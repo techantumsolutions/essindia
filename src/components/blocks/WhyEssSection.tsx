@@ -4,7 +4,22 @@ import { motion } from 'framer-motion';
 import { TextReveal } from '@/components/animations/TextReveal';
 import { MotionSection, StaggerContainer } from '@/components/animations/MotionSection';
 
-const reasons = [
+interface Reason {
+  title: string;
+  description: string;
+}
+
+interface WhyEssContent {
+  heading?: string;
+  subheading?: string;
+  reasons?: Reason[];
+}
+
+interface WhyEssSectionProps {
+  content?: WhyEssContent;
+}
+
+const defaultReasons = [
   {
     title: 'INDUSTRY EXPERTS',
     description: 'We bring deep knowledge of how industries work, so every solution fit actual operations.',
@@ -18,12 +33,16 @@ const reasons = [
     description: "We don't just implement technology; we deliver proven results.",
   },
   {
-    title: 'GLOBAL REACH WITH UNDERSTANDING ACROSS GROGRAPHIES',
+    title: 'GLOBAL REACH',
     description: 'We bring experience across geographies and adapt it to your business needs.',
   },
 ];
 
-export function WhyEssSection() {
+export function WhyEssSection({ content }: WhyEssSectionProps) {
+  const heading = content?.heading || "Why ESS?";
+  const subheading = content?.subheading || "We pioneer groundbreaking innovations while our competitors struggle to keep pace.";
+  const reasons = content?.reasons || defaultReasons;
+
   return (
     <section className="py-24 bg-[#F8F9FA] overflow-hidden relative">
       <div className="container mx-auto px-4 md:px-8 max-w-7xl">
@@ -32,12 +51,12 @@ export function WhyEssSection() {
         <div className="text-center mb-20 max-w-3xl mx-auto">
           <TextReveal 
             as="h2"
-            text="Why ESS?"
+            text={heading}
             className="text-4xl md:text-5xl font-bold text-slate-900 mb-6 tracking-tight justify-center"
           />
           <MotionSection variant="fadeUp" delay={0.4}>
             <p className="text-lg md:text-xl text-slate-500 leading-relaxed font-light">
-              We pioneer groundbreaking innovations while our competitors struggle to keep pace.
+              {subheading}
             </p>
           </MotionSection>
         </div>
@@ -98,7 +117,7 @@ export function WhyEssSection() {
                 <div className="flex items-start gap-4">
                   <div className="w-2 h-2 rounded-full bg-[#4B2A63] mt-2 group-hover:scale-150 transition-transform duration-300" />
                   <div>
-                    <h3 className="text-lg font-bold text-[#4B2A63] mb-3 tracking-wide">
+                    <h3 className="text-lg font-bold text-[#4B2A63] mb-3 tracking-wide uppercase text-[15px]">
                       {reason.title}
                     </h3>
                     <p className="text-[14px] text-slate-500 leading-relaxed font-normal">

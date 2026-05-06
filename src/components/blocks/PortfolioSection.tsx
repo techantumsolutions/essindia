@@ -6,7 +6,25 @@ import { ArrowRight, ChevronLeft, ChevronRight } from 'lucide-react';
 import { TextReveal } from '@/components/animations/TextReveal';
 import { MotionSection, StaggerContainer } from '@/components/animations/MotionSection';
 
-const portfolios = [
+interface Project {
+  title: string;
+  tags: string[];
+  image: string;
+  link: string;
+}
+
+interface PortfolioContent {
+  heading?: string;
+  subheading?: string;
+  projects?: Project[];
+  viewAllCta?: { label: string; url: string };
+}
+
+interface PortfolioSectionProps {
+  content?: PortfolioContent;
+}
+
+const defaultPortfolios = [
   {
     title: 'Workflow System Energy',
     tags: ['Oil & gas'],
@@ -27,7 +45,12 @@ const portfolios = [
   },
 ];
 
-export function PortfolioSection() {
+export function PortfolioSection({ content }: PortfolioSectionProps) {
+  const heading = content?.heading || "Real Work. Real Results.";
+  const subheading = content?.subheading || "Explore the ESS story, a legacy of transformation across high-end brands and verticals.";
+  const projects = content?.projects || defaultPortfolios;
+  const viewAllCta = content?.viewAllCta || { label: "View All Work", url: "/portfolio" };
+
   return (
     <section className="py-24 bg-[#F2F6F9] overflow-hidden relative">
       <div className="container mx-auto px-4 md:px-8 max-w-7xl">
@@ -36,12 +59,12 @@ export function PortfolioSection() {
         <div className="text-center mb-20 max-w-3xl mx-auto">
           <TextReveal 
             as="h2"
-            text="Real Work. Real Results."
+            text={heading}
             className="text-4xl md:text-5xl font-bold text-slate-900 mb-6 tracking-tight justify-center"
           />
           <MotionSection variant="fadeUp" delay={0.4}>
             <p className="text-lg md:text-xl text-slate-500 leading-relaxed font-light">
-              Explore the ESS story, a legacy of transformation across high-end brands and verticals.
+              {subheading}
             </p>
           </MotionSection>
         </div>
@@ -56,7 +79,7 @@ export function PortfolioSection() {
 
           {/* Grid */}
           <StaggerContainer className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10 xl:px-24 w-full">
-            {portfolios.map((portfolio, index) => (
+            {projects.map((portfolio, index) => (
               <motion.div
                 key={index}
                 variants={{
@@ -89,7 +112,7 @@ export function PortfolioSection() {
                 
                 {/* Tags */}
                 <div className="flex flex-wrap gap-2 mb-6">
-                  {portfolio.tags.map(tag => (
+                  {portfolio.tags?.map(tag => (
                     <span 
                       key={tag} 
                       className="bg-white/80 backdrop-blur-sm border border-slate-100 text-slate-500 px-4 py-1.5 rounded-full text-[11px] font-bold tracking-wider uppercase"
@@ -116,8 +139,11 @@ export function PortfolioSection() {
 
         {/* View All Button */}
         <MotionSection variant="fadeUp" delay={0.6} className="mt-20 text-center">
-          <Button className="bg-[#4B2A63] hover:bg-[#3B198F] text-white rounded-full px-12 h-[54px] text-[16px] font-bold shadow-xl transition-all duration-300 hover:shadow-2xl hover:-translate-y-1 active:scale-95 cursor-pointer">
-            View All Work
+          <Button 
+            onClick={() => window.location.href = viewAllCta.url}
+            className="bg-[#4B2A63] hover:bg-[#3B198F] text-white rounded-full px-12 h-[54px] text-[16px] font-bold shadow-xl transition-all duration-300 hover:shadow-2xl hover:-translate-y-1 active:scale-95 cursor-pointer"
+          >
+            {viewAllCta.label}
           </Button>
         </MotionSection>
 

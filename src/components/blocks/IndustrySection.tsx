@@ -5,7 +5,25 @@ import { Button } from '@/components/ui/button';
 import { TextReveal } from '@/components/animations/TextReveal';
 import { MotionSection, StaggerContainer } from '@/components/animations/MotionSection';
 
-const industries = [
+interface Industry {
+  name: string;
+  description: string;
+  image: string;
+}
+
+interface IndustryContent {
+  heading?: string;
+  subheading?: string;
+  description?: string;
+  industries?: Industry[];
+  viewAllCta?: { label: string; url: string };
+}
+
+interface IndustrySectionProps {
+  content?: IndustryContent;
+}
+
+const defaultIndustries = [
   { 
     name: 'Manufacturing industry', 
     description: 'Lorem ipsum dolor sit amet consectetur adipiscing elit phasellus eleifend ut,',
@@ -28,7 +46,13 @@ const industries = [
   },
 ];
 
-export function IndustrySection() {
+export function IndustrySection({ content }: IndustrySectionProps) {
+  const heading = content?.heading || "Choose the Industry Expert";
+  const subheading = content?.subheading || "Designed for the way your industry works.";
+  const description = content?.description || "From manufacturing to services, ESS understands the workflows behind real business operations. We infuse our extensive industry expertise into every solution, tailoring our approach to the specific realities of each industry rather than relying on generic software thinking.";
+  const industries = content?.industries || defaultIndustries;
+  const viewAllCta = content?.viewAllCta || { label: "View all INDUSTRIES", url: "/industries" };
+
   return (
     <section className="py-24 bg-[#462885] relative z-10 overflow-hidden">
       {/* Background Pattern */}
@@ -40,17 +64,17 @@ export function IndustrySection() {
         <div className="flex flex-col items-center text-center mb-16 max-w-4xl mx-auto text-white">
           <TextReveal 
             as="h2"
-            text="Choose the Industry Expert"
+            text={heading}
             className="text-4xl md:text-5xl font-bold tracking-tight mb-6 justify-center"
           />
           <MotionSection variant="fadeUp" delay={0.3}>
             <h3 className="text-xl md:text-[24px] font-medium mb-6 text-white/90">
-              Designed for the way your industry works.
+              {subheading}
             </h3>
           </MotionSection>
           <MotionSection variant="fadeUp" delay={0.4}>
             <p className="text-[14px] md:text-[15px] font-normal leading-relaxed text-white/70 max-w-3xl tracking-wide">
-              From manufacturing to services, ESS understands the workflows behind real business operations. We infuse our extensive industry expertise into every solution, tailoring our approach to the specific realities of each industry rather than relying on generic software thinking.
+              {description}
             </p>
           </MotionSection>
         </div>
@@ -59,7 +83,7 @@ export function IndustrySection() {
         <StaggerContainer className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           {industries.map((ind, index) => (
             <motion.div
-              key={ind.name}
+              key={ind.name + index}
               variants={{
                 initial: { opacity: 0, y: 30, scale: 0.95 },
                 animate: { opacity: 1, y: 0, scale: 1, transition: { duration: 0.8, ease: [0.22, 1, 0.36, 1] } }
@@ -97,8 +121,11 @@ export function IndustrySection() {
 
         {/* View All Button */}
         <MotionSection variant="fadeUp" delay={0.5} className="mt-16 text-center">
-          <Button className="bg-white hover:bg-slate-50 text-[#462885] rounded-full px-12 h-[54px] text-[15px] font-bold tracking-wider shadow-2xl transition-all duration-300 hover:shadow-white/20 hover:-translate-y-1 active:scale-95 cursor-pointer">
-            View all INDUSTRIES
+          <Button 
+            onClick={() => window.location.href = viewAllCta.url}
+            className="bg-white hover:bg-slate-50 text-[#462885] rounded-full px-12 h-[54px] text-[15px] font-bold tracking-wider shadow-2xl transition-all duration-300 hover:shadow-white/20 hover:-translate-y-1 active:scale-95 cursor-pointer"
+          >
+            {viewAllCta.label}
           </Button>
         </MotionSection>
 

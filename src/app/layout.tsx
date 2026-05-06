@@ -3,6 +3,12 @@ import { Roboto } from "next/font/google";
 import "./globals.css";
 import QueryProvider from "@/providers/query-provider";
 import { Footer } from '@/components/layout/Footer';
+import { validateDatabase } from '@/lib/db/validate';
+
+// Trigger DB validation on startup (in development and first load)
+if (process.env.NODE_ENV === 'development') {
+  validateDatabase().catch(console.error);
+}
 
 const roboto = Roboto({
   weight: ['100', '300', '400', '500', '700', '900'],

@@ -5,7 +5,25 @@ import { Button } from '@/components/ui/button';
 import { TextReveal } from '@/components/animations/TextReveal';
 import { MotionSection, StaggerContainer } from '@/components/animations/MotionSection';
 
-const blogs = [
+interface Blog {
+  title: string;
+  description: string;
+  image: string;
+  link: string;
+}
+
+interface BlogContent {
+  heading?: string;
+  subheading?: string;
+  blogs?: Blog[];
+  viewAllCta?: { label: string; url: string };
+}
+
+interface BlogSectionProps {
+  content?: BlogContent;
+}
+
+const defaultBlogs = [
   {
     title: 'Why Are More Finance Departments Adopting RPA for Core Processes?',
     description: 'How RPA Is Reshaping the Way Finance Departments Operate In most finance departments....',
@@ -26,7 +44,12 @@ const blogs = [
   },
 ];
 
-export function BlogSection() {
+export function BlogSection({ content }: BlogSectionProps) {
+  const heading = content?.heading || "News, Launches & Product Thinking";
+  const subheading = content?.subheading || "Stay updated on what we're building, learning, and launching.";
+  const blogs = content?.blogs || defaultBlogs;
+  const viewAllCta = content?.viewAllCta || { label: "Explore More", url: "/blog" };
+
   return (
     <section className="py-24 bg-[#F8F9FA] overflow-hidden">
       <div className="container mx-auto px-4 md:px-8 max-w-7xl">
@@ -35,12 +58,12 @@ export function BlogSection() {
         <div className="text-center mb-16 max-w-2xl mx-auto flex flex-col items-center">
           <TextReveal 
             as="h2"
-            text="News, Launches & Product Thinking"
+            text={heading}
             className="text-4xl md:text-[48px] font-bold text-slate-900 mb-6 tracking-tight leading-tight justify-center"
           />
           <MotionSection variant="fadeUp" delay={0.4}>
             <p className="text-lg text-slate-500 font-light">
-              Stay updated on what we're building, learning, and launching.
+              {subheading}
             </p>
           </MotionSection>
         </div>
@@ -92,8 +115,11 @@ export function BlogSection() {
 
         {/* View All Button */}
         <MotionSection variant="fadeUp" delay={0.6} className="mt-16 text-center">
-          <Button className="bg-[#4B2A63] hover:bg-[#3B198F] text-white rounded-full px-12 h-[54px] text-[16px] font-bold shadow-xl transition-all duration-300 hover:shadow-2xl hover:-translate-y-1 active:scale-95 cursor-pointer">
-            Explore More
+          <Button 
+            onClick={() => window.location.href = viewAllCta.url}
+            className="bg-[#4B2A63] hover:bg-[#3B198F] text-white rounded-full px-12 h-[54px] text-[16px] font-bold shadow-xl transition-all duration-300 hover:shadow-2xl hover:-translate-y-1 active:scale-95 cursor-pointer"
+          >
+            {viewAllCta.label}
           </Button>
         </MotionSection>
 

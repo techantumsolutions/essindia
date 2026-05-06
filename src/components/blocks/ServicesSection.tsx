@@ -5,53 +5,66 @@ import { Button } from '@/components/ui/button';
 import { MotionSection, StaggerContainer } from '@/components/animations/MotionSection';
 import { Spotlight } from '@/components/ui/Spotlight';
 
-// Generic placeholder SVGs matching the abstract geometric shapes in the screenshot
+// Generic placeholder SVGs
 const Icon1 = () => <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1" className="text-slate-700"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>;
-const Icon2 = () => <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1" className="text-slate-700"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="3" y1="9" x2="21" y2="9"></line><line x1="9" y1="21" x2="9" y2="9"></line></svg>;
-const Icon3 = () => <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1" className="text-slate-700"><circle cx="12" cy="12" r="10"></circle><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path><path d="M2 12h20"></path></svg>;
-const Icon4 = () => <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1" className="text-slate-700"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="7.5 4.21 12 6.81 16.5 4.21"></polyline><polyline points="7.5 19.79 12 17.19 16.5 19.79"></polyline><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>;
-const Icon5 = () => <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1" className="text-slate-700"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="16"></line><line x1="8" y1="12" x2="16" y2="12"></line></svg>;
 
-const services = [
+interface Service {
+  title: string;
+  description: string;
+  bgImage: string;
+  icon?: string;
+}
+
+interface ServicesContent {
+  heading?: string;
+  subheading?: string;
+  services?: Service[];
+  viewAllCta?: { label: string; url: string };
+}
+
+interface ServicesSectionProps {
+  content?: ServicesContent;
+}
+
+const defaultServices = [
   {
     title: 'Robotic Process Automation Solutions',
     description: 'Most trusted outcome -driven automation implementation partner of India',
-    icon: <Icon1 />,
     bgImage: '/service-rpa.png', 
   },
   {
     title: 'ORACLE',
     description: 'Trusted Oracle solutions partner for enterprise-scale transformation.',
-    icon: <Icon2 />,
     bgImage: '/service-oracle.png', 
   },
   {
     title: 'Business Intelligence',
     description: 'BI Dashboards with integrated AI to transform data into actionable decisions and insights.',
-    icon: <Icon4 />,
     bgImage: '/service-bi.png',
   },
   {
     title: 'Enterprise Resource Planning (ERP)',
     description: 'Unify your business operations with AI-powered insights and automation for faster, smarter....',
-    icon: <Icon3 />,
     bgImage: '/service-erp.png',
   },
   {
     title: 'Enterprise Mobility Solutions (EMS)',
     description: 'Smarter mobility for a secure and connected workforce.',
-    icon: <Icon1 />,
     bgImage: '/service-ems.png',
   },
   {
     title: 'Other solutions',
     description: 'Explore more solutions built to support business growth.',
-    icon: <Icon5 />,
     bgImage: '/service-bi.png',
   },
 ];
 
-export function ServicesSection() {
+export function ServicesSection({ content }: ServicesSectionProps) {
+  const heading = content?.heading || "Services we offer";
+  const subheading = content?.subheading || "Manage your operations with guidance that evolves with your business goals.";
+  const services = content?.services || defaultServices;
+  const viewAllCta = content?.viewAllCta || { label: "View all solutions", url: "/solutions" };
+
   return (
     <section className="py-24 bg-white relative z-10 overflow-hidden">
       <div className="container mx-auto px-4 md:px-8 max-w-7xl">
@@ -59,10 +72,10 @@ export function ServicesSection() {
         {/* Header */}
         <MotionSection variant="fadeUp" className="text-center mb-16">
           <h2 className="text-4xl md:text-5xl font-bold tracking-tight text-slate-900 mb-6">
-            Services we offer
+            {heading}
           </h2>
           <p className="text-slate-400 text-lg md:text-xl font-light max-w-2xl mx-auto">
-            Manage your operations with guidance that evolves with your business goals.
+            {subheading}
           </p>
         </MotionSection>
 
@@ -76,12 +89,12 @@ export function ServicesSection() {
                   animate: { opacity: 1, y: 0, filter: 'blur(0px)', transition: { duration: 0.8, ease: [0.22, 1, 0.36, 1] } }
                 }}
                 whileHover={{ y: -8, transition: { duration: 0.4, ease: [0.22, 1, 0.36, 1] } }}
-                className="group relative h-[320px] rounded-[24px] overflow-hidden cursor-pointer shadow-[0_20px_50px_rgba(0,0,0,0.02)] hover:shadow-[0_40px_80px_rgba(75,42,99,0.08)] transition-all duration-500 bg-white border border-slate-100"
+                className="group relative h-[320px] rounded-[24px] overflow-hidden cursor-pointer shadow-[0_20px_50px_rgba(0,0,0,0.02)] hover:shadow-[0_40px_80px_rgba(75, 42, 99, 0.08)] transition-all duration-500 bg-white border border-slate-100"
               >
                 {/* === Default State (White Card) === */}
                 <div className="absolute inset-0 p-8 flex flex-col transition-all duration-500 ease-in-out group-hover:opacity-0 z-10">
                   <div className="mb-8 transform group-hover:scale-110 transition-transform duration-500 origin-left">
-                    {service.icon}
+                    <Icon1 />
                   </div>
                   <h3 className="text-xl font-bold text-slate-900 leading-tight mb-4 pr-4">
                     {service.title}
@@ -109,9 +122,8 @@ export function ServicesSection() {
                   <div className="absolute inset-0 bg-[#4B2A63]/60 backdrop-blur-[2px] -z-10" />
                   
                   <div className="mb-8">
-                    {/* White Icon for hover */}
                     <div className="text-white brightness-200">
-                      {service.icon}
+                      <Icon1 />
                     </div>
                   </div>
                   <h3 className="text-xl font-bold text-white leading-tight mb-4">
@@ -132,10 +144,12 @@ export function ServicesSection() {
           ))}
         </StaggerContainer>
 
-
         <MotionSection variant="fadeUp" delay={0.4} className="mt-16 text-center">
-          <Button className="bg-[#4B2A63] hover:bg-[#3B198F] text-white rounded-full px-12 h-[54px] text-[16px] font-bold shadow-xl transition-all duration-300 hover:shadow-2xl hover:-translate-y-1 active:scale-95">
-            View all solutions
+          <Button 
+            onClick={() => window.location.href = viewAllCta.url}
+            className="bg-[#4B2A63] hover:bg-[#3B198F] text-white rounded-full px-12 h-[54px] text-[16px] font-bold shadow-xl transition-all duration-300 hover:shadow-2xl hover:-translate-y-1 active:scale-95"
+          >
+            {viewAllCta.label}
           </Button>
         </MotionSection>
 

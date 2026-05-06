@@ -31,6 +31,9 @@ export default function AdminLogin() {
       const password = (form.elements.namedItem('password') as HTMLInputElement).value;
 
       if (username === 'admin@essindia.com' && password === 'admin123') {
+        // Set mock session cookie for middleware
+        document.cookie = "mock-admin-session=true; path=/; max-age=3600";
+        setIsLoading(false);
         router.push('/admin/dashboard');
       } else {
         setError('Invalid credentials. Please try again.');

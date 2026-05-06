@@ -1,16 +1,23 @@
 import Redis from "ioredis";
+import { logger } from "@/lib/logger";
 
 declare global {
   var redis: Redis | undefined;
 }
 
+const REDIS_URL = process.env.REDIS_URL || 'redis://localhost:6379';
+const REDIS_TIMEOUT_MS = 500; // Snappier timeout for enterprise UX
+
 export const redisClient =
   global.redis ||
-  new Redis(process.env.REDIS_URL || 'redis://localhost:6379', {
-    maxRetriesPerRequest: null,
+  new Redis(REDIS_URL, {
+    maxRetriesPerRequest: 1,
+    connectTimeout: 2000,
     lazyConnect: true,
     retryStrategy(times) {
-      return Math.min(times * 200, 2000);
+      // Very aggressive backoff if Redis is missing to avoid log spam
+      if (times > 3) return null; // Stop retrying after 3 attempts if it fails
+      return Math.min(times * 1000, 5000);
     },
   });
 
@@ -18,37 +25,72 @@ if (process.env.NODE_ENV !== "production") {
   global.redis = redisClient;
 }
 
+let isRedisHealthy = true;
+let hasLoggedMissingRedis = false;
+
 redisClient.on('error', (err) => {
-  console.warn('[Redis] Connection error:', err.message);
+  isRedisHealthy = false;
+  if (!hasLoggedMissingRedis) {
+    logger.debug('[Redis] Cache unavailable, using direct database fallback', { 
+      detail: err.message || 'Connection refused' 
+    });
+    hasLoggedMissingRedis = true;
+  }
 });
 
-export default redisClient;
+redisClient.on('connect', () => {
+  isRedisHealthy = true;
+  hasLoggedMissingRedis = false;
+  logger.info('[Redis] Cache connection established');
+});
 
-// Helper to cache function results safely
+/**
+ * Executes a cache operation with a timeout
+ */
+async function withTimeout<T>(promise: Promise<T>, timeoutMs: number): Promise<T> {
+  let timeoutId: NodeJS.Timeout;
+  const timeoutPromise = new Promise<T>((_, reject) => {
+    timeoutId = setTimeout(() => reject(new Error('Redis Timeout')), timeoutMs);
+  });
+  
+  return Promise.race([promise, timeoutPromise]).finally(() => clearTimeout(timeoutId));
+}
+
 export async function withCache<T>(
   key: string,
   fetcher: () => Promise<T>,
   ttlSeconds: number = 3600
 ): Promise<T> {
-  try {
-    if (redisClient.status !== 'ready') {
-      return await fetcher();
-    }
+  // If Redis is unhealthy or not connected, bypass immediately
+  if (!isRedisHealthy || redisClient.status !== 'ready') {
+    return await fetcher();
+  }
 
-    const cached = await redisClient.get(key);
+  try {
+    const cached = await withTimeout(redisClient.get(key), REDIS_TIMEOUT_MS);
+    
     if (cached) {
       try {
         return JSON.parse(cached) as T;
       } catch (e) {
-        // Ignore parse error and fetch fresh
+        logger.debug('[Redis] Serialization error', { key });
       }
     }
 
     const data = await fetcher();
-    await redisClient.setex(key, ttlSeconds, JSON.stringify(data));
+    
+    if (data !== undefined && data !== null) {
+      // Non-blocking set
+      redisClient.setex(key, ttlSeconds, JSON.stringify(data)).catch(() => {
+        // Silently fail on set errors
+      });
+    }
+
     return data;
   } catch (error) {
-    console.warn('[Redis] Cache error, falling back to fetcher:', error);
+    // Graceful fallback
     return await fetcher();
   }
 }
+
+export default redisClient;

@@ -41,12 +41,16 @@ export async function updateSession(request: NextRequest) {
     console.warn('[Supabase Middleware] Failed to get user:', error);
   }
 
+  // For the demo/simulation, we allow access to admin routes if the user is using the mock credentials.
+  // In a real app, this would check for a valid session.
+  const isMockAuthenticated = request.cookies.get('mock-admin-session')?.value === 'true';
+
   if (
     !user &&
+    !isMockAuthenticated &&
     request.nextUrl.pathname.startsWith('/admin') &&
     !request.nextUrl.pathname.startsWith('/admin/login')
   ) {
-    // no user, potentially respond by redirecting the user to the login page
     const url = request.nextUrl.clone()
     url.pathname = '/admin/login'
     return NextResponse.redirect(url)

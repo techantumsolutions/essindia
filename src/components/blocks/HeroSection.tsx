@@ -2,10 +2,29 @@
 
 import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
-import { TextReveal, BlurReveal } from '@/components/animations/TextReveal';
+import { TextReveal } from '@/components/animations/TextReveal';
 import { MotionSection } from '@/components/animations/MotionSection';
 
-export function HeroSection() {
+interface HeroContent {
+  title?: string;
+  subtitle?: string;
+  primaryCta?: { label: string; url: string };
+  secondaryCta?: { label: string; url: string };
+  image?: string;
+}
+
+interface HeroSectionProps {
+  content?: HeroContent;
+}
+
+export function HeroSection({ content }: HeroSectionProps) {
+  // Use content from CMS or fall back to defaults
+  const title = content?.title || "The Digital Transformation Partner For Future-Ready Enterprises.";
+  const subtitle = content?.subtitle || "With proven expertise across 25+ industries over the last 35+ years. Helping businesses streamline operations, grow, and stay ahead in the AI-driven world.";
+  const primaryCta = content?.primaryCta || { label: "Book Free Demo", url: "/demo" };
+  const secondaryCta = content?.secondaryCta || { label: "View Solutions", url: "/solutions" };
+  const image = content?.image || "/hero-right.png";
+
   return (
     <section className="relative min-h-[90vh] flex items-center pt-32 pb-12 overflow-hidden bg-white">
       {/* Background Dotted Pattern */}
@@ -52,21 +71,28 @@ export function HeroSection() {
           <div className="w-full lg:w-1/2 max-w-2xl">
             <TextReveal 
               as="h1"
-              text="The Digital Transformation Partner For Future-Ready Enterprises."
+              text={title}
               className="text-4xl md:text-5xl lg:text-[54px] font-bold leading-[1.1] text-[#4B2A63] tracking-tighter"
             />
             
             <MotionSection variant="fadeUp" delay={0.4}>
               <p className="mt-6 text-[18px] leading-relaxed text-slate-600 max-w-lg">
-                With proven expertise across 25+ industries over the last 35+ years. Helping businesses streamline operations, grow, and stay ahead in the AI-driven world.
+                {subtitle}
               </p>
               
               <div className="mt-10 flex flex-wrap gap-4">
-                <Button className="bg-[#4B2A63] hover:bg-[#3B198F] text-white rounded-full px-10 h-14 text-[16px] font-semibold transition-all duration-300 hover:shadow-[0_20px_40px_-10px_rgba(75,42,99,0.3)] hover:-translate-y-1 active:scale-95 cursor-pointer">
-                  Book Free Demo
+                <Button 
+                  className="bg-[#4B2A63] hover:bg-[#3B198F] text-white rounded-full px-10 h-14 text-[16px] font-semibold transition-all duration-300 hover:shadow-[0_20px_40px_-10px_rgba(75,42,99,0.3)] hover:-translate-y-1 active:scale-95 cursor-pointer"
+                  onClick={() => window.location.href = primaryCta.url}
+                >
+                  {primaryCta.label}
                 </Button>
-                <Button variant="outline" className="rounded-full px-10 h-14 text-[16px] font-semibold border-slate-200 hover:bg-slate-50 hover:border-slate-300 transition-all duration-300 active:scale-95 cursor-pointer">
-                  View Solutions
+                <Button 
+                  variant="outline" 
+                  className="rounded-full px-10 h-14 text-[16px] font-semibold border-slate-200 hover:bg-slate-50 hover:border-slate-300 transition-all duration-300 active:scale-95 cursor-pointer"
+                  onClick={() => window.location.href = secondaryCta.url}
+                >
+                  {secondaryCta.label}
                 </Button>
               </div>
             </MotionSection>
@@ -87,7 +113,7 @@ export function HeroSection() {
                 className="relative z-10"
               >
                 <img 
-                  src="/hero-right.png" 
+                  src={image} 
                   alt="Platform Dashboard Features" 
                   className="w-full h-auto max-w-[650px] object-contain drop-shadow-[0_32px_64px_rgba(0,0,0,0.12)]" 
                 />

@@ -1,51 +1,78 @@
 import { db } from '@/lib/db';
-import { pages, pageSections } from '@/lib/db/schema';
+import { pages, pageSections, seoMetadata } from '@/lib/db/schema';
 import { eq, asc, and } from 'drizzle-orm';
 import { withCache } from '@/lib/redis';
+import { logger } from '@/lib/logger';
+import { cache } from 'react';
 
 export class PageRepository {
-  async getPageBySlug(slug: string) {
+  /**
+   * Fetches a page by its slug with caching and React cache()
+   * Optimized for Next.js App Router
+   */
+  getPageBySlug = cache(async (slug: string) => {
+    return this.getPageByPath(slug === 'index' ? '/' : `/${slug}`);
+  });
+
+  /**
+   * Fetches a page by its full hierarchical path
+   */
+  getPageByPath = cache(async (path: string) => {
     try {
-      return await withCache(`page:${slug}`, async () => {
-        const page = await db.query.pages.findFirst({
-          where: and(
-            eq(pages.slug, slug),
-            eq(pages.isPublished, true)
-          ),
-        });
+      if (!path || path.startsWith('/.') || path.includes('favicon.ico')) {
+        return null;
+      }
 
-        if (!page) return null;
+      // Normalized path: ensure leading slash, no trailing slash (unless root)
+      const normalizedPath = path === '/' ? '/' : path.replace(/\/$/, '');
 
-        const sections = await db.query.pageSections.findMany({
-          where: and(
-            eq(pageSections.pageId, page.id),
-            eq(pageSections.isActive, true)
-          ),
-          orderBy: [asc(pageSections.orderIndex)],
-        });
+      return await withCache(`page:${normalizedPath}`, async () => {
+        try {
+          const page = await db.query.pages.findFirst({
+            where: and(
+              eq(pages.fullPath, normalizedPath),
+              eq(pages.status, 'published')
+            ),
+            with: {
+              seo: true,
+              sections: {
+                where: eq(pageSections.isActive, true),
+                orderBy: [asc(pageSections.orderIndex)],
+              }
+            }
+          });
 
-        return {
-          ...page,
-          sections
-        };
+          return page || null;
+        } catch (dbError: any) {
+          if (dbError.code === '42P01') {
+            logger.error('[PageRepository] Table "pages" missing. Please run migrations.', dbError);
+            return null;
+          }
+          throw dbError;
+        }
       });
     } catch (error) {
-      console.error('[PageRepository] Error fetching page:', error);
-      // Return null gracefully if table is missing or DB is unreachable
+      logger.error(`[PageRepository] Error fetching page path: ${path}`, error);
       return null;
     }
-  }
+  });
 
-  async getAllSlugs() {
+  /**
+   * Fetches all published paths for static generation
+   */
+  async getAllPaths() {
     try {
-      return await withCache('page_slugs', async () => {
-        return db.query.pages.findMany({
-          columns: { slug: true },
-          where: eq(pages.isPublished, true),
-        });
+      return await withCache('page_paths', async () => {
+        try {
+          return await db.query.pages.findMany({
+            columns: { fullPath: true },
+            where: eq(pages.status, 'published'),
+          });
+        } catch (dbError: any) {
+          return [];
+        }
       }, 3600);
     } catch (error) {
-      console.error('[PageRepository] Error fetching slugs:', error);
       return [];
     }
   }

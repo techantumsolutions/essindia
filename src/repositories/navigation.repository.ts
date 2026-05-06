@@ -1,35 +1,45 @@
 import { db } from '@/lib/db';
 import { navigationMenus, navigationItems } from '@/lib/db/schema';
-import { eq, asc, isNull } from 'drizzle-orm';
+import { eq, asc } from 'drizzle-orm';
 import redisClient, { withCache } from '@/lib/redis';
+import { logger } from '@/lib/logger';
+import { cache } from 'react';
 
 export class NavigationRepository {
   /**
    * Get full navigation tree by menu location
    */
-  async getMenuTreeByLocation(location: string) {
+  getMenuTreeByLocation = cache(async (location: string) => {
     const cacheKey = `nav_tree:${location}`;
 
     try {
       return await withCache(cacheKey, async () => {
-        const menu = await db.query.navigationMenus.findFirst({
-          where: eq(navigationMenus.location, location),
-        });
+        try {
+          const menu = await db.query.navigationMenus.findFirst({
+            where: eq(navigationMenus.location, location),
+          });
 
-        if (!menu) return [];
+          if (!menu) return [];
 
-        const items = await db.query.navigationItems.findMany({
-          where: eq(navigationItems.menuId, menu.id),
-          orderBy: [asc(navigationItems.orderIndex)],
-        });
+          const items = await db.query.navigationItems.findMany({
+            where: eq(navigationItems.menuId, menu.id),
+            orderBy: [asc(navigationItems.orderIndex)],
+          });
 
-        return this.buildTree(items);
+          return this.buildTree(items);
+        } catch (dbError: any) {
+          if (dbError.code === '42P01') {
+            logger.error('[NavigationRepository] Navigation tables missing.', dbError);
+            return [];
+          }
+          throw dbError;
+        }
       }, 3600);
     } catch (error) {
-      console.error('[NavigationRepository] Error fetching menu:', error);
+      logger.error(`[NavigationRepository] Error fetching menu: ${location}`, error);
       return [];
     }
-  }
+  });
 
   private buildTree(items: any[], parentId: string | null = null): any[] {
     return items
@@ -41,7 +51,11 @@ export class NavigationRepository {
   }
 
   async clearCache(location: string) {
-    await redisClient.del(`nav_tree:${location}`);
+    try {
+      await redisClient.del(`nav_tree:${location}`);
+    } catch (error) {
+      logger.debug('[NavigationRepository] Failed to clear cache', error);
+    }
   }
 }
 
