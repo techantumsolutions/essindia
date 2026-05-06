@@ -1,36 +1,86 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# ESS India - Enterprise Digital Transformation Platform
 
-## Getting Started
+A production-ready Enterprise Corporate Website and CMS platform built with Next.js 15, Drizzle ORM, Supabase, Redis, and deployed on a Linux VPS.
 
-First, run the development server:
+## 🚀 Tech Stack
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+- **Frontend:** Next.js 15 (App Router), React 19, Tailwind CSS v4, Framer Motion, Shadcn UI
+- **Backend APIs:** Native Next.js Server Actions/Route Handlers running strictly on YOUR VPS (No heavy Edge Functions)
+- **Database:** PostgreSQL (via Supabase ONLY), Drizzle ORM
+- **Authentication:** Supabase Auth (Client & Server via Session Cookies)
+- **Media Storage:** Cloudflare R2 (S3-compatible Object Storage for media assets)
+- **Caching & Rate Limiting:** Redis (Self-hosted via Docker)
+- **Infrastructure:** Docker, Nginx, PM2, Ubuntu VPS (All Business Logic stays on your VPS)
+
+## 📂 Architecture overview
+
+- `src/app`: Next.js App Router with Route Groups (`(public)`, `(admin)`)
+- `src/components/blocks`: Reusable CMS dynamic blocks (Hero, Services, Industries, etc.)
+- `src/components/cms`: Section rendering engine for dynamic pages
+- `src/components/ui`: Shadcn UI components
+- `src/lib/db`: Database connection and Drizzle Schema (PostgreSQL)
+- `src/lib/supabase`: Server and Browser clients for Supabase Auth + Middleware
+- `src/lib/storage/r2.ts`: Cloudflare R2 Client (AWS S3 SDK) for media management
+- `src/lib/redis`: Redis client setup with caching helpers
+- `src/repositories`: Data access layer bridging DB with business logic exclusively running on your VPS
+
+## 🛠️ Setup Instructions
+
+### 1. Environment Variables
+
+Create a `.env.local` for local development:
+```env
+# Database & Auth (Supabase)
+NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
+DATABASE_URL=your_postgresql_connection_string
+
+# Caching & Session (Redis)
+REDIS_URL=redis://localhost:6379
+
+# Media Storage (Cloudflare R2)
+CLOUDFLARE_ACCOUNT_ID=your_cloudflare_account_id
+CLOUDFLARE_R2_ACCESS_KEY_ID=your_r2_access_key
+CLOUDFLARE_R2_SECRET_ACCESS_KEY=your_r2_secret_key
+CLOUDFLARE_R2_BUCKET_NAME=essind-media
+NEXT_PUBLIC_R2_PUBLIC_URL=https://media.yourdomain.com
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### 2. Local Development
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```bash
+# Install dependencies
+npm install
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+# Start redis (requires Docker)
+docker run --name essind-redis -p 6379:6379 -d redis:7-alpine
 
-## Learn More
+# Run DB Migrations
+npm run db:push # Make sure to add this script: drizzle-kit push
 
-To learn more about Next.js, take a look at the following resources:
+# Start Dev Server
+npm run dev
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### 3. Production Deployment (Ubuntu VPS)
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+```bash
+# Clone the repository to the VPS
 
-## Deploy on Vercel
+# Create .env.production file
+cp .env.local .env.production
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+# Run using docker-compose (Web + Redis + Nginx)
+docker-compose up -d --build
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+# OR Deploy using PM2 directly on the host machine
+npm run build
+pm2 start ecosystem.config.js
+pm2 save
+```
+
+## ✨ Enterprise Features
+- **Dynamic SEO-friendly Slugs:** No page IDs in URL. Uses hierarchical slugs for unlimited nesting.
+- **Section Builder:** Extendable `SectionRenderer` linking CMS data to React components.
+- **Repository Pattern:** Separated DB access layer with integrated Redis caching.
+- **Enterprise UI:** TailwindCSS with Framer Motion and scalable design system.
