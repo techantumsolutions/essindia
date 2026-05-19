@@ -125,5 +125,5 @@ async function invalidateMegaMenuCacheBySubCategory(subCategoryId: string) {
     where: eq(megaMenuSubCategories.id, subCategoryId),
     with: { category: true },
   });
-  if (sub?.category) await invalidateMegaMenuCache(sub.category.navigationItemId);
+  if (sub?.category && !Array.isArray(sub.category)) await invalidateMegaMenuCache(sub.category.navigationItemId);
 }

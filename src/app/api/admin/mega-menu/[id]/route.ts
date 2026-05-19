@@ -120,7 +120,7 @@ export async function DELETE(request: Request, props: { params: Promise<{ id: st
         with: { category: true },
       });
       await db.delete(megaMenuSubCategories).where(eq(megaMenuSubCategories.id, params.id));
-      if (existing?.category) await clearCaches(existing.category.navigationItemId);
+      if (existing?.category && !Array.isArray(existing.category)) await clearCaches(existing.category.navigationItemId);
       return NextResponse.json({ success: true });
     }
 
@@ -130,7 +130,9 @@ export async function DELETE(request: Request, props: { params: Promise<{ id: st
         with: { subCategory: { with: { category: true } } },
       });
       await db.delete(megaMenuSubSubCategories).where(eq(megaMenuSubSubCategories.id, params.id));
-      const navId = existing?.subCategory?.category?.navigationItemId;
+      const sub = existing?.subCategory && !Array.isArray(existing.subCategory) ? existing.subCategory : null;
+      const cat = sub?.category && !Array.isArray(sub.category) ? sub.category : null;
+      const navId = cat?.navigationItemId;
       if (navId) await clearCaches(navId);
       return NextResponse.json({ success: true });
     }

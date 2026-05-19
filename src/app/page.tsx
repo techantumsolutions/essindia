@@ -26,7 +26,7 @@ export default async function Home() {
     <MainLayout>
       {page && page.sections && page.sections.length > 0 ? (
         <>
-          {page.sections.map((section) => (
+          {page.sections.map((section: any) => (
             <SectionRenderer key={section.id} section={section} />
           ))}
           {/* Append fallbacks if they aren't in CMS yet */}
