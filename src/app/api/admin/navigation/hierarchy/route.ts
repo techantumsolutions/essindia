@@ -10,8 +10,22 @@ export async function GET(request: Request) {
   const location = searchParams.get('location') || 'header-main';
 
   try {
-    const items = await navigationTreeRepository.getTreeByLocation(location);
-    return NextResponse.json({ items });
+    const navigationItemId = searchParams.get('navigationItemId');
+
+    if (navigationItemId) {
+      const megaMenu = await navigationTreeRepository.getAdminMegaMenuForNavItem(navigationItemId);
+      if (!megaMenu) {
+        return NextResponse.json({ error: 'Navigation item not found' }, { status: 404 });
+      }
+      return NextResponse.json(megaMenu, {
+        headers: { 'Cache-Control': 'no-store, max-age=0' },
+      });
+    }
+
+    const items = await navigationTreeRepository.getAdminHierarchyByLocation(location);
+    return NextResponse.json({ items }, {
+      headers: { 'Cache-Control': 'no-store, max-age=0' },
+    });
   } catch (error) {
     return serverError(error);
   }

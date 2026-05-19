@@ -39,7 +39,7 @@ export default function PagesModule() {
     fetch('/api/admin/pages/sync-registry', { method: 'POST' }).finally(() => fetchData());
   }, [fetchData]);
 
-  const handleCreate = async (form: PageCreateFormData) => {
+  const handleCreate = async (form: PageCreateFormData, status: 'draft' | 'published') => {
     try {
       const res = await fetch('/api/admin/pages', {
         method: 'POST',
@@ -47,6 +47,7 @@ export default function PagesModule() {
         body: JSON.stringify({
           title: form.title,
           slug: form.slug || undefined,
+          status,
           templateId: form.templateId || null,
           navigationItemId: form.navigationItemId || null,
           megaMenuCategoryId: form.megaMenuCategoryId || null,
@@ -56,7 +57,7 @@ export default function PagesModule() {
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || 'Failed to create page');
-      toast.success('Page created');
+      toast.success(status === 'published' ? 'Page published' : 'Page saved as draft');
       router.push(`/admin/pages/${data.id}`);
     } catch (e: unknown) {
       toast.error(e instanceof Error ? e.message : 'Failed to create page');

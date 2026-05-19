@@ -73,44 +73,57 @@ export class PageAdminRepository {
     const pageSlug = resolvePageSlug(data.title, data.slug);
     let fullPath: string;
 
-    if (data.navigationItemId && data.megaMenuCategoryId) {
+    if (data.navigationItemId) {
       const nav = await db.query.navigationItems.findFirst({
         where: eq(navigationItems.id, data.navigationItemId),
       });
-      const cat = await db.query.megaMenuCategories.findFirst({
-        where: eq(megaMenuCategories.id, data.megaMenuCategoryId),
-      });
-      const sub = data.megaMenuSubCategoryId
-        ? await db.query.megaMenuSubCategories.findFirst({
+      if (!nav) throw new Error('Invalid navigation menu item');
+
+      const navSlug = nav.slug || slugify(nav.label);
+      let categorySlug: string | undefined;
+      let subSlug: string | undefined;
+      let subSubSlug: string | undefined;
+
+      if (data.megaMenuCategoryId) {
+        const cat = await db.query.megaMenuCategories.findFirst({
+          where: eq(megaMenuCategories.id, data.megaMenuCategoryId),
+        });
+        if (!cat || cat.navigationItemId !== nav.id) {
+          throw new Error('Category does not belong to the selected menu item');
+        }
+        categorySlug = cat.slug;
+
+        if (data.megaMenuSubCategoryId) {
+          const sub = await db.query.megaMenuSubCategories.findFirst({
             where: eq(megaMenuSubCategories.id, data.megaMenuSubCategoryId),
-          })
-        : null;
-      const subSub = data.megaMenuSubSubCategoryId
-        ? await db.query.megaMenuSubSubCategories.findFirst({
-            where: eq(megaMenuSubSubCategories.id, data.megaMenuSubSubCategoryId),
-          })
-        : null;
+          });
+          if (!sub || sub.categoryId !== cat.id) {
+            throw new Error('Sub category does not belong to the selected category');
+          }
+          subSlug = sub.slug;
 
-      if (!nav || !cat) throw new Error('Invalid navigation hierarchy mapping');
-
-      const existing = await db.query.pages.findFirst({
-        where: eq(pages.fullPath, buildPagePathFromNavHierarchy({
-          navSlug: nav.slug || slugify(nav.label),
-          categorySlug: cat.slug,
-          subSlug: sub?.slug,
-          subSubSlug: subSub?.slug,
-          pageSlug: !subSub ? pageSlug : undefined,
-        })),
-      });
-      if (existing) throw new Error('A page with this route already exists');
+          if (data.megaMenuSubSubCategoryId) {
+            const subSub = await db.query.megaMenuSubSubCategories.findFirst({
+              where: eq(megaMenuSubSubCategories.id, data.megaMenuSubSubCategoryId),
+            });
+            if (!subSub || subSub.subCategoryId !== sub.id) {
+              throw new Error('Sub sub category does not belong to the selected sub category');
+            }
+            subSubSlug = subSub.slug;
+          }
+        }
+      }
 
       fullPath = buildPagePathFromNavHierarchy({
-        navSlug: nav.slug || slugify(nav.label),
-        categorySlug: cat.slug,
-        subSlug: sub?.slug,
-        subSubSlug: subSub?.slug,
-        pageSlug: !subSub ? pageSlug : undefined,
+        navSlug,
+        categorySlug,
+        subSlug,
+        subSubSlug,
+        pageSlug: !subSubSlug ? pageSlug : undefined,
       });
+
+      const existing = await db.query.pages.findFirst({ where: eq(pages.fullPath, fullPath) });
+      if (existing) throw new Error('A page with this route already exists');
     } else {
       let parentPath: string | null = null;
       if (data.parentId) {
@@ -143,6 +156,7 @@ export class PageAdminRepository {
         megaMenuSubSubCategoryId: data.megaMenuSubSubCategoryId || null,
         pageType: data.pageType || 'standard',
         status: data.status || 'draft',
+        publishedAt: data.status === 'published' ? new Date() : null,
         seoId: seo.id,
         isTemplate: false,
       })

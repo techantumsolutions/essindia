@@ -21,12 +21,79 @@ export class NavigationTreeRepository {
   getTreeByLocation = cache(async (location: string): Promise<NavigationTreeItem[]> => {
     const cacheKey = `nav_tree_full:${location}`;
     try {
-      return await withCache(cacheKey, () => this.fetchTree(location), 3600);
+      return await withCache(cacheKey, () => this.fetchTree(location, 'public'), 3600);
     } catch (error) {
       logger.error('[NavigationTreeRepository] getTreeByLocation', error);
       return [];
     }
   });
+
+  /** Uncached full mega menu tree for admin forms (page create, etc.). */
+  async getAdminHierarchyByLocation(location: string): Promise<NavigationTreeItem[]> {
+    try {
+      return await this.fetchTree(location, 'admin');
+    } catch (error) {
+      logger.error('[NavigationTreeRepository] getAdminHierarchyByLocation', error);
+      return [];
+    }
+  }
+
+  /** Fresh mega menu branches for one nav item (admin). */
+  async getAdminMegaMenuForNavItem(navigationItemId: string) {
+    const navItem = await db.query.navigationItems.findFirst({
+      where: eq(navigationItems.id, navigationItemId),
+    });
+    if (!navItem) return null;
+
+    const categories = await db.query.megaMenuCategories.findMany({
+      where: and(
+        eq(megaMenuCategories.navigationItemId, navigationItemId),
+        eq(megaMenuCategories.status, 'active')
+      ),
+      orderBy: [asc(megaMenuCategories.orderIndex)],
+      with: {
+        subCategories: {
+          where: eq(megaMenuSubCategories.status, 'active'),
+          orderBy: [asc(megaMenuSubCategories.orderIndex)],
+          with: {
+            subSubCategories: {
+              where: eq(megaMenuSubSubCategories.status, 'active'),
+              orderBy: [asc(megaMenuSubSubCategories.orderIndex)],
+            },
+          },
+        },
+      },
+    });
+
+    return {
+      navigationItemId: navItem.id,
+      label: navItem.label,
+      slug: navItem.slug || slugify(navItem.label),
+      megaMenuEnabled: navItem.megaMenuEnabled,
+      categories: categories.map((cat) => ({
+        id: cat.id,
+        name: cat.name,
+        slug: cat.slug,
+        orderIndex: cat.orderIndex,
+        status: cat.status,
+        subCategories: cat.subCategories.map((sub) => ({
+          id: sub.id,
+          name: sub.name,
+          slug: sub.slug,
+          description: sub.description,
+          orderIndex: sub.orderIndex,
+          status: sub.status,
+          subSubCategories: sub.subSubCategories.map((leaf) => ({
+            id: leaf.id,
+            name: leaf.name,
+            slug: leaf.slug,
+            orderIndex: leaf.orderIndex,
+            status: leaf.status,
+          })),
+        })),
+      })),
+    };
+  }
 
   async clearCache(location: string) {
     await safeRedisDel(
@@ -36,7 +103,10 @@ export class NavigationTreeRepository {
     );
   }
 
-  private async fetchTree(location: string): Promise<NavigationTreeItem[]> {
+  private async fetchTree(
+    location: string,
+    mode: 'public' | 'admin' = 'public'
+  ): Promise<NavigationTreeItem[]> {
     const menu = await db.query.navigationMenus.findFirst({
       where: eq(navigationMenus.location, location),
     });
@@ -77,19 +147,23 @@ export class NavigationTreeRepository {
         continue;
       }
 
+      const categoryWhere = and(
+        eq(megaMenuCategories.navigationItemId, item.id),
+        eq(megaMenuCategories.status, 'active')
+      );
+      const subWhere = eq(megaMenuSubCategories.status, 'active');
+      const subSubWhere = eq(megaMenuSubSubCategories.status, 'active');
+
       const categories = await db.query.megaMenuCategories.findMany({
-        where: and(
-          eq(megaMenuCategories.navigationItemId, item.id),
-          eq(megaMenuCategories.status, 'active')
-        ),
+        where: categoryWhere,
         orderBy: [asc(megaMenuCategories.orderIndex)],
         with: {
           subCategories: {
-            where: eq(megaMenuSubCategories.status, 'active'),
+            where: subWhere,
             orderBy: [asc(megaMenuSubCategories.orderIndex)],
             with: {
               subSubCategories: {
-                where: eq(megaMenuSubSubCategories.status, 'active'),
+                where: subSubWhere,
                 orderBy: [asc(megaMenuSubSubCategories.orderIndex)],
               },
             },
@@ -98,16 +172,18 @@ export class NavigationTreeRepository {
       });
 
       const pageIds = new Set<string>();
-      categories.forEach((c) =>
-        c.subCategories.forEach((s) => {
-          if (s.pageId) pageIds.add(s.pageId);
-          s.subSubCategories.forEach((l) => {
-            if (l.pageId) pageIds.add(l.pageId);
-          });
-        })
-      );
+      if (mode === 'public') {
+        categories.forEach((c) =>
+          c.subCategories.forEach((s) => {
+            if (s.pageId) pageIds.add(s.pageId);
+            s.subSubCategories.forEach((l) => {
+              if (l.pageId) pageIds.add(l.pageId);
+            });
+          })
+        );
+      }
 
-      const pageMap = await this.loadPublishedPages([...pageIds]);
+      const pageMap = mode === 'public' ? await this.loadPublishedPages([...pageIds]) : new Map();
       const navSlug = item.slug || slugify(item.label);
 
       const treeCategories = categories
@@ -123,20 +199,24 @@ export class NavigationTreeRepository {
               slug: sub.slug,
               description: sub.description,
               orderIndex: sub.orderIndex,
-              page: sub.pageId ? pageMap.get(sub.pageId) ?? null : null,
+              page:
+                mode === 'public' && sub.pageId ? pageMap.get(sub.pageId) ?? null : null,
               subSubCategories: sub.subSubCategories
                 .map((leaf) => ({
                   id: leaf.id,
                   name: leaf.name,
                   slug: leaf.slug,
                   orderIndex: leaf.orderIndex,
-                  page: leaf.pageId ? pageMap.get(leaf.pageId) ?? null : null,
+                  page:
+                    mode === 'public' && leaf.pageId
+                      ? pageMap.get(leaf.pageId) ?? null
+                      : null,
                 }))
                 .filter((leaf) => leaf.name?.trim()),
             }))
             .filter((sub) => sub.name?.trim()),
         }))
-        .filter((cat) => cat.subCategories.length > 0);
+        .filter((cat) => mode === 'admin' || cat.subCategories.length > 0);
 
       result.push({
         id: item.id,
