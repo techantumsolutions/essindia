@@ -9,7 +9,7 @@ import {
   megaMenuSubCategories,
   megaMenuSubSubCategories,
 } from '@/lib/db/schema';
-import { asc, count, eq, isNull } from 'drizzle-orm';
+import { and, asc, count, eq, inArray, isNull } from 'drizzle-orm';
 import { scanFilesystemRoutes } from '@/lib/cms/page-registry-scanner';
 import type { PageRegistryRow } from '@/lib/cms/types';
 
@@ -139,7 +139,7 @@ export class PageRegistryRepository {
 
     const navLabels = await this.resolveNavLabels(allPages);
 
-    const cmsRows: PageRegistryRow[] = allPages.map((page) => {
+    return allPages.map((page) => {
       const labels = navLabels.get(page.id);
       return {
         id: page.id,
@@ -163,46 +163,6 @@ export class PageRegistryRepository {
         isLinked: true,
       };
     });
-
-    let unlinked: PageRegistryRow[] = [];
-    try {
-      await this.pruneOrphanedRegistry();
-
-      const staticPaths = new Set((await scanFilesystemRoutes()).map((r) => r.routePath));
-      const registryOnly = await db.query.pageRegistry.findMany({
-        where: isNull(pageRegistry.pageId),
-        orderBy: [asc(pageRegistry.routePath)],
-      });
-
-      unlinked = registryOnly
-        .filter((r) => r.source === 'filesystem' && staticPaths.has(r.routePath))
-        .map((r) => ({
-        id: r.id,
-        pageId: null,
-        routePath: r.routePath,
-        title: r.title || r.routePath,
-        slug: r.routePath.replace(/^\//, '') || 'index',
-        pageType: r.pageType || 'static',
-        status: 'filesystem',
-        source: 'filesystem' as const,
-        seoStatus: 'n/a' as const,
-        sectionCount: 0,
-        templateId: null,
-        previewThumbnail: null,
-        navigationLabel: null,
-        categoryLabel: null,
-        subCategoryLabel: null,
-        subSubCategoryLabel: null,
-        createdAt: r.createdAt,
-        updatedAt: r.updatedAt,
-        isLinked: false,
-      }));
-    } catch {
-      // page_registry table may not exist yet
-    }
-
-    const cmsPaths = new Set(cmsRows.map((r) => r.routePath));
-    return [...cmsRows, ...unlinked.filter((r) => !cmsPaths.has(r.routePath))];
   }
 
   private async resolveNavLabels(
@@ -220,80 +180,110 @@ export class PageRegistryRepository {
       { navigation: string; category: string; subCategory: string; subSubCategory: string }
     >();
 
+    if (!allPages.length) return map;
+
+    const allCategories = await db.query.categories.findMany({
+      columns: { id: true, name: true, parentId: true },
+    });
+    const catById = new Map(allCategories.map((c) => [c.id, c]));
+
+    const navIds = [...new Set(allPages.map((p) => p.navigationItemId).filter(Boolean))] as string[];
+    const navRows =
+      navIds.length > 0
+        ? await db.query.navigationItems.findMany({
+            where: inArray(navigationItems.id, navIds),
+            columns: { id: true, label: true },
+          })
+        : [];
+    const navById = new Map(navRows.map((n) => [n.id, n]));
+
+    const megaCatIds = [
+      ...new Set(allPages.map((p) => p.megaMenuCategoryId).filter(Boolean)),
+    ] as string[];
+    const megaSubIds = [
+      ...new Set(allPages.map((p) => p.megaMenuSubCategoryId).filter(Boolean)),
+    ] as string[];
+    const megaSubSubIds = [
+      ...new Set(allPages.map((p) => p.megaMenuSubSubCategoryId).filter(Boolean)),
+    ] as string[];
+
+    const megaCats =
+      megaCatIds.length > 0
+        ? await db.query.megaMenuCategories.findMany({
+            where: inArray(megaMenuCategories.id, megaCatIds),
+            columns: { id: true, name: true },
+          })
+        : [];
+    const megaSubs =
+      megaSubIds.length > 0
+        ? await db.query.megaMenuSubCategories.findMany({
+            where: inArray(megaMenuSubCategories.id, megaSubIds),
+            columns: { id: true, name: true },
+          })
+        : [];
+    const megaSubSubs =
+      megaSubSubIds.length > 0
+        ? await db.query.megaMenuSubSubCategories.findMany({
+            where: inArray(megaMenuSubSubCategories.id, megaSubSubIds),
+            columns: { id: true, name: true },
+          })
+        : [];
+
+    const megaCatById = new Map(megaCats.map((c) => [c.id, c]));
+    const megaSubById = new Map(megaSubs.map((s) => [s.id, s]));
+    const megaSubSubById = new Map(megaSubSubs.map((l) => [l.id, l]));
+
+    const resolveCmsCategoryLabels = (categoryId: string) => {
+      const leaf = catById.get(categoryId);
+      if (!leaf) return { category: '', subCategory: '', subSubCategory: '' };
+
+      if (!leaf.parentId) {
+        return { category: leaf.name, subCategory: '', subSubCategory: '' };
+      }
+      const parent = catById.get(leaf.parentId);
+      if (!parent) {
+        return { category: leaf.name, subCategory: '', subSubCategory: '' };
+      }
+      if (!parent.parentId) {
+        return { category: parent.name, subCategory: leaf.name, subSubCategory: '' };
+      }
+      const grand = catById.get(parent.parentId);
+      return {
+        category: grand?.name ?? parent.name,
+        subCategory: parent.name,
+        subSubCategory: leaf.name,
+      };
+    };
+
     for (const page of allPages) {
-      let category: string | null = null;
-      let subCategory: string | null = null;
-      let subSubCategory: string | null = null;
+      let category = '';
+      let subCategory = '';
+      let subSubCategory = '';
 
       if (page.categoryId) {
-        const cmsCat = await db.query.categories.findFirst({
-          where: eq(categories.id, page.categoryId),
-        });
-        if (cmsCat) {
-          category = cmsCat.name;
-          if (cmsCat.parentId) {
-            const parent = await db.query.categories.findFirst({
-              where: eq(categories.id, cmsCat.parentId),
-            });
-            if (parent) {
-              subCategory = cmsCat.name;
-              category = parent.name;
-              if (parent.parentId) {
-                const grand = await db.query.categories.findFirst({
-                  where: eq(categories.id, parent.parentId),
-                });
-                if (grand) {
-                  subSubCategory = cmsCat.name;
-                  subCategory = parent.name;
-                  category = grand.name;
-                }
-              }
-            }
-          }
+        const cms = resolveCmsCategoryLabels(page.categoryId);
+        category = cms.category;
+        subCategory = cms.subCategory;
+        subSubCategory = cms.subSubCategory;
+      } else {
+        if (page.megaMenuCategoryId) {
+          category = megaCatById.get(page.megaMenuCategoryId)?.name ?? '';
+        }
+        if (page.megaMenuSubCategoryId) {
+          subCategory = megaSubById.get(page.megaMenuSubCategoryId)?.name ?? '';
+        }
+        if (page.megaMenuSubSubCategoryId) {
+          subSubCategory = megaSubSubById.get(page.megaMenuSubSubCategoryId)?.name ?? '';
         }
       }
 
-      if (!page.navigationItemId) {
-        if (category) {
-          map.set(page.id, {
-            navigation: '',
-            category: category ?? '',
-            subCategory: subCategory ?? '',
-            subSubCategory: subSubCategory ?? '',
-          });
-        }
-        continue;
-      }
+      const navigation = page.navigationItemId
+        ? navById.get(page.navigationItemId)?.label ?? ''
+        : '';
 
-      const nav = await db.query.navigationItems.findFirst({
-        where: eq(navigationItems.id, page.navigationItemId),
-      });
+      if (!navigation && !category && !subCategory && !subSubCategory) continue;
 
-      if (!category && page.megaMenuCategoryId) {
-        const cat = await db.query.megaMenuCategories.findFirst({
-          where: eq(megaMenuCategories.id, page.megaMenuCategoryId),
-        });
-        category = cat?.name ?? null;
-      }
-      if (page.megaMenuSubCategoryId) {
-        const sub = await db.query.megaMenuSubCategories.findFirst({
-          where: eq(megaMenuSubCategories.id, page.megaMenuSubCategoryId),
-        });
-        subCategory = sub?.name ?? null;
-      }
-      if (page.megaMenuSubSubCategoryId) {
-        const leaf = await db.query.megaMenuSubSubCategories.findFirst({
-          where: eq(megaMenuSubSubCategories.id, page.megaMenuSubSubCategoryId),
-        });
-        subSubCategory = leaf?.name ?? null;
-      }
-
-      map.set(page.id, {
-        navigation: nav?.label ?? '',
-        category: category ?? '',
-        subCategory: subCategory ?? '',
-        subSubCategory: subSubCategory ?? '',
-      });
+      map.set(page.id, { navigation, category, subCategory, subSubCategory });
     }
 
     return map;

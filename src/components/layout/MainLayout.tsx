@@ -9,11 +9,13 @@ interface MainLayoutProps {
 }
 
 export async function MainLayout({ children }: MainLayoutProps) {
-  const [navTree, megaMenus] = await Promise.all([
-    navigationTreeRepository.getTreeByLocation('header-main'),
-    navigationTreeRepository.getMegaMenusByLocation('header-main'),
-  ]);
+  let navTree = await navigationTreeRepository.getTreeByLocation('header-main');
 
+  if (navTree.length === 0) {
+    navTree = await navigationTreeRepository.getTreeByLocationFresh('header-main');
+  }
+
+  const megaMenus = await navigationTreeRepository.getMegaMenusByLocation('header-main');
   const navData = mapNavigationTreeToNavItems(navTree, megaMenus);
 
   return (

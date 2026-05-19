@@ -80,7 +80,10 @@ export async function PUT(request: Request, props: { params: Promise<{ id: strin
           where: eq(megaMenuSubCategories.id, row.subCategoryId),
           with: { category: true },
         });
-        if (sub?.category) await clearCaches(sub.category.navigationItemId);
+        const category = sub?.category;
+        if (category && !Array.isArray(category) && 'navigationItemId' in category) {
+          await clearCaches(category.navigationItemId as string);
+        }
       }
       return NextResponse.json(row);
     }

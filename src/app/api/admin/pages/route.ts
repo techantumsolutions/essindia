@@ -5,6 +5,8 @@ import { pageRegistryRepository } from '@/repositories/page-registry.repository'
 import { createPageSchema } from '@/lib/cms/validators';
 import { badRequest, serverError, unauthorized } from '@/lib/cms/api-response';
 
+export const maxDuration = 60;
+
 export async function GET(request: Request) {
   try {
     const { searchParams } = new URL(request.url);
@@ -12,7 +14,10 @@ export async function GET(request: Request) {
     const tree = searchParams.get('tree') === 'true';
 
     if (registry) {
-      return NextResponse.json(await pageRegistryRepository.getRegistry());
+      const rows = await pageRegistryRepository.getRegistry();
+      return NextResponse.json(rows, {
+        headers: { 'Cache-Control': 'no-store, max-age=0' },
+      });
     }
 
     if (tree) {

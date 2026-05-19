@@ -15,6 +15,7 @@ import { slugify } from '@/lib/cms/utils';
 import type { NavigationTreeItem } from '@/lib/cms/navigation-tree-types';
 import { sanitizeMegaMenuPayload } from '@/lib/cms/mega-menu-sanitize';
 import { buildMegaMenuHref } from '@/lib/cms/mega-menu-paths';
+import { isConnectionError, isMissingSchemaError } from '@/lib/cms/pg-error';
 import type { MegaMenuPayload } from '@/lib/cms/mega-menu-types';
 
 export class NavigationTreeRepository {
@@ -23,10 +24,36 @@ export class NavigationTreeRepository {
     try {
       return await withCache(cacheKey, () => this.fetchTree(location, 'public'), 3600);
     } catch (error) {
-      logger.error('[NavigationTreeRepository] getTreeByLocation', error);
+      if (isConnectionError(error) || isMissingSchemaError(error)) {
+        try {
+          await safeRedisDel(cacheKey);
+          const retried = await this.fetchTree(location, 'public');
+          if (retried.length > 0) return retried;
+        } catch (retryError) {
+          logger.error('[NavigationTreeRepository] getTreeByLocation retry', retryError);
+        }
+      }
+      if (isMissingSchemaError(error)) {
+        logger.warn(
+          '[NavigationTreeRepository] Navigation schema missing. Run: npm run db:apply-mega-menu && npm run db:seed-nav'
+        );
+      } else {
+        logger.error('[NavigationTreeRepository] getTreeByLocation', error);
+      }
       return [];
     }
   });
+
+  /** Bypass React cache + Redis — use when cached tree is empty after a connection blip. */
+  async getTreeByLocationFresh(location: string): Promise<NavigationTreeItem[]> {
+    await this.clearCache(location);
+    try {
+      return await this.fetchTree(location, 'public');
+    } catch (error) {
+      logger.error('[NavigationTreeRepository] getTreeByLocationFresh', error);
+      return [];
+    }
+  }
 
   /** Top-level navigation items for page-create menu dropdown (uncached). */
   async getAdminMenuItemsForPageCreate(location: string): Promise<NavigationTreeItem[]> {
@@ -153,6 +180,7 @@ export class NavigationTreeRepository {
     for (const item of items) {
       if (mode === 'public' && item.parentId) continue;
 
+      try {
       if (!item.megaMenuEnabled) {
         const childRows = await db.query.navigationItems.findMany({
           where: and(
@@ -260,6 +288,18 @@ export class NavigationTreeRepository {
         orderIndex: item.orderIndex,
         categories: treeCategories,
       });
+      } catch (itemError) {
+        logger.error(`[NavigationTreeRepository] nav item "${item.label}"`, itemError);
+        result.push({
+          id: item.id,
+          label: item.label,
+          slug: item.slug || slugify(item.label),
+          url: item.url,
+          megaMenuEnabled: false,
+          orderIndex: item.orderIndex,
+          categories: [],
+        });
+      }
     }
 
     return result;

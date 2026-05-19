@@ -14,6 +14,7 @@
     "db:apply-cms": "npx tsx scripts/apply-cms-migration.ts",
     "db:apply-mega-menu": "npx tsx scripts/apply-mega-menu-migration.ts",
     "db:seed-mega-menu": "npx tsx scripts/seed-mega-menu.ts",
+    "db:seed-nav": "npm run db:seed-mega-menu",
     "db:apply-registry": "npx tsx scripts/apply-page-registry-migration.ts",
     "db:apply-page-nav": "npx tsx scripts/apply-page-nav-migration.ts",
     "db:apply-pages-template-id": "npx tsx scripts/apply-pages-template-id-migration.ts",

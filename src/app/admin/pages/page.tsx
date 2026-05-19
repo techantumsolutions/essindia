@@ -20,23 +20,41 @@ export default function PagesModule() {
   >([]);
   const [isLoading, setIsLoading] = React.useState(true);
   const [isModalOpen, setIsModalOpen] = React.useState(false);
-  const fetchData = React.useCallback(async () => {
+  const fetchData = React.useCallback(async (signal?: AbortSignal) => {
+    setIsLoading(true);
+    const requestInit: RequestInit = { credentials: 'same-origin', signal };
+
     try {
       const [pagesRes, tplRes] = await Promise.all([
-        fetch('/api/admin/pages?registry=true'),
-        fetch('/api/admin/templates'),
+        fetch('/api/admin/pages?registry=true', requestInit),
+        fetch('/api/admin/templates', requestInit),
       ]);
-      if (pagesRes.ok) setPages(await pagesRes.json());
-      if (tplRes.ok) setTemplates(await tplRes.json());
-    } catch {
+
+      if (signal?.aborted) return;
+
+      if (pagesRes.ok) {
+        setPages(await pagesRes.json());
+      } else {
+        const err = await pagesRes.json().catch(() => ({}));
+        toast.error((err as { error?: string }).error || 'Failed to load pages');
+      }
+
+      if (tplRes.ok) {
+        setTemplates(await tplRes.json());
+      }
+    } catch (error: unknown) {
+      if (signal?.aborted) return;
+      if (error instanceof Error && error.name === 'AbortError') return;
       toast.error('Failed to load pages');
     } finally {
-      setIsLoading(false);
+      if (!signal?.aborted) setIsLoading(false);
     }
   }, []);
 
   React.useEffect(() => {
-    fetch('/api/admin/pages/sync-registry', { method: 'POST' }).finally(() => fetchData());
+    const controller = new AbortController();
+    fetchData(controller.signal).catch(() => {});
+    return () => controller.abort();
   }, [fetchData]);
 
   const handleCreate = async (form: PageCreateFormData, status: 'draft' | 'published') => {
@@ -85,7 +103,7 @@ export default function PagesModule() {
     });
     if (res.ok) {
       toast.success(`Page ${action.replace('-', ' ')} successful`);
-      fetchData();
+      void fetchData();
     } else {
       const data = await res.json().catch(() => ({}));
       toast.error(data.error || `Failed to ${action}`);
@@ -197,18 +215,7 @@ function RegistryPageRow({
   onDelete: (id: string) => void;
   onAction: (pageId: string, action: string) => void;
 }) {
-  if (!page.isLinked || !page.pageId) {
-    return (
-      <motion.div className="grid grid-cols-12 gap-2 items-center py-3 px-6 rounded-2xl bg-slate-50/50 border border-dashed border-slate-200 my-1">
-        <motion.div className="col-span-3">
-          <h4 className="text-[15px] font-bold text-slate-700">{page.title}</h4>
-          <p className="text-[10px] text-slate-400 uppercase font-black">Filesystem route</p>
-        </motion.div>
-        <motion.div className="col-span-2 font-mono text-xs text-slate-500">{page.routePath}</motion.div>
-        <motion.div className="col-span-6 text-sm text-slate-400">Not linked to CMS.</motion.div>
-      </motion.div>
-    );
-  }
+  if (!page.pageId) return null;
 
   return (
     <motion.div className="group grid grid-cols-12 gap-2 items-center py-3 px-6 rounded-2xl hover:bg-slate-50/80 transition-all my-1">

@@ -8,8 +8,7 @@ export async function POST() {
 
   try {
     const result = await pageRegistryRepository.syncFromFilesystem();
-    const registry = await pageRegistryRepository.getRegistry();
-    return NextResponse.json({ ...result, registry });
+    return NextResponse.json(result);
   } catch (error) {
     return serverError(error);
   }

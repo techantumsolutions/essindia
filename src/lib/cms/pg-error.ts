@@ -15,6 +15,19 @@ export function getPostgresErrorCode(error: unknown): string | undefined {
   return undefined;
 }
 
+export function isConnectionError(error: unknown): boolean {
+  const parts: string[] = [];
+  let current: unknown = error;
+  const seen = new Set<unknown>();
+  while (current && typeof current === 'object' && !seen.has(current)) {
+    seen.add(current);
+    if (current instanceof Error) parts.push(current.message);
+    current = (current as { cause?: unknown }).cause;
+  }
+  const message = parts.join(' ');
+  return /connection is closed/i.test(message) || /ECONNRESET|ECONNREFUSED|ETIMEDOUT/i.test(message);
+}
+
 export function isMissingSchemaError(error: unknown): boolean {
   const code = getPostgresErrorCode(error);
   if (code === '42P01' || code === '42703') return true;
