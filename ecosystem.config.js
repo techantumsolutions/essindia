@@ -2,17 +2,14 @@ module.exports = {
   apps: [
     {
       name: 'essind-web',
-      script: 'npm',
-      args: 'start',
-      instances: 'max',
-      exec_mode: 'cluster',
+      script: './node_modules/.bin/next',
+      args: 'start -p 5002',
+      cwd: '/var/www/essindia',
+      instances: 1,
+      exec_mode: 'fork',
       env: {
         NODE_ENV: 'production',
-        PORT: 3000,
-      },
-      env_production: {
-        NODE_ENV: 'production',
-        PORT: 3000,
+        PORT: 5002,
       }
     }
   ]
