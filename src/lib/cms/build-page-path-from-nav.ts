@@ -15,6 +15,17 @@ export function buildPagePathFromNavHierarchy(input: {
   return `/${parts.join('/')}`;
 }
 
+/** Nav prefix + full CMS category slug chain (Admin → Categories) + optional page slug. */
+export function buildPagePathFromNavAndCategorySlugs(
+  navSlug: string,
+  categorySlugs: string[],
+  pageSlug?: string
+): string {
+  const parts = [navSlug.replace(/^\//, ''), ...categorySlugs.filter(Boolean)];
+  if (pageSlug) parts.push(pageSlug);
+  return `/${parts.join('/')}`;
+}
+
 export function resolvePageSlug(title: string, explicitSlug?: string): string {
   return explicitSlug?.trim() || slugify(title);
 }

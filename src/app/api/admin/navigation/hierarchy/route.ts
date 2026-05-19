@@ -11,6 +11,14 @@ export async function GET(request: Request) {
 
   try {
     const navigationItemId = searchParams.get('navigationItemId');
+    const forPageCreate = searchParams.get('for') === 'page-create';
+
+    if (forPageCreate) {
+      const items = await navigationTreeRepository.getAdminMenuItemsForPageCreate(location);
+      return NextResponse.json({ items }, {
+        headers: { 'Cache-Control': 'no-store, max-age=0' },
+      });
+    }
 
     if (navigationItemId) {
       const megaMenu = await navigationTreeRepository.getAdminMegaMenuForNavItem(navigationItemId);

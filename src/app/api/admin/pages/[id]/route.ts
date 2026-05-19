@@ -58,7 +58,8 @@ export async function DELETE(
 
   try {
     const { id } = await params;
-    await pageAdminRepository.delete(id);
+    const deleted = await pageAdminRepository.delete(id);
+    if (!deleted) return notFound('Page not found');
     return NextResponse.json({ success: true });
   } catch (error) {
     return serverError(error);

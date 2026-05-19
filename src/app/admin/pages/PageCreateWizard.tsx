@@ -6,15 +6,14 @@ import { X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
-import type { NavigationTreeCategory, NavigationTreeItem } from '@/lib/cms/navigation-tree-types';
-import { buildPagePathFromNavHierarchy, resolvePageSlug } from '@/lib/cms/build-page-path-from-nav';
+import type { NavigationTreeItem } from '@/lib/cms/navigation-tree-types';
+import type { CategoryTreeNode } from '@/lib/cms/types';
+import { buildPagePathFromNavAndCategorySlugs, resolvePageSlug } from '@/lib/cms/build-page-path-from-nav';
 import { slugify } from '@/lib/cms/utils';
 
 export type PageCreateFormData = {
   navigationItemId: string;
-  megaMenuCategoryId: string;
-  megaMenuSubCategoryId: string;
-  megaMenuSubSubCategoryId: string;
+  categoryId: string;
   title: string;
   slug: string;
   templateId: string;
@@ -29,13 +28,14 @@ type Props = {
 
 const emptyForm: PageCreateFormData = {
   navigationItemId: '',
-  megaMenuCategoryId: '',
-  megaMenuSubCategoryId: '',
-  megaMenuSubSubCategoryId: '',
+  categoryId: '',
   title: '',
   slug: '',
   templateId: '',
 };
+
+const adminFetch = (url: string, init?: RequestInit) =>
+  fetch(url, { cache: 'no-store', credentials: 'same-origin', ...init });
 
 function FieldLabel({ children }: { children: React.ReactNode }) {
   return (
@@ -45,65 +45,142 @@ function FieldLabel({ children }: { children: React.ReactNode }) {
   );
 }
 
+function NativeSelect({
+  value,
+  onChange,
+  disabled,
+  children,
+  className,
+}: {
+  value: string;
+  onChange: (value: string) => void;
+  disabled?: boolean;
+  children: React.ReactNode;
+  className?: string;
+}) {
+  return (
+    <select
+      value={value}
+      disabled={disabled}
+      onChange={(e) => onChange(e.target.value)}
+      onMouseDown={(e) => e.stopPropagation()}
+      onClick={(e) => e.stopPropagation()}
+      className={cn(
+        'w-full bg-slate-50 rounded-2xl px-6 py-4 font-bold outline-none focus:ring-4 focus:ring-[#4B2A63]/10 disabled:opacity-50 disabled:cursor-not-allowed',
+        className
+      )}
+    >
+      {children}
+    </select>
+  );
+}
+
+function findCategoryNode(tree: CategoryTreeNode[], id: string): CategoryTreeNode | null {
+  for (const node of tree) {
+    if (node.id === id) return node;
+    if (node.children?.length) {
+      const found = findCategoryNode(node.children, id);
+      if (found) return found;
+    }
+  }
+  return null;
+}
+
+function getCategorySlugPath(tree: CategoryTreeNode[], categoryId: string): string[] {
+  const node = findCategoryNode(tree, categoryId);
+  if (!node) return [];
+
+  const slugs: string[] = [node.slug];
+  let parentId = node.parentId;
+  while (parentId) {
+    const parent = findCategoryNode(tree, parentId);
+    if (!parent) break;
+    slugs.unshift(parent.slug);
+    parentId = parent.parentId;
+  }
+  return slugs;
+}
+
+function categoryLabel(c: CategoryTreeNode) {
+  return c.status === 'inactive' ? `${c.name} (inactive)` : c.name;
+}
+
 export function PageCreateWizard({ open, onClose, templates, onSubmit }: Props) {
   const [form, setForm] = React.useState<PageCreateFormData>(emptyForm);
   const [navItems, setNavItems] = React.useState<NavigationTreeItem[]>([]);
-  const [megaCategories, setMegaCategories] = React.useState<NavigationTreeCategory[]>([]);
+  const [categoryTree, setCategoryTree] = React.useState<CategoryTreeNode[]>([]);
+  const [categoryPath, setCategoryPath] = React.useState<string[]>(['']);
   const [loading, setLoading] = React.useState(false);
-  const [loadingMega, setLoadingMega] = React.useState(false);
   const [submitting, setSubmitting] = React.useState(false);
+  const [loadError, setLoadError] = React.useState<string | null>(null);
 
   React.useEffect(() => {
     if (!open) return;
+
     setForm(emptyForm);
-    setMegaCategories([]);
+    setCategoryPath(['']);
+    setLoadError(null);
     setLoading(true);
-    fetch('/api/admin/navigation/hierarchy?location=header-main', { cache: 'no-store' })
-      .then(async (res) => {
-        const data = await res.json();
-        if (!res.ok) throw new Error(data.error || 'Failed to load navigation');
-        setNavItems(data.items || []);
+
+    Promise.all([
+      adminFetch('/api/admin/navigation/hierarchy?location=header-main&for=page-create'),
+      adminFetch('/api/admin/categories?tree=true'),
+    ])
+      .then(async ([navRes, catRes]) => {
+        const navData = await navRes.json();
+        const catData = await catRes.json();
+        if (!navRes.ok) throw new Error(navData.error || 'Failed to load navigation');
+        if (!catRes.ok) throw new Error(catData.error || 'Failed to load categories');
+
+        setNavItems(navData.items || []);
+        setCategoryTree(catData || []);
+
+        if (!navData.items?.length) {
+          setLoadError('No menu items found. Add navigation under Admin → Navigation.');
+        }
       })
-      .catch((e: unknown) =>
-        toast.error(e instanceof Error ? e.message : 'Failed to load navigation')
-      )
+      .catch((e: unknown) => {
+        const message = e instanceof Error ? e.message : 'Failed to load form data';
+        setLoadError(message);
+        toast.error(message);
+      })
       .finally(() => setLoading(false));
   }, [open]);
 
-  React.useEffect(() => {
-    if (!open || !form.navigationItemId) {
-      setMegaCategories([]);
-      return;
-    }
-    const nav = navItems.find((n) => n.id === form.navigationItemId);
-    if (!nav?.megaMenuEnabled) {
-      setMegaCategories([]);
-      return;
-    }
-
-    setLoadingMega(true);
-    fetch(`/api/admin/navigation/hierarchy?navigationItemId=${form.navigationItemId}`, {
-      cache: 'no-store',
-    })
-      .then(async (res) => {
-        const data = await res.json();
-        if (!res.ok) throw new Error(data.error || 'Failed to load mega menu');
-        setMegaCategories(data.categories || []);
-      })
-      .catch((e: unknown) =>
-        toast.error(e instanceof Error ? e.message : 'Failed to load categories')
-      )
-      .finally(() => setLoadingMega(false));
-  }, [open, form.navigationItemId, navItems]);
-
   const selectedNav = navItems.find((n) => n.id === form.navigationItemId);
-  const categories = megaCategories;
-  const selectedCat = categories.find((c) => c.id === form.megaMenuCategoryId);
-  const subCategories = selectedCat?.subCategories ?? [];
-  const selectedSub = subCategories.find((s) => s.id === form.megaMenuSubCategoryId);
-  const subSubCategories = selectedSub?.subSubCategories ?? [];
 
-  const showMegaFields = !!selectedNav?.megaMenuEnabled;
+  const categoryLevels = React.useMemo(() => {
+    const levels: { options: CategoryTreeNode[]; selectedId: string }[] = [];
+    let options = categoryTree;
+
+    for (let i = 0; i < categoryPath.length; i++) {
+      const selectedId = categoryPath[i] || '';
+      levels.push({ options, selectedId });
+      if (!selectedId) break;
+      const selected = options.find((o) => o.id === selectedId);
+      if (!selected?.children?.length) break;
+      options = selected.children;
+    }
+
+    const last = levels[levels.length - 1];
+    if (last?.selectedId) {
+      const selected = last.options.find((o) => o.id === last.selectedId);
+      if (selected?.children?.length) {
+        levels.push({ options: selected.children, selectedId: '' });
+      }
+    }
+
+    return levels;
+  }, [categoryTree, categoryPath]);
+
+  const resolvedCategoryId =
+    [...categoryPath].reverse().find((id) => id !== '') || '';
+
+  React.useEffect(() => {
+    setForm((prev) =>
+      prev.categoryId === resolvedCategoryId ? prev : { ...prev, categoryId: resolvedCategoryId }
+    );
+  }, [resolvedCategoryId]);
 
   const routePreview = React.useMemo(() => {
     if (!selectedNav) return '';
@@ -112,16 +189,19 @@ export function PageCreateWizard({ open, onClose, templates, onSubmit }: Props) 
       ? resolvePageSlug(form.title, form.slug)
       : form.slug.trim() || 'page-slug';
 
-    return buildPagePathFromNavHierarchy({
-      navSlug,
-      categorySlug: selectedCat?.slug,
-      subSlug: selectedSub?.slug,
-      subSubSlug: form.megaMenuSubSubCategoryId
-        ? subSubCategories.find((l) => l.id === form.megaMenuSubSubCategoryId)?.slug
-        : undefined,
-      pageSlug: form.megaMenuSubSubCategoryId ? undefined : pageSlug,
-    });
-  }, [selectedNav, selectedCat, selectedSub, subSubCategories, form]);
+    const categorySlugs = resolvedCategoryId
+      ? getCategorySlugPath(categoryTree, resolvedCategoryId)
+      : [];
+
+    return buildPagePathFromNavAndCategorySlugs(navSlug, categorySlugs, pageSlug);
+  }, [selectedNav, categoryTree, resolvedCategoryId, form.title, form.slug]);
+
+  const setCategoryAtLevel = (level: number, categoryId: string) => {
+    const next = categoryPath.slice(0, level);
+    next[level] = categoryId;
+    if (categoryId) next.length = level + 1;
+    setCategoryPath(next.length ? next : ['']);
+  };
 
   const submit = async (status: 'draft' | 'published') => {
     if (!form.navigationItemId) {
@@ -134,7 +214,7 @@ export function PageCreateWizard({ open, onClose, templates, onSubmit }: Props) 
     }
     setSubmitting(true);
     try {
-      await onSubmit(form, status);
+      await onSubmit({ ...form, categoryId: resolvedCategoryId }, status);
       onClose();
     } finally {
       setSubmitting(false);
@@ -157,21 +237,24 @@ export function PageCreateWizard({ open, onClose, templates, onSubmit }: Props) 
           animate={{ scale: 1, opacity: 1, y: 0 }}
           exit={{ scale: 0.95, opacity: 0, y: 20 }}
           onClick={(e) => e.stopPropagation()}
-          className="bg-white w-full max-w-2xl rounded-[40px] shadow-2xl overflow-hidden"
+          onMouseDown={(e) => e.stopPropagation()}
+          className="bg-white w-full max-w-2xl rounded-[40px] shadow-2xl flex flex-col max-h-[90vh]"
         >
-          <motion.div className="bg-slate-50 px-10 py-8 border-b border-slate-100 flex justify-between items-center">
+          <div className="bg-slate-50 px-10 py-8 border-b border-slate-100 flex justify-between items-center shrink-0 rounded-t-[40px]">
             <div>
               <h2 className="text-xl font-bold text-slate-900">Create New Page</h2>
-              <p className="text-sm text-slate-400">Place the page anywhere in your navigation hierarchy</p>
+              <p className="text-sm text-slate-400">Place the page in navigation and categories from Admin → Categories</p>
             </div>
             <button type="button" onClick={onClose} aria-label="Close">
               <X className="w-5 h-5 text-slate-400" />
             </button>
-          </motion.div>
+          </div>
 
-          <div className="p-10 space-y-8 max-h-[70vh] overflow-y-auto">
+          <div className="p-10 space-y-8 overflow-y-auto flex-1 min-h-0">
             {loading ? (
-              <p className="text-slate-400 text-center py-8">Loading navigation…</p>
+              <p className="text-slate-400 text-center py-8">Loading…</p>
+            ) : loadError ? (
+              <p className="text-amber-600 text-center py-8 text-sm">{loadError}</p>
             ) : (
               <>
                 <section className="space-y-4">
@@ -179,18 +262,9 @@ export function PageCreateWizard({ open, onClose, templates, onSubmit }: Props) 
 
                   <div>
                     <FieldLabel>Menu item</FieldLabel>
-                    <select
+                    <NativeSelect
                       value={form.navigationItemId}
-                      onChange={(e) =>
-                        setForm({
-                          ...form,
-                          navigationItemId: e.target.value,
-                          megaMenuCategoryId: '',
-                          megaMenuSubCategoryId: '',
-                          megaMenuSubSubCategoryId: '',
-                        })
-                      }
-                      className="w-full bg-slate-50 rounded-2xl px-6 py-4 font-bold outline-none focus:ring-4 focus:ring-[#4B2A63]/10"
+                      onChange={(navigationItemId) => setForm({ ...form, navigationItemId })}
                     >
                       <option value="">Select menu item</option>
                       {navItems.map((n) => (
@@ -198,98 +272,36 @@ export function PageCreateWizard({ open, onClose, templates, onSubmit }: Props) 
                           {n.label}
                         </option>
                       ))}
-                    </select>
+                    </NativeSelect>
                   </div>
 
-                  {showMegaFields && (
-                    <>
-                      <div>
-                        <FieldLabel>Category (optional)</FieldLabel>
-                        <select
-                          value={form.megaMenuCategoryId}
-                          onChange={(e) =>
-                            setForm({
-                              ...form,
-                              megaMenuCategoryId: e.target.value,
-                              megaMenuSubCategoryId: '',
-                              megaMenuSubSubCategoryId: '',
-                            })
-                          }
-                          disabled={!form.navigationItemId || loadingMega}
-                          className="w-full bg-slate-50 rounded-2xl px-6 py-4 font-bold outline-none disabled:opacity-50"
+                  <div className="space-y-3">
+                    <FieldLabel>Category (from Admin → Categories)</FieldLabel>
+                    {categoryTree.length === 0 ? (
+                      <p className="text-xs text-amber-600">
+                        No categories yet. Create them under Admin → Categories.
+                      </p>
+                    ) : (
+                      categoryLevels.map((level, index) => (
+                        <NativeSelect
+                          key={`cat-level-${index}`}
+                          value={level.selectedId}
+                          onChange={(id) => setCategoryAtLevel(index, id)}
                         >
                           <option value="">
-                            {loadingMega ? 'Loading categories…' : 'None — page under menu item only'}
+                            {index === 0
+                              ? 'None — page under menu item only'
+                              : 'None — use parent category only'}
                           </option>
-                          {categories.map((c) => (
+                          {level.options.map((c) => (
                             <option key={c.id} value={c.id}>
-                              {c.name}
+                              {categoryLabel(c)}
                             </option>
                           ))}
-                        </select>
-                        {form.navigationItemId && !loadingMega && categories.length === 0 && (
-                          <p className="text-xs text-amber-600 mt-2">
-                            No categories in the database for this menu item. Add them under Admin →
-                            Navigation → Mega Menu.
-                          </p>
-                        )}
-                      </div>
-
-                      {form.megaMenuCategoryId && (
-                        <div>
-                          <FieldLabel>Sub category (optional)</FieldLabel>
-                          <select
-                            value={form.megaMenuSubCategoryId}
-                            onChange={(e) =>
-                              setForm({
-                                ...form,
-                                megaMenuSubCategoryId: e.target.value,
-                                megaMenuSubSubCategoryId: '',
-                              })
-                            }
-                            disabled={loadingMega}
-                            className="w-full bg-slate-50 rounded-2xl px-6 py-4 font-bold outline-none disabled:opacity-50"
-                          >
-                            <option value="">
-                              {subCategories.length === 0
-                                ? 'No sub categories in database'
-                                : 'None — page under category'}
-                            </option>
-                            {subCategories.map((s) => (
-                              <option key={s.id} value={s.id}>
-                                {s.name}
-                              </option>
-                            ))}
-                          </select>
-                        </div>
-                      )}
-
-                      {form.megaMenuSubCategoryId && (
-                        <div>
-                          <FieldLabel>Sub sub category (optional)</FieldLabel>
-                          <select
-                            value={form.megaMenuSubSubCategoryId}
-                            onChange={(e) =>
-                              setForm({ ...form, megaMenuSubSubCategoryId: e.target.value })
-                            }
-                            disabled={loadingMega}
-                            className="w-full bg-slate-50 rounded-2xl px-6 py-4 font-bold outline-none disabled:opacity-50"
-                          >
-                            <option value="">
-                              {subSubCategories.length === 0
-                                ? 'No sub sub categories in database'
-                                : 'None — page under sub category'}
-                            </option>
-                            {subSubCategories.map((l) => (
-                              <option key={l.id} value={l.id}>
-                                {l.name}
-                              </option>
-                            ))}
-                          </select>
-                        </div>
-                      )}
-                    </>
-                  )}
+                        </NativeSelect>
+                      ))
+                    )}
+                  </div>
                 </section>
 
                 <section className="space-y-4">
@@ -301,6 +313,7 @@ export function PageCreateWizard({ open, onClose, templates, onSubmit }: Props) 
                         placeholder="Page title"
                         value={form.title}
                         onChange={(e) => setForm({ ...form, title: e.target.value })}
+                        onMouseDown={(e) => e.stopPropagation()}
                         className="w-full bg-slate-50 rounded-2xl px-6 py-4 font-bold outline-none focus:ring-4 focus:ring-[#4B2A63]/10"
                       />
                     </div>
@@ -310,12 +323,13 @@ export function PageCreateWizard({ open, onClose, templates, onSubmit }: Props) 
                         placeholder="auto-generated from title"
                         value={form.slug}
                         onChange={(e) => setForm({ ...form, slug: e.target.value })}
+                        onMouseDown={(e) => e.stopPropagation()}
                         className="w-full bg-slate-50 rounded-2xl px-6 py-4 font-bold outline-none focus:ring-4 focus:ring-[#4B2A63]/10"
                       />
                     </div>
                   </div>
 
-                  {routePreview && (
+                  {routePreview && form.navigationItemId && (
                     <div className="rounded-2xl bg-[#4B2A63]/5 border border-[#4B2A63]/10 px-5 py-4">
                       <p className="text-[10px] font-black text-[#4B2A63] uppercase tracking-widest mb-1">
                         Route preview
@@ -361,7 +375,7 @@ export function PageCreateWizard({ open, onClose, templates, onSubmit }: Props) 
             )}
           </div>
 
-          <div className="px-10 py-8 bg-slate-50 border-t border-slate-100 flex justify-between items-center gap-3">
+          <div className="px-10 py-8 bg-slate-50 border-t border-slate-100 flex justify-between items-center gap-3 shrink-0 rounded-b-[40px]">
             <Button variant="ghost" onClick={onClose} className="rounded-full px-8" disabled={submitting}>
               Cancel
             </Button>

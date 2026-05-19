@@ -53,7 +53,7 @@ export const pages = pgTable('pages', {
   fullPath: text('full_path').notNull().unique(),
   status: varchar('status', { length: 50 }).notNull().default('draft'),
   pageType: varchar('page_type', { length: 100 }).default('standard'),
-  templateId: varchar('template_id', { length: 100 }),
+  templateId: uuid('template_id').references(() => templates.id, { onDelete: 'set null' }),
   categoryId: uuid('category_id').references(() => categories.id, { onDelete: 'set null' }),
   navigationItemId: uuid('navigation_item_id'),
   megaMenuCategoryId: uuid('mega_menu_category_id'),

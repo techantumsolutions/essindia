@@ -9,6 +9,7 @@ const steps = [
   'db:apply-mega-menu',
   'db:apply-registry',
   'db:apply-page-nav',
+  'db:apply-pages-template-id',
 ] as const;
 
 for (const script of steps) {

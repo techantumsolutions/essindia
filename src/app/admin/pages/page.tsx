@@ -50,9 +50,7 @@ export default function PagesModule() {
           status,
           templateId: form.templateId || null,
           navigationItemId: form.navigationItemId || null,
-          megaMenuCategoryId: form.megaMenuCategoryId || null,
-          megaMenuSubCategoryId: form.megaMenuSubCategoryId || null,
-          megaMenuSubSubCategoryId: form.megaMenuSubSubCategoryId || null,
+          categoryId: form.categoryId || null,
         }),
       });
       const data = await res.json();
@@ -95,13 +93,18 @@ export default function PagesModule() {
   };
 
   const handleDelete = async (id: string) => {
-    if (!confirm('Delete this page?')) return;
-    const res = await fetch(`/api/admin/pages/${id}`, { method: 'DELETE' });
-    if (res.ok) {
+    if (!confirm('Delete this page? This cannot be undone.')) return;
+    try {
+      const res = await fetch(`/api/admin/pages/${id}`, {
+        method: 'DELETE',
+        credentials: 'same-origin',
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(data.error || 'Failed to delete page');
       toast.success('Page deleted');
-      fetchData();
-    } else {
-      toast.error('Failed to delete page');
+      await fetchData();
+    } catch (e: unknown) {
+      toast.error(e instanceof Error ? e.message : 'Failed to delete page');
     }
   };
 
@@ -232,12 +235,12 @@ function RegistryPageRow({
       <motion.div className="col-span-1 text-center text-xs">{page.seoStatus}</motion.div>
       <motion.div className="col-span-1 text-center text-xs font-bold">{page.sectionCount}</motion.div>
       <motion.div className="col-span-1 text-center text-xs text-slate-400">{new Date(page.updatedAt).toLocaleDateString()}</motion.div>
-      <motion.div className="col-span-2 flex justify-end gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+      <div className="col-span-2 flex justify-end gap-1">
         <Link href={page.routePath} target="_blank"><Button variant="ghost" size="icon"><Eye className="w-4 h-4" /></Button></Link>
         <Link href={`/admin/pages/${page.pageId}`}><Button className="bg-[#4B2A63] text-white rounded-xl h-9 px-3 text-xs font-bold">Edit</Button></Link>
         <Button variant="ghost" className="text-xs font-bold" onClick={() => onAction(page.pageId!, 'convert-template')}>Template</Button>
         <Button variant="ghost" size="icon" className="text-rose-400" onClick={() => onDelete(page.pageId!)}><Trash2 className="w-4 h-4" /></Button>
-      </motion.div>
+      </div>
     </motion.div>
   );
 }

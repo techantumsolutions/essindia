@@ -3,6 +3,7 @@ import {
   pageRegistry,
   pages,
   pageSections,
+  categories,
   navigationItems,
   megaMenuCategories,
   megaMenuSubCategories,
@@ -83,7 +84,40 @@ export class PageRegistryRepository {
         });
     }
 
+    await this.pruneOrphanedRegistry();
+
     return { discovered: discovered.length, linked };
+  }
+
+  /** Removes registry rows left behind when CMS pages are deleted (pageId nulled by FK). */
+  async pruneOrphanedRegistry(): Promise<number> {
+    try {
+      const staticPaths = new Set((await scanFilesystemRoutes()).map((r) => r.routePath));
+      const orphans = await db.query.pageRegistry.findMany({
+        where: isNull(pageRegistry.pageId),
+      });
+
+      let removed = 0;
+      for (const row of orphans) {
+        const isStaleCms = row.source === 'cms';
+        const isUnknownRoute = !staticPaths.has(row.routePath);
+        if (isStaleCms || isUnknownRoute) {
+          await db.delete(pageRegistry).where(eq(pageRegistry.id, row.id));
+          removed += 1;
+        }
+      }
+      return removed;
+    } catch {
+      return 0;
+    }
+  }
+
+  async removeByRoute(routePath: string) {
+    try {
+      await db.delete(pageRegistry).where(eq(pageRegistry.routePath, routePath));
+    } catch {
+      // page_registry may not exist
+    }
   }
 
   async getRegistry(): Promise<PageRegistryRow[]> {
@@ -132,12 +166,17 @@ export class PageRegistryRepository {
 
     let unlinked: PageRegistryRow[] = [];
     try {
+      await this.pruneOrphanedRegistry();
+
+      const staticPaths = new Set((await scanFilesystemRoutes()).map((r) => r.routePath));
       const registryOnly = await db.query.pageRegistry.findMany({
         where: isNull(pageRegistry.pageId),
         orderBy: [asc(pageRegistry.routePath)],
       });
 
-      unlinked = registryOnly.map((r) => ({
+      unlinked = registryOnly
+        .filter((r) => r.source === 'filesystem' && staticPaths.has(r.routePath))
+        .map((r) => ({
         id: r.id,
         pageId: null,
         routePath: r.routePath,
@@ -169,6 +208,7 @@ export class PageRegistryRepository {
   private async resolveNavLabels(
     allPages: Array<{
       id: string;
+      categoryId: string | null;
       navigationItemId: string | null;
       megaMenuCategoryId: string | null;
       megaMenuSubCategoryId: string | null;
@@ -181,16 +221,55 @@ export class PageRegistryRepository {
     >();
 
     for (const page of allPages) {
-      if (!page.navigationItemId) continue;
-
-      const nav = await db.query.navigationItems.findFirst({
-        where: eq(navigationItems.id, page.navigationItemId),
-      });
       let category: string | null = null;
       let subCategory: string | null = null;
       let subSubCategory: string | null = null;
 
-      if (page.megaMenuCategoryId) {
+      if (page.categoryId) {
+        const cmsCat = await db.query.categories.findFirst({
+          where: eq(categories.id, page.categoryId),
+        });
+        if (cmsCat) {
+          category = cmsCat.name;
+          if (cmsCat.parentId) {
+            const parent = await db.query.categories.findFirst({
+              where: eq(categories.id, cmsCat.parentId),
+            });
+            if (parent) {
+              subCategory = cmsCat.name;
+              category = parent.name;
+              if (parent.parentId) {
+                const grand = await db.query.categories.findFirst({
+                  where: eq(categories.id, parent.parentId),
+                });
+                if (grand) {
+                  subSubCategory = cmsCat.name;
+                  subCategory = parent.name;
+                  category = grand.name;
+                }
+              }
+            }
+          }
+        }
+      }
+
+      if (!page.navigationItemId) {
+        if (category) {
+          map.set(page.id, {
+            navigation: '',
+            category: category ?? '',
+            subCategory: subCategory ?? '',
+            subSubCategory: subSubCategory ?? '',
+          });
+        }
+        continue;
+      }
+
+      const nav = await db.query.navigationItems.findFirst({
+        where: eq(navigationItems.id, page.navigationItemId),
+      });
+
+      if (!category && page.megaMenuCategoryId) {
         const cat = await db.query.megaMenuCategories.findFirst({
           where: eq(megaMenuCategories.id, page.megaMenuCategoryId),
         });

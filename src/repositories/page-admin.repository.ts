@@ -3,15 +3,22 @@ import {
   pages,
   pageSections,
   pageRevisions,
+  pageRegistry,
   seoMetadata,
+  categories,
   navigationItems,
   megaMenuCategories,
   megaMenuSubCategories,
   megaMenuSubSubCategories,
+  templates,
 } from '@/lib/db/schema';
-import { asc, desc, eq } from 'drizzle-orm';
+import { asc, desc, eq, or } from 'drizzle-orm';
 import { buildFullPath, buildPageTree, slugify } from '@/lib/cms/utils';
-import { buildPagePathFromNavHierarchy, resolvePageSlug } from '@/lib/cms/build-page-path-from-nav';
+import {
+  buildPagePathFromNavAndCategorySlugs,
+  buildPagePathFromNavHierarchy,
+  resolvePageSlug,
+} from '@/lib/cms/build-page-path-from-nav';
 import { templateRepository } from './template.repository';
 import { sectionLibraryRepository } from './section-library.repository';
 import { pageRegistryRepository } from './page-registry.repository';
@@ -80,47 +87,53 @@ export class PageAdminRepository {
       if (!nav) throw new Error('Invalid navigation menu item');
 
       const navSlug = nav.slug || slugify(nav.label);
-      let categorySlug: string | undefined;
-      let subSlug: string | undefined;
-      let subSubSlug: string | undefined;
 
-      if (data.megaMenuCategoryId) {
-        const cat = await db.query.megaMenuCategories.findFirst({
-          where: eq(megaMenuCategories.id, data.megaMenuCategoryId),
-        });
-        if (!cat || cat.navigationItemId !== nav.id) {
-          throw new Error('Category does not belong to the selected menu item');
-        }
-        categorySlug = cat.slug;
+      if (data.categoryId) {
+        const categorySlugs = await this.getCategorySlugPath(data.categoryId);
+        fullPath = buildPagePathFromNavAndCategorySlugs(navSlug, categorySlugs, pageSlug);
+      } else {
+        let categorySlug: string | undefined;
+        let subSlug: string | undefined;
+        let subSubSlug: string | undefined;
 
-        if (data.megaMenuSubCategoryId) {
-          const sub = await db.query.megaMenuSubCategories.findFirst({
-            where: eq(megaMenuSubCategories.id, data.megaMenuSubCategoryId),
+        if (data.megaMenuCategoryId) {
+          const cat = await db.query.megaMenuCategories.findFirst({
+            where: eq(megaMenuCategories.id, data.megaMenuCategoryId),
           });
-          if (!sub || sub.categoryId !== cat.id) {
-            throw new Error('Sub category does not belong to the selected category');
+          if (!cat || cat.navigationItemId !== nav.id) {
+            throw new Error('Category does not belong to the selected menu item');
           }
-          subSlug = sub.slug;
+          categorySlug = cat.slug;
 
-          if (data.megaMenuSubSubCategoryId) {
-            const subSub = await db.query.megaMenuSubSubCategories.findFirst({
-              where: eq(megaMenuSubSubCategories.id, data.megaMenuSubSubCategoryId),
+          if (data.megaMenuSubCategoryId) {
+            const sub = await db.query.megaMenuSubCategories.findFirst({
+              where: eq(megaMenuSubCategories.id, data.megaMenuSubCategoryId),
             });
-            if (!subSub || subSub.subCategoryId !== sub.id) {
-              throw new Error('Sub sub category does not belong to the selected sub category');
+            if (!sub || sub.categoryId !== cat.id) {
+              throw new Error('Sub category does not belong to the selected category');
             }
-            subSubSlug = subSub.slug;
+            subSlug = sub.slug;
+
+            if (data.megaMenuSubSubCategoryId) {
+              const subSub = await db.query.megaMenuSubSubCategories.findFirst({
+                where: eq(megaMenuSubSubCategories.id, data.megaMenuSubSubCategoryId),
+              });
+              if (!subSub || subSub.subCategoryId !== sub.id) {
+                throw new Error('Sub sub category does not belong to the selected sub category');
+              }
+              subSubSlug = subSub.slug;
+            }
           }
         }
-      }
 
-      fullPath = buildPagePathFromNavHierarchy({
-        navSlug,
-        categorySlug,
-        subSlug,
-        subSubSlug,
-        pageSlug: !subSubSlug ? pageSlug : undefined,
-      });
+        fullPath = buildPagePathFromNavHierarchy({
+          navSlug,
+          categorySlug,
+          subSlug,
+          subSubSlug,
+          pageSlug: !subSubSlug ? pageSlug : undefined,
+        });
+      }
 
       const existing = await db.query.pages.findFirst({ where: eq(pages.fullPath, fullPath) });
       if (existing) throw new Error('A page with this route already exists');
@@ -430,11 +443,78 @@ export class PageAdminRepository {
     return this.getById(copy.id);
   }
 
-  async delete(id: string) {
-    const page = await this.getById(id);
-    if (!page) return;
+  async delete(id: string): Promise<boolean> {
+    const [page] = await db
+      .select({
+        id: pages.id,
+        fullPath: pages.fullPath,
+        seoId: pages.seoId,
+      })
+      .from(pages)
+      .where(eq(pages.id, id))
+      .limit(1);
+
+    if (!page) return false;
+
+    await db.update(pages).set({ parentId: null }).where(eq(pages.parentId, id));
+
+    try {
+      await db
+        .delete(pageRegistry)
+        .where(or(eq(pageRegistry.pageId, id), eq(pageRegistry.routePath, page.fullPath)));
+    } catch {
+      // page_registry may not exist
+    }
+
     await db.delete(pages).where(eq(pages.id, id));
+
+    if (page.seoId) {
+      try {
+        await db.delete(seoMetadata).where(eq(seoMetadata.id, page.seoId));
+      } catch {
+        // seo row may be referenced elsewhere
+      }
+    }
+
+    await pageRegistryRepository.removeByRoute(page.fullPath);
+    await navigationTreeRepository.clearCache('header-main');
     await this.invalidateCache(page.fullPath);
+    return true;
+  }
+
+  private async findTemplateSummary(templateId: string | null) {
+    if (!templateId) return null;
+    const [row] = await db
+      .select({ id: templates.id, name: templates.name })
+      .from(templates)
+      .where(eq(templates.id, templateId))
+      .limit(1);
+    return row ?? null;
+  }
+
+  private async getCategorySlugPath(categoryId: string): Promise<string[]> {
+    const slugs: string[] = [];
+    let currentId: string | null = categoryId;
+
+    while (currentId) {
+      const [row] = await db
+        .select({
+          slug: categories.slug,
+          parentId: categories.parentId,
+          status: categories.status,
+        })
+        .from(categories)
+        .where(eq(categories.id, currentId))
+        .limit(1);
+
+      if (!row || row.status === 'archived') {
+        throw new Error('Invalid category');
+      }
+      slugs.unshift(row.slug);
+      currentId = row.parentId;
+    }
+
+    return slugs;
   }
 
   async getRevisions(pageId: string) {
@@ -462,23 +542,27 @@ export class PageAdminRepository {
       },
       with: {
         sections: { columns: { id: true } },
-        template: { columns: { id: true, name: true } },
       },
     });
 
-    return rows.map((p) => ({
+    return Promise.all(
+      rows.map(async (p) => {
+        const template = await this.findTemplateSummary(p.templateId);
+        return {
       id: p.id,
       title: p.title,
       slug: p.slug,
       route: p.fullPath,
       status: p.status,
       templateId: p.templateId,
-      templateName: p.template?.name ?? null,
+      templateName: template?.name ?? null,
       previewThumbnail: p.previewThumbnail,
       sectionCount: p.sections.length,
       createdAt: p.createdAt,
       updatedAt: p.updatedAt,
-    }));
+    };
+      })
+    );
   }
 
   async listPageSections(pageId: string) {
@@ -487,10 +571,11 @@ export class PageAdminRepository {
       columns: { id: true, title: true, fullPath: true, templateId: true },
       with: {
         sections: { orderBy: [asc(pageSections.orderIndex)] },
-        template: { columns: { id: true, name: true } },
       },
     });
     if (!page) return null;
+
+    const template = await this.findTemplateSummary(page.templateId);
 
     return page.sections.map((s) => ({
       id: s.id,
@@ -506,7 +591,7 @@ export class PageAdminRepository {
       sourcePageId: pageId,
       sourceRoute: page.fullPath,
       sourceTemplateId: page.templateId,
-      sourceTemplateName: page.template?.name ?? null,
+      sourceTemplateName: template?.name ?? null,
     }));
   }
 

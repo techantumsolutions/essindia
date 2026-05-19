@@ -7,7 +7,7 @@ import {
   megaMenuSubSubCategories,
   pages,
 } from '@/lib/db/schema';
-import { and, asc, eq, inArray } from 'drizzle-orm';
+import { and, asc, eq, inArray, isNull } from 'drizzle-orm';
 import { cache } from 'react';
 import { safeRedisDel, withCache } from '@/lib/redis';
 import { logger } from '@/lib/logger';
@@ -27,6 +27,34 @@ export class NavigationTreeRepository {
       return [];
     }
   });
+
+  /** Top-level navigation items for page-create menu dropdown (uncached). */
+  async getAdminMenuItemsForPageCreate(location: string): Promise<NavigationTreeItem[]> {
+    try {
+      const menu = await db.query.navigationMenus.findFirst({
+        where: eq(navigationMenus.location, location),
+      });
+      if (!menu) return [];
+
+      const items = await db.query.navigationItems.findMany({
+        where: and(eq(navigationItems.menuId, menu.id), isNull(navigationItems.parentId)),
+        orderBy: [asc(navigationItems.orderIndex)],
+      });
+
+      return items.map((item) => ({
+        id: item.id,
+        label: item.label,
+        slug: item.slug || slugify(item.label),
+        url: item.url,
+        megaMenuEnabled: item.megaMenuEnabled,
+        orderIndex: item.orderIndex,
+        categories: [],
+      }));
+    } catch (error) {
+      logger.error('[NavigationTreeRepository] getAdminMenuItemsForPageCreate', error);
+      return [];
+    }
+  }
 
   /** Uncached full mega menu tree for admin forms (page create, etc.). */
   async getAdminHierarchyByLocation(location: string): Promise<NavigationTreeItem[]> {
@@ -113,13 +141,18 @@ export class NavigationTreeRepository {
     if (!menu) return [];
 
     const items = await db.query.navigationItems.findMany({
-      where: and(eq(navigationItems.menuId, menu.id), eq(navigationItems.isActive, true)),
+      where:
+        mode === 'admin'
+          ? and(eq(navigationItems.menuId, menu.id), isNull(navigationItems.parentId))
+          : and(eq(navigationItems.menuId, menu.id), eq(navigationItems.isActive, true)),
       orderBy: [asc(navigationItems.orderIndex)],
     });
 
     const result: NavigationTreeItem[] = [];
 
     for (const item of items) {
+      if (mode === 'public' && item.parentId) continue;
+
       if (!item.megaMenuEnabled) {
         const childRows = await db.query.navigationItems.findMany({
           where: and(
