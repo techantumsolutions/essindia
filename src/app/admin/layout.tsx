@@ -33,6 +33,8 @@ const navGroups = [
     items: [
       { icon: LayoutDashboard, label: 'Dashboard', href: '/admin/dashboard' },
       { icon: FileText, label: 'Pages', href: '/admin/pages' },
+      { icon: Layers, label: 'Sections Library', href: '/admin/sections' },
+      { icon: Briefcase, label: 'Categories', href: '/admin/categories' },
       { icon: Navigation, label: 'Navigation', href: '/admin/navigation' },
       { icon: Layers, label: 'Templates', href: '/admin/templates' },
     ]

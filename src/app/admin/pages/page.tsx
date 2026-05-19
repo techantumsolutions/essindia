@@ -1,223 +1,242 @@
 'use client';
 
 import React from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { 
-  Plus, 
-  Search, 
-  FileText, 
-  ChevronRight, 
-  MoreVertical, 
-  Globe, 
-  Eye, 
-  Trash2, 
-  Copy,
-  ChevronDown,
-  Folder,
-  FolderOpen
-} from 'lucide-react';
+import { motion } from 'framer-motion';
+import { Plus, Search, FileText, Eye, Trash2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
-
-interface PageNode {
-  id: string;
-  title: string;
-  slug: string;
-  fullPath: string;
-  status: 'published' | 'draft' | 'archived';
-  children?: PageNode[];
-}
-
-const mockPages: PageNode[] = [
-  {
-    id: '1',
-    title: 'Home',
-    slug: 'index',
-    fullPath: '/',
-    status: 'published',
-  },
-  {
-    id: '2',
-    title: 'About',
-    slug: 'about',
-    fullPath: '/about',
-    status: 'published',
-    children: [
-      { id: '21', title: 'Our Story', slug: 'our-story', fullPath: '/about/our-story', status: 'published' },
-      { id: '22', title: 'Leadership', slug: 'leadership', fullPath: '/about/leadership', status: 'draft' },
-    ]
-  },
-  {
-    id: '3',
-    title: 'Solutions',
-    slug: 'solutions',
-    fullPath: '/solutions',
-    status: 'published',
-    children: [
-      {
-        id: '31',
-        title: 'ERP Software',
-        slug: 'erp',
-        fullPath: '/solutions/erp',
-        status: 'published',
-        children: [
-          { id: '311', title: 'Overview', slug: 'overview', fullPath: '/solutions/erp/overview', status: 'published' },
-          { id: '312', title: 'Modules', slug: 'modules', fullPath: '/solutions/erp/modules', status: 'published' },
-          { id: '313', title: 'Corrugated Boxes', slug: 'corrugated-boxes', fullPath: '/solutions/erp/corrugated-boxes', status: 'published' },
-        ]
-      },
-      { id: '32', title: 'Business Intelligence', slug: 'bi', fullPath: '/solutions/bi', status: 'published' },
-      { id: '33', title: 'RPA', slug: 'rpa', fullPath: '/solutions/rpa', status: 'published' },
-    ]
-  },
-];
+import { cn } from '@/lib/utils';
+import type { PageRegistryRow } from '@/lib/cms/types';
+import { PageCreateWizard, type PageCreateFormData } from './PageCreateWizard';
 
 export default function PagesModule() {
+  const router = useRouter();
+  const [pages, setPages] = React.useState<PageRegistryRow[]>([]);
+  const [isSyncing, setIsSyncing] = React.useState(false);
+  const [templates, setTemplates] = React.useState<
+    Array<{ id: string; name: string; templateSections?: unknown[] }>
+  >([]);
+  const [isLoading, setIsLoading] = React.useState(true);
+  const [isModalOpen, setIsModalOpen] = React.useState(false);
+  const fetchData = React.useCallback(async () => {
+    try {
+      const [pagesRes, tplRes] = await Promise.all([
+        fetch('/api/admin/pages?registry=true'),
+        fetch('/api/admin/templates'),
+      ]);
+      if (pagesRes.ok) setPages(await pagesRes.json());
+      if (tplRes.ok) setTemplates(await tplRes.json());
+    } catch {
+      toast.error('Failed to load pages');
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
+
+  React.useEffect(() => {
+    fetch('/api/admin/pages/sync-registry', { method: 'POST' }).finally(() => fetchData());
+  }, [fetchData]);
+
+  const handleCreate = async (form: PageCreateFormData) => {
+    try {
+      const res = await fetch('/api/admin/pages', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          title: form.title,
+          slug: form.slug || undefined,
+          templateId: form.templateId || null,
+          navigationItemId: form.navigationItemId || null,
+          megaMenuCategoryId: form.megaMenuCategoryId || null,
+          megaMenuSubCategoryId: form.megaMenuSubCategoryId || null,
+          megaMenuSubSubCategoryId: form.megaMenuSubSubCategoryId || null,
+        }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Failed to create page');
+      toast.success('Page created');
+      router.push(`/admin/pages/${data.id}`);
+    } catch (e: unknown) {
+      toast.error(e instanceof Error ? e.message : 'Failed to create page');
+    }
+  };
+
+  const handleSyncRegistry = async () => {
+    setIsSyncing(true);
+    try {
+      const res = await fetch('/api/admin/pages/sync-registry', { method: 'POST' });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Sync failed');
+      toast.success(`Synced ${data.discovered} routes (${data.linked} linked to CMS)`);
+      await fetchData();
+    } catch (e: unknown) {
+      toast.error(e instanceof Error ? e.message : 'Sync failed');
+    } finally {
+      setIsSyncing(false);
+    }
+  };
+
+  const handlePageAction = async (pageId: string, action: string) => {
+    const res = await fetch(`/api/admin/pages/${pageId}/actions`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action }),
+    });
+    if (res.ok) {
+      toast.success(`Page ${action.replace('-', ' ')} successful`);
+      fetchData();
+    } else {
+      const data = await res.json().catch(() => ({}));
+      toast.error(data.error || `Failed to ${action}`);
+    }
+  };
+
+  const handleDelete = async (id: string) => {
+    if (!confirm('Delete this page?')) return;
+    const res = await fetch(`/api/admin/pages/${id}`, { method: 'DELETE' });
+    if (res.ok) {
+      toast.success('Page deleted');
+      fetchData();
+    } else {
+      toast.error('Failed to delete page');
+    }
+  };
+
   return (
-    <div className="space-y-8">
-      {/* Header */}
+    <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="space-y-8">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
         <div>
           <h1 className="text-3xl font-bold text-slate-900 tracking-tight mb-2">Pages</h1>
           <p className="text-slate-500 font-medium">Manage your website hierarchy and content structure.</p>
         </div>
-        <Button className="bg-[#4B2A63] hover:bg-[#3B198F] text-white rounded-full px-8 h-12 font-bold shadow-lg shadow-[#4B2A63]/20 active:scale-95 cursor-pointer gap-2">
-          <Plus className="w-5 h-5" />
-          Create New Page
-        </Button>
-      </div>
-
-      {/* Toolbar */}
-      <div className="bg-white rounded-2xl p-4 border border-slate-100 flex items-center justify-between shadow-sm">
-        <div className="flex items-center gap-4 flex-1 max-w-md">
-          <div className="relative w-full">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
-            <input 
-              type="text" 
-              placeholder="Filter pages..." 
-              className="w-full bg-slate-50 border border-transparent focus:border-[#4B2A63]/10 focus:bg-white focus:ring-4 focus:ring-[#4B2A63]/5 rounded-xl pl-12 pr-4 py-2.5 text-sm font-medium outline-none transition-all"
-            />
-          </div>
-        </div>
-        <div className="flex items-center gap-2">
-          <Button variant="ghost" className="rounded-xl text-slate-500 font-bold text-xs uppercase tracking-widest px-4">Expand All</Button>
-          <Button variant="ghost" className="rounded-xl text-slate-500 font-bold text-xs uppercase tracking-widest px-4">Collapse All</Button>
+        <div className="flex gap-3">
+          <Button
+            variant="outline"
+            onClick={handleSyncRegistry}
+            disabled={isSyncing}
+            className="rounded-full px-6 h-12 font-bold"
+          >
+            {isSyncing ? 'Syncing…' : 'Sync Registry'}
+          </Button>
+          <Button
+            onClick={() => setIsModalOpen(true)}
+            className="bg-[#4B2A63] hover:bg-[#3B198F] text-white rounded-full px-8 h-12 font-bold shadow-lg shadow-[#4B2A63]/20"
+          >
+            <Plus className="w-5 h-5 mr-2" />
+            Create New Page
+          </Button>
         </div>
       </div>
 
-      {/* Pages Tree */}
-      <div className="bg-white rounded-[32px] border border-slate-100 shadow-[0_20px_50px_-15px_rgba(0,0,0,0.03)] overflow-hidden">
-        <div className="bg-slate-50/50 px-8 py-4 flex items-center text-[11px] font-black text-slate-400 uppercase tracking-[0.2em] border-b border-slate-100">
-          <div className="flex-1">Page Title & Path</div>
-          <div className="w-32 text-center">Status</div>
-          <div className="w-32 text-center">Last Updated</div>
-          <div className="w-48 text-right">Actions</div>
+      <div className="bg-white rounded-2xl p-4 border border-slate-100 flex items-center shadow-sm">
+        <div className="relative flex-1 max-w-md">
+          <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+          <input
+            type="text"
+            placeholder="Filter pages..."
+            className="w-full bg-slate-50 rounded-xl pl-12 pr-4 py-2.5 text-sm font-medium outline-none focus:ring-4 focus:ring-[#4B2A63]/5"
+          />
         </div>
-        
+      </div>
+
+      <motion.div
+        initial={{ opacity: 0, y: 8 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="bg-white rounded-[32px] border border-slate-100 shadow-[0_20px_50px_-15px_rgba(0,0,0,0.03)] overflow-hidden"
+      >
+        <div className="bg-slate-50/50 px-6 py-4 grid grid-cols-12 gap-2 text-[10px] font-black text-slate-400 uppercase tracking-[0.15em] border-b border-slate-100">
+          <div className="col-span-3">Page / Nav mapping</div>
+          <div className="col-span-2">Route</div>
+          <div className="col-span-1 text-center">Type</div>
+          <div className="col-span-1 text-center">Status</div>
+          <div className="col-span-1 text-center">SEO</div>
+          <div className="col-span-1 text-center">Sections</div>
+          <div className="col-span-1 text-center">Updated</div>
+          <div className="col-span-2 text-right">Actions</div>
+        </div>
         <div className="p-2">
-          {mockPages.map((page) => (
-            <PageRow key={page.id} page={page} depth={0} />
-          ))}
+          {isLoading ? (
+            <div className="p-16 text-center text-slate-400">Loading pages...</div>
+          ) : pages.length === 0 ? (
+            <div className="p-16 text-center text-slate-400">No pages yet. Create your first page.</div>
+          ) : (
+            pages.map((page) => (
+              <RegistryPageRow
+                key={page.id}
+                page={page}
+                onDelete={handleDelete}
+                onAction={handlePageAction}
+              />
+            ))
+          )}
         </div>
-      </div>
-    </div>
+      </motion.div>
+
+      <PageCreateWizard
+        open={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        templates={templates}
+        onSubmit={handleCreate}
+      />
+    </motion.div>
   );
 }
 
-function PageRow({ page, depth }: { page: PageNode, depth: number }) {
-  const [isOpen, setIsOpen] = React.useState(depth < 1);
-  const hasChildren = page.children && page.children.length > 0;
+function RegistryPageRow({
+  page,
+  onDelete,
+  onAction,
+}: {
+  page: PageRegistryRow;
+  onDelete: (id: string) => void;
+  onAction: (pageId: string, action: string) => void;
+}) {
+  if (!page.isLinked || !page.pageId) {
+    return (
+      <motion.div className="grid grid-cols-12 gap-2 items-center py-3 px-6 rounded-2xl bg-slate-50/50 border border-dashed border-slate-200 my-1">
+        <motion.div className="col-span-3">
+          <h4 className="text-[15px] font-bold text-slate-700">{page.title}</h4>
+          <p className="text-[10px] text-slate-400 uppercase font-black">Filesystem route</p>
+        </motion.div>
+        <motion.div className="col-span-2 font-mono text-xs text-slate-500">{page.routePath}</motion.div>
+        <motion.div className="col-span-6 text-sm text-slate-400">Not linked to CMS.</motion.div>
+      </motion.div>
+    );
+  }
 
   return (
-    <div className="select-none">
-      <div 
-        className={cn(
-          "group flex items-center py-3 px-6 rounded-2xl transition-all duration-200 hover:bg-slate-50/80 cursor-pointer border border-transparent hover:border-slate-100",
-          depth > 0 && "ml-4 border-l-2 border-slate-100/50 rounded-l-none"
-        )}
-      >
-        {/* Toggle & Icon */}
-        <div className="flex items-center gap-3 flex-1">
-          <div 
-            onClick={(e) => { e.stopPropagation(); setIsOpen(!isOpen); }}
-            className={cn(
-              "w-6 h-6 flex items-center justify-center rounded-md transition-all",
-              hasChildren ? "hover:bg-slate-200 text-slate-400 hover:text-slate-600" : "opacity-0 pointer-events-none"
-            )}
-          >
-            {isOpen ? <ChevronDown className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />}
-          </div>
-          
-          <div className={cn(
-            "w-10 h-10 rounded-xl flex items-center justify-center transition-all group-hover:scale-110 shadow-sm",
-            hasChildren ? "bg-blue-50 text-blue-600" : "bg-slate-50 text-slate-400"
-          )}>
-            {hasChildren ? (isOpen ? <FolderOpen className="w-5 h-5" /> : <Folder className="w-5 h-5" />) : <FileText className="w-5 h-5" />}
-          </div>
-
-          <div className="ml-2">
-            <h4 className="text-[15px] font-bold text-slate-900 group-hover:text-[#4B2A63] transition-colors">{page.title}</h4>
-            <p className="text-[12px] text-slate-400 font-medium font-mono">{page.fullPath}</p>
-          </div>
-        </div>
-
-        {/* Status */}
-        <div className="w-32 flex justify-center">
-          <span className={cn(
-            "text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-tighter",
-            page.status === 'published' ? "bg-emerald-50 text-emerald-600" : 
-            page.status === 'draft' ? "bg-amber-50 text-amber-600" : "bg-slate-100 text-slate-400"
-          )}>
-            {page.status}
-          </span>
-        </div>
-
-        {/* Date */}
-        <div className="w-32 text-center text-[13px] font-bold text-slate-400">
-          May 6, 2026
-        </div>
-
-        {/* Actions */}
-        <div className="w-48 flex items-center justify-end gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-          <Button variant="ghost" size="icon" className="rounded-xl text-slate-400 hover:text-[#4B2A63] hover:bg-white hover:shadow-sm">
-            <Eye className="w-4 h-4" />
-          </Button>
-          <Button variant="ghost" size="icon" className="rounded-xl text-slate-400 hover:text-[#4B2A63] hover:bg-white hover:shadow-sm">
-            <Copy className="w-4 h-4" />
-          </Button>
-          <Link href={`/admin/content/${page.slug === 'index' ? 'hero' : 'editor'}/${page.id}`}>
-            <Button className="bg-[#4B2A63] hover:bg-[#3B198F] text-white rounded-xl h-9 px-4 font-bold text-xs active:scale-95">
-              Edit
-            </Button>
-          </Link>
-          <Button variant="ghost" size="icon" className="rounded-xl text-slate-400 hover:text-rose-600 hover:bg-rose-50">
-            <Trash2 className="w-4 h-4" />
-          </Button>
-        </div>
-      </div>
-
-      {/* Children */}
-      <AnimatePresence>
-        {isOpen && hasChildren && (
-          <motion.div
-            initial={{ height: 0, opacity: 0 }}
-            animate={{ height: 'auto', opacity: 1 }}
-            exit={{ height: 0, opacity: 0 }}
-            className="overflow-hidden"
-          >
-            <div className="ml-4">
-              {page.children!.map((child) => (
-                <PageRow key={child.id} page={child} depth={depth + 1} />
-              ))}
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </div>
+    <motion.div className="group grid grid-cols-12 gap-2 items-center py-3 px-6 rounded-2xl hover:bg-slate-50/80 transition-all my-1">
+      <motion.div className="col-span-3 flex items-center gap-3">
+        <motion.div className="w-10 h-10 rounded-xl bg-slate-50 flex items-center justify-center">
+          <FileText className="w-5 h-5 text-slate-400" />
+        </motion.div>
+        <motion.div>
+          <h4 className="text-[15px] font-bold text-slate-900">{page.title}</h4>
+          <p className="text-[10px] text-slate-400 truncate">
+            {[page.navigationLabel, page.categoryLabel, page.subCategoryLabel, page.subSubCategoryLabel]
+              .filter(Boolean)
+              .join(' → ') || page.source}
+          </p>
+        </motion.div>
+      </motion.div>
+      <motion.div className="col-span-2 font-mono text-xs text-slate-500 truncate">{page.routePath}</motion.div>
+      <motion.div className="col-span-1 text-center text-xs font-bold">{page.pageType}</motion.div>
+      <motion.div className="col-span-1 flex justify-center">
+        <span className={cn('text-[10px] font-black px-2 py-1 rounded-full uppercase', page.status === 'published' ? 'bg-emerald-50 text-emerald-600' : 'bg-amber-50 text-amber-600')}>
+          {page.status}
+        </span>
+      </motion.div>
+      <motion.div className="col-span-1 text-center text-xs">{page.seoStatus}</motion.div>
+      <motion.div className="col-span-1 text-center text-xs font-bold">{page.sectionCount}</motion.div>
+      <motion.div className="col-span-1 text-center text-xs text-slate-400">{new Date(page.updatedAt).toLocaleDateString()}</motion.div>
+      <motion.div className="col-span-2 flex justify-end gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+        <Link href={page.routePath} target="_blank"><Button variant="ghost" size="icon"><Eye className="w-4 h-4" /></Button></Link>
+        <Link href={`/admin/pages/${page.pageId}`}><Button className="bg-[#4B2A63] text-white rounded-xl h-9 px-3 text-xs font-bold">Edit</Button></Link>
+        <Button variant="ghost" className="text-xs font-bold" onClick={() => onAction(page.pageId!, 'convert-template')}>Template</Button>
+        <Button variant="ghost" size="icon" className="text-rose-400" onClick={() => onDelete(page.pageId!)}><Trash2 className="w-4 h-4" /></Button>
+      </motion.div>
+    </motion.div>
   );
-}
-
-function cn(...inputs: any[]) {
-  return inputs.filter(Boolean).join(' ');
 }

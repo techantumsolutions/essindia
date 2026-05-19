@@ -19,8 +19,11 @@ import { StaggerContainer } from '@/components/animations/MotionSection';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { toast } from 'sonner';
+import { getSectionDefinition } from '@/lib/cms/section-registry';
+import { useRouter } from 'next/navigation';
 
 export default function ContentManager() {
+  const router = useRouter();
   const [sections, setSections] = React.useState<any[]>([]);
   const [isLoading, setIsLoading] = React.useState(true);
 
@@ -42,17 +45,9 @@ export default function ContentManager() {
   }, []);
 
   const getSectionMetadata = (type: string) => {
-    switch (type) {
-      case 'hero': return { icon: Layout, label: 'Hero Banner', color: 'bg-blue-50 text-blue-600', desc: 'Main brand message and primary CTA' };
-      case 'trusted-brands': return { icon: Grid, label: 'Brand Trust', color: 'bg-slate-50 text-slate-600', desc: 'Client logos and partner grid' };
-      case 'intro': return { icon: Type, label: 'Intro Text', color: 'bg-purple-50 text-purple-600', desc: 'Mission statement and key metrics' };
-      case 'services': return { icon: Briefcase, label: 'Services Grid', color: 'bg-emerald-50 text-emerald-600', desc: 'Core business offerings and solutions' };
-      case 'industries': return { icon: ImageIcon, label: 'Industries', color: 'bg-amber-50 text-amber-600', desc: 'Vertical specific solution blocks' };
-      case 'why-ess': return { icon: MousePointer, label: 'Value Prop', color: 'bg-rose-50 text-rose-600', desc: 'Unique selling points and differentiators' };
-      case 'portfolio': return { icon: Layers, label: 'Portfolio', color: 'bg-indigo-50 text-indigo-600', desc: 'Case studies and project highlights' };
-      case 'blog': return { icon: FileText, label: 'Resources', color: 'bg-cyan-50 text-cyan-600', desc: 'Latest news and thought leadership' };
-      default: return { icon: FileText, label: 'Custom Section', color: 'bg-slate-50 text-slate-400', desc: 'Generic content section' };
-    }
+    const def = getSectionDefinition(type);
+    if (def) return { icon: def.icon, label: def.label, color: def.color, desc: def.description };
+    return { icon: FileText, label: 'Custom Section', color: 'bg-slate-50 text-slate-400', desc: 'Generic content section' };
   };
 
   return (
@@ -68,7 +63,10 @@ export default function ContentManager() {
             <History className="w-4 h-4" />
             History
           </Button>
-          <Button className="bg-[#4B2A63] hover:bg-[#3B198F] text-white rounded-full px-8 font-bold shadow-lg shadow-[#4B2A63]/20 active:scale-95 cursor-pointer">
+          <Button
+            onClick={() => router.push('/admin/pages')}
+            className="bg-[#4B2A63] hover:bg-[#3B198F] text-white rounded-full px-8 font-bold shadow-lg shadow-[#4B2A63]/20 active:scale-95 cursor-pointer"
+          >
             Manage Pages
           </Button>
         </div>

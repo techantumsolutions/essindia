@@ -3,7 +3,9 @@ import { db } from '@/lib/db';
 import { pageSections } from '@/lib/db/schema';
 import { eq } from 'drizzle-orm';
 import { logger } from '@/lib/logger';
-import redisClient from '@/lib/redis';
+import { safeRedisDel, safeRedisKeys } from '@/lib/redis';
+import { isAdminRequest } from '@/lib/cms/auth';
+import { unauthorized } from '@/lib/cms/api-response';
 
 /**
  * Update a specific page section's content
@@ -12,6 +14,8 @@ export async function PATCH(
   request: Request,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  if (!(await isAdminRequest())) return unauthorized();
+
   try {
     const { id } = await params;
     const body = await request.json();
@@ -39,10 +43,8 @@ export async function PATCH(
     // We don't know the slug here easily, so we might need to clear all page caches 
     // or improve the cache key structure. For now, clear the specific section's parent page if known.
     // As a shortcut for the demo, we'll clear all page-related caches.
-    const keys = await redisClient.keys('page:*');
-    if (keys.length > 0) {
-      await redisClient.del(...keys);
-    }
+    const keys = await safeRedisKeys('page:*');
+    if (keys.length > 0) await safeRedisDel(...keys);
 
     return NextResponse.json(updated[0]);
   } catch (error) {

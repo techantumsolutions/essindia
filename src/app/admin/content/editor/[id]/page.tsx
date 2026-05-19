@@ -35,7 +35,7 @@ export default function GenericSectionEditor() {
         const data = await res.json();
         if (data) {
           setSectionData(data);
-          setJsonString(JSON.stringify(data.content, null, 2));
+          setJsonString(JSON.stringify(data.content || {}, null, 2));
         }
       } catch (error) {
         toast.error('Failed to load section data');
@@ -107,7 +107,7 @@ export default function GenericSectionEditor() {
           <div>
             <div className="flex items-center gap-2 mb-1">
               <h1 className="text-2xl font-bold text-slate-900 tracking-tight">Configure {sectionData?.type}</h1>
-              <span className="bg-slate-100 text-slate-500 text-[10px] font-bold px-2 py-0.5 rounded uppercase">{sectionData?.id.substring(0,8)}</span>
+              <span className="bg-slate-100 text-slate-500 text-[10px] font-bold px-2 py-0.5 rounded uppercase">{sectionData?.id?.substring(0,8)}</span>
             </div>
             <p className="text-sm text-slate-500 font-medium">Technical configuration and content structure.</p>
           </div>
@@ -173,8 +173,8 @@ export default function GenericSectionEditor() {
             
             <div className="bg-[#181825] px-8 py-3 flex items-center justify-between text-[11px] font-bold text-slate-500 border-t border-slate-800">
               <div className="flex gap-4">
-                <span>Ln {jsonString.split('\n').length}</span>
-                <span>Col {jsonString.length}</span>
+                <span>Ln {jsonString?.split('\n')?.length || 0}</span>
+                <span>Col {jsonString?.length || 0}</span>
               </div>
               <div className="flex items-center gap-1.5 text-emerald-500/80 uppercase tracking-widest">
                 <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />

@@ -40,13 +40,24 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
   return {
     title: page.seo?.title || page.title,
-    description: page.seo?.description || page.metaDescription,
+    description: page.seo?.description,
+    robots: page.seo?.noIndex ? { index: false, follow: false } : undefined,
     openGraph: {
       images: page.seo?.ogImage ? [page.seo.ogImage] : [],
     },
     alternates: {
       canonical: page.seo?.canonicalUrl,
-    }
+    },
+    ...(page.seo?.schemaMarkup &&
+    typeof page.seo.schemaMarkup === 'object' &&
+    page.seo.schemaMarkup !== null &&
+    Object.keys(page.seo.schemaMarkup).length > 0
+      ? {
+          other: {
+            'script:ld+json': JSON.stringify(page.seo.schemaMarkup),
+          },
+        }
+      : {}),
   };
 }
 

@@ -1,0 +1,113 @@
+import {
+  Layout,
+  Type,
+  ImageIcon,
+  Grid,
+  Briefcase,
+  FileText,
+  MousePointer,
+  Layers,
+  LucideIcon,
+} from 'lucide-react';
+
+export interface SectionTypeDefinition {
+  type: string;
+  label: string;
+  description: string;
+  icon: LucideIcon;
+  color: string;
+  defaultVariant: string;
+  supportsVariants: boolean;
+}
+
+export const SECTION_REGISTRY: SectionTypeDefinition[] = [
+  {
+    type: 'hero',
+    label: 'Hero Banner',
+    description: 'Main brand message and primary CTA',
+    icon: Layout,
+    color: 'bg-blue-50 text-blue-600',
+    defaultVariant: 'default',
+    supportsVariants: true,
+  },
+  {
+    type: 'trusted-brands',
+    label: 'Brand Trust',
+    description: 'Client logos and partner grid',
+    icon: Grid,
+    color: 'bg-slate-50 text-slate-600',
+    defaultVariant: 'default',
+    supportsVariants: false,
+  },
+  {
+    type: 'intro',
+    label: 'Intro Text',
+    description: 'Mission statement and key metrics',
+    icon: Type,
+    color: 'bg-purple-50 text-purple-600',
+    defaultVariant: 'default',
+    supportsVariants: false,
+  },
+  {
+    type: 'services',
+    label: 'Services Grid',
+    description: 'Core business offerings and solutions',
+    icon: Briefcase,
+    color: 'bg-emerald-50 text-emerald-600',
+    defaultVariant: 'default',
+    supportsVariants: true,
+  },
+  {
+    type: 'industries',
+    label: 'Industries',
+    description: 'Vertical specific solution blocks',
+    icon: ImageIcon,
+    color: 'bg-amber-50 text-amber-600',
+    defaultVariant: 'default',
+    supportsVariants: false,
+  },
+  {
+    type: 'why-ess',
+    label: 'Value Prop',
+    description: 'Unique selling points and differentiators',
+    icon: MousePointer,
+    color: 'bg-rose-50 text-rose-600',
+    defaultVariant: 'default',
+    supportsVariants: false,
+  },
+  {
+    type: 'portfolio',
+    label: 'Portfolio',
+    description: 'Case studies and project highlights',
+    icon: Layers,
+    color: 'bg-indigo-50 text-indigo-600',
+    defaultVariant: 'default',
+    supportsVariants: false,
+  },
+  {
+    type: 'blog',
+    label: 'Resources',
+    description: 'Latest news and thought leadership',
+    icon: FileText,
+    color: 'bg-cyan-50 text-cyan-600',
+    defaultVariant: 'default',
+    supportsVariants: false,
+  },
+  {
+    type: 'rich_text',
+    label: 'Rich Text',
+    description: 'Flexible HTML content block',
+    icon: FileText,
+    color: 'bg-slate-50 text-slate-400',
+    defaultVariant: 'default',
+    supportsVariants: false,
+  },
+];
+
+export function getSectionDefinition(type: string): SectionTypeDefinition | undefined {
+  return SECTION_REGISTRY.find((s) => s.type === type);
+}
+
+export function isValidSectionType(type: string): boolean {
+  return SECTION_REGISTRY.some((s) => s.type === type);
+}

@@ -2,6 +2,8 @@ import { NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { navigationItems } from '@/lib/db/schema';
 import { eq } from 'drizzle-orm';
+import { megaMenuRepository } from '@/repositories/mega-menu.repository';
+import { navigationRepository } from '@/repositories/navigation.repository';
 import { createServerClient } from '@supabase/ssr';
 import { cookies } from 'next/headers';
 
@@ -27,14 +29,29 @@ export async function PUT(request: Request, props: { params: Promise<{ id: strin
   try {
     const params = await props.params;
     const body = await request.json();
-    const { title, url, icon, isActive, orderIndex } = body;
+    const { label, slug, url, icon, isActive, orderIndex, megaMenuEnabled, megaMenuConfig } = body;
 
     const updated = await db.update(navigationItems)
-      .set({ title, url, icon, isActive, orderIndex, updatedAt: new Date() })
+      .set({ 
+        label, 
+        slug,
+        url, 
+        icon, 
+        isActive, 
+        orderIndex, 
+        megaMenuEnabled,
+        megaMenuConfig,
+        updatedAt: new Date() 
+      })
       .where(eq(navigationItems.id, params.id))
       .returning();
 
     if (!updated.length) return NextResponse.json({ error: 'Item not found' }, { status: 404 });
+
+    await megaMenuRepository.clearCacheForNavItem(params.id, 'header-main');
+    await navigationRepository.clearCache('header-main');
+    const { navigationTreeRepository } = await import('@/repositories/navigation-tree.repository');
+    await navigationTreeRepository.clearCache('header-main');
 
     return NextResponse.json(updated[0]);
   } catch (error) {

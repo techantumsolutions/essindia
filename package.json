@@ -6,7 +6,18 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "db:generate": "drizzle-kit generate",
+    "db:migrate": "drizzle-kit migrate",
+    "db:push": "drizzle-kit push",
+    "db:studio": "drizzle-kit studio",
+    "db:apply-cms": "npx tsx scripts/apply-cms-migration.ts",
+    "db:apply-mega-menu": "npx tsx scripts/apply-mega-menu-migration.ts",
+    "db:seed-mega-menu": "npx tsx scripts/seed-mega-menu.ts",
+    "db:apply-registry": "npx tsx scripts/apply-page-registry-migration.ts",
+    "db:apply-page-nav": "npx tsx scripts/apply-page-nav-migration.ts",
+    "db:apply-all": "npx tsx scripts/apply-all-migrations.ts",
+    "db:clear-mega-demo": "npx tsx scripts/clear-mega-menu-demo.ts"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.1043.0",

@@ -1,5 +1,6 @@
+import 'dotenv/config';
 import { db } from './src/lib/db';
-import { pages, pageSections } from './src/lib/db/schema';
+import { pages, pageSections, seoMetadata } from './src/lib/db/schema';
 import { eq } from 'drizzle-orm';
 
 async function seed() {
@@ -12,12 +13,18 @@ async function seed() {
 
   let pageId: string;
   if (!existingPage) {
+    const seo = await db.insert(seoMetadata).values({
+      title: 'ESS India - Enterprise ERP & Digital Transformation',
+      description: 'Enterprise software solutions, AI automation, and digital transformation for modern businesses.',
+    }).returning();
+    
     const newPage = await db.insert(pages).values({
       title: 'Home',
       slug: 'index',
-      isPublished: true,
-      metaTitle: 'ESS India - Enterprise ERP & Digital Transformation',
-      metaDescription: 'Enterprise software solutions, AI automation, and digital transformation for modern businesses.',
+      fullPath: '/',
+      status: 'published',
+      seoId: seo[0].id,
+      pageType: 'standard'
     }).returning();
     pageId = newPage[0].id;
     console.log('✅ Created homepage');
@@ -232,7 +239,7 @@ async function seed() {
         pageId,
         type: section.type,
         content: section.content,
-        orderIndex: new Date(Date.now() + section.order * 1000), // Hacky order index
+        orderIndex: section.order,
         isActive: true,
       });
       console.log(`✅ Seeded ${section.type} section`);

@@ -5,7 +5,10 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { cn } from '@/lib/utils';
 import { motion, AnimatePresence } from 'framer-motion';
-import { SolutionsMenuContent } from './SolutionsMenu';
+import { MegaMenuContent } from './MegaMenuContent';
+import { MegaMenuMobile } from './MegaMenuMobile';
+import type { MegaMenuPayload } from '@/lib/cms/mega-menu-types';
+import { hasRenderableMegaMenu } from '@/lib/cms/mega-menu-sanitize';
 import {
   NavigationMenu,
   NavigationMenuContent,
@@ -18,7 +21,16 @@ import {
 import { Button } from '@/components/ui/button';
 import { Menu, X, Search } from 'lucide-react';
 
-export function Header() {
+export type NavItem = {
+  id: string;
+  label: string;
+  url?: string | null;
+  megaMenuEnabled?: boolean;
+  children?: NavItem[];
+  megaMenu?: MegaMenuPayload;
+};
+
+export function Header({ navData = [] }: { navData?: NavItem[] }) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = React.useState(false);
   const [scrolled, setScrolled] = React.useState(false);
 
@@ -56,7 +68,7 @@ export function Header() {
 
         {/* Desktop Nav */}
         <div className="hidden lg:flex flex-1 justify-center">
-          <DesktopNav />
+          <DesktopNav items={navData} />
         </div>
 
         {/* Right Actions */}
@@ -89,18 +101,43 @@ export function Header() {
             className="absolute top-[80px] left-4 right-4 bg-white/95 backdrop-blur-2xl rounded-2xl shadow-2xl border border-slate-100 p-6 flex flex-col gap-6 lg:hidden z-50"
           >
             <nav className="flex flex-col gap-4">
-              <Link href="/about" onClick={() => setIsMobileMenuOpen(false)} className="text-lg font-medium text-slate-800 hover:text-[#4B2A63] transition-colors">About us</Link>
-              <div className="flex flex-col gap-2">
-                <span className="text-lg font-medium text-[#4B2A63]">Solutions</span>
-                <div className="pl-4 flex flex-col gap-2 border-l-2 border-slate-100">
-                  <Link href="/solutions/erp" onClick={() => setIsMobileMenuOpen(false)} className="text-slate-600 hover:text-[#4B2A63] transition-colors">ERP Software</Link>
-                  <Link href="/solutions/bi" onClick={() => setIsMobileMenuOpen(false)} className="text-slate-600 hover:text-[#4B2A63] transition-colors">Business Intelligence</Link>
-                  <Link href="/solutions/rpa" onClick={() => setIsMobileMenuOpen(false)} className="text-slate-600 hover:text-[#4B2A63] transition-colors">RPA</Link>
-                </div>
-              </div>
-              <Link href="/industries" onClick={() => setIsMobileMenuOpen(false)} className="text-lg font-medium text-slate-800 hover:text-[#4B2A63] transition-colors">Industries</Link>
-              <Link href="/resources" onClick={() => setIsMobileMenuOpen(false)} className="text-lg font-medium text-slate-800 hover:text-[#4B2A63] transition-colors">Resources</Link>
-              <Link href="/contact" onClick={() => setIsMobileMenuOpen(false)} className="text-lg font-medium text-slate-800 hover:text-[#4B2A63] transition-colors">Contact</Link>
+              {navData.map((item) => (
+                <motion.div key={item.id}>
+                  {hasRenderableMegaMenu(item.megaMenu) ? (
+                    <motion.div className="flex flex-col gap-2">
+                      <span className="text-lg font-medium text-[#4B2A63]">{item.label}</span>
+                      <MegaMenuMobile
+                        data={item.megaMenu!}
+                        onNavigate={() => setIsMobileMenuOpen(false)}
+                      />
+                    </motion.div>
+                  ) : item.children && item.children.length > 0 ? (
+                    <motion.div className="flex flex-col gap-2">
+                      <span className="text-lg font-medium text-[#4B2A63]">{item.label}</span>
+                      <motion.div className="pl-4 flex flex-col gap-2 border-l-2 border-slate-100">
+                        {item.children.map((child) => (
+                          <Link
+                            key={child.id}
+                            href={child.url || '#'}
+                            onClick={() => setIsMobileMenuOpen(false)}
+                            className="text-slate-600 hover:text-[#4B2A63] transition-colors"
+                          >
+                            {child.label}
+                          </Link>
+                        ))}
+                      </motion.div>
+                    </motion.div>
+                  ) : (
+                    <Link
+                      href={item.url || '#'}
+                      onClick={() => setIsMobileMenuOpen(false)}
+                      className="text-lg font-medium text-slate-800 hover:text-[#4B2A63] transition-colors"
+                    >
+                      {item.label}
+                    </Link>
+                  )}
+                </motion.div>
+              ))}
             </nav>
             
             <div className="pt-4 border-t border-slate-100">
@@ -115,51 +152,43 @@ export function Header() {
   );
 }
 
-function DesktopNav() {
+function DesktopNav({ items = [] }: { items: NavItem[] }) {
   return (
     <NavigationMenu align="center">
       <NavigationMenuList className="gap-2">
-        <NavigationMenuItem>
-          <NavigationMenuTrigger className="bg-transparent hover:bg-slate-50 text-[13px] text-slate-700 font-medium">About us</NavigationMenuTrigger>
-          <NavigationMenuContent>
-            <div className="p-4 w-[400px]">
-              <p className="text-sm text-slate-500">About company details</p>
-            </div>
-          </NavigationMenuContent>
-        </NavigationMenuItem>
-        
-        <NavigationMenuItem>
-          <NavigationMenuTrigger className="bg-transparent hover:bg-slate-50 text-[13px] text-[#4B2A63] font-medium">Solutions</NavigationMenuTrigger>
-          <SolutionsMenuContent />
-        </NavigationMenuItem>
-        
-        <NavigationMenuItem>
-          <NavigationMenuTrigger className="bg-transparent hover:bg-slate-50 text-[13px] text-slate-700 font-medium">Industries</NavigationMenuTrigger>
-          <NavigationMenuContent>
-            <ul className="grid w-[400px] gap-3 p-4 md:w-[500px] md:grid-cols-2">
-              {industries.map((item) => (
-                <ListItem key={item.title} title={item.title} href={item.href}>
-                  {item.description}
-                </ListItem>
-              ))}
-            </ul>
-          </NavigationMenuContent>
-        </NavigationMenuItem>
-        
-        <NavigationMenuItem>
-          <NavigationMenuTrigger className="bg-transparent hover:bg-slate-50 text-[13px] text-slate-700 font-medium">Resources</NavigationMenuTrigger>
-          <NavigationMenuContent>
-            <div className="p-4 w-[400px]">
-              <p className="text-sm text-slate-500">Blog and news</p>
-            </div>
-          </NavigationMenuContent>
-        </NavigationMenuItem>
-
-        <NavigationMenuItem>
-          <NavigationMenuLink render={<Link href="/contact" />} className={cn(navigationMenuTriggerStyle(), "bg-transparent hover:bg-slate-50 text-[13px] text-slate-700 font-medium")}>
-            Contact
-          </NavigationMenuLink>
-        </NavigationMenuItem>
+        {items.map((item) => (
+          <NavigationMenuItem key={item.id}>
+            {hasRenderableMegaMenu(item.megaMenu) ? (
+              <>
+                <NavigationMenuTrigger className="bg-transparent hover:bg-slate-50 text-[13px] text-slate-700 font-medium">
+                  {item.label}
+                </NavigationMenuTrigger>
+                <MegaMenuContent data={item.megaMenu!} />
+              </>
+            ) : item.children && item.children.length > 0 ? (
+              <>
+                <NavigationMenuTrigger className="bg-transparent hover:bg-slate-50 text-[13px] text-slate-700 font-medium">
+                  {item.label}
+                </NavigationMenuTrigger>
+                <NavigationMenuContent>
+                  <motion.div className="p-4 w-[400px]">
+                    <ul className="grid gap-3">
+                      {item.children.map((child) => (
+                        <ListItem key={child.id} title={child.label} href={child.url ?? '#'}>
+                          {(child as NavItem & { description?: string }).description || ''}
+                        </ListItem>
+                      ))}
+                    </ul>
+                  </motion.div>
+                </NavigationMenuContent>
+              </>
+            ) : (
+              <NavigationMenuLink render={<Link href={item.url || '#'} />} className={cn(navigationMenuTriggerStyle(), "bg-transparent hover:bg-slate-50 text-[13px] text-slate-700 font-medium")}>
+                {item.label}
+              </NavigationMenuLink>
+            )}
+          </NavigationMenuItem>
+        ))}
       </NavigationMenuList>
     </NavigationMenu>
   );
@@ -190,12 +219,3 @@ const ListItem = React.forwardRef<
 });
 ListItem.displayName = 'ListItem';
 
-const solutions = [
-  { title: 'ERP Solutions', href: '/solutions/erp', description: 'Enterprise resource planning' },
-  { title: 'AI Automation', href: '/solutions/ai', description: 'Intelligent business agents' },
-];
-
-const industries = [
-  { title: 'Automotive', href: '/industries/automotive', description: 'Manufacturing operations' },
-  { title: 'Textiles', href: '/industries/textiles', description: 'Supply chain management' },
-];

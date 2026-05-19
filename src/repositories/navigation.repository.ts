@@ -1,7 +1,7 @@
 import { db } from '@/lib/db';
 import { navigationMenus, navigationItems } from '@/lib/db/schema';
 import { eq, asc } from 'drizzle-orm';
-import redisClient, { withCache } from '@/lib/redis';
+import { safeRedisDel, withCache } from '@/lib/redis';
 import { logger } from '@/lib/logger';
 import { cache } from 'react';
 
@@ -43,19 +43,15 @@ export class NavigationRepository {
 
   private buildTree(items: any[], parentId: string | null = null): any[] {
     return items
-      .filter(item => item.parentId === parentId)
-      .map(item => ({
+      .filter((item) => item.parentId === parentId && item.isActive !== false)
+      .map((item) => ({
         ...item,
-        children: this.buildTree(items, item.id)
+        children: this.buildTree(items, item.id),
       }));
   }
 
   async clearCache(location: string) {
-    try {
-      await redisClient.del(`nav_tree:${location}`);
-    } catch (error) {
-      logger.debug('[NavigationRepository] Failed to clear cache', error);
-    }
+    await safeRedisDel(`nav_tree:${location}`);
   }
 }
 

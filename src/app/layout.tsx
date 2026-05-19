@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import { Roboto } from "next/font/google";
 import "./globals.css";
 import QueryProvider from "@/providers/query-provider";
-import { Footer } from '@/components/layout/Footer';
 import { validateDatabase } from '@/lib/db/validate';
 
 // Trigger DB validation on startup (in development and first load)
@@ -33,7 +32,6 @@ export default function RootLayout({
       <body className={`${roboto.variable} font-sans antialiased`}>
         <QueryProvider>
           {children}
-          <Footer />
         </QueryProvider>
       </body>
     </html>

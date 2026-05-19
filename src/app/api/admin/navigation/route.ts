@@ -68,7 +68,7 @@ export async function POST(request: Request) {
 
   try {
     const body = await request.json();
-    const { type, menuId, parentId, title, url, icon, location, name } = body;
+    const { type, menuId, parentId, label, url, icon, location, name } = body;
 
     // Create new menu wrapper
     if (type === 'menu') {
@@ -84,7 +84,7 @@ export async function POST(request: Request) {
       const newItem = await db.insert(navigationItems).values({
         menuId,
         parentId: parentId || null,
-        title,
+        label,
         url: url || '#',
         icon,
       }).returning();

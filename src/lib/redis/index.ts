@@ -93,4 +93,29 @@ export async function withCache<T>(
   }
 }
 
+function isRedisReady(): boolean {
+  return isRedisHealthy && redisClient.status === 'ready';
+}
+
+/** Delete keys without failing page mutations when Redis is down. */
+export async function safeRedisDel(...keys: string[]): Promise<void> {
+  if (!keys.length || !isRedisReady()) return;
+  try {
+    await withTimeout(redisClient.del(...keys), REDIS_TIMEOUT_MS);
+  } catch {
+    isRedisHealthy = false;
+  }
+}
+
+/** Scan keys without failing when Redis is down. */
+export async function safeRedisKeys(pattern: string): Promise<string[]> {
+  if (!isRedisReady()) return [];
+  try {
+    return await withTimeout(redisClient.keys(pattern), REDIS_TIMEOUT_MS);
+  } catch {
+    isRedisHealthy = false;
+    return [];
+  }
+}
+
 export default redisClient;

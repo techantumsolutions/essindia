@@ -30,7 +30,7 @@ export default async function Home() {
             <SectionRenderer key={section.id} section={section} />
           ))}
           {/* Append fallbacks if they aren't in CMS yet */}
-          {page.sections.every(s => s.type !== 'services') && <IntroSection />}
+          {page.sections.every((s: { type: string }) => s.type !== 'services') && <IntroSection />}
         </>
       ) : (
         <>

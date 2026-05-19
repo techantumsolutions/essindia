@@ -3,6 +3,7 @@ import { pages, pageSections, seoMetadata } from '@/lib/db/schema';
 import { eq, asc, and } from 'drizzle-orm';
 import { withCache } from '@/lib/redis';
 import { logger } from '@/lib/logger';
+import { getPostgresErrorCode, isMissingSchemaError } from '@/lib/cms/pg-error';
 import { cache } from 'react';
 
 export class PageRepository {
@@ -43,15 +44,22 @@ export class PageRepository {
           });
 
           return page || null;
-        } catch (dbError: any) {
-          if (dbError.code === '42P01') {
-            logger.error('[PageRepository] Table "pages" missing. Please run migrations.', dbError);
+        } catch (dbError: unknown) {
+          const pgCode = getPostgresErrorCode(dbError);
+          if (pgCode === '42P01' || isMissingSchemaError(dbError)) {
+            logger.warn(
+              '[PageRepository] Database schema out of date. Run: npm run db:apply-page-nav (and db:apply-mega-menu if needed). Homepage will use fallbacks until migrations are applied.'
+            );
             return null;
           }
           throw dbError;
         }
       });
     } catch (error) {
+      if (isMissingSchemaError(error)) {
+        logger.warn(`[PageRepository] Skipping CMS page for path "${path}" (schema mismatch).`);
+        return null;
+      }
       logger.error(`[PageRepository] Error fetching page path: ${path}`, error);
       return null;
     }

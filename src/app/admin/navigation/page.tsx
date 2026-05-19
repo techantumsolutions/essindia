@@ -1,6 +1,7 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { 
   Plus, 
@@ -15,34 +16,159 @@ import {
   Monitor,
   Smartphone,
   Tablet,
-  CheckCircle2
+  RotateCcw
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
-import { StaggerContainer } from '@/components/animations/MotionSection';
-
-const menuItems = [
-  { id: '1', label: 'Home', url: '/', mega: false },
-  { id: '2', label: 'About', url: '/about', mega: false },
-  { 
-    id: '3', 
-    label: 'Solutions', 
-    url: '/solutions', 
-    mega: true,
-    columns: [
-      { title: 'ERP Software', items: ['Overview', 'Modules', 'Industries'] },
-      { title: 'Data & AI', items: ['Business Intelligence', 'RPA', 'Data Lake'] },
-      { title: 'Development', items: ['Mobile Apps', 'Custom Software', 'Cloud Migration'] },
-    ]
-  },
-  { id: '4', label: 'Industries', url: '/industries', mega: true },
-  { id: '5', label: 'Resources', url: '/resources', mega: false },
-  { id: '6', label: 'Contact', url: '/contact', mega: false },
-];
+import { toast } from 'sonner';
 
 export default function NavigationModule() {
-  const [activeMenu, setActiveMenu] = React.useState('header-main');
-  const [selectedItem, setSelectedItem] = React.useState<string | null>('3');
+  const [menus, setMenus] = useState<any[]>([]);
+  const [activeMenuLocation, setActiveMenuLocation] = useState('header-main');
+  const [items, setItems] = useState<any[]>([]);
+  const [selectedItemId, setSelectedItemId] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isSaving, setIsSaving] = useState(false);
+
+  // Fetch all menus on mount
+  useEffect(() => {
+    async function fetchMenus() {
+      try {
+        const res = await fetch('/api/admin/navigation');
+        const data = await res.json();
+        if (Array.isArray(data)) {
+          setMenus(data);
+          if (data.length > 0 && !activeMenuLocation) {
+            setActiveMenuLocation(data[0].location);
+          }
+        }
+      } catch (error) {
+        toast.error('Failed to load menus');
+      }
+    }
+    fetchMenus();
+  }, []);
+
+  // Fetch items for the active menu
+  useEffect(() => {
+    async function fetchItems() {
+      if (!activeMenuLocation) return;
+      setIsLoading(true);
+      try {
+        const res = await fetch(`/api/admin/navigation?location=${activeMenuLocation}`);
+        const data = await res.json();
+        if (data.items) {
+          setItems(data.items);
+          if (data.items.length > 0) {
+            setSelectedItemId(data.items[0].id);
+          } else {
+            setSelectedItemId(null);
+          }
+        }
+      } catch (error) {
+        toast.error('Failed to load navigation items');
+      } finally {
+        setIsLoading(false);
+      }
+    }
+    fetchItems();
+  }, [activeMenuLocation]);
+
+  const selectedItem = items.find(item => item.id === selectedItemId);
+
+  const handleUpdateItemField = (field: string, value: any) => {
+    setItems(prev => prev.map(item => 
+      item.id === selectedItemId ? { ...item, [field]: value } : item
+    ));
+  };
+
+  const handleSave = async () => {
+    if (!selectedItemId || !selectedItem) return;
+    setIsSaving(true);
+    try {
+      const res = await fetch(`/api/admin/navigation/${selectedItemId}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          label: selectedItem.label,
+          url: selectedItem.url,
+          icon: selectedItem.icon,
+          megaMenuEnabled: selectedItem.megaMenuEnabled,
+          megaMenuConfig: selectedItem.megaMenuConfig,
+          isActive: selectedItem.isActive,
+          orderIndex: selectedItem.orderIndex,
+        }),
+      });
+
+      if (res.ok) {
+        toast.success('Navigation item updated');
+      } else {
+        throw new Error('Failed to update');
+      }
+    } catch (error) {
+      toast.error('Failed to save changes');
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  const handleAddItem = async () => {
+    const activeMenu = menus.find(m => m.location === activeMenuLocation);
+    if (!activeMenu) return;
+
+    try {
+      const res = await fetch('/api/admin/navigation', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          type: 'item',
+          menuId: activeMenu.id,
+          label: 'New Link',
+          url: '#',
+          icon: 'Link'
+        }),
+      });
+
+      if (res.ok) {
+        const newItem = await res.json();
+        setItems(prev => [...prev, newItem]);
+        setSelectedItemId(newItem.id);
+        toast.success('New item added');
+      }
+    } catch (error) {
+      toast.error('Failed to add item');
+    }
+  };
+
+  const handleDeleteItem = async () => {
+    if (!selectedItemId) return;
+    if (!confirm('Are you sure you want to delete this item?')) return;
+
+    try {
+      const res = await fetch(`/api/admin/navigation/${selectedItemId}`, {
+        method: 'DELETE',
+      });
+
+      if (res.ok) {
+        setItems(prev => prev.filter(item => item.id !== selectedItemId));
+        setSelectedItemId(null);
+        toast.success('Item deleted');
+      }
+    } catch (error) {
+      toast.error('Failed to delete item');
+    }
+  };
+
+  if (isLoading && items.length === 0) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[60vh]">
+        <motion.div animate={{ rotate: 360 }} transition={{ duration: 1, repeat: Infinity, ease: "linear" }}>
+          <RotateCcw className="w-10 h-10 text-[#4B2A63] opacity-20" />
+        </motion.div>
+        <p className="mt-4 text-slate-400 font-bold uppercase tracking-widest text-[11px]">Loading Navigation...</p>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-10">
@@ -50,14 +176,27 @@ export default function NavigationModule() {
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
         <div>
           <h1 className="text-3xl font-bold text-slate-900 tracking-tight mb-2">Navigation Manager</h1>
-          <p className="text-slate-500 font-medium">Design your multi-level Mega Menus and site-wide navigation.</p>
+          <div className="flex items-center gap-4">
+            <select 
+              value={activeMenuLocation}
+              onChange={(e) => setActiveMenuLocation(e.target.value)}
+              className="bg-slate-50 border-none text-slate-900 font-bold text-sm rounded-lg px-3 py-1 outline-none"
+            >
+              {menus.map(m => <option key={m.id} value={m.location}>{m.name}</option>)}
+            </select>
+            <p className="text-slate-500 font-medium">Design your multi-level Mega Menus and site-wide navigation.</p>
+          </div>
         </div>
         <div className="flex gap-3">
           <Button variant="outline" className="rounded-full px-6 h-12 font-bold border-slate-200 active:scale-95 cursor-pointer">
             Discard
           </Button>
-          <Button className="bg-[#4B2A63] hover:bg-[#3B198F] text-white rounded-full px-10 h-12 font-bold shadow-lg shadow-[#4B2A63]/20 active:scale-95 cursor-pointer gap-2">
-            Save Changes
+          <Button 
+            onClick={handleSave}
+            disabled={isSaving}
+            className="bg-[#4B2A63] hover:bg-[#3B198F] text-white rounded-full px-10 h-12 font-bold shadow-lg shadow-[#4B2A63]/20 active:scale-95 cursor-pointer gap-2"
+          >
+            {isSaving ? 'Saving...' : 'Save Changes'}
           </Button>
         </div>
       </div>
@@ -75,33 +214,35 @@ export default function NavigationModule() {
             </div>
 
             <div className="space-y-2">
-              {menuItems.map((item) => (
+              {items.map((item) => (
                 <motion.div
                   key={item.id}
-                  onClick={() => setSelectedItem(item.id)}
+                  onClick={() => setSelectedItemId(item.id)}
                   className={cn(
                     "flex items-center gap-4 p-4 rounded-2xl border transition-all cursor-pointer group",
-                    selectedItem === item.id 
+                    selectedItemId === item.id 
                       ? "bg-[#4B2A63] border-[#4B2A63] text-white shadow-xl shadow-[#4B2A63]/20" 
                       : "bg-white border-slate-50 text-slate-600 hover:border-[#4B2A63]/20 hover:bg-slate-50"
                   )}
                 >
-                  <GripVertical className={cn("w-4 h-4 shrink-0", selectedItem === item.id ? "text-white/40" : "text-slate-300")} />
+                  <GripVertical className={cn("w-4 h-4 shrink-0", selectedItemId === item.id ? "text-white/40" : "text-slate-300")} />
                   <span className="flex-1 font-bold text-[14px]">{item.label}</span>
-                  {item.mega && (
+                  {item.megaMenuEnabled && (
                     <span className={cn(
                       "text-[9px] font-black px-1.5 py-0.5 rounded uppercase tracking-tighter",
-                      selectedItem === item.id ? "bg-white/20 text-white" : "bg-purple-50 text-purple-600"
+                      selectedItemId === item.id ? "bg-white/20 text-white" : "bg-purple-50 text-purple-600"
                     )}>
                       Mega
                     </span>
                   )}
-                  <ChevronDown className={cn("w-4 h-4 shrink-0 transition-transform", selectedItem === item.id ? "-rotate-90 opacity-40" : "opacity-20")} />
+                  <ChevronDown className={cn("w-4 h-4 shrink-0 transition-transform", selectedItemId === item.id ? "-rotate-90 opacity-40" : "opacity-20")} />
                 </motion.div>
               ))}
             </div>
 
-            <Button variant="outline" className="w-full mt-6 rounded-2xl border-dashed border-2 py-8 text-slate-400 font-bold gap-2">
+            <Button 
+              onClick={handleAddItem}
+              variant="outline" className="w-full mt-6 rounded-2xl border-dashed border-2 py-8 text-slate-400 font-bold gap-2">
               <Plus className="w-4 h-4" />
               Add Menu Item
             </Button>
@@ -124,7 +265,9 @@ export default function NavigationModule() {
                 </div>
               </div>
               <div className="flex gap-2">
-                <Button variant="ghost" size="icon" className="rounded-xl text-slate-400 hover:text-rose-500">
+                <Button 
+                  onClick={handleDeleteItem}
+                  variant="ghost" size="icon" className="rounded-xl text-slate-400 hover:text-rose-500">
                   <Trash2 className="w-5 h-5" />
                 </Button>
               </div>
@@ -134,13 +277,23 @@ export default function NavigationModule() {
               <div className="space-y-6">
                 <div className="space-y-2">
                   <label className="text-[11px] font-black text-slate-400 uppercase tracking-widest ml-1">Label</label>
-                  <input type="text" defaultValue="Solutions" className="w-full bg-slate-50 border-2 border-transparent focus:border-[#4B2A63]/10 focus:bg-white focus:ring-4 focus:ring-[#4B2A63]/5 rounded-2xl px-6 py-4 text-[15px] font-bold outline-none transition-all" />
+                  <input 
+                    type="text" 
+                    value={selectedItem?.label || ''} 
+                    onChange={(e) => handleUpdateItemField('label', e.target.value)}
+                    className="w-full bg-slate-50 border-2 border-transparent focus:border-[#4B2A63]/10 focus:bg-white focus:ring-4 focus:ring-[#4B2A63]/5 rounded-2xl px-6 py-4 text-[15px] font-bold outline-none transition-all" 
+                  />
                 </div>
                 <div className="space-y-2">
                   <label className="text-[11px] font-black text-slate-400 uppercase tracking-widest ml-1">Link URL / Page</label>
                   <div className="relative">
                     <LinkIcon className="absolute left-6 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
-                    <input type="text" defaultValue="/solutions" className="w-full bg-slate-50 border-2 border-transparent focus:border-[#4B2A63]/10 focus:bg-white focus:ring-4 focus:ring-[#4B2A63]/5 rounded-2xl pl-14 pr-6 py-4 text-[15px] font-bold outline-none transition-all" />
+                    <input 
+                      type="text" 
+                      value={selectedItem?.url || ''} 
+                      onChange={(e) => handleUpdateItemField('url', e.target.value)}
+                      className="w-full bg-slate-50 border-2 border-transparent focus:border-[#4B2A63]/10 focus:bg-white focus:ring-4 focus:ring-[#4B2A63]/5 rounded-2xl pl-14 pr-6 py-4 text-[15px] font-bold outline-none transition-all" 
+                    />
                   </div>
                 </div>
               </div>
@@ -149,25 +302,40 @@ export default function NavigationModule() {
                 <div className="space-y-4">
                   <label className="text-[11px] font-black text-slate-400 uppercase tracking-widest ml-1">Behavior</label>
                   <div className="grid grid-cols-2 gap-4">
-                    <div className="p-4 rounded-2xl bg-[#4B2A63]/5 border-2 border-[#4B2A63] flex flex-col items-center gap-2 cursor-pointer">
-                      <Layout className="w-6 h-6 text-[#4B2A63]" />
-                      <span className="text-[12px] font-bold text-[#4B2A63]">Mega Menu</span>
+                    <div 
+                      onClick={() => handleUpdateItemField('megaMenuEnabled', true)}
+                      className={cn(
+                        "p-4 rounded-2xl border-2 flex flex-col items-center gap-2 cursor-pointer transition-all",
+                        selectedItem?.megaMenuEnabled ? "bg-[#4B2A63]/5 border-[#4B2A63]" : "bg-slate-50 border-transparent"
+                      )}
+                    >
+                      <Layout className={cn("w-6 h-6", selectedItem?.megaMenuEnabled ? "text-[#4B2A63]" : "text-slate-400")} />
+                      <span className={cn("text-[12px] font-bold", selectedItem?.megaMenuEnabled ? "text-[#4B2A63]" : "text-slate-500")}>Mega Menu</span>
                     </div>
-                    <div className="p-4 rounded-2xl bg-slate-50 border-2 border-transparent flex flex-col items-center gap-2 cursor-pointer hover:bg-slate-100 transition-colors">
-                      <ExternalLink className="w-6 h-6 text-slate-400" />
-                      <span className="text-[12px] font-bold text-slate-500">Simple Link</span>
+                    <div 
+                      onClick={() => handleUpdateItemField('megaMenuEnabled', false)}
+                      className={cn(
+                        "p-4 rounded-2xl border-2 flex flex-col items-center gap-2 cursor-pointer transition-all",
+                        !selectedItem?.megaMenuEnabled ? "bg-[#4B2A63]/5 border-[#4B2A63]" : "bg-slate-50 border-transparent"
+                      )}
+                    >
+                      <ExternalLink className={cn("w-6 h-6", !selectedItem?.megaMenuEnabled ? "text-[#4B2A63]" : "text-slate-400")} />
+                      <span className={cn("text-[12px] font-bold", !selectedItem?.megaMenuEnabled ? "text-[#4B2A63]" : "text-slate-500")}>Simple Link</span>
                     </div>
                   </div>
                 </div>
                 <div className="space-y-2">
-                  <label className="text-[11px] font-black text-slate-400 uppercase tracking-widest ml-1">Mega Menu Template</label>
-                  <div className="flex items-center justify-between p-4 rounded-2xl bg-slate-50 border border-slate-100 cursor-pointer">
-                    <div className="flex items-center gap-3">
-                      <Columns className="w-5 h-5 text-slate-400" />
-                      <span className="text-[14px] font-bold text-slate-700">3-Column Grid with Cards</span>
-                    </div>
-                    <ChevronDown className="w-4 h-4 text-slate-300" />
-                  </div>
+                  {selectedItem?.megaMenuEnabled && selectedItemId ? (
+                    <Link
+                      href={`/admin/navigation/mega-menu/${selectedItemId}`}
+                      className="flex items-center justify-center gap-2 p-4 rounded-2xl bg-[#4B2A63] text-white font-bold text-sm hover:bg-[#3B198F] transition-colors"
+                    >
+                      <Layout className="w-4 h-4" />
+                      Manage Mega Menu Structure
+                    </Link>
+                  ) : (
+                    <p className="text-sm text-slate-400 p-4">Enable mega menu to configure structure.</p>
+                  )}
                 </div>
               </div>
             </div>

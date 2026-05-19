@@ -6,7 +6,7 @@ const footerLinks = {
     'About', 'Leadership', 'Career', 'Partners', 'Blog', 'Case Studies', 'Testimonials', 'FAQs', 'Contact us'
   ],
   products: [
-    'ERP Software', 'ERP for Small Business', 'Cloud ERP Solutions', 'Finance Management Softw', 'HR Management System', 'Supply Chain Management', 'CRM Software', 'Manufacturing ERP'
+    'Modules', 'ERP Software', 'ERP for Small Business', 'Cloud ERP Solutions', 'Finance Management Softw', 'HR Management System', 'Supply Chain Management', 'CRM Software', 'Manufacturing ERP'
   ],
   industries: [
     'ERP for Manufacturing Industry', 'ERP for Healthcare', 'ERP for Retail Business', 'ERP for Logistics', 'ERP for Construction', 'Custom ERP Solutions'
@@ -84,7 +84,7 @@ export function Footer() {
             <ul className="space-y-3">
               {footerLinks.products.map(link => (
                 <li key={link}>
-                  <Link href="#" className="text-[13px] text-slate-600 hover:text-purple-700 transition-colors">
+                  <Link href={link === 'Modules' ? '/modules' : '#'} className="text-[13px] text-slate-600 hover:text-purple-700 transition-colors">
                     {link}
                   </Link>
                 </li>

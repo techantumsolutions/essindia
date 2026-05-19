@@ -20,10 +20,10 @@ import { MotionSection, StaggerContainer } from '@/components/animations/MotionS
 import { Button } from '@/components/ui/button';
 import { Spotlight } from '@/components/ui/Spotlight';
 
-const stats = [
-  { label: 'Total Page Views', value: '45.2k', trend: '+12.5%', isUp: true, icon: Eye },
-  { label: 'Avg. Engagement', value: '2m 34s', trend: '+3.2%', isUp: true, icon: MousePointerClick },
-  { label: 'Total Leads', value: '1,284', trend: '-1.4%', isUp: false, icon: Users },
+const defaultStats = [
+  { label: 'Total Pages', value: '—', trend: 'CMS', isUp: true, icon: FileText },
+  { label: 'Published Pages', value: '—', trend: 'Live', isUp: true, icon: Eye },
+  { label: 'Library Sections', value: '—', trend: 'Reusable', isUp: true, icon: Layout },
 ];
 
 const cmsShortcuts = [
@@ -33,6 +33,23 @@ const cmsShortcuts = [
 ];
 
 export default function AdminDashboard() {
+  const [stats, setStats] = React.useState(defaultStats);
+
+  React.useEffect(() => {
+    fetch('/api/admin/stats')
+      .then((r) => r.json())
+      .then((data) => {
+        if (data.pages !== undefined) {
+          setStats([
+            { label: 'Total Pages', value: String(data.pages), trend: `${data.publishedPages} live`, isUp: true, icon: FileText },
+            { label: 'Page Sections', value: String(data.pageSections), trend: `${data.templates} templates`, isUp: true, icon: Eye },
+            { label: 'Library Sections', value: String(data.librarySections), trend: `${data.media} media`, isUp: true, icon: Layout },
+          ]);
+        }
+      })
+      .catch(() => {});
+  }, []);
+
   return (
     <div className="space-y-10">
       {/* Welcome Header */}
@@ -88,7 +105,9 @@ export default function AdminDashboard() {
         <div className="lg:col-span-2 space-y-6">
           <div className="flex items-center justify-between">
             <h2 className="text-xl font-bold text-slate-900">CMS Quick Access</h2>
-            <Button variant="link" className="text-[#4B2A63] font-bold text-sm">View All Sections</Button>
+            <Button variant="link" className="text-[#4B2A63] font-bold text-sm" onClick={() => window.location.href = '/admin/content'}>
+              View All Sections
+            </Button>
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

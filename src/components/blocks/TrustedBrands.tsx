@@ -17,7 +17,7 @@ interface TrustedBrandsProps {
   content?: TrustedBrandsContent;
 }
 
-const defaultBrands = [
+const defaultBrands: Brand[] = [
   { name: 'Spotify' },
   { name: 'Nike' },
   { name: 'AMD' },
