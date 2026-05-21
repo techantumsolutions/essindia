@@ -10,7 +10,7 @@ import {
   LucideIcon,
 } from 'lucide-react';
 
-export interface SectionTypeDefinition {
+export interface SectionTypeDefinition { 
   type: string;
   label: string;
   description: string;
@@ -153,6 +153,60 @@ export const SECTION_REGISTRY: SectionTypeDefinition[] = [
     description: 'Vertical panels for strategic benefits',
     icon: FileText,
     color: 'bg-rose-50 text-rose-600',
+    defaultVariant: 'default',
+    supportsVariants: false,
+  },
+  {
+    type: 'retail-hero',
+    label: 'Retail Hero',
+    description: 'Header block for Retail ERP overview',
+    icon: Layout,
+    color: 'bg-indigo-50 text-indigo-600',
+    defaultVariant: 'default',
+    supportsVariants: false,
+  },
+  {
+    type: 'retail-nurture',
+    label: 'Retail Nurture',
+    description: 'Nurture your business section',
+    icon: Type,
+    color: 'bg-slate-50 text-slate-600',
+    defaultVariant: 'default',
+    supportsVariants: false,
+  },
+  {
+    type: 'retail-features',
+    label: 'Retail Features',
+    description: 'Dark-themed feature showcase',
+    icon: Layers,
+    color: 'bg-blue-50 text-blue-600',
+    defaultVariant: 'default',
+    supportsVariants: false,
+  },
+  {
+    type: 'retail-operations',
+    label: 'Retail Operations Grid',
+    description: 'Grid showcasing POS operations',
+    icon: Grid,
+    color: 'bg-purple-50 text-purple-600',
+    defaultVariant: 'default',
+    supportsVariants: false,
+  },
+  {
+    type: 'retail-mobile-dashboard',
+    label: 'Retail Mobile Dashboard',
+    description: 'Interactive accordion for modules',
+    icon: FileText,
+    color: 'bg-cyan-50 text-cyan-600',
+    defaultVariant: 'default',
+    supportsVariants: false,
+  },
+  {
+    type: 'retail-clients',
+    label: 'Retail Clients',
+    description: 'Brand trust and client logos',
+    icon: ImageIcon,
+    color: 'bg-amber-50 text-amber-600',
     defaultVariant: 'default',
     supportsVariants: false,
   },
