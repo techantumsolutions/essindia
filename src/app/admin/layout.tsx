@@ -70,7 +70,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   const router = useRouter();
   const [isSidebarOpen, setIsSidebarOpen] = React.useState(true);
 
-  if (pathname === '/admin/login') {
+  if (pathname === '/admin/login' || pathname.endsWith('/preview')) {
     return <>{children}</>;
   }
 
