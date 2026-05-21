@@ -1,5 +1,7 @@
 import React from 'react';
 import { notFound } from 'next/navigation';
+
+export const dynamic = 'force-dynamic';
 import { templateRepository } from '@/repositories/template.repository';
 import { SectionRenderer } from '@/components/cms/SectionRenderer';
 import { MainLayout } from '@/components/layout/MainLayout';

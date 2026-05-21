@@ -13,6 +13,12 @@ import { ErpModulesGrid } from '@/components/blocks/ErpModulesGrid';
 import { ErpFeaturesTab } from '@/components/blocks/ErpFeaturesTab';
 import { ErpValueGrid } from '@/components/blocks/ErpValueGrid';
 import { ErpTransform } from '@/components/blocks/ErpTransform';
+import ManufacturingHero from '@/components/blocks/ManufacturingHero';
+import ManufacturingIconRow from '@/components/blocks/ManufacturingIconRow';
+import ManufacturingDemand from '@/components/blocks/ManufacturingDemand';
+import ManufacturingProcess from '@/components/blocks/ManufacturingProcess';
+import ManufacturingEfficiency from '@/components/blocks/ManufacturingEfficiency';
+import ManufacturingModels from '@/components/blocks/ManufacturingModels';
 
 interface Section {
   id: string;
@@ -62,6 +68,18 @@ export function SectionRenderer({ section }: SectionRendererProps) {
       return <ErpValueGrid content={section.content} />;
     case 'erp-transform':
       return <ErpTransform content={section.content} />;
+    case 'mfg-hero':
+      return <ManufacturingHero />;
+    case 'mfg-icons':
+      return <ManufacturingIconRow />;
+    case 'mfg-demand':
+      return <ManufacturingDemand />;
+    case 'mfg-process':
+      return <ManufacturingProcess />;
+    case 'mfg-efficiency':
+      return <ManufacturingEfficiency />;
+    case 'mfg-models':
+      return <ManufacturingModels />;
     default:
       if (process.env.NODE_ENV === 'development') {
         return (
