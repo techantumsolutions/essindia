@@ -24,15 +24,15 @@ interface ErpValueGridProps {
 
 export function ErpValueGrid({ content }: ErpValueGridProps) {
   const heading = content?.heading || 'ERP Advances Business Value';
-  const subheading = content?.subheading || 'Enterprise Resource Planning systems contribute to operational efficiency. ERP contributes in business growth in the following ways';
-  const ctaButton = content?.ctaButton || { label: 'WHAT UNIQUE VALUE ESS ERP BRINGS?', url: '#' };
+  const subheading = content?.subheading || 'Enterprise Resource Planning Companies are more likely to deploy a full-service suite of ERP technology.ERP modules are available to automate processes that broadly are:';
+  const ctaButton = content?.ctaButton || { label: 'So what benefits do businesses get from ERP Software?', url: '#' };
   const valueCards = content?.valueCards || [
-    { title: 'Efficiency', desc: 'Minimize duplicate records and data entry, automate processes for maximum efficiency.', image: '/service-rpa.png' },
-    { title: 'Integrated Information', desc: 'All database is integrated, no more siloed files, single source of truth.', image: '/service-oracle.png' },
-    { title: 'Reporting', desc: 'Flexible custom reports, automated analytics, real-time metrics.', image: '/service-bi.png' },
-    { title: 'Customer Service', desc: 'Get real-time customer history, improve response time, enhance customer satisfaction.', image: '/service-ems.png' },
-    { title: 'Decision making', desc: 'Real-time updates across departments help management make faster, smarter decisions.', image: '/why-ess-main.png' },
-    { title: 'Profitability', desc: 'Lower inventory carrying cost, reduce scrap, automate billing.', image: '/service-erp.png' },
+    { title: 'Efficiency', desc: 'Removes repetitive processes and reduces manual entry of information. Business processes are therefore streamlined and efficient as they work on information from common source.', image: '/ErpOverview/value-1.png' },
+    { title: 'Integrated Information', desc: 'Removes repetitive processes and reduces manual entry of information. Business processes are therefore streamlined and efficient as they work on information from common source.', image: '/ErpOverview/value-2.png' },
+    { title: 'Reporting', desc: 'Removes repetitive processes and reduces manual entry of information. Business processes are therefore streamlined and efficient as they work on information from common source.', image: '/ErpOverview/value-3.png' },
+    { title: 'Customer Service', desc: 'Removes repetitive processes and reduces manual entry of information. Business processes are therefore streamlined and efficient as they work on information from common source.', image: '/ErpOverview/value-4.png' },
+    { title: 'Decision making', desc: 'Removes repetitive processes and reduces manual entry of information. Business processes are therefore streamlined and efficient as they work on information from common source.', image: '/ErpOverview/value-5.png' },
+    { title: 'Profitability', desc: 'Removes repetitive processes and reduces manual entry of information. Business processes are therefore streamlined and efficient as they work on information from common source.', image: '/ErpOverview/value-6.png' },
   ];
 
   const containerVariants = {
@@ -47,44 +47,61 @@ export function ErpValueGrid({ content }: ErpValueGridProps) {
 
   const cardVariants = {
     hidden: { opacity: 0, y: 30 },
-    show: { 
-      opacity: 1, 
+    show: {
+      opacity: 1,
       y: 0,
-      transition: { duration: 0.8, ease: [0.22, 1, 0.36, 1] as any } 
+      transition: { duration: 0.8, ease: [0.22, 1, 0.36, 1] as any }
     },
   };
 
   return (
-    <section className="relative w-full py-24 md:py-32 bg-[#F8F9FA] overflow-hidden border-b border-slate-100">
+    <section className="relative w-full py-16 bg-[#F8F9FA] overflow-hidden border-b border-slate-100">
       {/* Background radial soft light */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] rounded-full bg-slate-200/30 blur-[130px] -z-10" />
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-200 h-200 rounded-full bg-slate-200/30 blur-[130px] -z-10" />
 
       <div className="container mx-auto px-4 md:px-8 max-w-7xl">
-        
+
         {/* Header Block */}
-        <div className="text-center max-w-3xl mx-auto mb-16 md:mb-20 space-y-6">
-          <MotionSection variant="fadeUp" className="space-y-4">
-            <h2 className="text-3xl md:text-5xl font-extrabold text-[#4B2A63] tracking-tight">
+        <div className="text-center max-w-3xl mx-auto mb-12">
+          <MotionSection variant="fadeUp" className="">
+            <h2 className="text-3xl md:text-4xl lg:[42px] font-bold text-[#462294] tracking-tight">
               {heading}
             </h2>
-            <p className="text-slate-500 text-lg font-light leading-relaxed">
+            <p className="text-[#777777] text-lg font-normal">
               {subheading}
             </p>
           </MotionSection>
 
           {/* Central Accent CTA Button */}
-          <MotionSection variant="fadeUp" delay={0.2} className="pt-2">
-            <Button
-              onClick={() => (window.location.href = ctaButton.url)}
-              className="bg-[#4B2A63] hover:bg-[#391E4E] text-white rounded-full px-8 h-12 text-xs font-bold tracking-wider shadow-lg shadow-[#4B2A63]/10 transition-all duration-300 hover:scale-105 active:scale-95 cursor-pointer uppercase"
-            >
-              {ctaButton.label}
-            </Button>
+          {/* Badge With Dotted Line */}
+          <MotionSection variant="fadeUp" delay={0.2} className="pt-8">
+            <div className="relative flex items-center justify-center transition-all duration-300">
+
+              {/* Left Line */}
+              <div className="hidden md:flex flex-1 items-center justify-end">
+                <div className="w-full border-t border-dashed border-[#B9B4D6]" />
+                <div className="w-2 h-2 rounded-full bg-[#4A36F4] ml-2 shrink-0" />
+              </div>
+
+              {/* Badge */}
+              <Button
+                onClick={() => (window.location.href = ctaButton.url)}
+                className="bg-[#4A36F4] hover:bg-[#462294] text-white rounded-full px-8 md:px-10 h-12 text-sm md:text-base font-semibold shadow-lg transition-all duration-300"
+              >
+                {ctaButton.label}
+              </Button>
+
+              {/* Right Line */}
+              <div className="hidden md:flex flex-1 items-center justify-start">
+                <div className="w-2 h-2 rounded-full bg-[#4A36F4] mr-2 shrink-0" />
+                <div className="w-full border-t border-dashed border-[#B9B4D6]" />
+              </div>
+            </div>
           </MotionSection>
         </div>
 
         {/* 3x2 Grid layout */}
-        <motion.div 
+        <motion.div
           variants={containerVariants}
           initial="hidden"
           whileInView="show"
@@ -95,40 +112,46 @@ export function ErpValueGrid({ content }: ErpValueGridProps) {
             <motion.div
               key={idx}
               variants={cardVariants}
-              className="group relative h-80 rounded-[32px] overflow-hidden border border-slate-200 bg-slate-900 shadow-lg hover:shadow-2xl transition-all duration-500"
+              className="group transition-all duration-500 hover:-translate-y-2"
             >
-              {/* Card Image Cover with gradient fallback */}
-              <div className="absolute inset-0 bg-gradient-to-tr from-slate-900 via-slate-800 to-indigo-950 -z-10" />
-              <img
-                src={card.image}
-                alt={card.title}
-                onError={(e) => {
-                  // If image fails to load, gracefully hide it and let the beautiful gradient show
-                  (e.target as HTMLImageElement).style.display = 'none';
-                }}
-                className="absolute inset-0 w-full h-full object-cover opacity-35 group-hover:scale-110 group-hover:rotate-1 transition-all duration-700 ease-[0.22,1,0.36,1] -z-10"
-              />
+              {/* Image */}
+              <div className="relative h-65">
+                <img
+                  src={card.image}
+                  alt={card.title}
+                  onError={(e) => {
+                    (e.target as HTMLImageElement).style.display = 'none';
+                  }}
+                  className="w-full h-full transition-transform hover:rounded-2xl rounded-2xl duration-700 group-hover:scale-105"
+                />
 
-              {/* Top Shadow Gradient Overlay */}
-              <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-900/60 to-transparent" />
+                {/* Overlay */}
+                {/* <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-black/10 to-transparent" /> */}
 
-              {/* Content Box */}
-              <div className="absolute inset-0 p-8 flex flex-col justify-end space-y-3.5">
-                <div className="inline-block">
-                  <span className="text-[10px] font-black tracking-widest text-[#FFD54F] uppercase border-b-2 border-[#FFD54F]/80 pb-1">
-                    METRIC {idx + 1}
+                {/* Floating Number */}
+                {/* <div className="absolute top-5 left-5 w-11 h-11 rounded-2xl bg-white/90 backdrop-blur-md flex items-center justify-center shadow-lg">
+                  <span className="text-[#462294] font-bold text-sm">
+                    0{idx + 1}
                   </span>
-                </div>
-                <h3 className="text-xl font-black text-white tracking-wide">
-                  {card.title}
-                </h3>
-                <p className="text-slate-300 text-[13px] font-light leading-relaxed">
-                  {card.desc}
-                </p>
+                </div> */}
               </div>
 
-              {/* Soft border accent on hover */}
-              <div className="absolute inset-0 rounded-[32px] border-2 border-transparent group-hover:border-[#FFD54F]/20 transition-colors duration-500 pointer-events-none" />
+              {/* Content */}
+              <div className="py-4 px-4">
+                <h3 className="text-[28px] leading-tight mb-1 font-bold text-[#462294] group-hover:text-[#391781] transition-colors duration-300">
+                  {card.title}
+                </h3>
+
+                <p className="text-[#6E6E73] text-[15px] font-normal">
+                  {card.desc}
+                </p>
+
+                {/* Bottom Accent */}
+                {/* <div className="mt-6 flex items-center gap-2">
+                  <div className="w-10 h-[3px] rounded-full bg-[#462294]" />
+                  <div className="w-2 h-2 rounded-full bg-[#462294]" />
+                </div> */}
+              </div>
             </motion.div>
           ))}
         </motion.div>
