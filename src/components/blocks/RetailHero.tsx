@@ -69,7 +69,7 @@ export function RetailHero({ content }: { content: RetailHeroContent }) {
              <img 
                 src={imagePath} 
                 alt="Retail ERP Dashboard" 
-                className="w-full max-w-lg lg:max-w-none h-auto object-contain drop-shadow-2xl"
+                className="w-full  h-[400px] object-contain drop-shadow-2xl"
              />
           </motion.div>
           
