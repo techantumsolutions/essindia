@@ -5,43 +5,43 @@ import { motion } from 'framer-motion';
 
 const models = [
   {
-    title: 'Corrugated boxes',
-    desc: 'Centralize production, material movement, and packaging commitments.',
+    title: 'Lorem ipsum',
+    desc: 'Lorem ipsum dolor sit amet, labore et dolore magna aliqua. Ut enim ad minim veniam.',
     img: '/Modules-manufacturing/industries-1.png'
   },
   {
-    title: 'Trading',
-    desc: 'Track supply, customer commitments, pricing, and marketing activity in real time.',
+    title: 'Lorem ipsum',
+    desc: 'Lorem ipsum dolor sit amet, labore et dolore magna aliqua. Ut enim ad minim veniam.',
     img: '/Modules-manufacturing/industries-2.png'
   },
   {
-    title: 'Flour mills',
-    desc: 'Bring procurement, milling, inventory, quality, and dispatch into one operating view.',
+    title: 'Lorem ipsum',
+    desc: 'Lorem ipsum dolor sit amet, labore et dolore magna aliqua. Ut enim ad minim veniam.',
     img: '/Modules-manufacturing/industries-3.png'
   },
   {
-    title: 'Printing & publishing',
-    desc: 'ebizframe ERP for Printing & Publishing is an integrated ERP System specially',
+    title: 'Lorem ipsum',
+    desc: 'Lorem ipsum dolor sit amet, labore et dolore magna aliqua. Ut enim ad minim veniam.',
     img: '/Modules-manufacturing/industries-4.png'
   },
   {
-    title: 'Food and beverages',
-    desc: 'Centralize production, material movement, and packaging commitments.',
+    title: 'Lorem ipsum',
+    desc: 'Lorem ipsum dolor sit amet, labore et dolore magna aliqua. Ut enim ad minim veniam.',
     img: '/Modules-manufacturing/industries-5.png'
   },
   {
-    title: 'Process manufacturing',
-    desc: 'Track supply, customer commitments, pricing, and marketing activity in real time.',
+    title: 'Lorem ipsum',
+    desc: 'Lorem ipsum dolor sit amet, labore et dolore magna aliqua. Ut enim ad minim veniam.',
     img: '/Modules-manufacturing/industries-6.png'
   },
   {
-    title: 'Discrete manufacturing',
-    desc: 'Bring procurement, milling, inventory, quality, and dispatch into one operating view.',
+    title: 'Lorem ipsum',
+    desc: 'Lorem ipsum dolor sit amet, labore et dolore magna aliqua. Ut enim ad minim veniam.',
     img: '/Modules-manufacturing/industries-7.png'
   },
   {
-    title: 'Construction',
-    desc: 'The Construction Industry is one of the booming industries in the world.',
+    title: 'Lorem ipsum',
+    desc: 'Lorem ipsum dolor sit amet, labore et dolore magna aliqua. Ut enim ad minim veniam.',
     img: '/Modules-manufacturing/industries-8.png'
   },
 ];
@@ -51,14 +51,15 @@ export default function ManufacturingModels() {
     <section className="py-14 bg-white px-6">
       <div className="container mx-auto  max-w-7xl">
         <div className="text-center mb-14 space-y-2">
-          <div className="text-[13px] font-bold text-slate-800">
-            Industries served
+          <div className="text-[14px] font-bold text-slate-800">
+            Lorem ipsum
           </div>
           <h2 className="text-3xl md:text-4xl lg:text-[44px] font-extrabold text-[#27256b] leading-[1.1] tracking-tight">
-            Manufacturing depth across <br /> operating models.
+            Lorem ipsum dolor sit amet, consectetur.<br />
+            ipsum dolor sit models.
           </h2>
           <p className="text-slate-500 text-[16px] max-w-3xl mx-auto pt-2">
-            Each industry card now states the operational value clearly instead of burying it in broad text.
+            Lorem ipsum dolor sit amet, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
           </p>
         </div>
 

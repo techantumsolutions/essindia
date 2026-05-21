@@ -18,7 +18,7 @@ const footerLinks = {
 
 export function Footer() {
   return (
-    <footer className="bg-[#ececec] border-t border-slate-100 pt-12 pb-0 px-6">
+    <footer className="bg-[#ececec] border-t border-slate-100 pt-8 pb-0 px-6">
       <div className="container mx-auto max-w-7xl">
 
         {/* Top Section Grid */}
@@ -124,8 +124,8 @@ export function Footer() {
       </div>
 
       {/* Bottom Section - Full width border */}
-      <div className="border-t border-slate-300 w-full mt-4">
-        <div className="container mx-auto max-w-7xl px-6 py-6 flex flex-col md:flex-row justify-between items-center gap-4">
+      <div className="border-t border-slate-300 w-full mt-2">
+        <div className="container mx-auto max-w-7xl px-6 py-2 flex flex-col md:flex-row justify-between items-center gap-4">
           <div className="flex flex-wrap items-center gap-3 text-[12px] text-slate-500">
             <Link href="#" className="hover:text-slate-800">Trust & security</Link>
             <span className="text-slate-300">|</span>

@@ -5,20 +5,20 @@ import { motion } from 'framer-motion';
 import { LineChart, Factory, Monitor, LayoutDashboard, Coins, Layers, Users } from 'lucide-react';
 
 const icons = [
-  { icon: LineChart, label: 'SALES' },
-  { icon: Factory, label: 'MANUFACTURING' },
-  { icon: Monitor, label: 'FIXED ASSETS' },
-  { icon: LayoutDashboard, label: 'CORPORATE PORTAL' },
-  { icon: Coins, label: 'FINANCE' },
-  { icon: Layers, label: 'MATERIALS' },
-  { icon: Users, label: 'HUMAN CAPITAL' },
+  { icon: LineChart, label: 'Lorem ipsum' },
+  { icon: Factory, label: 'Lorem ipsum' },
+  { icon: Monitor, label: 'Lorem ipsum' },
+  { icon: LayoutDashboard, label: 'Lorem ipsum' },
+  { icon: Coins, label: 'Lorem ipsum' },
+  { icon: Layers, label: 'Lorem ipsum' },
+  { icon: Users, label: 'Lorem ipsum' },
 ];
 
 export default function ManufacturingIconRow() {
   return (
     <section className="bg-[#f4f4fc] py-14 px-6">
       <div className="container mx-auto max-w-7xl">
-        <div className="flex flex-wrap lg:flex-nowrap justify-center gap-3">
+        <div className="flex overflow-x-auto lg:overflow-x-visible lg:flex-nowrap justify-start lg:justify-center gap-3 pb-4 snap-x snap-mandatory hide-scrollbar">
           {icons.map((item, i) => {
             const Icon = item.icon;
             const isActive = i === 0;
@@ -29,7 +29,7 @@ export default function ManufacturingIconRow() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.4, delay: i * 0.05 }}
-                className={`relative flex-1 min-w-[130px] aspect-square lg:aspect-auto lg:h-[130px] flex flex-col items-center justify-center gap-3 text-center transition-all cursor-pointer rounded-2xl ${isActive
+                className={`relative w-[130px] shrink-0 lg:flex-1 snap-start aspect-square lg:aspect-auto lg:h-[130px] flex flex-col items-center justify-center gap-3 text-center transition-all cursor-pointer rounded-[20px] ${isActive
                   ? 'bg-[#27256b] text-white shadow-lg'
                   : 'bg-white border border-slate-200 hover:border-[#27256b]/30 hover:shadow-md'
                   }`}

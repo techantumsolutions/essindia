@@ -4,10 +4,10 @@ import React from 'react';
 import { motion } from 'framer-motion';
 
 const steps = [
-  { img: '/Modules-manufacturing/Production flow-1.png', label: 'DEMAND', desc: 'Convert orders and forecasts into production intent without losing customer priority.' },
-  { img: '/Modules-manufacturing/Production flow-2.png', label: 'PLAN', desc: 'Match capacity, shifts, machines, manpower, and material before work reaches the floor.' },
-  { img: '/Modules-manufacturing/Production flow-3.png', label: 'EXECUTE', desc: 'Create job cards, capture closures, and monitor production progress in real time.' },
-  { img: '/Modules-manufacturing/Production flow-4.png', label: 'IMPROVE', desc: 'Convert orders and forecasts into production intent without losing customer priority.' },
+  { img: '/Modules-manufacturing/Production flow-1.png', label: 'DEMAND', desc: 'Quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea nisi ut aliqu ipsum lorem.' },
+  { img: '/Modules-manufacturing/Production flow-2.png', label: 'PLAN', desc: 'Quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea nisi ut aliqu ipsum lorem.' },
+  { img: '/Modules-manufacturing/Production flow-3.png', label: 'EXECUTE', desc: 'Quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea nisi ut aliqu ipsum lorem.' },
+  { img: '/Modules-manufacturing/Production flow-4.png', label: 'IMPROVE', desc: 'Quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea nisi ut aliqu ipsum lorem.' },
 ];
 
 export default function ManufacturingProcess() {
@@ -16,13 +16,13 @@ export default function ManufacturingProcess() {
       <div className="container mx-auto max-w-7xl">
         <div className="text-center mb-8 space-y-2">
           <div className="text-[14px] font-bold text-slate-900">
-            Production flow
+            Process ipsum
           </div>
           <h2 className="text-3xl md:text-4xl font-bold text-[#27256b] tracking-tight">
-            From order receipt to finished goods.
+            Lorem ipsum dolor sit amet, consectetur.
           </h2>
           <p className="text-slate-500 max-w-2xl mx-auto text-[15px]">
-            A calmer sequence helps visitors understand where the ERP fits in daily manufacturing work.
+            Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea nisi ut aliquip
           </p>
         </div>
 

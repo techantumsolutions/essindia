@@ -15,9 +15,9 @@ export default function ManufacturingDemand() {
             transition={{ duration: 0.6 }}
           >
             <h2 className="text-3xl md:text-[40px] font-bold text-[#27256b] leading-[1.3] tracking-tight">
-              Connect demand, capacity,<br />
-              material, manpower,<br />
-              machines, and quality.
+              Lorem demand, Lorem,<br />
+              ipsum, incididunt ,<br />
+              commodo ,  adipiscing.
             </h2>
           </motion.div>
 
@@ -26,13 +26,13 @@ export default function ManufacturingDemand() {
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6, delay: 0.2 }}
-            className="space-y-6 text-slate-500 text-[14px] leading-relaxed border-l-[1.5px] border-slate-200 pl-8 md:pl-12 py-2"
+            className="space-y-6 text-slate-500 text-[14px] leading-relaxed border-l-0 md:border-l-[1.5px] border-slate-200 pl-0 md:pl-12 py-2"
           >
             <p>
-              The ESS India Manufacturing Module is designed to simplify complex production processes and improve operational efficiency. From planning and procurement to shop floor execution and quality control, ebizframe ERP connects every stage of manufacturing into one intelligent platform.
+              Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
             </p>
             <p>
-              With real-time data, automated workflows, and advanced production monitoring, manufacturers can improve productivity, reduce waste, and make faster business decisions.
+              Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
             </p>
           </motion.div>
         </div>
