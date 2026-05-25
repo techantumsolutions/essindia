@@ -84,11 +84,11 @@ export default async function DynamicPage({ params }: PageProps) {
   return (
     <MainLayout>
       {/* Dynamic Breadcrumbs */}
-      <div className="bg-white border-b border-slate-50 pt-32 pb-4">
+      {/* <div className="bg-white border-b border-slate-50 pt-32 pb-4">
         <div className="container mx-auto px-4 md:px-8 max-w-7xl">
           <Breadcrumbs path={fullPath} />
         </div>
-      </div>
+      </div> */}
 
       {/* Render Page Sections */}
       {page.sections && page.sections.length > 0 ? (
