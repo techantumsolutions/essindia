@@ -4,7 +4,7 @@ import type { MegaMenuPayload, MegaMenuCategory } from '@/lib/cms/mega-menu-type
 export function hasRenderableMegaMenu(data: MegaMenuPayload | null | undefined): boolean {
   if (!data?.categories?.length) return false;
   return data.categories.some(
-    (cat) => cat.subCategories.length > 0
+    (cat) => cat.subCategories.length > 0 || cat.pageId || cat.href
   );
 }
 
@@ -21,7 +21,7 @@ export function sanitizeMegaMenuPayload(data: MegaMenuPayload): MegaMenuPayload 
 
       return { ...cat, subCategories };
     })
-    .filter((cat) => cat.name?.trim() && cat.subCategories.length > 0);
+    .filter((cat) => cat.name?.trim() && (cat.subCategories.length > 0 || cat.pageId || cat.href));
 
   if (categories.length === 0) return null;
 

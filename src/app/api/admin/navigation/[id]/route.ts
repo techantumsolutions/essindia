@@ -29,22 +29,23 @@ export async function PUT(request: Request, props: { params: Promise<{ id: strin
   try {
     const params = await props.params;
     const body = await request.json();
-    const { label, slug, url, icon, isActive, orderIndex, megaMenuEnabled, megaMenuConfig } = body;
+    const { label, slug, url, icon, isActive, orderIndex, megaMenuEnabled, megaMenuConfig, pageId } = body;
 
     const updated = await db.update(navigationItems)
-      .set({ 
-        label, 
-        slug,
-        url, 
-        icon, 
-        isActive, 
-        orderIndex, 
-        megaMenuEnabled,
-        megaMenuConfig,
-        updatedAt: new Date() 
-      })
-      .where(eq(navigationItems.id, params.id))
-      .returning();
+       .set({ 
+         label, 
+         slug,
+         url, 
+         pageId: pageId !== undefined ? (pageId ?? null) : undefined,
+         icon, 
+         isActive, 
+         orderIndex, 
+         megaMenuEnabled,
+         megaMenuConfig,
+         updatedAt: new Date() 
+       })
+       .where(eq(navigationItems.id, params.id))
+       .returning();
 
     if (!updated.length) return NextResponse.json({ error: 'Item not found' }, { status: 404 });
 

@@ -105,6 +105,7 @@ export class MegaMenuRepository {
 
       const pageIds = new Set<string>();
       categories.forEach((cat) => {
+        if (cat.pageId) pageIds.add(cat.pageId);
         cat.subCategories.forEach((sub) => {
           if (sub.pageId) pageIds.add(sub.pageId);
           sub.subSubCategories.forEach((leaf) => {
@@ -119,11 +120,27 @@ export class MegaMenuRepository {
         navigationItemId,
         navSlug,
         label: navItem.label,
-        categories: categories.map((cat) => ({
-          id: cat.id,
-          name: cat.name,
-          slug: cat.slug,
-          subCategories: cat.subCategories
+        categories: categories
+          .filter((cat) => {
+            if (cat.pageId) {
+              const page = pageMap.get(cat.pageId);
+              if (page && page.status !== 'published') return false;
+            }
+            return true;
+          })
+          .map((cat) => ({
+            id: cat.id,
+            name: cat.name,
+            slug: cat.slug,
+            pageId: cat.pageId,
+            href: buildMegaMenuHref(
+              navSlug,
+              cat.slug,
+              undefined,
+              undefined,
+              cat.pageId ? pageMap.get(cat.pageId)?.fullPath ?? null : null
+            ),
+            subCategories: cat.subCategories
             .filter((sub) => {
               if (sub.pageId) {
                 const page = pageMap.get(sub.pageId);

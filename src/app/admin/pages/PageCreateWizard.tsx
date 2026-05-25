@@ -24,7 +24,7 @@ type Props = {
   open: boolean;
   onClose: () => void;
   templates: Array<{ id: string; name: string; templateSections?: unknown[] }>;
-  onSubmit: (data: PageCreateFormData, status: 'draft' | 'published') => Promise<void>;
+  onSubmit: (data: PageCreateFormData) => Promise<void>;
 };
 
 const emptyForm: PageCreateFormData = {
@@ -209,7 +209,7 @@ export function PageCreateWizard({ open, onClose, templates, onSubmit }: Props) 
     setCategoryPath(next.length ? next : ['']);
   };
 
-  const submit = async (status: 'draft' | 'published') => {
+  const submit = async () => {
     if (!form.navigationItemId) {
       toast.error('Select a navigation menu item');
       return;
@@ -220,7 +220,7 @@ export function PageCreateWizard({ open, onClose, templates, onSubmit }: Props) 
     }
     setSubmitting(true);
     try {
-      await onSubmit({ ...form, categoryId: resolvedCategoryId }, status);
+      await onSubmit({ ...form, categoryId: resolvedCategoryId });
       onClose();
     } finally {
       setSubmitting(false);
@@ -385,25 +385,14 @@ export function PageCreateWizard({ open, onClose, templates, onSubmit }: Props) 
             <Button variant="ghost" onClick={onClose} className="rounded-full px-8" disabled={submitting}>
               Cancel
             </Button>
-            <div className="flex gap-3">
-              <Button
-                type="button"
-                variant="outline"
-                onClick={() => submit('draft')}
-                disabled={loading || submitting || !form.navigationItemId || !form.title.trim()}
-                className="rounded-full px-8 h-12 font-bold border-slate-200"
-              >
-                {submitting ? 'Saving…' : 'Save as Draft'}
-              </Button>
-              <Button
-                type="button"
-                onClick={() => submit('published')}
-                disabled={loading || submitting || !form.navigationItemId || !form.title.trim()}
-                className="bg-[#4B2A63] hover:bg-[#3B198F] text-white rounded-full px-10 h-12 font-bold"
-              >
-                {submitting ? 'Publishing…' : 'Publish'}
-              </Button>
-            </div>
+            <Button
+              type="button"
+              onClick={submit}
+              disabled={loading || submitting || !form.navigationItemId || !form.title.trim()}
+              className="bg-[#4B2A63] hover:bg-[#3B198F] text-white rounded-full px-10 h-12 font-bold"
+            >
+              {submitting ? 'Creating…' : 'Create Page'}
+            </Button>
           </div>
         </motion.div>
       </motion.div>

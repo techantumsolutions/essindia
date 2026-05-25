@@ -11,7 +11,7 @@ import { cn } from '@/lib/utils';
 import type { PageRegistryRow } from '@/lib/cms/types';
 import { PageCreateWizard, type PageCreateFormData } from './PageCreateWizard';
 
-export default function PagesModule() {
+function PagesModuleContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [pages, setPages] = React.useState<PageRegistryRow[]>([]);
@@ -64,7 +64,7 @@ export default function PagesModule() {
     return () => controller.abort();
   }, [fetchData]);
 
-  const handleCreate = async (form: PageCreateFormData, status: 'draft' | 'published') => {
+  const handleCreate = async (form: PageCreateFormData) => {
     try {
       const res = await fetch('/api/admin/pages', {
         method: 'POST',
@@ -72,7 +72,7 @@ export default function PagesModule() {
         body: JSON.stringify({
           title: form.title,
           slug: form.slug || undefined,
-          status,
+          status: 'draft',
           templateId: form.templateId || null,
           navigationItemId: form.navigationItemId || null,
           categoryId: form.categoryId || null,
@@ -80,7 +80,7 @@ export default function PagesModule() {
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || 'Failed to create page');
-      toast.success(status === 'published' ? 'Page published' : 'Page saved as draft');
+      toast.success('Page created as draft');
       router.push(`/admin/pages/${data.id}`);
     } catch (e: unknown) {
       toast.error(e instanceof Error ? e.message : 'Failed to create page');
@@ -252,9 +252,20 @@ function RegistryPageRow({
       <div className="col-span-2 flex justify-end gap-1">
         <Link href={page.routePath} target="_blank"><Button variant="ghost" size="icon"><Eye className="w-4 h-4" /></Button></Link>
         <Link href={`/admin/pages/${page.pageId}`}><Button className="bg-[#4B2A63] text-white rounded-xl h-9 px-3 text-xs font-bold">Edit</Button></Link>
-        <Button variant="ghost" className="text-xs font-bold" onClick={() => onAction(page.pageId!, 'convert-template')}>Template</Button>
         <Button variant="ghost" size="icon" className="text-rose-400" onClick={() => onDelete(page.pageId!)}><Trash2 className="w-4 h-4" /></Button>
       </div>
     </motion.div>
+  );
+}
+
+export default function PagesModule() {
+  return (
+    <React.Suspense fallback={
+      <div className="flex items-center justify-center min-h-screen bg-slate-50">
+        <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-[#4B2A63]"></div>
+      </div>
+    }>
+      <PagesModuleContent />
+    </React.Suspense>
   );
 }

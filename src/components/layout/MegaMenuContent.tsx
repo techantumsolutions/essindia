@@ -18,7 +18,10 @@ export function MegaMenuContent({ data }: Props) {
   }
 
   const { categories, navigationItemId } = data;
-  const [activeTabId, setActiveTabId] = React.useState(categories[0]?.id ?? '');
+  const [activeTabId, setActiveTabId] = React.useState(() => {
+    const firstWithSubs = categories.find((c) => c.subCategories && c.subCategories.length > 0);
+    return firstWithSubs?.id ?? categories[0]?.id ?? '';
+  });
   const activeCategory = categories.find((c) => c.id === activeTabId);
   const [activeSubId, setActiveSubId] = React.useState(
     activeCategory?.subCategories[0]?.id ?? ''
@@ -45,25 +48,41 @@ export function MegaMenuContent({ data }: Props) {
       >
         {categories.length > 1 && (
           <motion.div className="flex items-center gap-10 border-b border-slate-50 px-12 pt-6 overflow-x-auto">
-            {categories.map((tab) => (
-              <button
-                key={tab.id}
-                type="button"
-                onMouseEnter={() => setActiveTabId(tab.id)}
-                className={cn(
-                  'pb-4 text-[11px] font-bold transition-colors relative tracking-[0.05em] uppercase cursor-pointer whitespace-nowrap',
-                  activeTabId === tab.id ? 'text-[#4B2A63]' : 'text-slate-600 hover:text-[#4B2A63]'
-                )}
-              >
-                {tab.name}
-                {activeTabId === tab.id && (
-                  <motion.div
-                    layoutId={tabLayoutId}
-                    className="absolute bottom-0 left-0 right-0 h-[3px] bg-[#4B2A63] rounded-t-full"
-                  />
-                )}
-              </button>
-            ))}
+            {categories.map((tab) => {
+              const hasSubs = tab.subCategories && tab.subCategories.length > 0;
+              if (!hasSubs) {
+                return (
+                  <Link
+                    key={tab.id}
+                    href={tab.href || '#'}
+                    className={cn(
+                      'pb-4 text-[11px] font-bold transition-colors relative tracking-[0.05em] uppercase cursor-pointer whitespace-nowrap text-slate-600 hover:text-[#4B2A63]'
+                    )}
+                  >
+                    {tab.name}
+                  </Link>
+                );
+              }
+              return (
+                <button
+                  key={tab.id}
+                  type="button"
+                  onMouseEnter={() => setActiveTabId(tab.id)}
+                  className={cn(
+                    'pb-4 text-[11px] font-bold transition-colors relative tracking-[0.05em] uppercase cursor-pointer whitespace-nowrap',
+                    activeTabId === tab.id ? 'text-[#4B2A63]' : 'text-slate-600 hover:text-[#4B2A63]'
+                  )}
+                >
+                  {tab.name}
+                  {activeTabId === tab.id && (
+                    <motion.div
+                      layoutId={tabLayoutId}
+                      className="absolute bottom-0 left-0 right-0 h-[3px] bg-[#4B2A63] rounded-t-full"
+                    />
+                  )}
+                </button>
+              );
+            })}
           </motion.div>
         )}
 

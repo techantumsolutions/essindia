@@ -27,6 +27,7 @@ export async function PUT(request: Request, props: { params: Promise<{ id: strin
         .update(megaMenuCategories)
         .set({
           name,
+          pageId: pageId !== undefined ? (pageId ?? null) : undefined,
           slug: slug || (name ? slugify(name) : undefined),
           orderIndex,
           status,

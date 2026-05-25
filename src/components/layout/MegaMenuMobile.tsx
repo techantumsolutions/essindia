@@ -24,25 +24,40 @@ export function MegaMenuMobile({ data, onNavigate }: Props) {
       transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
       className="pl-4 flex flex-col gap-2 border-l-2 border-slate-100 overflow-hidden"
     >
-      {data.categories.map((cat) => (
-        <motion.div key={cat.id} className="flex flex-col">
-          <button
-            type="button"
-            onClick={() =>
-              setOpenCategoryId((prev) => (prev === cat.id ? null : cat.id))
-            }
-            className="flex items-center justify-between text-left text-slate-600 hover:text-[#4B2A63] py-1 font-medium"
-          >
-            <span>{cat.name}</span>
-            <ChevronDown
-              className={cn(
-                'w-4 h-4 transition-transform',
-                openCategoryId === cat.id && 'rotate-180'
-              )}
-            />
-          </button>
-          <AnimatePresence>
-            {openCategoryId === cat.id && (
+      {data.categories.map((cat) => {
+        const hasSubs = cat.subCategories && cat.subCategories.length > 0;
+        if (!hasSubs) {
+          return (
+            <motion.div key={cat.id} className="flex flex-col">
+              <Link
+                href={cat.href || '#'}
+                onClick={onNavigate}
+                className="flex items-center justify-between text-left text-slate-600 hover:text-[#4B2A63] py-1 font-medium"
+              >
+                <span>{cat.name}</span>
+              </Link>
+            </motion.div>
+          );
+        }
+        return (
+          <motion.div key={cat.id} className="flex flex-col">
+            <button
+              type="button"
+              onClick={() =>
+                setOpenCategoryId((prev) => (prev === cat.id ? null : cat.id))
+              }
+              className="flex items-center justify-between text-left text-slate-600 hover:text-[#4B2A63] py-1 font-medium"
+            >
+              <span>{cat.name}</span>
+              <ChevronDown
+                className={cn(
+                  'w-4 h-4 transition-transform',
+                  openCategoryId === cat.id && 'rotate-180'
+                )}
+              />
+            </button>
+            <AnimatePresence>
+              {openCategoryId === cat.id && (
               <motion.div
                 initial={{ opacity: 0, height: 0 }}
                 animate={{ opacity: 1, height: 'auto' }}
@@ -104,8 +119,9 @@ export function MegaMenuMobile({ data, onNavigate }: Props) {
               </motion.div>
             )}
           </AnimatePresence>
-        </motion.div>
-      ))}
+          </motion.div>
+        );
+      })}
     </motion.div>
   );
 }

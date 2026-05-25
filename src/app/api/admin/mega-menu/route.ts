@@ -49,6 +49,7 @@ export async function POST(request: Request) {
         .insert(megaMenuCategories)
         .values({
           navigationItemId,
+          pageId: pageId ?? null,
           name,
           slug: slug || slugify(name),
           orderIndex: orderIndex ?? 0,
