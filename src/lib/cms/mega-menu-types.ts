@@ -19,6 +19,8 @@ export type MegaMenuCategory = {
   id: string;
   name: string;
   slug: string;
+  pageId?: string | null;
+  href?: string;
   subCategories: MegaMenuSubCategory[];
 };
 

@@ -261,6 +261,7 @@ export const megaMenuCategories = pgTable('mega_menu_categories', {
   navigationItemId: uuid('navigation_item_id')
     .notNull()
     .references(() => navigationItems.id, { onDelete: 'cascade' }),
+  pageId: uuid('page_id').references(() => pages.id, { onDelete: 'set null' }),
   name: varchar('name', { length: 255 }).notNull(),
   slug: varchar('slug', { length: 255 }).notNull(),
   orderIndex: integer('order_index').notNull().default(0),
@@ -426,6 +427,7 @@ export const megaMenuCategoriesRelations = relations(megaMenuCategories, ({ one,
     fields: [megaMenuCategories.navigationItemId],
     references: [navigationItems.id],
   }),
+  page: one(pages, { fields: [megaMenuCategories.pageId], references: [pages.id] }),
   subCategories: many(megaMenuSubCategories),
 }));
 

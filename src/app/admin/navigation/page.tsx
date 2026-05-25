@@ -8,7 +8,6 @@ import {
   GripVertical, 
   ExternalLink, 
   Layout, 
-  Columns, 
   Settings2,
   Trash2,
   Link as LinkIcon,
@@ -26,27 +25,42 @@ export default function NavigationModule() {
   const [menus, setMenus] = useState<any[]>([]);
   const [activeMenuLocation, setActiveMenuLocation] = useState('header-main');
   const [items, setItems] = useState<any[]>([]);
+  const [registryPages, setRegistryPages] = useState<any[]>([]);
   const [selectedItemId, setSelectedItemId] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
+  const [draggedIndex, setDraggedIndex] = useState<number | null>(null);
 
-  // Fetch all menus on mount
+  // Fetch all menus and pages on mount
   useEffect(() => {
-    async function fetchMenus() {
+    async function initData() {
       try {
-        const res = await fetch('/api/admin/navigation');
-        const data = await res.json();
-        if (Array.isArray(data)) {
-          setMenus(data);
-          if (data.length > 0 && !activeMenuLocation) {
-            setActiveMenuLocation(data[0].location);
+        const [menusRes, pagesRes] = await Promise.all([
+          fetch('/api/admin/navigation'),
+          fetch('/api/admin/pages?registry=true')
+        ]);
+        
+        if (menusRes.ok) {
+          const menusData = await menusRes.json();
+          if (Array.isArray(menusData)) {
+            setMenus(menusData);
+            if (menusData.length > 0 && !activeMenuLocation) {
+              setActiveMenuLocation(menusData[0].location);
+            }
+          }
+        }
+        
+        if (pagesRes.ok) {
+          const pagesData = await pagesRes.json();
+          if (Array.isArray(pagesData)) {
+            setRegistryPages(pagesData);
           }
         }
       } catch (error) {
-        toast.error('Failed to load menus');
+        toast.error('Failed to load navigation configuration');
       }
     }
-    fetchMenus();
+    initData();
   }, []);
 
   // Fetch items for the active menu
@@ -58,9 +72,11 @@ export default function NavigationModule() {
         const res = await fetch(`/api/admin/navigation?location=${activeMenuLocation}`);
         const data = await res.json();
         if (data.items) {
-          setItems(data.items);
-          if (data.items.length > 0) {
-            setSelectedItemId(data.items[0].id);
+          // Sort items by orderIndex initially
+          const sorted = data.items.sort((a: any, b: any) => a.orderIndex - b.orderIndex);
+          setItems(sorted);
+          if (sorted.length > 0) {
+            setSelectedItemId(sorted[0].id);
           } else {
             setSelectedItemId(null);
           }
@@ -92,6 +108,7 @@ export default function NavigationModule() {
         body: JSON.stringify({
           label: selectedItem.label,
           url: selectedItem.url,
+          pageId: selectedItem.pageId || null,
           icon: selectedItem.icon,
           megaMenuEnabled: selectedItem.megaMenuEnabled,
           megaMenuConfig: selectedItem.megaMenuConfig,
@@ -101,7 +118,7 @@ export default function NavigationModule() {
       });
 
       if (res.ok) {
-        toast.success('Navigation item updated');
+        toast.success('Navigation item updated successfully');
       } else {
         throw new Error('Failed to update');
       }
@@ -124,7 +141,7 @@ export default function NavigationModule() {
           type: 'item',
           menuId: activeMenu.id,
           label: 'New Link',
-          url: '#',
+          url: '/',
           icon: 'Link'
         }),
       });
@@ -133,7 +150,7 @@ export default function NavigationModule() {
         const newItem = await res.json();
         setItems(prev => [...prev, newItem]);
         setSelectedItemId(newItem.id);
-        toast.success('New item added');
+        toast.success('New menu item added');
       }
     } catch (error) {
       toast.error('Failed to add item');
@@ -156,6 +173,50 @@ export default function NavigationModule() {
       }
     } catch (error) {
       toast.error('Failed to delete item');
+    }
+  };
+
+  // Drag and Drop implementation
+  const handleDragStart = (e: React.DragEvent, index: number) => {
+    setDraggedIndex(index);
+    e.dataTransfer.effectAllowed = 'move';
+  };
+
+  const handleDragOver = (e: React.DragEvent, index: number) => {
+    e.preventDefault();
+    if (draggedIndex === null || draggedIndex === index) return;
+    
+    const newItems = [...items];
+    const draggedItem = newItems[draggedIndex];
+    newItems.splice(draggedIndex, 1);
+    newItems.splice(index, 0, draggedItem);
+    setDraggedIndex(index);
+    setItems(newItems);
+  };
+
+  const handleDragEnd = async () => {
+    setDraggedIndex(null);
+    const updatedItems = items.map((item, idx) => ({
+      ...item,
+      orderIndex: idx,
+    }));
+    setItems(updatedItems);
+    
+    try {
+      const res = await fetch('/api/admin/navigation/reorder', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          items: updatedItems.map(item => ({ id: item.id, orderIndex: item.orderIndex }))
+        })
+      });
+      if (res.ok) {
+        toast.success('Navigation ordering saved');
+      } else {
+        toast.error('Failed to save navigation order');
+      }
+    } catch (error) {
+      toast.error('Network error saving navigation order');
     }
   };
 
@@ -184,13 +245,10 @@ export default function NavigationModule() {
             >
               {menus.map(m => <option key={m.id} value={m.location}>{m.name}</option>)}
             </select>
-            <p className="text-slate-500 font-medium">Design your multi-level Mega Menus and site-wide navigation.</p>
+            <p className="text-slate-500 font-medium">Design your site navigation structure with drag-and-drop ease.</p>
           </div>
         </div>
         <div className="flex gap-3">
-          <Button variant="outline" className="rounded-full px-6 h-12 font-bold border-slate-200 active:scale-95 cursor-pointer">
-            Discard
-          </Button>
           <Button 
             onClick={handleSave}
             disabled={isSaving}
@@ -208,21 +266,26 @@ export default function NavigationModule() {
           <div className="bg-white rounded-[32px] p-8 border border-slate-100 shadow-[0_20px_50px_-15px_rgba(0,0,0,0.03)]">
             <div className="flex items-center justify-between mb-8">
               <h3 className="font-bold text-lg text-slate-900">Menu Hierarchy</h3>
-              <Button size="icon" variant="ghost" className="rounded-full bg-slate-50 text-[#4B2A63]">
+              <Button size="icon" variant="ghost" onClick={handleAddItem} className="rounded-full bg-slate-50 text-[#4B2A63]">
                 <Plus className="w-5 h-5" />
               </Button>
             </div>
 
             <div className="space-y-2">
-              {items.map((item) => (
+              {items.map((item, index) => (
                 <motion.div
                   key={item.id}
+                  draggable
+                  onDragStart={(e: any) => handleDragStart(e, index)}
+                  onDragOver={(e: any) => handleDragOver(e, index)}
+                  onDragEnd={handleDragEnd}
                   onClick={() => setSelectedItemId(item.id)}
                   className={cn(
-                    "flex items-center gap-4 p-4 rounded-2xl border transition-all cursor-pointer group",
+                    "flex items-center gap-4 p-4 rounded-2xl border transition-all cursor-grab active:cursor-grabbing group",
                     selectedItemId === item.id 
                       ? "bg-[#4B2A63] border-[#4B2A63] text-white shadow-xl shadow-[#4B2A63]/20" 
-                      : "bg-white border-slate-50 text-slate-600 hover:border-[#4B2A63]/20 hover:bg-slate-50"
+                      : "bg-white border-slate-50 text-slate-600 hover:border-[#4B2A63]/20 hover:bg-slate-50",
+                    draggedIndex === index && "opacity-40 border-dashed border-2 border-[#4B2A63]"
                   )}
                 >
                   <GripVertical className={cn("w-4 h-4 shrink-0", selectedItemId === item.id ? "text-white/40" : "text-slate-300")} />
@@ -273,75 +336,110 @@ export default function NavigationModule() {
               </div>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
-              <div className="space-y-6">
-                <div className="space-y-2">
-                  <label className="text-[11px] font-black text-slate-400 uppercase tracking-widest ml-1">Label</label>
-                  <input 
-                    type="text" 
-                    value={selectedItem?.label || ''} 
-                    onChange={(e) => handleUpdateItemField('label', e.target.value)}
-                    className="w-full bg-slate-50 border-2 border-transparent focus:border-[#4B2A63]/10 focus:bg-white focus:ring-4 focus:ring-[#4B2A63]/5 rounded-2xl px-6 py-4 text-[15px] font-bold outline-none transition-all" 
-                  />
-                </div>
-                <div className="space-y-2">
-                  <label className="text-[11px] font-black text-slate-400 uppercase tracking-widest ml-1">Link URL / Page</label>
-                  <div className="relative">
-                    <LinkIcon className="absolute left-6 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+            {selectedItem ? (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+                <div className="space-y-6">
+                  <div className="space-y-2">
+                    <label className="text-[11px] font-black text-slate-400 uppercase tracking-widest ml-1">Label</label>
                     <input 
                       type="text" 
-                      value={selectedItem?.url || ''} 
-                      onChange={(e) => handleUpdateItemField('url', e.target.value)}
-                      className="w-full bg-slate-50 border-2 border-transparent focus:border-[#4B2A63]/10 focus:bg-white focus:ring-4 focus:ring-[#4B2A63]/5 rounded-2xl pl-14 pr-6 py-4 text-[15px] font-bold outline-none transition-all" 
+                      value={selectedItem?.label || ''} 
+                      onChange={(e) => handleUpdateItemField('label', e.target.value)}
+                      className="w-full bg-slate-50 border-2 border-transparent focus:border-[#4B2A63]/10 focus:bg-white focus:ring-4 focus:ring-[#4B2A63]/5 rounded-2xl px-6 py-4 text-[15px] font-bold outline-none transition-all" 
                     />
                   </div>
-                </div>
-              </div>
+                  
+                  <div className="space-y-4">
+                    <div className="space-y-2">
+                      <label className="text-[11px] font-black text-slate-400 uppercase tracking-widest ml-1">Link URL / Page</label>
+                      <select
+                        value={selectedItem?.pageId || 'custom'}
+                        onChange={(e) => {
+                          const val = e.target.value;
+                          if (val === 'custom') {
+                            handleUpdateItemField('pageId', null);
+                          } else {
+                            const page = registryPages.find(p => p.id === val);
+                            if (page) {
+                              handleUpdateItemField('pageId', page.id);
+                              handleUpdateItemField('url', page.routePath);
+                            }
+                          }
+                        }}
+                        className="w-full bg-slate-50 border-2 border-transparent focus:border-[#4B2A63]/10 focus:bg-white focus:ring-4 focus:ring-[#4B2A63]/5 rounded-2xl px-6 py-4 text-[15px] font-bold outline-none transition-all"
+                      >
+                        <option value="custom">Custom URL...</option>
+                        {registryPages.map((page) => (
+                          <option key={page.id} value={page.id}>
+                            {page.title} ({page.routePath})
+                          </option>
+                        ))}
+                      </select>
+                    </div>
 
-              <div className="space-y-6">
-                <div className="space-y-4">
-                  <label className="text-[11px] font-black text-slate-400 uppercase tracking-widest ml-1">Behavior</label>
-                  <div className="grid grid-cols-2 gap-4">
-                    <div 
-                      onClick={() => handleUpdateItemField('megaMenuEnabled', true)}
-                      className={cn(
-                        "p-4 rounded-2xl border-2 flex flex-col items-center gap-2 cursor-pointer transition-all",
-                        selectedItem?.megaMenuEnabled ? "bg-[#4B2A63]/5 border-[#4B2A63]" : "bg-slate-50 border-transparent"
-                      )}
-                    >
-                      <Layout className={cn("w-6 h-6", selectedItem?.megaMenuEnabled ? "text-[#4B2A63]" : "text-slate-400")} />
-                      <span className={cn("text-[12px] font-bold", selectedItem?.megaMenuEnabled ? "text-[#4B2A63]" : "text-slate-500")}>Mega Menu</span>
-                    </div>
-                    <div 
-                      onClick={() => handleUpdateItemField('megaMenuEnabled', false)}
-                      className={cn(
-                        "p-4 rounded-2xl border-2 flex flex-col items-center gap-2 cursor-pointer transition-all",
-                        !selectedItem?.megaMenuEnabled ? "bg-[#4B2A63]/5 border-[#4B2A63]" : "bg-slate-50 border-transparent"
-                      )}
-                    >
-                      <ExternalLink className={cn("w-6 h-6", !selectedItem?.megaMenuEnabled ? "text-[#4B2A63]" : "text-slate-400")} />
-                      <span className={cn("text-[12px] font-bold", !selectedItem?.megaMenuEnabled ? "text-[#4B2A63]" : "text-slate-500")}>Simple Link</span>
-                    </div>
+                    {!selectedItem?.pageId && (
+                      <div className="space-y-2">
+                        <label className="text-[11px] font-black text-slate-400 uppercase tracking-widest ml-1">Custom Link URL</label>
+                        <div className="relative">
+                          <LinkIcon className="absolute left-6 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                          <input 
+                            type="text" 
+                            value={selectedItem?.url || ''} 
+                            onChange={(e) => handleUpdateItemField('url', e.target.value)}
+                            className="w-full bg-slate-50 border-2 border-transparent focus:border-[#4B2A63]/10 focus:bg-white focus:ring-4 focus:ring-[#4B2A63]/5 rounded-2xl pl-14 pr-6 py-4 text-[15px] font-bold outline-none transition-all" 
+                            placeholder="e.g. /custom-path"
+                          />
+                        </div>
+                      </div>
+                    )}
                   </div>
                 </div>
-                <div className="space-y-2">
-                  {selectedItem?.megaMenuEnabled && selectedItemId ? (
-                    <Link
-                      href={`/admin/navigation/mega-menu/${selectedItemId}`}
-                      className="flex items-center justify-center gap-2 p-4 rounded-2xl bg-[#4B2A63] text-white font-bold text-sm hover:bg-[#3B198F] transition-colors"
-                    >
-                      <Layout className="w-4 h-4" />
-                      Manage Mega Menu Structure
-                    </Link>
-                  ) : (
-                    <p className="text-sm text-slate-400 p-4">Enable mega menu to configure structure.</p>
-                  )}
+
+                <div className="space-y-6">
+                  <div className="space-y-4">
+                    <label className="text-[11px] font-black text-slate-400 uppercase tracking-widest ml-1">Behavior</label>
+                    <div className="grid grid-cols-2 gap-4">
+                      <div 
+                        onClick={() => handleUpdateItemField('megaMenuEnabled', true)}
+                        className={cn(
+                          "p-4 rounded-2xl border-2 flex flex-col items-center gap-2 cursor-pointer transition-all",
+                          selectedItem?.megaMenuEnabled ? "bg-[#4B2A63]/5 border-[#4B2A63]" : "bg-slate-50 border-transparent"
+                        )}
+                      >
+                        <Layout className={cn("w-6 h-6", selectedItem?.megaMenuEnabled ? "text-[#4B2A63]" : "text-slate-400")} />
+                        <span className={cn("text-[12px] font-bold", selectedItem?.megaMenuEnabled ? "text-[#4B2A63]" : "text-slate-500")}>Mega Menu</span>
+                      </div>
+                      <div 
+                        onClick={() => handleUpdateItemField('megaMenuEnabled', false)}
+                        className={cn(
+                          "p-4 rounded-2xl border-2 flex flex-col items-center gap-2 cursor-pointer transition-all",
+                          !selectedItem?.megaMenuEnabled ? "bg-[#4B2A63]/5 border-[#4B2A63]" : "bg-slate-50 border-transparent"
+                        )}
+                      >
+                        <ExternalLink className={cn("w-6 h-6", !selectedItem?.megaMenuEnabled ? "text-[#4B2A63]" : "text-slate-400")} />
+                        <span className={cn("text-[12px] font-bold", !selectedItem?.megaMenuEnabled ? "text-[#4B2A63]" : "text-slate-500")}>Simple Link</span>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="space-y-2">
+                    {selectedItem?.megaMenuEnabled && selectedItemId ? (
+                      <Link
+                        href={`/admin/navigation/mega-menu/${selectedItemId}`}
+                        className="flex items-center justify-center gap-2 p-4 rounded-2xl bg-[#4B2A63] text-white font-bold text-sm hover:bg-[#3B198F] transition-colors"
+                      >
+                        <Layout className="w-4 h-4" />
+                        Manage Mega Menu Structure
+                      </Link>
+                    ) : null}
+                  </div>
                 </div>
               </div>
-            </div>
+            ) : (
+              <p className="text-slate-400 text-sm font-bold uppercase tracking-widest text-center py-6">Select a menu item to configure</p>
+            )}
           </div>
 
-          {/* Mega Menu Visual Builder (Mock) */}
+          {/* Mega Menu Visual Builder Preview (Mock) */}
           <div className="bg-[#1A1A2E] rounded-[32px] p-10 text-white shadow-2xl relative overflow-hidden">
             <div className="absolute top-0 left-0 w-full h-full opacity-5 pointer-events-none" style={{ backgroundImage: 'radial-gradient(white 1px, transparent 1px)', backgroundSize: '30px 30px' }} />
             

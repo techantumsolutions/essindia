@@ -11,6 +11,7 @@ import {
   megaMenuSubCategories,
   megaMenuSubSubCategories,
   templates,
+  templateSections,
 } from '@/lib/db/schema';
 import { asc, desc, eq, or } from 'drizzle-orm';
 import { buildFullPath, buildPageTree, slugify } from '@/lib/cms/utils';
@@ -56,7 +57,13 @@ export class PageAdminRepository {
           orderBy: [asc(pageSections.orderIndex)],
         },
         category: true,
-        template: true,
+        template: {
+          with: {
+            templateSections: {
+              orderBy: [asc(templateSections.orderIndex)],
+            },
+          },
+        },
       },
     });
     if (!page) return null;
