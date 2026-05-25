@@ -33,9 +33,9 @@ export function RetailNurture({ content }: { content: RetailNurtureContent }) {
     <>
       <section className="py-14 bg-white">
         <div className="container mx-auto px-4 md:px-6 max-w-7xl">
-          
+
           {/* Top Illustrations */}
-          <div className="flex flex-wrap justify-start items-center gap-8 mb-12">
+          <div className="flex flex-wrap justify-center lg:justify-start items-center gap-8 mb-12">
             {images.map((img, idx) => (
               <motion.div
                 key={idx}
@@ -61,7 +61,7 @@ export function RetailNurture({ content }: { content: RetailNurtureContent }) {
             <h2 className="text-3xl -mt-4 md:text-4xl font-bold text-[#27256b] mb-4 tracking-tight">
               {title}
             </h2>
-            
+
             <div className="space-y-4 text-left md:text-left text-[#b2b2b2] text-sm leading-relaxed">
               {paragraphs.map((para, idx) => (
                 <p key={idx}>{para}</p>
@@ -69,27 +69,27 @@ export function RetailNurture({ content }: { content: RetailNurtureContent }) {
             </div>
           </motion.div>
 
-           {/* Why ebizframe ERP Section */}
-     
+          {/* Why ebizframe ERP Section */}
+
           <div className="grid grid-cols-1 mt-5 md:grid-cols-2 gap-4">
-            
+
             {/* Left Diagram */}
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0, x: -30 }}
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.6 }}
               className="w-full"
             >
-              <img 
-                src={whyImagePath} 
-                alt="ERP Process Diagram" 
+              <img
+                src={whyImagePath}
+                alt="ERP Process Diagram"
                 className=" w-full h-full max-w-xl object-contain drop-shadow-lg"
               />
             </motion.div>
 
             {/* Right Content */}
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0, x: 30 }}
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
@@ -103,15 +103,15 @@ export function RetailNurture({ content }: { content: RetailNurtureContent }) {
                 {whyParagraph}
               </p>
             </motion.div>
-            
+
           </div>
-          
+
         </div>
-       
+
       </section>
 
-      
-       
+
+
     </>
   );
 }
