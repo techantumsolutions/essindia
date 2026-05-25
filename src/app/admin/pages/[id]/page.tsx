@@ -332,11 +332,11 @@ export default function PageEditor() {
                                 setPage((p) =>
                                   p
                                     ? {
-                                        ...p,
-                                        sections: p.sections.map((s) =>
-                                          s.id === section.id ? { ...s, content } : s
-                                        ),
-                                      }
+                                      ...p,
+                                      sections: p.sections.map((s) =>
+                                        s.id === section.id ? { ...s, content } : s
+                                      ),
+                                    }
                                     : p
                                 );
                               } catch {

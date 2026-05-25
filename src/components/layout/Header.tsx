@@ -60,9 +60,10 @@ export function Header({ navData = [] }: { navData?: NavItem[] }) {
       >
         
         {/* Logo */}
-        <Link href="/" className="flex items-center gap-2 group">
-          <div className="relative h-8 w-36 overflow-hidden">
-             <span className="font-bold text-lg text-[#4B2A63] transition-transform duration-500 group-hover:scale-105 inline-block">EASTERN</span>
+        <Link href="/" className="flex items-center group">
+         <div className="relative">
+            <img src="/footer-logo.png" alt="Eastern Software Solutions Pvt.Ltd" className="h-10 w-[160px]" />
+             {/* <span className="font-bold text-lg text-[#4B2A63] transition-transform duration-500 group-hover:scale-105 inline-block">EASTERN</span> */}
           </div>
         </Link>
 

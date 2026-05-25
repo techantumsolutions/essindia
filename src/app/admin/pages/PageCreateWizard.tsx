@@ -10,6 +10,7 @@ import type { NavigationTreeItem } from '@/lib/cms/navigation-tree-types';
 import type { CategoryTreeNode } from '@/lib/cms/types';
 import { buildPagePathFromNavAndCategorySlugs, resolvePageSlug } from '@/lib/cms/build-page-path-from-nav';
 import { slugify } from '@/lib/cms/utils';
+import { useSearchParams } from 'next/navigation';
 
 export type PageCreateFormData = {
   navigationItemId: string;
@@ -106,6 +107,8 @@ function categoryLabel(c: CategoryTreeNode) {
 }
 
 export function PageCreateWizard({ open, onClose, templates, onSubmit }: Props) {
+  const searchParams = useSearchParams();
+  const templateIdParam = searchParams.get('templateId') || '';
   const [form, setForm] = React.useState<PageCreateFormData>(emptyForm);
   const [navItems, setNavItems] = React.useState<NavigationTreeItem[]>([]);
   const [categoryTree, setCategoryTree] = React.useState<CategoryTreeNode[]>([]);
@@ -117,7 +120,10 @@ export function PageCreateWizard({ open, onClose, templates, onSubmit }: Props) 
   React.useEffect(() => {
     if (!open) return;
 
-    setForm(emptyForm);
+    setForm({
+      ...emptyForm,
+      templateId: templateIdParam,
+    });
     setCategoryPath(['']);
     setLoadError(null);
     setLoading(true);

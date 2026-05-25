@@ -5,7 +5,7 @@ import { motion } from 'framer-motion';
 import { Plus, Search, FileText, Eye, Trash2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
 import type { PageRegistryRow } from '@/lib/cms/types';
@@ -13,6 +13,7 @@ import { PageCreateWizard, type PageCreateFormData } from './PageCreateWizard';
 
 export default function PagesModule() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [pages, setPages] = React.useState<PageRegistryRow[]>([]);
   const [isSyncing, setIsSyncing] = React.useState(false);
   const [templates, setTemplates] = React.useState<
@@ -20,6 +21,12 @@ export default function PagesModule() {
   >([]);
   const [isLoading, setIsLoading] = React.useState(true);
   const [isModalOpen, setIsModalOpen] = React.useState(false);
+
+  React.useEffect(() => {
+    if (searchParams.get('createPage') === 'true') {
+      setIsModalOpen(true);
+    }
+  }, [searchParams]);
   const fetchData = React.useCallback(async (signal?: AbortSignal) => {
     setIsLoading(true);
     const requestInit: RequestInit = { credentials: 'same-origin', signal };
