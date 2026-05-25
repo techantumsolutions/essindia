@@ -8,7 +8,7 @@ export default function ManufacturingHero() {
   return (
     <section className="relative bg-[#27256b] text-white px-6 overflow-hidden py-14">
       <div className="container mx-auto max-w-7xl relative z-10">
-        <div className="grid lg:grid-cols-2 gap-12 lg:gap-8 items-center">
+        <div className="grid lg:grid-cols-2 gap-12 lg:gap-8 pt-20 items-center">
 
           {/* Left Content */}
           <motion.div
