@@ -13,12 +13,12 @@ import { ErpModulesGrid } from '@/components/blocks/ErpModulesGrid';
 import { ErpFeaturesTab } from '@/components/blocks/ErpFeaturesTab';
 import { ErpValueGrid } from '@/components/blocks/ErpValueGrid';
 import { ErpTransform } from '@/components/blocks/ErpTransform';
-import ManufacturingHero from '@/components/blocks/ManufacturingHero';
-import ManufacturingIconRow from '@/components/blocks/ManufacturingIconRow';
-import ManufacturingDemand from '@/components/blocks/ManufacturingDemand';
-import ManufacturingProcess from '@/components/blocks/ManufacturingProcess';
-import ManufacturingEfficiency from '@/components/blocks/ManufacturingEfficiency';
-import ManufacturingModels from '@/components/blocks/ManufacturingModels';
+import { RetailHero } from '@/components/blocks/RetailHero';
+import { RetailNurture } from '@/components/blocks/RetailNurture';
+import { RetailFeatures } from '@/components/blocks/RetailFeatures';
+import { RetailOperations } from '@/components/blocks/RetailOperations';
+import { RetailMobileDashboard } from '@/components/blocks/RetailMobileDashboard';
+import { RetailClients } from '@/components/blocks/RetailClients';
 
 interface Section {
   id: string;
@@ -68,18 +68,18 @@ export function SectionRenderer({ section }: SectionRendererProps) {
       return <ErpValueGrid content={section.content} />;
     case 'erp-transform':
       return <ErpTransform content={section.content} />;
-    case 'mfg-hero':
-      return <ManufacturingHero />;
-    case 'mfg-icons':
-      return <ManufacturingIconRow />;
-    case 'mfg-demand':
-      return <ManufacturingDemand />;
-    case 'mfg-process':
-      return <ManufacturingProcess />;
-    case 'mfg-efficiency':
-      return <ManufacturingEfficiency />;
-    case 'mfg-models':
-      return <ManufacturingModels />;
+    case 'retail-hero':
+      return <RetailHero content={section.content} />;
+    case 'retail-nurture':
+      return <RetailNurture content={section.content} />;
+    case 'retail-features':
+      return <RetailFeatures content={section.content} />;
+    case 'retail-operations':
+      return <RetailOperations content={section.content} />;
+    case 'retail-mobile-dashboard':
+      return <RetailMobileDashboard content={section.content} />;
+    case 'retail-clients':
+      return <RetailClients content={section.content} />;
     default:
       if (process.env.NODE_ENV === 'development') {
         return (
