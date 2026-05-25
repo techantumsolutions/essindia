@@ -7,6 +7,7 @@ import { MotionSection } from '@/components/animations/MotionSection';
 interface ErpTab {
   id: string;
   title: string;
+  contentImage: string;
   contentHeading: string;
   contentParagraphs: string[];
   illustrationUrl?: string;
@@ -28,6 +29,7 @@ export function ErpFeaturesTab({ content }: ErpFeaturesTabProps) {
   const tabs = content?.tabs || [
     {
       id: 'standard',
+      contentImage: '/ErpOverview/featureTav1.png',
       title: 'STANDARD VERSION OR WITH CUSTOMIZATION',
       contentHeading: 'FOR STANDARD VERSION OR WITH CUSTOMIZATION',
       contentParagraphs: [
@@ -37,6 +39,7 @@ export function ErpFeaturesTab({ content }: ErpFeaturesTabProps) {
     },
     {
       id: 'global',
+      contentImage: '/ErpOverview/ERP-2.png',
       title: 'GLOBAL STANDARD EDITION',
       contentHeading: 'GLOBAL STANDARD EDITION',
       contentParagraphs: [
@@ -46,6 +49,7 @@ export function ErpFeaturesTab({ content }: ErpFeaturesTabProps) {
     },
     {
       id: 'commerce',
+      contentImage: '/ErpOverview/ERP-3.png',
       title: 'COMMERCE ENGINE SPECIAL EDITION',
       contentHeading: 'COMMERCE ENGINE SPECIAL EDITION',
       contentParagraphs: [
@@ -55,6 +59,7 @@ export function ErpFeaturesTab({ content }: ErpFeaturesTabProps) {
     },
     {
       id: 'enterprise',
+      contentImage: '/ErpOverview/ERP-4.png',
       title: 'ENTERPRISE SPECIFICATIONS',
       contentHeading: 'ENTERPRISE SPECIFICATIONS',
       contentParagraphs: [
@@ -64,6 +69,7 @@ export function ErpFeaturesTab({ content }: ErpFeaturesTabProps) {
     },
     {
       id: 'multisite',
+      contentImage: '/ErpOverview/ERP-5.png',
       title: 'MULTI-SITE SYSTEM EDITION',
       contentHeading: 'MULTI-SITE SYSTEM EDITION',
       contentParagraphs: [
@@ -77,17 +83,17 @@ export function ErpFeaturesTab({ content }: ErpFeaturesTabProps) {
   const activeTab = tabs.find((tab) => tab.id === activeTabId) || tabs[0];
 
   return (
-    <section className="relative w-full py-24 md:py-32 bg-[#4B2A63] text-white overflow-hidden border-b border-slate-900">
+    <section className="relative w-full py-16 bg-[#462294] text-white overflow-hidden border-b border-slate-900">
       {/* Background radial glowing effects */}
-      <div className="absolute top-1/4 -left-1/4 w-[600px] h-[600px] rounded-full bg-purple-500/10 blur-[120px] -z-10" />
-      <div className="absolute bottom-1/4 -right-1/4 w-[600px] h-[600px] rounded-full bg-indigo-500/10 blur-[120px] -z-10" />
+      {/* <div className="absolute top-1/4 -left-1/4 w-150 h-150 rounded-full bg-purple-500/10 blur-[120px] -z-10" />
+      <div className="absolute bottom-1/4 -right-1/4 w-150 h-150 rounded-full bg-indigo-500/10 blur-[120px] -z-10" /> */}
 
       <div className="container mx-auto px-4 md:px-8 max-w-7xl">
         
         {/* Header Block */}
-        <div className="text-center max-w-3xl mx-auto mb-16 md:mb-20 space-y-4">
+        <div className="text-center max-w-xl mx-auto mb-8">
           <MotionSection variant="fadeUp">
-            <h2 className="text-3xl md:text-5xl font-extrabold tracking-tight text-white">
+            <h2 className="text-3xl md:text-4xl lg:text[42px] font-extrabold text-white">
               {heading}
             </h2>
           </MotionSection>
@@ -100,10 +106,10 @@ export function ErpFeaturesTab({ content }: ErpFeaturesTabProps) {
         </div>
 
         {/* Dynamic Comparison Panel Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 bg-[#3b1c7d] p-8 lg:p-20 rounded-[40px] border border-gray-300 shadow-2xl relative overflow-hidden">
           
           {/* Left Column: Sidebar Selector Buttons */}
-          <div className="lg:col-span-5 flex flex-col gap-3.5 w-full">
+          <div className="lg:col-span-5 justify-center items-center flex flex-col gap-3.5 w-full">
             {tabs.map((tab, idx) => {
               const isActive = tab.id === activeTabId;
               return (
@@ -114,16 +120,16 @@ export function ErpFeaturesTab({ content }: ErpFeaturesTabProps) {
                   viewport={{ once: true }}
                   transition={{ duration: 0.5, delay: idx * 0.08, ease: [0.22, 1, 0.36, 1] }}
                   onClick={() => setActiveTabId(tab.id)}
-                  className={`w-full text-left px-6 py-5 rounded-2xl transition-all duration-300 active:scale-98 cursor-pointer flex items-center justify-between group border text-xs md:text-sm tracking-wider font-extrabold ${
+                  className={`w-full text-left px-6 py-5 rounded-full transition-all duration-300 active:scale-98 cursor-pointer flex items-center justify-between group border text-xs md:text-sm tracking-wider font-extrabold ${
                     isActive
                       ? 'bg-[#FFD54F] text-[#4B2A63] border-[#FFD54F] shadow-lg shadow-[#FFD54F]/10'
-                      : 'bg-white/5 border-white/10 text-white/80 hover:bg-white/10 hover:text-white hover:border-white/20'
+                      : 'bg-white border-white/10 text-[#462294] hover:bg-white/10 hover:text-white hover:border-white/20'
                   }`}
                 >
                   <span className="truncate pr-4">{tab.title}</span>
-                  <span className={`transition-transform duration-300 ${isActive ? 'translate-x-1' : 'group-hover:translate-x-1 opacity-60'}`}>
+                  {/* <span className={`transition-transform duration-300 ${isActive ? 'translate-x-1' : 'group-hover:translate-x-1 opacity-60'}`}>
                     →
-                  </span>
+                  </span> */}
                 </motion.button>
               );
             })}
@@ -131,21 +137,23 @@ export function ErpFeaturesTab({ content }: ErpFeaturesTabProps) {
 
           {/* Right Column: Tab Content Pane with Rotating SVG Hub */}
           <div className="lg:col-span-7 w-full">
-            <div className="bg-white/[0.04] border border-white/10 rounded-3xl p-6 md:p-10 shadow-2xl relative overflow-hidden backdrop-blur-md">
-              <div className="absolute top-0 right-0 w-64 h-64 bg-white/[0.01] rounded-full -mr-16 -mt-16 pointer-events-none" />
+            <div className="">
+              <div className="absolute top-0 right-0 w-64 h-64 rounded-full -mr-16 -mt-16 pointer-events-none" />
 
-              <AnimatePresence mode="wait">
                 <motion.div
                   key={activeTab.id}
                   initial={{ opacity: 0, y: 15 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -15 }}
                   transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
-                  className="grid grid-cols-1 md:grid-cols-12 gap-8 items-center"
+                  className=""
                 >
-                  {/* Left inner side: text and paragraphs */}
-                  <div className="md:col-span-7 space-y-6">
-                    <h3 className="text-xl md:text-2xl font-black text-white tracking-wide leading-snug">
+                  <div className="mb-6">
+                    <img src={activeTab?.contentImage || 'ErpOverview/featureTav1.png'} alt={activeTab.contentHeading} />
+                  </div>
+                  {/* text and paragraphs */}
+                  <div className="">
+                    <h3 className="text-xl md:text-3xl font-light text-white tracking-tight leading-10">
                       {activeTab.contentHeading}
                     </h3>
                     
@@ -161,52 +169,8 @@ export function ErpFeaturesTab({ content }: ErpFeaturesTabProps) {
                     </div>
                   </div>
 
-                  {/* Right inner side: Interactive Rotating SVG Illustration */}
-                  <div className="md:col-span-5 flex justify-center items-center">
-                    <div className="relative w-48 h-48 md:w-56 md:h-56">
-                      
-                      {/* Rotating Outer Ring */}
-                      <motion.div
-                        animate={{ rotate: 360 }}
-                        transition={{ repeat: Infinity, duration: 25, ease: 'linear' }}
-                        className="absolute inset-0 rounded-full border border-dashed border-purple-400/40 flex items-center justify-center"
-                      >
-                        {/* Interactive Satellite Nodes */}
-                        <div className="absolute top-0 w-3 h-3 rounded-full bg-[#FFD54F] shadow-lg shadow-[#FFD54F]/50" />
-                        <div className="absolute bottom-0 w-3 h-3 rounded-full bg-cyan-400 shadow-lg shadow-cyan-400/50" />
-                        <div className="absolute left-0 w-3 h-3 rounded-full bg-emerald-400 shadow-lg shadow-emerald-400/50" />
-                        <div className="absolute right-0 w-3 h-3 rounded-full bg-rose-400 shadow-lg shadow-rose-400/50" />
-                      </motion.div>
-
-                      {/* Rotating Middle Ring (Reverse Direction) */}
-                      <motion.div
-                        animate={{ rotate: -360 }}
-                        transition={{ repeat: Infinity, duration: 18, ease: 'linear' }}
-                        className="absolute inset-6 rounded-full border border-dotted border-white/20"
-                      />
-
-                      {/* Central Main Hub */}
-                      <div className="absolute inset-12 rounded-full bg-white/10 border border-white/20 flex flex-col items-center justify-center shadow-inner backdrop-blur-sm pointer-events-none">
-                        <span className="text-[10px] font-black tracking-widest text-[#FFD54F] uppercase">ESS</span>
-                        <span className="text-sm font-black text-white tracking-wide mt-0.5">ERP</span>
-                        <div className="w-1.5 h-1.5 rounded-full bg-[#FFD54F] animate-ping absolute top-4 right-6" />
-                      </div>
-
-                      {/* Floating Decorative Particle Rays */}
-                      <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                        <svg className="w-full h-full text-purple-400/20" viewBox="0 0 100 100">
-                          <line x1="50" y1="50" x2="50" y2="15" stroke="currentColor" strokeWidth="0.75" strokeDasharray="3 3" />
-                          <line x1="50" y1="50" x2="50" y2="85" stroke="currentColor" strokeWidth="0.75" strokeDasharray="3 3" />
-                          <line x1="50" y1="50" x2="15" y2="50" stroke="currentColor" strokeWidth="0.75" strokeDasharray="3 3" />
-                          <line x1="50" y1="50" x2="85" y2="50" stroke="currentColor" strokeWidth="0.75" strokeDasharray="3 3" />
-                        </svg>
-                      </div>
-
-                    </div>
-                  </div>
-
                 </motion.div>
-              </AnimatePresence>
+             
             </div>
           </div>
 

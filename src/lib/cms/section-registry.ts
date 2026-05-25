@@ -10,7 +10,7 @@ import {
   LucideIcon,
 } from 'lucide-react';
 
-export interface SectionTypeDefinition { 
+export interface SectionTypeDefinition {
   type: string;
   label: string;
   description: string;
