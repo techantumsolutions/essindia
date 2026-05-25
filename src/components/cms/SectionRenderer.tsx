@@ -19,6 +19,12 @@ import { RetailFeatures } from '@/components/blocks/RetailFeatures';
 import { RetailOperations } from '@/components/blocks/RetailOperations';
 import { RetailMobileDashboard } from '@/components/blocks/RetailMobileDashboard';
 import { RetailClients } from '@/components/blocks/RetailClients';
+import ManufacturingHero from '@/components/blocks/ManufacturingHero';
+import ManufacturingIconRow from '@/components/blocks/ManufacturingIconRow';
+import ManufacturingDemand from '@/components/blocks/ManufacturingDemand';
+import ManufacturingProcess from '@/components/blocks/ManufacturingProcess';
+import ManufacturingEfficiency from '@/components/blocks/ManufacturingEfficiency';
+import ManufacturingModels from '@/components/blocks/ManufacturingModels';
 
 interface Section {
   id: string;
@@ -80,6 +86,18 @@ export function SectionRenderer({ section }: SectionRendererProps) {
       return <RetailMobileDashboard content={section.content} />;
     case 'retail-clients':
       return <RetailClients content={section.content} />;
+    case 'mfg-hero':
+      return <ManufacturingHero />;
+    case 'mfg-icons':
+      return <ManufacturingIconRow />;
+    case 'mfg-demand':
+      return <ManufacturingDemand />;
+    case 'mfg-process':
+      return <ManufacturingProcess />;
+    case 'mfg-efficiency':
+      return <ManufacturingEfficiency />;
+    case 'mfg-models':
+      return <ManufacturingModels />;
     default:
       if (process.env.NODE_ENV === 'development') {
         return (
