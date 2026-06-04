@@ -25,6 +25,9 @@ import ManufacturingDemand from '@/components/blocks/ManufacturingDemand';
 import ManufacturingProcess from '@/components/blocks/ManufacturingProcess';
 import ManufacturingEfficiency from '@/components/blocks/ManufacturingEfficiency';
 import ManufacturingModels from '@/components/blocks/ManufacturingModels';
+import { QualityHero } from '@/components/blocks/QualityHero';
+import { QualityContent } from '@/components/blocks/QualityContent';
+
 
 interface Section {
   id: string;
@@ -98,6 +101,11 @@ export function SectionRenderer({ section }: SectionRendererProps) {
       return <ManufacturingEfficiency />;
     case 'mfg-models':
       return <ManufacturingModels />;
+    case 'quality-hero':
+      return <QualityHero content={section.content} />;
+    case 'quality-content':
+      return <QualityContent content={section.content} />;
+
     default:
       if (process.env.NODE_ENV === 'development') {
         return (
