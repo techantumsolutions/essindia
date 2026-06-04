@@ -264,6 +264,24 @@ export const SECTION_REGISTRY: SectionTypeDefinition[] = [
     defaultVariant: 'default',
     supportsVariants: false,
   },
+  {
+    type: 'quality-hero',
+    label: 'Quality Hero Banner',
+    description: 'Premium dark hero banner with purple bottom glow',
+    icon: Layout,
+    color: 'bg-indigo-950 text-indigo-400',
+    defaultVariant: 'default',
+    supportsVariants: false,
+  },
+  {
+    type: 'quality-content',
+    label: 'Quality Certifications & Policy',
+    description: 'Certifications and bulleted quality policies with gold checkmarks',
+    icon: FileText,
+    color: 'bg-amber-50 text-amber-600',
+    defaultVariant: 'default',
+    supportsVariants: false,
+  },
 ];
 
 export function getSectionDefinition(type: string): SectionTypeDefinition | undefined {
