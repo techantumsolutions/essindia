@@ -33,6 +33,13 @@ import CareerPerks from '@/components/blocks/CareerPerks';
 import CareerLife from '@/components/blocks/CareerLife';
 import CareerPositions from '@/components/blocks/CareerPositions';
 import CareerCta from '@/components/blocks/CareerCta';
+import { AboutUsHero } from '@/components/blocks/AboutUsHero';
+import { AboutUsCompanyIntro } from '@/components/blocks/AboutUsCompanyIntro';
+import { AboutUsMissionVision } from '@/components/blocks/AboutUsMissionVision';
+import { AboutUsServicesOverview } from '@/components/blocks/AboutUsServicesOverview';
+import { AboutUsTransformationSection } from '@/components/blocks/AboutUsTransformationSection';
+import { AboutUsWhyEss } from '@/components/blocks/AboutUsWhyEss';
+import { AboutUsCta } from '@/components/blocks/AboutUsCta';
 import { QualityHero } from '@/components/blocks/QualityHero';
 import { QualityContent } from '@/components/blocks/QualityContent';
 
@@ -125,6 +132,20 @@ export function SectionRenderer({ section }: SectionRendererProps) {
       return <CareerPositions content={section.content} />;
     case 'career-cta':
       return <CareerCta content={section.content} />;
+    case 'AboutUsHero':
+      return <AboutUsHero content={section.content} />;
+    case 'AboutUsCompanyIntro':
+      return <AboutUsCompanyIntro content={section.content} />;
+    case 'AboutUsMissionVision':
+      return <AboutUsMissionVision content={section.content} />;
+    case 'AboutUsServicesOverview':
+      return <AboutUsServicesOverview content={section.content} />;
+    case 'AboutUsTransformationSection':
+      return <AboutUsTransformationSection content={section.content} />;
+    case 'AboutUsWhyEss':
+      return <AboutUsWhyEss content={section.content} />;
+    case 'AboutUsCta':
+      return <AboutUsCta content={section.content} />;
     case 'quality-hero':
       return <QualityHero content={section.content} />;
     case 'quality-content':
