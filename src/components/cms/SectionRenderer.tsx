@@ -32,6 +32,9 @@ import { AboutUsServicesOverview } from '@/components/blocks/AboutUsServicesOver
 import { AboutUsTransformationSection } from '@/components/blocks/AboutUsTransformationSection';
 import { AboutUsWhyEss } from '@/components/blocks/AboutUsWhyEss';
 import { AboutUsCta } from '@/components/blocks/AboutUsCta';
+import { QualityHero } from '@/components/blocks/QualityHero';
+import { QualityContent } from '@/components/blocks/QualityContent';
+
 
 interface Section {
   id: string;
@@ -119,6 +122,11 @@ export function SectionRenderer({ section }: SectionRendererProps) {
       return <AboutUsWhyEss content={section.content} />;
     case 'AboutUsCta':
       return <AboutUsCta content={section.content} />;
+    case 'quality-hero':
+      return <QualityHero content={section.content} />;
+    case 'quality-content':
+      return <QualityContent content={section.content} />;
+
     default:
       if (process.env.NODE_ENV === 'development') {
         return (
