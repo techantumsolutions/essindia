@@ -12,6 +12,7 @@ export type FieldType =
   | 'icon'
   | 'object'
   | 'array'
+  | 'countryCode'
   | 'null';
 
 export function humanLabel(key: string): string {
@@ -45,6 +46,7 @@ export function detectFieldType(key: string, value: JsonValue): FieldType {
     if (COLOR_PATTERN.test(value)) return 'color';
     if (URL_PATTERNS.some((p) => lower === p || lower.endsWith(p.charAt(0).toUpperCase() + p.slice(1)) || lower.endsWith('_' + p))) return 'url';
     if (ICON_PATTERNS.some((p) => lower === p) && value.length < 50) return 'icon';
+    if (lower === 'countrycode' || lower === 'country_code') return 'countryCode';
 
     if (RICHTEXT_PATTERNS.some((p) => lower === p || lower.endsWith(p.charAt(0).toUpperCase() + p.slice(1)))) return 'richtext';
     if (TEXTAREA_PATTERNS.some((p) => lower.includes(p))) return 'textarea';
