@@ -33,6 +33,9 @@ import CareerPerks from '@/components/blocks/CareerPerks';
 import CareerLife from '@/components/blocks/CareerLife';
 import CareerPositions from '@/components/blocks/CareerPositions';
 import CareerCta from '@/components/blocks/CareerCta';
+import { QualityHero } from '@/components/blocks/QualityHero';
+import { QualityContent } from '@/components/blocks/QualityContent';
+
 
 interface Section {
   id: string;
@@ -122,6 +125,11 @@ export function SectionRenderer({ section }: SectionRendererProps) {
       return <CareerPositions content={section.content} />;
     case 'career-cta':
       return <CareerCta content={section.content} />;
+    case 'quality-hero':
+      return <QualityHero content={section.content} />;
+    case 'quality-content':
+      return <QualityContent content={section.content} />;
+
     default:
       if (process.env.NODE_ENV === 'development') {
         return (
