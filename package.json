@@ -16,6 +16,7 @@
     "db:seed-mega-menu": "npx tsx scripts/seed-mega-menu.ts",
     "db:seed-nav": "npm run db:seed-mega-menu",
     "db:seed-erp-template": "npx tsx scripts/seed-erp-template.ts",
+    "db:seed-aboutus-template": "npx tsx scripts/create-aboutus-template.ts",
     "db:seed-retail-template": "npx tsx scripts/seed-retail-template.ts",
     "db:seed-mfg-template": "npx tsx scripts/create-mfg-template.ts",
     "db:apply-registry": "npx tsx scripts/apply-page-registry-migration.ts",
