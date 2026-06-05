@@ -3,6 +3,7 @@
 import React from 'react';
 import { ImageIcon, X } from 'lucide-react';
 import { humanLabel } from './field-utils';
+import { toast } from 'sonner';
 
 interface MediaFieldProps {
   fieldKey: string;
@@ -12,6 +13,29 @@ interface MediaFieldProps {
 
 export function MediaField({ fieldKey, value, onChange }: MediaFieldProps) {
   const [showPreview, setShowPreview] = React.useState(true);
+  const [isUploading, setIsUploading] = React.useState(false);
+  const fileInputRef = React.useRef<HTMLInputElement>(null);
+
+  const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setIsUploading(true);
+    try {
+      const formData = new FormData();
+      formData.append('file', file);
+      const res = await fetch('/api/admin/media', { method: 'POST', body: formData });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Upload failed');
+      onChange(data.url);
+      setShowPreview(true);
+      toast.success('File uploaded successfully');
+    } catch (err: any) {
+      toast.error(err.message || 'Failed to upload image');
+    } finally {
+      setIsUploading(false);
+      if (fileInputRef.current) fileInputRef.current.value = '';
+    }
+  };
 
   return (
     <div className="space-y-2">
@@ -39,21 +63,39 @@ export function MediaField({ fieldKey, value, onChange }: MediaFieldProps) {
           </div>
         )}
         <div className="flex-1 space-y-2">
-          <input
-            type="text"
-            value={value}
-            onChange={(e) => {
-              onChange(e.target.value);
-              setShowPreview(true);
-            }}
-            placeholder="Enter image URL or path..."
-            className="w-full bg-slate-50 rounded-xl px-4 py-2.5 text-sm font-medium outline-none focus:ring-2 focus:ring-[#4B2A63]/10 border border-transparent focus:border-[#4B2A63]/20"
-          />
+          <div className="flex gap-2">
+            <input
+              type="text"
+              value={value}
+              onChange={(e) => {
+                onChange(e.target.value);
+                setShowPreview(true);
+              }}
+              placeholder="Enter image URL or path..."
+              className="flex-1 bg-slate-50 rounded-xl px-4 py-2.5 text-sm font-medium outline-none focus:ring-2 focus:ring-[#4B2A63]/10 border border-transparent focus:border-[#4B2A63]/20"
+            />
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="image/*"
+              className="hidden"
+              onChange={handleUpload}
+            />
+            <button
+              type="button"
+              onClick={() => fileInputRef.current?.click()}
+              disabled={isUploading}
+              className="px-4 py-2.5 bg-[#4B2A63] hover:bg-[#3B198F] text-white rounded-xl text-xs font-bold transition-all disabled:opacity-50 cursor-pointer shrink-0"
+            >
+              {isUploading ? 'Uploading...' : 'Upload'}
+            </button>
+          </div>
           <p className="text-[10px] text-slate-400">
-            Paste image URL or use a path like /images/example.jpg
+            Paste image URL or click "Upload" to upload from your device.
           </p>
         </div>
       </div>
     </div>
   );
 }
+

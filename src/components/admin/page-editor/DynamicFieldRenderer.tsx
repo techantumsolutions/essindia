@@ -10,6 +10,7 @@ import { ColorPickerField } from './ColorPickerField';
 import { MediaField } from './MediaField';
 import { RichTextField } from './RichTextField';
 import { ArrayFieldEditor } from './ArrayFieldEditor';
+import { ALL_COUNTRIES_LIST } from '@/lib/countries';
 
 interface DynamicFieldRendererProps {
   keyPath: string;
@@ -87,6 +88,15 @@ export function DynamicFieldRenderer({
     case 'icon':
       return (
         <IconField
+          fieldKey={fieldKey}
+          value={value as string}
+          onChange={(v) => onChange(keyPath, v)}
+        />
+      );
+
+    case 'countryCode':
+      return (
+        <CountryCodeField
           fieldKey={fieldKey}
           value={value as string}
           onChange={(v) => onChange(keyPath, v)}
@@ -420,5 +430,33 @@ function ArrayField({
         );
       }}
     />
+  );
+}
+
+function CountryCodeField({
+  fieldKey,
+  value,
+  onChange,
+}: {
+  fieldKey: string;
+  value: string;
+  onChange: (value: string) => void;
+}) {
+  return (
+    <div className="space-y-1.5">
+      <label className="text-xs font-semibold text-slate-500">{humanLabel(fieldKey)}</label>
+      <select
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        className="w-full bg-slate-50 rounded-xl px-4 py-2.5 text-sm font-medium outline-none focus:ring-2 focus:ring-[#4B2A63]/10 border border-transparent focus:border-[#4B2A63]/20"
+      >
+        <option value="">Select a country...</option>
+        {ALL_COUNTRIES_LIST.map((c) => (
+          <option key={c.code} value={c.code}>
+            {c.name} ({c.code.toUpperCase()})
+          </option>
+        ))}
+      </select>
+    </div>
   );
 }

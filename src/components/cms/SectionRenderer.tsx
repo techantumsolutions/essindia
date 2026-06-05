@@ -25,13 +25,14 @@ import ManufacturingDemand from '@/components/blocks/ManufacturingDemand';
 import ManufacturingProcess from '@/components/blocks/ManufacturingProcess';
 import ManufacturingEfficiency from '@/components/blocks/ManufacturingEfficiency';
 import ManufacturingModels from '@/components/blocks/ManufacturingModels';
-import { AboutUsHero } from '@/components/blocks/AboutUsHero';
-import { AboutUsCompanyIntro } from '@/components/blocks/AboutUsCompanyIntro';
-import { AboutUsMissionVision } from '@/components/blocks/AboutUsMissionVision';
-import { AboutUsServicesOverview } from '@/components/blocks/AboutUsServicesOverview';
-import { AboutUsTransformationSection } from '@/components/blocks/AboutUsTransformationSection';
-import { AboutUsWhyEss } from '@/components/blocks/AboutUsWhyEss';
-import { AboutUsCta } from '@/components/blocks/AboutUsCta';
+import CareerHero from '@/components/blocks/CareerHero';
+import CareerWhyJoin from '@/components/blocks/CareerWhyJoin';
+import CareerOffices from '@/components/blocks/CareerOffices';
+import CareerExperience from '@/components/blocks/CareerExperience';
+import CareerPerks from '@/components/blocks/CareerPerks';
+import CareerLife from '@/components/blocks/CareerLife';
+import CareerPositions from '@/components/blocks/CareerPositions';
+import CareerCta from '@/components/blocks/CareerCta';
 
 interface Section {
   id: string;
@@ -105,20 +106,22 @@ export function SectionRenderer({ section }: SectionRendererProps) {
       return <ManufacturingEfficiency />;
     case 'mfg-models':
       return <ManufacturingModels />;
-    case 'AboutUsHero':
-      return <AboutUsHero content={section.content} />;
-    case 'AboutUsCompanyIntro':
-      return <AboutUsCompanyIntro content={section.content} />;
-    case 'AboutUsMissionVision':
-      return <AboutUsMissionVision content={section.content} />;
-    case 'AboutUsServicesOverview':
-      return <AboutUsServicesOverview content={section.content} />;
-    case 'AboutUsTransformationSection':
-      return <AboutUsTransformationSection content={section.content} />;
-    case 'AboutUsWhyEss':
-      return <AboutUsWhyEss content={section.content} />;
-    case 'AboutUsCta':
-      return <AboutUsCta content={section.content} />;
+    case 'career-hero':
+      return <CareerHero content={section.content} />;
+    case 'career-why-join':
+      return <CareerWhyJoin content={section.content} />;
+    case 'career-offices':
+      return <CareerOffices content={section.content} />;
+    case 'career-experience':
+      return <CareerExperience content={section.content} />;
+    case 'career-perks':
+      return <CareerPerks content={section.content} />;
+    case 'career-life':
+      return <CareerLife content={section.content} />;
+    case 'career-positions':
+      return <CareerPositions content={section.content} />;
+    case 'career-cta':
+      return <CareerCta content={section.content} />;
     default:
       if (process.env.NODE_ENV === 'development') {
         return (
