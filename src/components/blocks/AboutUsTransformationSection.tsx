@@ -1,22 +1,17 @@
 'use client';
 
+import Image from 'next/image';
 import { motion } from 'framer-motion';
-import { MotionSection, StaggerContainer } from '@/components/animations/MotionSection';
-import { Database, RefreshCw, GitMerge, FileCode } from 'lucide-react';
+import { StaggerContainer } from '@/components/animations/MotionSection';
 
 interface TransformItem {
   title?: string;
   description?: string;
-  icon?: string; // 'database' | 'upgrade' | 'integration' | 'custom'
+  icon?: string;
 }
 
 interface AboutUsTransformationContent {
   title?: string;
-  subtitle?: string;
-  description?: string;
-  image?: string;
-  buttonText?: string;
-  buttonLink?: string;
   items?: TransformItem[];
 }
 
@@ -26,106 +21,116 @@ interface AboutUsTransformationSectionProps {
 
 const defaultItems: TransformItem[] = [
   {
-    title: 'D2K Migration Services',
-    description: 'Deceptively simple migration of your legacy systems to advanced D2K structures with near-zero data loss.',
-    icon: 'database'
+    title: 'WHAT IT ENABLES',
+    description:
+      'Eastern Software Solutions is a global leader specializing in the digital transformation of every facet of your organization. We combine deep domain expertise with matured building blocks and an entrepreneurial delivery model.',
+    icon: 'enable',
   },
   {
-    title: 'Technology Upgradation',
-    description: 'Upgrade your tech stack to latest frameworks to enhance execution speed, stability, and future scalability.',
-    icon: 'upgrade'
+    title: 'WHAT IT ENABLES',
+    description:
+      'Migration to latest technology of Forms and DB Upgrade to latest APEX Technology.',
+    icon: 'migration',
   },
   {
-    title: 'System Integration',
-    description: 'Connecting various software layers and third-party APIs to operate as a single unified enterprise ecosystem.',
-    icon: 'integration'
+    title: 'WHY IT MATTERS',
+    description:
+      'Legacy systems limit flexibility, increase dependency, and slow growth. D2K migration modernizes existing applications while preserving core business logic, data, and processes.',
+    icon: 'matter',
   },
   {
-    title: 'Custom Development',
-    description: 'Tailor-made software systems and workflows engineered from scratch to cater to unique operational demands.',
-    icon: 'custom'
-  }
+    title: 'HOW IT HELPS',
+    description:
+      'Businesses achieve faster development, improved usability, simpler maintenance, and AI enabled future-ready platforms that support scaling and integration without the cost and risk of a complete rebuild.',
+    icon: 'help',
+  },
 ];
 
-export function AboutUsTransformationSection({ content }: AboutUsTransformationSectionProps) {
-  const title = content?.title || "D2K Migration or Technology Upgradation Services";
-  const subtitle = content?.subtitle || "Legacy to Modernity";
+export function AboutUsTransformationSection({
+  content,
+}: AboutUsTransformationSectionProps) {
+  const title =
+    content?.title || 'D2K Migration or Technology Upgradation Services';
+
   const items = content?.items || defaultItems;
 
-  const renderIcon = (iconName?: string) => {
-    switch (iconName) {
-      case 'database':
-        return <Database className="w-6 h-6 text-indigo-500" />;
-      case 'upgrade':
-        return <RefreshCw className="w-6 h-6 text-sky-500 animate-spin-slow" />;
-      case 'integration':
-        return <GitMerge className="w-6 h-6 text-purple-500" />;
-      case 'custom':
-        return <FileCode className="w-6 h-6 text-emerald-500" />;
-      default:
-        return <Database className="w-6 h-6 text-indigo-500" />;
-    }
-  };
+  const getImage = (icon?: string) => {
+    switch (icon) {
+      case 'enable':
+        return '/about-us/what-enable.png';
 
-  const getCardColor = (iconName?: string) => {
-    switch (iconName) {
-      case 'database':
-        return 'from-indigo-500/10 to-indigo-500/0 hover:border-indigo-200';
-      case 'upgrade':
-        return 'from-sky-500/10 to-sky-500/0 hover:border-sky-200';
-      case 'integration':
-        return 'from-purple-500/10 to-purple-500/0 hover:border-purple-200';
-      case 'custom':
-        return 'from-emerald-500/10 to-emerald-500/0 hover:border-emerald-200';
+      case 'migration':
+        return '/about-us/migration.png';
+
+      case 'matter':
+        return '/about-us/why-matter.png';
+
+      case 'help':
+        return '/about-us/how-help.png';
+
       default:
-        return 'from-indigo-500/10 to-indigo-500/0 hover:border-indigo-200';
+        return '/about-us/what-enable.png';
     }
   };
 
   return (
-    <section className="py-24 bg-gradient-to-b from-[#F8F9FA] to-[#ECEFF1]/50">
-      <div className="container mx-auto px-4 md:px-8 max-w-7xl">
-        
-        {/* Header */}
-        <div className="text-center mb-20 max-w-3xl mx-auto">
-          <span className="text-sm font-bold text-slate-500 uppercase tracking-widest block mb-3">
-            {subtitle}
-          </span>
-          <h2 className="text-3xl md:text-4xl font-bold text-slate-900 tracking-tight leading-[1.25]">
+    <section className="py-8 md:py-24">
+      <div className="max-w-7xl mx-auto px-4">
+        {/* Heading */}
+        <div className="max-w-4xl mx-auto text-center mb-8 md:mb-20">
+          <h2 className="text-3xl md:text-5xl font-bold text-[#24365C] leading-[1.1]">
             {title}
           </h2>
         </div>
 
-        {/* Feature Grid */}
-        <StaggerContainer className="grid grid-cols-1 md:grid-cols-2 gap-8">
+        {/* Grid */}
+        <StaggerContainer className="flex flex-wrap">
           {items.map((item, index) => (
             <motion.div
               key={index}
               variants={{
-                initial: { opacity: 0, scale: 0.95 },
-                animate: { opacity: 1, scale: 1, transition: { duration: 0.7 } }
+                initial: {
+                  opacity: 0,
+                  y: 20,
+                },
+                animate: {
+                  opacity: 1,
+                  y: 0,
+                  transition: {
+                    duration: 0.7,
+                  },
+                },
               }}
-              whileHover={{ y: -6 }}
-              className={`bg-white border border-slate-100 rounded-3xl p-8 shadow-[0_10px_30px_rgba(0,0,0,0.01)] hover:shadow-[0_20px_40px_rgba(0,0,0,0.03)] bg-gradient-to-br transition-all duration-300 flex flex-col sm:flex-row gap-6 items-start ${getCardColor(item.icon)}`}
+              className="border border-[#E4E4E4] rounded-[20px] lg:basis-1/2"
             >
-              {/* Graphic Icon Area */}
-              <div className="p-4 bg-slate-50 border border-slate-100 rounded-2xl flex-shrink-0 flex items-center justify-center shadow-sm">
-                {renderIcon(item.icon)}
-              </div>
+              <div className="flex flex-col md:flex-row gap-4 h-full p-2">
+                {/* Image */}
+                <div className="md:w-[240px] flex-shrink-0">
+                  <Image
+                    src={getImage(item.icon)}
+                    alt={item.title || ''}
+                    width={240}
+                    height={240}
+                    className="w-full h-full object-cover"
+                  />
+                </div>
 
-              {/* Text Area */}
-              <div>
-                <h3 className="text-xl font-bold text-slate-950 mb-3 tracking-tight">
-                  {item.title}
-                </h3>
-                <p className="text-slate-500 text-sm leading-relaxed font-light">
-                  {item.description}
-                </p>
+                {/* Content */}
+                <div className="flex items-center">
+                  <div>
+                    <h3 className="text-lg font-bold uppercase text-black">
+                      {item.title}
+                    </h3>
+
+                    <p className="text-[#6B7280] text-base">
+                      {item.description}
+                    </p>
+                  </div>
+                </div>
               </div>
             </motion.div>
           ))}
         </StaggerContainer>
-
       </div>
     </section>
   );

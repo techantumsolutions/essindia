@@ -36,10 +36,10 @@ export function AboutUsHero({ content }: AboutUsHeroProps) {
   const stats = content?.items || defaultStats;
 
   return (
-    <section className="relative min-h-[50vh] flex flex-col justify-between pt-30 pb-30 overflow-hidden bg-gradient-to-b from-[#1C2D4E] to-[#111B2D] text-white">
+    <section className="relative min-h-[50vh] flex flex-col justify-between pt-30 pb-8 md:pb-30 overflow-hidden bg-gradient-to-b from-[#1C2D4E] to-[#111B2D] text-white">
       {/* Background Image */}
       <div
-        className="absolute inset-0 bg-cover bg-center pointer-events-none"
+        className="absolute inset-0 bg-cover bg-center"
         style={{ backgroundImage: "url('/about-us/banner.png')" }}
       />
       <div className="container relative z-10 mx-auto px-4 md:px-8 max-w-7xl flex-grow flex flex-col justify-center items-center text-center">
