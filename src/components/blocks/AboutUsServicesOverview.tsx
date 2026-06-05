@@ -1,22 +1,18 @@
 'use client';
 
+import Image from 'next/image';
 import { motion } from 'framer-motion';
-import { MotionSection, StaggerContainer } from '@/components/animations/MotionSection';
-import { BarChart3, Cpu, Smartphone } from 'lucide-react';
+import { StaggerContainer } from '@/components/animations/MotionSection';
 
 interface ServiceItem {
   title?: string;
   description?: string;
-  icon?: string; // 'data' | 'automation' | 'mobility'
+  icon?: string;
 }
 
 interface AboutUsServicesOverviewContent {
   title?: string;
   subtitle?: string;
-  description?: string;
-  image?: string;
-  buttonText?: string;
-  buttonLink?: string;
   items?: ServiceItem[];
 }
 
@@ -27,96 +23,98 @@ interface AboutUsServicesOverviewProps {
 const defaultServices: ServiceItem[] = [
   {
     title: 'Smarter Decisions Through Data',
-    description: 'BI Dashboards with integrated AI to transform data into actionable decisions and insights.',
     icon: 'data',
   },
   {
     title: 'Intelligent Process Automation',
-    description: 'RPA solutions to automate repetitive tasks and optimize enterprise workflows.',
     icon: 'automation',
   },
   {
     title: 'Enterprise Mobility Simplified',
-    description: 'Custom mobile solutions to streamline field operations and keep teams connected.',
     icon: 'mobility',
-  }
+  },
 ];
 
-export function AboutUsServicesOverview({ content }: AboutUsServicesOverviewProps) {
-  const title = content?.title || "Core Offerings & Solutions";
-  const subtitle = content?.subtitle || "Services Overview";
+export function AboutUsServicesOverview({
+  content,
+}: AboutUsServicesOverviewProps) {
   const services = content?.items || defaultServices;
 
-  const renderIcon = (iconName?: string) => {
-    switch (iconName) {
+  const getImage = (icon?: string) => {
+    switch (icon) {
       case 'data':
-        return <BarChart3 className="w-8 h-8 text-blue-600" />;
+        return '/about-us/smartDecision.png';
+
       case 'automation':
-        return <Cpu className="w-8 h-8 text-orange-600" />;
+        return '/about-us/inteligentProcess.png';
+
       case 'mobility':
-        return <Smartphone className="w-8 h-8 text-indigo-600" />;
+        return '/about-us/enterpriseMobility.png';
+
       default:
-        return <BarChart3 className="w-8 h-8 text-blue-600" />;
+        return '/about-us/smartDecision.png';
     }
   };
 
-  const iconBg = (iconName?: string) => {
-    switch (iconName) {
+  const getCategory = (icon?: string) => {
+    switch (icon) {
       case 'data':
-        return 'bg-blue-50 border-blue-100';
+        return 'BUSINESS INTELLIGENCE (BI)';
+
       case 'automation':
-        return 'bg-orange-50 border-orange-100';
+        return 'ROBOTIC PROCESS AUTOMATION (RPA)';
+
       case 'mobility':
-        return 'bg-indigo-50 border-indigo-100';
+        return 'MOBILE APPLICATIONS & CUSTOM APPS';
+
       default:
-        return 'bg-blue-50 border-blue-100';
+        return '';
     }
   };
 
   return (
-    <section className="py-24 bg-white">
-      <div className="container mx-auto px-4 md:px-8 max-w-7xl">
-        
-        {/* Header */}
-        <div className="text-center mb-20 max-w-3xl mx-auto">
-          <span className="text-sm font-bold text-slate-500 uppercase tracking-widest block mb-3">
-            {subtitle}
-          </span>
-          <h2 className="text-3xl md:text-4xl font-bold text-slate-900 tracking-tight">
-            {title}
-          </h2>
-        </div>
-
-        {/* Services Grid */}
-        <StaggerContainer className="grid grid-cols-1 md:grid-cols-3 gap-8">
+    <section className="py-8 md:py-24 border border-b border-gray-300 md:border-b-white">
+      <div className="max-w-7xl mx-auto px-6">
+        <StaggerContainer className="grid grid-cols-1 lg:grid-cols-3 gap-16 lg:gap-10">
           {services.map((service, index) => (
             <motion.div
               key={index}
               variants={{
                 initial: { opacity: 0, y: 30 },
-                animate: { opacity: 1, y: 0, transition: { duration: 0.8 } }
+                animate: {
+                  opacity: 1,
+                  y: 0,
+                  transition: { duration: 0.8 },
+                },
               }}
-              whileHover={{ y: -8 }}
-              className="bg-white border border-slate-100 rounded-3xl p-8 shadow-[0_4px_25px_rgba(0,0,0,0.01)] hover:shadow-[0_20px_40px_rgba(0,0,0,0.04)] hover:border-slate-200 transition-all duration-300 flex flex-col items-center text-center group cursor-pointer"
+              className="flex flex-col justify-between items-center text-center"
             >
-              {/* Icon Container */}
-              <div className={`p-5 rounded-2xl border mb-6 flex items-center justify-center transition-transform duration-300 group-hover:scale-110 ${iconBg(service.icon)}`}>
-                {renderIcon(service.icon)}
+              {/* Image */}
+              <div className="relative w-full flex justify-center items-center mb-10">
+                <Image
+                  src={getImage(service.icon)}
+                  alt={service.title || ''}
+                  width={320}
+                  height={260}
+                  className="object-contain"
+                  priority={index === 0}
+                />
               </div>
 
-              {/* Title */}
-              <h3 className="text-xl font-bold text-slate-950 mb-4 tracking-tight group-hover:text-slate-800 transition-colors">
-                {service.title}
-              </h3>
+              <div className="">
+                {/* Category */}
+                <span className="text-[#4A4E92] uppercase tracking-wide text-[15px] md:text-[16px] font-medium mb-4">
+                  {getCategory(service.icon)}
+                </span>
 
-              {/* Description */}
-              <p className="text-slate-500 text-sm leading-relaxed font-light">
-                {service.description}
-              </p>
+                {/* Heading */}
+                <h3 className="text-[32px] md:text-2xl leading-tight font-bold text-black max-w-md">
+                  {service.title}
+                </h3>
+              </div>
             </motion.div>
           ))}
         </StaggerContainer>
-
       </div>
     </section>
   );
