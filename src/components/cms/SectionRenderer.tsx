@@ -33,6 +33,8 @@ import CareerPerks from '@/components/blocks/CareerPerks';
 import CareerLife from '@/components/blocks/CareerLife';
 import CareerPositions from '@/components/blocks/CareerPositions';
 import CareerCta from '@/components/blocks/CareerCta';
+import JobDetailHero from '@/components/blocks/JobDetailHero';
+import JobDetailContent from '@/components/blocks/JobDetailContent';
 
 interface Section {
   id: string;
@@ -122,6 +124,10 @@ export function SectionRenderer({ section }: SectionRendererProps) {
       return <CareerPositions content={section.content} />;
     case 'career-cta':
       return <CareerCta content={section.content} />;
+    case 'job-detail-hero':
+      return <JobDetailHero content={section.content} />;
+    case 'job-detail-content':
+      return <JobDetailContent content={section.content} />;
     default:
       if (process.env.NODE_ENV === 'development') {
         return (
