@@ -354,6 +354,42 @@ export const SECTION_REGISTRY: SectionTypeDefinition[] = [
     defaultVariant: 'default',
     supportsVariants: false,
   },
+  {
+    type: 'blog-list-block',
+    label: 'Blog List Section',
+    description: 'Interactive listing section for news & resources with sidebar filters',
+    icon: FileText,
+    color: 'bg-cyan-50 text-cyan-600',
+    defaultVariant: 'default',
+    supportsVariants: false,
+  },
+  {
+    type: 'blog-detail-block',
+    label: 'Blog Detail Content',
+    description: 'Rich detail view of an article including reconciliation diagram and highlight panels',
+    icon: FileText,
+    color: 'bg-indigo-50 text-indigo-600',
+    defaultVariant: 'default',
+    supportsVariants: false,
+  },
+  {
+    type: 'quality-hero',
+    label: 'Quality Hero',
+    description: 'Hero banner for Quality Policy template',
+    icon: Layout,
+    color: 'bg-indigo-50 text-indigo-600',
+    defaultVariant: 'default',
+    supportsVariants: false,
+  },
+  {
+    type: 'quality-content',
+    label: 'Quality Content',
+    description: 'Detailed content blocks for Quality Policy certifications and text',
+    icon: FileText,
+    color: 'bg-slate-50 text-slate-600',
+    defaultVariant: 'default',
+    supportsVariants: false,
+  },
 ];
 
 export function getSectionDefinition(type: string): SectionTypeDefinition | undefined {
