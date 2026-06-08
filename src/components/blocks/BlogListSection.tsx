@@ -29,7 +29,7 @@ const TOPICS = [
 ];
 
 const INDUSTRIES = [
-  'Industries',
+
   'FMCG',
   'Pharma',
   'Manufacturing',
@@ -47,13 +47,13 @@ export function BlogListSection({ content }: BlogListSectionProps) {
   const [blogs, setBlogs] = React.useState<BlogPost[]>([]);
   const [loading, setLoading] = React.useState(true);
   const [visibleCount, setVisibleCount] = React.useState(6);
-  const [selectedTopics, setSelectedTopics] = React.useState<string[]>(['IoT Solutions']);
-  const [selectedIndustries, setSelectedIndustries] = React.useState<string[]>(['Industries', 'FMCG']);
+  const [selectedTopics, setSelectedTopics] = React.useState<string[]>([]);
+  const [selectedIndustries, setSelectedIndustries] = React.useState<string[]>([]);
   const [searchQuery, setSearchQuery] = React.useState('');
 
   // Accordion State
-  const [topicsOpen, setTopicsOpen] = React.useState(true);
-  const [industriesOpen, setIndustriesOpen] = React.useState(true);
+  const [topicsOpen, setTopicsOpen] = React.useState(false);
+  const [industriesOpen, setIndustriesOpen] = React.useState(false);
 
   // Fetch blogs from API
   React.useEffect(() => {
@@ -121,21 +121,28 @@ export function BlogListSection({ content }: BlogListSectionProps) {
   };
 
   return (
-    <section className="bg-white min-h-screen">
+    <section
+      className="bg-white min-h-screen"
+
+    >
       {/* Premium Hero Banner with header offset */}
       <div
-        className="relative bg-gradient-to-b from-[#103D38] via-[#0A2E2A] to-white pt-40 pb-28 text-center px-4 overflow-hidden"
+        className={`relative pt-40 pb-28 text-center px-4 overflow-hidden `}
         style={bgImage ? {
-          background: `linear-gradient(rgba(10, 46, 42, 0.8), rgba(10, 46, 42, 0.8)), url('${bgImage}') no-repeat center center / cover`
+          backgroundImage: `url('${bgImage}')`,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          backgroundRepeat: 'no-repeat',
+          backgroundAttachment: 'fixed'
         } : undefined}
       >
-        <div className="absolute inset-0 opacity-10 bg-[radial-gradient(#fff_1px,transparent_1px)] [background-size:24px_24px] pointer-events-none" />
+        <div className="absolute inset-0 opacity-10" />
         <div className="relative max-w-4xl mx-auto flex flex-col items-center">
           <motion.div
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.6 }}
-            className="px-5 py-1.5 rounded-full bg-white text-[#0A2E2A] text-xs font-bold shadow-md uppercase tracking-wider mb-6 border border-slate-100"
+            className="px-6 py-1.5  rounded-full bg-white text-[#0A2E2A] text-xs font-bold shadow-md uppercase tracking-wider  border border-slate-100"
           >
             {badge}
           </motion.div>
@@ -143,7 +150,7 @@ export function BlogListSection({ content }: BlogListSectionProps) {
             initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.1 }}
-            className="text-4xl md:text-6xl font-black text-white tracking-tight leading-tight mb-6"
+            className="text-4xl md:text-6xl font-black font-extralight text-white tracking-tight leading-tight"
           >
             {heading}
           </motion.h1>
@@ -151,7 +158,7 @@ export function BlogListSection({ content }: BlogListSectionProps) {
             initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.2 }}
-            className="text-sm md:text-base text-slate-200/90 max-w-2xl font-light leading-relaxed mb-4"
+            className="text-sm text-slate-200/90 max-w-2xl font-light leading-relaxed mb-4"
           >
             {subheading}
           </motion.p>
@@ -163,7 +170,7 @@ export function BlogListSection({ content }: BlogListSectionProps) {
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-12">
 
           {/* Left Column: Filter Sidebar */}
-          <div className="col-span-1 space-y-8 lg:sticky lg:top-32 h-fit">
+          <div className="col-span-1 space-y-3 lg:sticky lg:top-32 h-fit">
 
             {/* Search Bar */}
             <div className="relative bg-slate-50 border border-slate-200/60 rounded-2xl px-4 py-2.5 flex items-center shadow-sm focus-within:ring-2 focus-within:ring-[#103D38]/20 focus-within:border-[#103D38] transition-all">
@@ -322,24 +329,24 @@ export function BlogListSection({ content }: BlogListSectionProps) {
                               }}
                             />
                             {/* Topic Floating Tag */}
-                            <div className="absolute bottom-4 left-4 bg-white/90 backdrop-blur px-3 py-1 rounded-full shadow-sm">
-                              <span className="text-[10px] text-[#103D38] font-black uppercase tracking-wider">{blog.topic}</span>
+                            <div className="absolute bottom-4 left-4 bg-white/90 backdrop-blur px-3 py-0.3 rounded-full shadow-sm">
+                              <span className="text-xs text-[#859bfc] font-normal  tracking-wider">{blog.topic}</span>
                             </div>
                           </div>
 
                           {/* Content Body */}
-                          <div className="p-6 flex-1 flex flex-col justify-between">
-                            <div className="space-y-4">
-                              <h3 className="text-[16px] md:text-[18px] font-black text-slate-800 leading-snug group-hover:text-[#103D38] transition-colors line-clamp-3">
+                          <div className="py-4 px-3 flex-1 flex flex-col justify-between">
+                            <div className="space-y-0">
+                              <h3 className="text-[16px] font-black text-slate-800 leading-snug group-hover:text-[#103D38] transition-colors line-clamp-3">
                                 {blog.title}
                               </h3>
-                              <p className="text-xs text-slate-400 font-normal leading-relaxed line-clamp-3">
+                              {/* <p className="text-xs text-slate-400 font-normal leading-relaxed line-clamp-3">
                                 {blog.description}
-                              </p>
+                              </p> */}
                             </div>
 
                             {/* Author & Footer */}
-                            <div className="pt-6 mt-6 border-t border-slate-50 flex items-center justify-between">
+                            <div className="pt-3  border-t border-slate-50 flex items-center justify-between">
                               <div className="flex items-center gap-3">
                                 <img
                                   src={blog.author.avatar}
@@ -351,9 +358,9 @@ export function BlogListSection({ content }: BlogListSectionProps) {
                                   <p className="text-[9px] text-slate-400">{blog.date}</p>
                                 </div>
                               </div>
-                              <div className="w-8 h-8 rounded-full bg-[#103D38]/5 group-hover:bg-[#103D38] text-[#103D38] group-hover:text-white flex items-center justify-center transition-colors">
+                              {/* <div className="w-8 h-8 rounded-full bg-[#103D38]/5 group-hover:bg-[#103D38] text-[#103D38] group-hover:text-white flex items-center justify-center transition-colors">
                                 <ArrowRight className="w-3.5 h-3.5" />
-                              </div>
+                              </div> */}
                             </div>
                           </div>
                         </motion.div>

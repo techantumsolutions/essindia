@@ -39,7 +39,7 @@ interface BlogDetailContent {
   image?: string;
   description?: string;
   contentHtml?: string;
-  
+
   // Diagram
   diagramTitle1?: string;
   diagramDesc1?: string;
@@ -108,15 +108,16 @@ export function BlogDetailSection({ content }: BlogDetailSectionProps) {
   const heroHeading = content?.headingText || 'Explore our knowledge hub';
   const heroSubheading = content?.subheadingText || 'Everything journalists, analysts, and partners need to cover ESS — from brand assets to company facts.';
   const bgImage = content?.bgImage;
-  
+
   const category = content?.category || 'Technology';
   const title = content?.title || 'How Power BI Services Help Fix Multi-System Data Mismatches';
   const authorName = content?.authorName || 'Jason Francisco';
   const authorAvatar = content?.authorAvatar || 'https://api.dicebear.com/7.x/avataaars/svg?seed=Jason';
   const date = content?.date || 'May 15, 2026';
+  const hasImage = content ? !!content.image : true;
   const image = content?.image || '/blog-1.png';
   const description = content?.description || 'In most enterprise environments, data flows from CRM platforms, local databases, and legacy solutions. If not managed properly, this leads to contradictory reports, duplicate customer records, and mismatched financial data.';
-  
+
   const contentHtml = content?.contentHtml || `
     <p class="text-slate-600 leading-relaxed mb-6">
       Today, businesses generate more data than ever. From CRM platforms to local databases, enterprise systems are constantly producing information. However, when these systems operate in silos, they often create contradictory reports, duplicate customer records, and mismatched financial data.
@@ -136,7 +137,7 @@ export function BlogDetailSection({ content }: BlogDetailSectionProps) {
   const diagDesc2 = content?.diagramDesc2 || 'Reconcile conflicting calculation logic';
   const diagTitle3 = content?.diagramTitle3 || 'System alignment';
   const diagDesc3 = content?.diagramDesc3 || 'Consistent data across all systems';
-  
+
   const diagSub1 = content?.diagramSub1 || 'Establish clear data ownership';
   const diagSub2 = content?.diagramSub2 || 'Reconcile conflicting calculation logic';
   const diagSub3 = content?.diagramSub3 || 'Enhance customer data standards';
@@ -200,35 +201,39 @@ export function BlogDetailSection({ content }: BlogDetailSectionProps) {
   return (
     <section className="bg-white min-h-screen">
       {/* Premium Hero Banner */}
-      <div 
-        className="relative bg-gradient-to-b from-[#103D38] via-[#0A2E2A] to-white pt-40 pb-20 text-center px-4 overflow-hidden"
+      <div
+        className="relative  pt-40 pb-20 text-center px-4 overflow-hidden"
         style={bgImage ? {
-          background: `linear-gradient(rgba(10, 46, 42, 0.8), rgba(10, 46, 42, 0.8)), url('${bgImage}') no-repeat center center / cover`
+          backgroundImage: `url('${bgImage}')`,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          backgroundRepeat: 'no-repeat',
+          backgroundAttachment: 'fixed'
         } : undefined}
       >
-        <div className="absolute inset-0 opacity-10 bg-[radial-gradient(#fff_1px,transparent_1px)] [background-size:24px_24px] pointer-events-none" />
+        <div className="absolute inset-0 opacity-10" />
         <div className="relative max-w-4xl mx-auto flex flex-col items-center">
           <motion.button
             whileHover={{ scale: 1.05 }}
             onClick={() => window.location.href = '/blog'}
-            className="px-5 py-1.5 rounded-full bg-white text-[#0A2E2A] text-xs font-bold shadow-md uppercase tracking-wider mb-6 border border-slate-100 flex items-center gap-2 cursor-pointer hover:bg-slate-50 transition-colors"
+            className="px-5 py-1.5 rounded-full bg-white text-[#0A2E2A] text-xs font-bold shadow-md uppercase tracking-wider  border border-slate-100 flex items-center gap-2 cursor-pointer hover:bg-slate-50 transition-colors"
           >
             <ArrowLeft className="w-3 h-3" />
             {badge}
           </motion.button>
-          <motion.h1 
+          <motion.h1
             initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.1 }}
-            className="text-4xl md:text-5xl font-black text-white tracking-tight leading-tight mb-6"
+            className="text-4xl md:text-5xl font-black text-white tracking-tight leading-tight mb-1 font-extralight"
           >
             {heroHeading}
           </motion.h1>
-          <motion.p 
+          <motion.p
             initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.2 }}
-            className="text-sm md:text-base text-slate-200/90 max-w-2xl font-light leading-relaxed mb-4"
+            className="text-sm  text-slate-200/90 max-w-2xl font-light leading-relaxed mb-4"
           >
             {heroSubheading}
           </motion.p>
@@ -236,20 +241,20 @@ export function BlogDetailSection({ content }: BlogDetailSectionProps) {
       </div>
 
       {/* Article Container */}
-      <div className="max-w-4xl mx-auto px-4 md:px-8 pb-32">
+      <div className="max-w-7xl mx-auto px-6 mt-6  pb-6">
         <article className="space-y-10">
-          
+
           {/* Header Info */}
-          <div className="space-y-4">
-            <span className="inline-block px-3 py-1 bg-blue-50 text-blue-600 rounded-full text-xs font-bold uppercase tracking-wider">
+          <div className="space-y-2">
+            <span className="inline-block px-3 py-1 bg-[#4b6bfb] text-[#fff] rounded-[10px] text-xs font-normal  tracking-wider">
               {category}
             </span>
-            <h2 className="text-3xl md:text-5xl font-black text-slate-800 leading-tight">
+            <h2 className="text-3xl  font-black text-slate-800 leading-tight">
               {title}
             </h2>
             <div className="flex items-center gap-4 pt-2">
-              <img 
-                src={authorAvatar} 
+              <img
+                src={authorAvatar}
                 alt={authorName}
                 className="w-10 h-10 rounded-full border border-slate-100 bg-slate-50"
               />
@@ -261,16 +266,18 @@ export function BlogDetailSection({ content }: BlogDetailSectionProps) {
           </div>
 
           {/* Large Featured Image */}
-          <div className="rounded-[32px] overflow-hidden aspect-[16/9] shadow-md border border-slate-100 bg-slate-100">
-            <img 
-              src={image} 
-              alt={title}
-              className="w-full h-full object-cover"
-              onError={(e) => {
-                (e.target as HTMLImageElement).src = '/blog-1.png';
-              }}
-            />
-          </div>
+          {hasImage && image && (
+            <div className="w-full md:w-1/2 mx-auto rounded-[32px] overflow-hidden aspect-[16/10] shadow-md border border-slate-100 bg-slate-100">
+              <img
+                src={image}
+                alt={title}
+                className="w-full h-full object-cover"
+                onError={(e) => {
+                  (e.target as HTMLImageElement).src = '/blog-1.png';
+                }}
+              />
+            </div>
+          )}
 
           {/* Intro Description */}
           <div className="prose prose-slate max-w-none">
@@ -280,7 +287,7 @@ export function BlogDetailSection({ content }: BlogDetailSectionProps) {
           {/* Custom Styled Reconciliation Diagram */}
           <div className="my-16 bg-slate-50 border border-slate-100 rounded-3xl p-8 shadow-sm">
             <div className="grid grid-cols-1 md:grid-cols-7 gap-4 items-center relative">
-              
+
               {/* Box 1 */}
               <div className="col-span-1 md:col-span-2 text-center p-5 bg-white border border-slate-200/80 rounded-2xl shadow-sm z-10">
                 <h4 className="text-sm font-black text-[#103D38] mb-1">{diagTitle1}</h4>
@@ -336,7 +343,7 @@ export function BlogDetailSection({ content }: BlogDetailSectionProps) {
             <h3 className="text-lg font-black text-slate-800 uppercase tracking-wider border-b border-slate-100 pb-3">Key Solutions</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {highlights.map((panel, index) => (
-                <div 
+                <div
                   key={index}
                   className="bg-blue-50/40 border border-blue-100/60 rounded-3xl p-6 shadow-sm flex flex-col gap-3"
                 >
@@ -365,7 +372,7 @@ export function BlogDetailSection({ content }: BlogDetailSectionProps) {
         <div className="space-y-8">
           <div className="flex items-center justify-between">
             <h3 className="text-xl font-black text-slate-800 uppercase tracking-wider">Latest Blog</h3>
-            <button 
+            <button
               onClick={() => window.location.href = '/blog'}
               className="text-[#103D38] hover:text-[#0A2E2A] text-xs font-black uppercase tracking-wider flex items-center gap-1.5 cursor-pointer group hover:underline"
             >
@@ -377,15 +384,15 @@ export function BlogDetailSection({ content }: BlogDetailSectionProps) {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {relatedBlogs.map(blog => {
               return (
-                <div 
+                <div
                   key={blog.slug}
                   className="flex flex-col group cursor-pointer bg-white border border-slate-100 rounded-3xl overflow-hidden shadow-sm hover:shadow-lg transition-all"
                   onClick={() => window.location.href = `/blog/${blog.slug}`}
                 >
                   <div className="aspect-[16/10] overflow-hidden bg-slate-100">
-                    <img 
-                      src={blog.image} 
-                      alt={blog.title} 
+                    <img
+                      src={blog.image}
+                      alt={blog.title}
                       className="w-full h-full object-cover group-hover:scale-103 transition-transform duration-500"
                       onError={(e) => {
                         (e.target as HTMLImageElement).src = '/blog-1.png';
@@ -397,8 +404,8 @@ export function BlogDetailSection({ content }: BlogDetailSectionProps) {
                       {blog.title}
                     </h4>
                     <div className="flex items-center gap-3">
-                      <img 
-                        src={blog.author.avatar} 
+                      <img
+                        src={blog.author.avatar}
                         alt={blog.author.name}
                         className="w-6 h-6 rounded-full bg-slate-50"
                       />
