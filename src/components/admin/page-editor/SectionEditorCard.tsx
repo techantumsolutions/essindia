@@ -29,6 +29,17 @@ export interface PageSection {
   isActive: boolean;
 }
 
+const BLOG_DETAIL_TABS: Record<string, string[]> = {
+  basic: ['title', 'category', 'authorName', 'authorAvatar', 'date', 'image', 'description', 'contentHtml'],
+  hero: ['badgeText', 'headingText', 'subheadingText', 'bgImage'],
+  highlights: ['highlights', 'conclusionHtml']
+};
+
+const TESTIMONIALS_TABS: Record<string, string[]> = {
+  hero: ['badgeText', 'headingText', 'subheadingText', 'bgImage'],
+  testimonials: ['testimonials']
+};
+
 interface SectionEditorCardProps {
   section: PageSection;
   schema?: Record<string, unknown> | null;
@@ -57,6 +68,7 @@ export function SectionEditorCard({
   isSectionDirty,
 }: SectionEditorCardProps) {
   const [saving, setSaving] = React.useState(false);
+  const [activeTab, setActiveTab] = React.useState<string>('basic');
   const meta = getSectionDefinition(section.type);
 
   const mergedContent = React.useMemo(() => {
@@ -177,6 +189,63 @@ export function SectionEditorCard({
                   <p className="text-xs text-slate-300 mt-1">
                     This section may use default content from the template.
                   </p>
+                </div>
+              ) : section.type === 'blog-detail-block' || section.type === 'testimonials-block' ? (
+                <div className="space-y-4">
+                  {/* Tabs Navigation */}
+                  <div className="flex border-b border-slate-100 bg-slate-50/50 rounded-t-xl shrink-0 -mx-5 -mt-5 px-3">
+                    {(() => {
+                      const tabs = section.type === 'testimonials-block' 
+                        ? [
+                            { id: 'hero', label: 'Hero Banner' },
+                            { id: 'testimonials', label: 'Testimonials' },
+                          ]
+                        : [
+                            { id: 'basic', label: 'Basic Info' },
+                            { id: 'hero', label: 'Hero Banner' },
+                            { id: 'highlights', label: 'Highlights & Conclusion' },
+                          ];
+                      // Fallback tab if currently activeTab is not valid for the switch
+                      const tabsMap = section.type === 'testimonials-block' ? TESTIMONIALS_TABS : BLOG_DETAIL_TABS;
+                      const validTab = tabsMap[activeTab] ? activeTab : (section.type === 'testimonials-block' ? 'hero' : 'basic');
+                      
+                      return tabs.map((tab) => (
+                        <button
+                          key={tab.id}
+                          type="button"
+                          onClick={() => setActiveTab(tab.id)}
+                          className={cn(
+                            'px-4 py-3 text-xs font-bold border-b-2 transition-colors cursor-pointer',
+                            validTab === tab.id
+                              ? 'border-[#4B2A63] text-[#4B2A63] border-b-[#4B2A63]'
+                              : 'border-transparent text-slate-400 hover:text-slate-600'
+                          )}
+                        >
+                          {tab.label}
+                        </button>
+                      ));
+                    })()}
+                  </div>
+
+                  {/* Tab Content Fields */}
+                  <div className="space-y-4 pt-2">
+                    {(() => {
+                      const tabsMap = section.type === 'testimonials-block' ? TESTIMONIALS_TABS : BLOG_DETAIL_TABS;
+                      const activeKeys = tabsMap[activeTab] || (section.type === 'testimonials-block' ? tabsMap.hero : tabsMap.basic);
+                      return activeKeys.map((key) => {
+                        if (!contentKeys.includes(key)) return null;
+                        return (
+                          <DynamicFieldRenderer
+                            key={key}
+                            keyPath={key}
+                            fieldKey={key}
+                            value={mergedContent[key] as JsonValue}
+                            onChange={(kp, val) => onContentChange(section.id, kp, val)}
+                          />
+                        );
+                      });
+                    })()}
+                  </div>
                 </div>
               ) : (
                 contentKeys.map((key) => (

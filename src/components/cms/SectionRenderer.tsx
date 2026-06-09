@@ -39,6 +39,7 @@ import { BlogListSection } from '@/components/blocks/BlogListSection';
 import { BlogDetailSection } from '@/components/blocks/BlogDetailSection';
 import { QualityHero } from '@/components/blocks/QualityHero';
 import { QualityContent } from '@/components/blocks/QualityContent';
+import { TestimonialsSection } from '@/components/blocks/TestimonialsSection';
 
 interface Section {
   id: string;
@@ -140,6 +141,8 @@ export function SectionRenderer({ section }: SectionRendererProps) {
       return <QualityHero content={section.content} />;
     case 'quality-content':
       return <QualityContent content={section.content} />;
+    case 'testimonials-block':
+      return <TestimonialsSection content={section.content} />;
     default:
       if (process.env.NODE_ENV === 'development') {
         return (
