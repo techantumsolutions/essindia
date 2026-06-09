@@ -21,7 +21,7 @@ export function buildPagePathFromNavAndCategorySlugs(
   categorySlugs: string[],
   pageSlug?: string
 ): string {
-  const parts = [navSlug.replace(/^\//, ''), ...categorySlugs.filter(Boolean)];
+  const parts = [navSlug.replace(/^\//, ''), ...categorySlugs].filter(Boolean);
   if (pageSlug) parts.push(pageSlug);
   return `/${parts.join('/')}`;
 }

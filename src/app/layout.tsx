@@ -16,6 +16,8 @@ export const metadata: Metadata = {
   description: "Enterprise software solutions, AI automation, and digital transformation for modern businesses.",
 };
 
+import { Toaster } from "@/components/ui/sonner";
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -27,6 +29,7 @@ export default function RootLayout({
         <QueryProvider>
           {children}
         </QueryProvider>
+        <Toaster />
       </body>
     </html>
   );

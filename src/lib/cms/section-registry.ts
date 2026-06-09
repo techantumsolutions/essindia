@@ -354,6 +354,24 @@ export const SECTION_REGISTRY: SectionTypeDefinition[] = [
     defaultVariant: 'default',
     supportsVariants: false,
   },
+  {
+    type: 'employee-spotlight-hero',
+    label: 'Employee Spotlight Hero',
+    description: 'Hero block for Employee Spotlight',
+    icon: Layout,
+    color: 'bg-indigo-50 text-indigo-600',
+    defaultVariant: 'default',
+    supportsVariants: false,
+  },
+  {
+    type: 'employee-spotlight-cards',
+    label: 'Employee Spotlight Cards',
+    description: 'Cards showcasing employees for Spotlight',
+    icon: Grid,
+    color: 'bg-purple-50 text-purple-600',
+    defaultVariant: 'default',
+    supportsVariants: false,
+  },
 ];
 
 export function getSectionDefinition(type: string): SectionTypeDefinition | undefined {

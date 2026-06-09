@@ -35,6 +35,13 @@ import CareerPositions from '@/components/blocks/CareerPositions';
 import CareerCta from '@/components/blocks/CareerCta';
 import JobDetailHero from '@/components/blocks/JobDetailHero';
 import JobDetailContent from '@/components/blocks/JobDetailContent';
+import { EmployeeSpotlightHero } from '@/components/blocks/EmployeeSpotlightHero';
+import { EmployeeSpotlightCards } from '@/components/blocks/EmployeeSpotlightCards';
+import { ContactHero } from '@/components/blocks/ContactHero';
+import { ContactInfoCards } from '@/components/blocks/ContactInfoCards';
+import { ContactFormFaq } from '@/components/blocks/ContactFormFaq';
+import { ContactLocations } from '@/components/blocks/ContactLocations';
+import { ContactMap } from '@/components/blocks/ContactMap';
 
 interface Section {
   id: string;
@@ -128,6 +135,20 @@ export function SectionRenderer({ section }: SectionRendererProps) {
       return <JobDetailHero content={section.content} />;
     case 'job-detail-content':
       return <JobDetailContent content={section.content} />;
+    case 'employee-spotlight-hero':
+      return <EmployeeSpotlightHero content={section.content} />;
+    case 'employee-spotlight-cards':
+      return <EmployeeSpotlightCards content={section.content} />;
+    case 'contact-hero':
+      return <ContactHero />;
+    case 'contact-info-cards':
+      return <ContactInfoCards />;
+    case 'contact-form-faq':
+      return <ContactFormFaq />;
+    case 'contact-locations':
+      return <ContactLocations />;
+    case 'contact-map':
+      return <ContactMap />;
     default:
       if (process.env.NODE_ENV === 'development') {
         return (

@@ -2,19 +2,22 @@
 
 import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X } from 'lucide-react';
+import { X, Layers } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
 import type { NavigationTreeItem } from '@/lib/cms/navigation-tree-types';
-import type { CategoryTreeNode } from '@/lib/cms/types';
-import { buildPagePathFromNavAndCategorySlugs, resolvePageSlug } from '@/lib/cms/build-page-path-from-nav';
+import type { MegaMenuPayload, MegaMenuCategory, MegaMenuSubCategory, MegaMenuLeaf } from '@/lib/cms/mega-menu-types';
+import { buildPagePathFromNavHierarchy, resolvePageSlug } from '@/lib/cms/build-page-path-from-nav';
 import { slugify } from '@/lib/cms/utils';
 import { useSearchParams } from 'next/navigation';
 
 export type PageCreateFormData = {
   navigationItemId: string;
-  categoryId: string;
+  categoryId: string; // generic
+  megaMenuCategoryId: string;
+  megaMenuSubCategoryId: string;
+  megaMenuSubSubCategoryId: string;
   title: string;
   slug: string;
   templateId: string;
@@ -30,6 +33,9 @@ type Props = {
 const emptyForm: PageCreateFormData = {
   navigationItemId: '',
   categoryId: '',
+  megaMenuCategoryId: '',
+  megaMenuSubCategoryId: '',
+  megaMenuSubSubCategoryId: '',
   title: '',
   slug: '',
   templateId: '',
@@ -76,44 +82,15 @@ function NativeSelect({
   );
 }
 
-function findCategoryNode(tree: CategoryTreeNode[], id: string): CategoryTreeNode | null {
-  for (const node of tree) {
-    if (node.id === id) return node;
-    if (node.children?.length) {
-      const found = findCategoryNode(node.children, id);
-      if (found) return found;
-    }
-  }
-  return null;
-}
-
-function getCategorySlugPath(tree: CategoryTreeNode[], categoryId: string): string[] {
-  const node = findCategoryNode(tree, categoryId);
-  if (!node) return [];
-
-  const slugs: string[] = [node.slug];
-  let parentId = node.parentId;
-  while (parentId) {
-    const parent = findCategoryNode(tree, parentId);
-    if (!parent) break;
-    slugs.unshift(parent.slug);
-    parentId = parent.parentId;
-  }
-  return slugs;
-}
-
-function categoryLabel(c: CategoryTreeNode) {
-  return c.status === 'inactive' ? `${c.name} (inactive)` : c.name;
-}
-
 export function PageCreateWizard({ open, onClose, templates, onSubmit }: Props) {
   const searchParams = useSearchParams();
   const templateIdParam = searchParams.get('templateId') || '';
   const [form, setForm] = React.useState<PageCreateFormData>(emptyForm);
   const [navItems, setNavItems] = React.useState<NavigationTreeItem[]>([]);
-  const [categoryTree, setCategoryTree] = React.useState<CategoryTreeNode[]>([]);
-  const [categoryPath, setCategoryPath] = React.useState<string[]>(['']);
+  const [megaMenu, setMegaMenu] = React.useState<MegaMenuPayload | null>(null);
+  
   const [loading, setLoading] = React.useState(false);
+  const [megaMenuLoading, setMegaMenuLoading] = React.useState(false);
   const [submitting, setSubmitting] = React.useState(false);
   const [loadError, setLoadError] = React.useState<string | null>(null);
 
@@ -124,22 +101,16 @@ export function PageCreateWizard({ open, onClose, templates, onSubmit }: Props) 
       ...emptyForm,
       templateId: templateIdParam,
     });
-    setCategoryPath(['']);
+    setMegaMenu(null);
     setLoadError(null);
     setLoading(true);
 
-    Promise.all([
-      adminFetch('/api/admin/navigation/hierarchy?location=header-main&for=page-create'),
-      adminFetch('/api/admin/categories?tree=true'),
-    ])
-      .then(async ([navRes, catRes]) => {
+    adminFetch('/api/admin/navigation/hierarchy?location=header-main&for=page-create')
+      .then(async (navRes) => {
         const navData = await navRes.json();
-        const catData = await catRes.json();
         if (!navRes.ok) throw new Error(navData.error || 'Failed to load navigation');
-        if (!catRes.ok) throw new Error(catData.error || 'Failed to load categories');
 
         setNavItems(navData.items || []);
-        setCategoryTree(catData || []);
 
         if (!navData.items?.length) {
           setLoadError('No menu items found. Add navigation under Admin → Navigation.');
@@ -153,74 +124,81 @@ export function PageCreateWizard({ open, onClose, templates, onSubmit }: Props) 
       .finally(() => setLoading(false));
   }, [open]);
 
-  const selectedNav = navItems.find((n) => n.id === form.navigationItemId);
-
-  const categoryLevels = React.useMemo(() => {
-    const levels: { options: CategoryTreeNode[]; selectedId: string }[] = [];
-    let options = categoryTree;
-
-    for (let i = 0; i < categoryPath.length; i++) {
-      const selectedId = categoryPath[i] || '';
-      levels.push({ options, selectedId });
-      if (!selectedId) break;
-      const selected = options.find((o) => o.id === selectedId);
-      if (!selected?.children?.length) break;
-      options = selected.children;
-    }
-
-    const last = levels[levels.length - 1];
-    if (last?.selectedId) {
-      const selected = last.options.find((o) => o.id === last.selectedId);
-      if (selected?.children?.length) {
-        levels.push({ options: selected.children, selectedId: '' });
-      }
-    }
-
-    return levels;
-  }, [categoryTree, categoryPath]);
-
-  const resolvedCategoryId =
-    [...categoryPath].reverse().find((id) => id !== '') || '';
-
+  // Fetch mega menu when nav item changes
   React.useEffect(() => {
-    setForm((prev) =>
-      prev.categoryId === resolvedCategoryId ? prev : { ...prev, categoryId: resolvedCategoryId }
-    );
-  }, [resolvedCategoryId]);
+    if (!form.navigationItemId) {
+      setMegaMenu(null);
+      setForm(f => ({ ...f, megaMenuCategoryId: '', megaMenuSubCategoryId: '', megaMenuSubSubCategoryId: '' }));
+      return;
+    }
+
+    const selectedNav = navItems.find((n) => n.id === form.navigationItemId);
+    if (!selectedNav?.megaMenuEnabled) {
+      setMegaMenu(null);
+      setForm(f => ({ ...f, megaMenuCategoryId: '', megaMenuSubCategoryId: '', megaMenuSubSubCategoryId: '' }));
+      return;
+    }
+
+    setMegaMenuLoading(true);
+    adminFetch(`/api/admin/navigation/hierarchy?navigationItemId=${form.navigationItemId}`)
+      .then(async (res) => {
+        const data = await res.json();
+        if (res.ok) {
+          setMegaMenu(data);
+        } else {
+          setMegaMenu(null);
+        }
+      })
+      .catch(() => setMegaMenu(null))
+      .finally(() => setMegaMenuLoading(false));
+  }, [form.navigationItemId, navItems]);
+
+  const selectedNav = navItems.find((n) => n.id === form.navigationItemId);
+  
+  const activeCategory = React.useMemo(() => 
+    megaMenu?.categories.find(c => c.id === form.megaMenuCategoryId) || null
+  , [megaMenu, form.megaMenuCategoryId]);
+
+  const activeSubCategory = React.useMemo(() => 
+    activeCategory?.subCategories.find(s => s.id === form.megaMenuSubCategoryId) || null
+  , [activeCategory, form.megaMenuSubCategoryId]);
 
   const routePreview = React.useMemo(() => {
-    if (!selectedNav) return '';
-    const navSlug = selectedNav.slug || slugify(selectedNav.label);
+    const navSlug = selectedNav ? (selectedNav.slug || slugify(selectedNav.label)) : '';
     const pageSlug = form.title.trim()
       ? resolvePageSlug(form.title, form.slug)
       : form.slug.trim() || 'page-slug';
 
-    const categorySlugs = resolvedCategoryId
-      ? getCategorySlugPath(categoryTree, resolvedCategoryId)
-      : [];
+    if (!selectedNav) {
+      // Unlinked
+      return `/${pageSlug}`;
+    }
 
-    return buildPagePathFromNavAndCategorySlugs(navSlug, categorySlugs, pageSlug);
-  }, [selectedNav, categoryTree, resolvedCategoryId, form.title, form.slug]);
+    if (megaMenu && form.megaMenuCategoryId) {
+      const cat = megaMenu.categories.find(c => c.id === form.megaMenuCategoryId);
+      const sub = cat?.subCategories.find(s => s.id === form.megaMenuSubCategoryId);
+      const subSub = sub?.subSubCategories.find(l => l.id === form.megaMenuSubSubCategoryId);
+      
+      return buildPagePathFromNavHierarchy({
+        navSlug,
+        categorySlug: cat?.slug,
+        subSlug: sub?.slug,
+        subSubSlug: subSub?.slug,
+        pageSlug: !subSub ? pageSlug : undefined, // If placed at leaf, leaf slug is used. Wait!
+      });
+    }
 
-  const setCategoryAtLevel = (level: number, categoryId: string) => {
-    const next = categoryPath.slice(0, level);
-    next[level] = categoryId;
-    if (categoryId) next.length = level + 1;
-    setCategoryPath(next.length ? next : ['']);
-  };
+    return `/${navSlug.replace(/^\//, '')}/${pageSlug}`;
+  }, [selectedNav, megaMenu, form.megaMenuCategoryId, form.megaMenuSubCategoryId, form.megaMenuSubSubCategoryId, form.title, form.slug]);
 
   const submit = async () => {
-    if (!form.navigationItemId) {
-      toast.error('Select a navigation menu item');
-      return;
-    }
     if (!form.title.trim()) {
       toast.error('Page title is required');
       return;
     }
     setSubmitting(true);
     try {
-      await onSubmit({ ...form, categoryId: resolvedCategoryId });
+      await onSubmit(form);
       onClose();
     } finally {
       setSubmitting(false);
@@ -249,7 +227,7 @@ export function PageCreateWizard({ open, onClose, templates, onSubmit }: Props) 
           <div className="bg-slate-50 px-10 py-8 border-b border-slate-100 flex justify-between items-center shrink-0 rounded-t-[40px]">
             <div>
               <h2 className="text-xl font-bold text-slate-900">Create New Page</h2>
-              <p className="text-sm text-slate-400">Place the page in navigation and categories from Admin → Categories</p>
+              <p className="text-sm text-slate-400">Place the page directly in your website Navigation</p>
             </div>
             <button type="button" onClick={onClose} aria-label="Close">
               <X className="w-5 h-5 text-slate-400" />
@@ -267,47 +245,92 @@ export function PageCreateWizard({ open, onClose, templates, onSubmit }: Props) 
                   <h3 className="text-sm font-bold text-slate-700">Navigation placement</h3>
 
                   <div>
-                    <FieldLabel>Menu item</FieldLabel>
+                    <FieldLabel>Menu item (Nav Bar)</FieldLabel>
                     <NativeSelect
                       value={form.navigationItemId}
                       onChange={(navigationItemId) => setForm({ ...form, navigationItemId })}
                     >
-                      <option value="">Select menu item</option>
+                      <option value="">None — unlinked page</option>
                       {navItems.map((n) => (
                         <option key={n.id} value={n.id}>
-                          {n.label}
+                          {n.label} {n.megaMenuEnabled ? '(Mega Menu)' : ''}
                         </option>
                       ))}
                     </NativeSelect>
                   </div>
 
-                  <div className="space-y-3">
-                    <FieldLabel>Category (from Admin → Categories)</FieldLabel>
-                    {categoryTree.length === 0 ? (
-                      <p className="text-xs text-amber-600">
-                        No categories yet. Create them under Admin → Categories.
-                      </p>
-                    ) : (
-                      categoryLevels.map((level, index) => (
-                        <NativeSelect
-                          key={`cat-level-${index}`}
-                          value={level.selectedId}
-                          onChange={(id) => setCategoryAtLevel(index, id)}
-                        >
-                          <option value="">
-                            {index === 0
-                              ? 'None — page under menu item only'
-                              : 'None — use parent category only'}
-                          </option>
-                          {level.options.map((c) => (
-                            <option key={c.id} value={c.id}>
-                              {categoryLabel(c)}
-                            </option>
-                          ))}
-                        </NativeSelect>
-                      ))
-                    )}
-                  </div>
+                  {megaMenuLoading ? (
+                    <p className="text-xs text-slate-400 animate-pulse pl-2">Loading Mega Menu structure...</p>
+                  ) : megaMenu ? (
+                    <div className="space-y-3 pt-4 border-t border-slate-50">
+                      <div>
+                        <h4 className="text-sm font-bold text-slate-900 flex items-center gap-2">
+                          <Layers className="w-4 h-4 text-[#4B2A63]" />
+                          Mega Menu Linking (Optional)
+                        </h4>
+                        <p className="text-xs text-slate-500 mt-1">
+                          Select where in the dropdown this page should appear.
+                        </p>
+                      </div>
+
+                      <div className="space-y-3 pl-4 border-l-2 border-slate-100">
+                        <div>
+                          <FieldLabel>Category (Tab)</FieldLabel>
+                          <NativeSelect
+                            value={form.megaMenuCategoryId}
+                            onChange={(val) => setForm({ 
+                              ...form, 
+                              megaMenuCategoryId: val,
+                              megaMenuSubCategoryId: '',
+                              megaMenuSubSubCategoryId: ''
+                            })}
+                          >
+                            <option value="">None — do not link in Mega Menu</option>
+                            {megaMenu.categories.map((c) => (
+                              <option key={c.id} value={c.id}>{c.name}</option>
+                            ))}
+                          </NativeSelect>
+                        </div>
+
+                        {form.megaMenuCategoryId && activeCategory && activeCategory.subCategories.length > 0 && (
+                          <div>
+                            <FieldLabel>Sub Category (Panel)</FieldLabel>
+                            <NativeSelect
+                              value={form.megaMenuSubCategoryId}
+                              onChange={(val) => setForm({ 
+                                ...form, 
+                                megaMenuSubCategoryId: val,
+                                megaMenuSubSubCategoryId: ''
+                              })}
+                            >
+                              <option value="">None — link directly to Category Tab</option>
+                              {activeCategory.subCategories.map((s) => (
+                                <option key={s.id} value={s.id}>{s.name}</option>
+                              ))}
+                            </NativeSelect>
+                          </div>
+                        )}
+
+                        {form.megaMenuSubCategoryId && activeSubCategory && activeSubCategory.subSubCategories.length > 0 && (
+                          <div>
+                            <FieldLabel>Leaf Link (Grid Link)</FieldLabel>
+                            <NativeSelect
+                              value={form.megaMenuSubSubCategoryId}
+                              onChange={(val) => setForm({ 
+                                ...form, 
+                                megaMenuSubSubCategoryId: val
+                              })}
+                            >
+                              <option value="">None — link directly to Sub Category</option>
+                              {activeSubCategory.subSubCategories.map((l) => (
+                                <option key={l.id} value={l.id}>{l.name}</option>
+                              ))}
+                            </NativeSelect>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  ) : null}
                 </section>
 
                 <section className="space-y-4">
@@ -335,7 +358,7 @@ export function PageCreateWizard({ open, onClose, templates, onSubmit }: Props) 
                     </div>
                   </div>
 
-                  {routePreview && form.navigationItemId && (
+                  {routePreview && (
                     <div className="rounded-2xl bg-[#4B2A63]/5 border border-[#4B2A63]/10 px-5 py-4">
                       <p className="text-[10px] font-black text-[#4B2A63] uppercase tracking-widest mb-1">
                         Route preview
@@ -388,7 +411,7 @@ export function PageCreateWizard({ open, onClose, templates, onSubmit }: Props) 
             <Button
               type="button"
               onClick={submit}
-              disabled={loading || submitting || !form.navigationItemId || !form.title.trim()}
+              disabled={loading || submitting || !form.title.trim()}
               className="bg-[#4B2A63] hover:bg-[#3B198F] text-white rounded-full px-10 h-12 font-bold"
             >
               {submitting ? 'Creating…' : 'Create Page'}
