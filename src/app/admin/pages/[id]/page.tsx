@@ -129,24 +129,37 @@ function BlogManager({ pageId, onRefresh }: BlogManagerProps) {
   const [title, setTitle] = React.useState('');
   const [slug, setSlug] = React.useState('');
   const [slugTouched, setSlugTouched] = React.useState(false);
-  const [category, setCategory] = React.useState('Technology');
+  const [category, setCategory] = React.useState('');
   const [date, setDate] = React.useState('');
-  const [authorName, setAuthorName] = React.useState('Staff Writer');
+  const [authorName, setAuthorName] = React.useState('');
+  const [authorAvatar, setAuthorAvatar] = React.useState('');
   const [image, setImage] = React.useState('');
   const [description, setDescription] = React.useState('');
   const [contentHtml, setContentHtml] = React.useState('');
   const [status, setStatus] = React.useState<'draft' | 'published'>('draft');
 
-  // Load date on mount to avoid hydration mismatch
-  React.useEffect(() => {
-    setDate(
-      new Date().toLocaleDateString('en-US', {
-        month: 'long',
-        day: 'numeric',
-        year: 'numeric',
-      })
-    );
-  }, []);
+  // Additional fields for Blog Detail Page
+  const [badgeText, setBadgeText] = React.useState('');
+  const [headingText, setHeadingText] = React.useState('');
+  const [subheadingText, setSubheadingText] = React.useState('');
+  const [bgImage, setBgImage] = React.useState('');
+
+  // Highlights State
+  const [highlights, setHighlights] = React.useState<Array<{ title: string; description: string; image: string }>>([]);
+
+  const addHighlight = () => {
+    setHighlights(prev => [...prev, { title: '', description: '', image: '' }]);
+  };
+
+  const removeHighlight = (index: number) => {
+    setHighlights(prev => prev.filter((_, idx) => idx !== index));
+  };
+
+  // Conclusion HTML
+  const [conclusionHtml, setConclusionHtml] = React.useState('');
+
+  // Tab control in the creation modal
+  const [activeTab, setActiveTab] = React.useState<'basic' | 'hero' | 'highlights'>('basic');
 
   const fetchBlogs = React.useCallback(async () => {
     setIsLoading(true);
@@ -291,28 +304,33 @@ function BlogManager({ pageId, onRefresh }: BlogManagerProps) {
 
       const updatedContent = {
         ...defaultContent,
-        badgeText: defaultContent.badgeText || 'Latest Blogs',
-        headingText: defaultContent.headingText || 'Explore our knowledge hub',
-        subheadingText:
-          defaultContent.subheadingText ||
-          'Everything journalists, analysts, and partners need to cover ESS — from brand assets to company facts.',
-        category: category || 'Technology',
         title: title,
-        authorName: authorName || 'Staff Writer',
-        authorAvatar: `https://api.dicebear.com/7.x/avataaars/svg?seed=${
-          authorName || 'Staff'
-        }`,
-        date:
-          date ||
-          new Date().toLocaleDateString('en-US', {
-            month: 'long',
-            day: 'numeric',
-            year: 'numeric',
-          }),
-        image: image || '',
-        description: description,
-        contentHtml: contentHtml,
+        category: category || undefined,
+        authorName: authorName || undefined,
+        authorAvatar: authorAvatar || (authorName
+          ? `https://api.dicebear.com/7.x/avataaars/svg?seed=${authorName}`
+          : undefined),
+        date: date || undefined,
+        image: image || undefined,
+        description: description || undefined,
+        contentHtml: contentHtml || undefined,
+        badgeText: badgeText || undefined,
+        headingText: headingText || undefined,
+        subheadingText: subheadingText || undefined,
+        bgImage: bgImage || undefined,
+        conclusionHtml: conclusionHtml || undefined,
       };
+
+      // For highlights, only update if user edited them
+      if (highlights.some(h => h.title.trim() || h.description.trim() || h.image.trim())) {
+        (updatedContent as any).highlights = highlights
+          .filter(h => h.title.trim() || h.description.trim() || h.image.trim())
+          .map(h => ({
+            title: h.title.trim(),
+            description: h.description.trim(),
+            image: h.image.trim() || undefined,
+          }));
+      }
 
       // 4. Save section content
       const updateSectionRes = await fetch(
@@ -349,19 +367,23 @@ function BlogManager({ pageId, onRefresh }: BlogManagerProps) {
       setTitle('');
       setSlug('');
       setSlugTouched(false);
-      setCategory('Technology');
-      setDate(
-        new Date().toLocaleDateString('en-US', {
-          month: 'long',
-          day: 'numeric',
-          year: 'numeric',
-        })
-      );
-      setAuthorName('Staff Writer');
+      setCategory('');
+      setDate('');
+      setAuthorName('');
+      setAuthorAvatar('');
       setImage('');
       setDescription('');
       setContentHtml('');
       setStatus('draft');
+
+      // Reset new fields
+      setBadgeText('');
+      setHeadingText('');
+      setSubheadingText('');
+      setBgImage('');
+      setHighlights([]);
+      setConclusionHtml('');
+      setActiveTab('basic');
 
       fetchBlogs();
       onRefresh();
@@ -526,110 +548,283 @@ function BlogManager({ pageId, onRefresh }: BlogManagerProps) {
                 </button>
               </div>
 
+              {/* Tabs Navigation */}
+              <div className="flex border-b border-slate-100 px-6 bg-slate-50/50 shrink-0">
+                {[
+                  { id: 'basic', label: 'Basic Info' },
+                  { id: 'hero', label: 'Hero Banner' },
+                  { id: 'highlights', label: 'Highlights & Conclusion' },
+                ].map((tab) => (
+                  <button
+                    key={tab.id}
+                    type="button"
+                    onClick={() => setActiveTab(tab.id as any)}
+                    className={cn(
+                      'px-4 py-3 text-xs font-bold border-b-2 transition-colors cursor-pointer',
+                      activeTab === tab.id
+                        ? 'border-[#4B2A63] text-[#4B2A63] border-b-[#4B2A63]'
+                        : 'border-transparent text-slate-400 hover:text-slate-600'
+                    )}
+                  >
+                    {tab.label}
+                  </button>
+                ))}
+              </div>
+
               {/* Modal Form Scroll Area */}
               <form onSubmit={handleCreate} className="flex-1 overflow-y-auto p-6 space-y-5">
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div className="space-y-1">
-                    <label className="text-xs font-semibold text-slate-500">
-                      Blog Title
-                    </label>
-                    <input
-                      type="text"
-                      required
-                      value={title}
-                      onChange={(e) => setTitle(e.target.value)}
-                      placeholder="e.g. How Power BI Solves Mismatches"
-                      className="w-full bg-slate-50 rounded-xl px-4 py-2.5 text-sm outline-none border border-transparent focus:border-[#4B2A63]/20 focus:ring-2 focus:ring-[#4B2A63]/10 font-bold"
-                    />
-                  </div>
-                  <div className="space-y-1">
-                    <label className="text-xs font-semibold text-slate-500">
-                      URL Slug
-                    </label>
-                    <input
-                      type="text"
-                      required
-                      value={slug}
-                      onChange={(e) => {
-                        setSlug(e.target.value);
-                        setSlugTouched(true);
-                      }}
-                      placeholder="e.g. how-power-bi-solves-mismatches"
-                      className="w-full bg-slate-50 rounded-xl px-4 py-2.5 text-sm outline-none border border-transparent focus:border-[#4B2A63]/20 focus:ring-2 focus:ring-[#4B2A63]/10 font-mono"
-                    />
-                  </div>
-                </div>
+                {activeTab === 'basic' && (
+                  <>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      <div className="space-y-1">
+                        <label className="text-xs font-semibold text-slate-500">
+                          Blog Title
+                        </label>
+                        <input
+                          type="text"
+                          required
+                          value={title}
+                          onChange={(e) => setTitle(e.target.value)}
+                          placeholder="e.g. How Power BI Solves Mismatches"
+                          className="w-full bg-slate-50 rounded-xl px-4 py-2.5 text-sm outline-none border border-transparent focus:border-[#4B2A63]/20 focus:ring-2 focus:ring-[#4B2A63]/10 font-bold"
+                        />
+                      </div>
+                      <div className="space-y-1">
+                        <label className="text-xs font-semibold text-slate-500">
+                          URL Slug
+                        </label>
+                        <input
+                          type="text"
+                          required
+                          value={slug}
+                          onChange={(e) => {
+                            setSlug(e.target.value);
+                            setSlugTouched(true);
+                          }}
+                          placeholder="e.g. how-power-bi-solves-mismatches"
+                          className="w-full bg-slate-50 rounded-xl px-4 py-2.5 text-sm outline-none border border-transparent focus:border-[#4B2A63]/20 focus:ring-2 focus:ring-[#4B2A63]/10 font-mono"
+                        />
+                      </div>
+                    </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                  <div className="space-y-1">
-                    <label className="text-xs font-semibold text-slate-500">
-                      Category / Topic
-                    </label>
-                    <select
-                      value={category}
-                      onChange={(e) => setCategory(e.target.value)}
-                      className="w-full bg-slate-50 rounded-xl px-4 py-2.5 text-sm outline-none border border-transparent focus:border-[#4B2A63]/20 focus:ring-2 focus:ring-[#4B2A63]/10 font-medium"
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                      <div className="space-y-1">
+                        <label className="text-xs font-semibold text-slate-500">
+                          Category / Topic
+                        </label>
+                        <select
+                          value={category}
+                          onChange={(e) => setCategory(e.target.value)}
+                          className="w-full bg-slate-50 rounded-xl px-4 py-2.5 text-sm outline-none border border-transparent focus:border-[#4B2A63]/20 focus:ring-2 focus:ring-[#4B2A63]/10 font-medium"
+                        >
+                          <option value="">Select Category / Topic</option>
+                          <option value="Business Intelligence">Business Intelligence</option>
+                          <option value="ERP Solutions">ERP Solutions</option>
+                          <option value="IoT Solutions">IoT Solutions</option>
+                          <option value="Mobile App Solutions">Mobile App Solutions</option>
+                          <option value="CRM Solutions">CRM Solutions</option>
+                          <option value="Sales Force Automation">Sales Force Automation</option>
+                          <option value="After-Sales Service App">After-Sales Service App</option>
+                        </select>
+                      </div>
+                      <div className="space-y-1">
+                        <label className="text-xs font-semibold text-slate-500">
+                          Author Name
+                        </label>
+                        <input
+                          type="text"
+                          value={authorName}
+                          onChange={(e) => setAuthorName(e.target.value)}
+                          placeholder="e.g. Jason Francisco"
+                          className="w-full bg-slate-50 rounded-xl px-4 py-2.5 text-sm outline-none border border-transparent focus:border-[#4B2A63]/20 focus:ring-2 focus:ring-[#4B2A63]/10 font-medium"
+                        />
+                      </div>
+                      <div className="space-y-1">
+                        <label className="text-xs font-semibold text-slate-500">
+                          Publish Date String
+                        </label>
+                        <input
+                          type="text"
+                          value={date}
+                          onChange={(e) => setDate(e.target.value)}
+                          placeholder="e.g. May 15, 2026"
+                          className="w-full bg-slate-50 rounded-xl px-4 py-2.5 text-sm outline-none border border-transparent focus:border-[#4B2A63]/20 focus:ring-2 focus:ring-[#4B2A63]/10 font-medium"
+                        />
+                      </div>
+                    </div>
+
+                    <MediaField
+                      fieldKey="authorAvatar"
+                      value={authorAvatar}
+                      onChange={setAuthorAvatar}
+                    />
+
+                    <MediaField
+                      fieldKey="featuredImage"
+                      value={image}
+                      onChange={setImage}
+                    />
+
+                    <div className="space-y-1">
+                      <label className="text-xs font-semibold text-slate-500">
+                        Brief Description / Summary
+                      </label>
+                      <textarea
+                        rows={3}
+                        value={description}
+                        onChange={(e) => setDescription(e.target.value)}
+                        placeholder="Short excerpt for lists and previews..."
+                        className="w-full bg-slate-50 rounded-xl px-4 py-2.5 text-sm outline-none border border-transparent focus:border-[#4B2A63]/20 focus:ring-2 focus:ring-[#4B2A63]/10 font-medium resize-none"
+                      />
+                    </div>
+
+                    <RichTextField
+                      fieldKey="contentHtml"
+                      value={contentHtml}
+                      onChange={setContentHtml}
+                      placeholder="Start writing article content..."
+                    />
+                  </>
+                )}
+
+                {activeTab === 'hero' && (
+                  <div className="space-y-5">
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                      <div className="space-y-1">
+                        <label className="text-xs font-semibold text-slate-500">
+                          Badge Text
+                        </label>
+                        <input
+                          type="text"
+                          value={badgeText}
+                          onChange={(e) => setBadgeText(e.target.value)}
+                          placeholder="e.g. Latest Blogs"
+                          className="w-full bg-slate-50 rounded-xl px-4 py-2.5 text-sm outline-none border border-transparent focus:border-[#4B2A63]/20 focus:ring-2 focus:ring-[#4B2A63]/10 font-medium"
+                        />
+                      </div>
+                      <div className="space-y-1 sm:col-span-2">
+                        <label className="text-xs font-semibold text-slate-500">
+                          Hero Heading Text
+                        </label>
+                        <input
+                          type="text"
+                          value={headingText}
+                          onChange={(e) => setHeadingText(e.target.value)}
+                          placeholder="e.g. Explore our knowledge hub"
+                          className="w-full bg-slate-50 rounded-xl px-4 py-2.5 text-sm outline-none border border-transparent focus:border-[#4B2A63]/20 focus:ring-2 focus:ring-[#4B2A63]/10 font-medium"
+                        />
+                      </div>
+                    </div>
+
+                    <div className="space-y-1">
+                      <label className="text-xs font-semibold text-slate-500">
+                        Hero Subheading Text
+                      </label>
+                      <textarea
+                        rows={2}
+                        value={subheadingText}
+                        onChange={(e) => setSubheadingText(e.target.value)}
+                        placeholder="Subheading below hero heading..."
+                        className="w-full bg-slate-50 rounded-xl px-4 py-2.5 text-sm outline-none border border-transparent focus:border-[#4B2A63]/20 focus:ring-2 focus:ring-[#4B2A63]/10 font-medium resize-none"
+                      />
+                    </div>
+
+                    <MediaField
+                      fieldKey="heroBackgroundImage"
+                      value={bgImage}
+                      onChange={setBgImage}
+                    />
+                  </div>
+                )}
+
+                {activeTab === 'highlights' && (
+                  <div className="space-y-5">
+                    <h4 className="text-xs font-bold text-slate-700 uppercase tracking-wider">Key Highlights / Solutions</h4>
+                    
+                    {highlights.length === 0 ? (
+                      <div className="bg-slate-50/50 rounded-2xl p-6 text-center border border-dashed border-slate-200">
+                        <p className="text-xs text-slate-400 font-medium">No highlights added yet.</p>
+                        <p className="text-[10px] text-slate-300 mt-0.5">Click &ldquo;Add Highlight&rdquo; below to insert a highlight card.</p>
+                      </div>
+                    ) : (
+                      <div className="flex flex-col gap-4">
+                        {highlights.map((highlight, index) => (
+                          <div key={index} className="bg-slate-50/50 p-4 rounded-2xl border border-slate-100 space-y-3 flex flex-col justify-between">
+                            <div className="space-y-3">
+                              <div className="flex items-center justify-between border-b border-slate-100 pb-2">
+                                <h5 className="text-[10px] font-black text-[#4B2A63] uppercase tracking-wider">Highlight {index + 1}</h5>
+                                <button
+                                  type="button"
+                                  onClick={() => removeHighlight(index)}
+                                  className="p-1 rounded-full text-rose-500 hover:bg-rose-50 hover:text-rose-700 transition-colors"
+                                  title="Delete Highlight"
+                                >
+                                  <Trash2 className="w-4 h-4" />
+                                </button>
+                              </div>
+                              <div className="space-y-1">
+                                <label className="text-[10px] font-semibold text-slate-500">Title</label>
+                                <input
+                                  type="text"
+                                  value={highlight.title}
+                                  onChange={(e) => {
+                                    const newHighlights = [...highlights];
+                                    newHighlights[index].title = e.target.value;
+                                    setHighlights(newHighlights);
+                                  }}
+                                  placeholder="Feature or solution title..."
+                                  className="w-full bg-white rounded-xl px-4 py-2 text-sm outline-none border border-slate-200 focus:border-[#4B2A63]/20 focus:ring-2 focus:ring-[#4B2A63]/10 font-medium"
+                                />
+                              </div>
+                              <div className="space-y-1">
+                                <label className="text-[10px] font-semibold text-slate-500">Description</label>
+                                <textarea
+                                  rows={2}
+                                  value={highlight.description}
+                                  onChange={(e) => {
+                                    const newHighlights = [...highlights];
+                                    newHighlights[index].description = e.target.value;
+                                    setHighlights(newHighlights);
+                                  }}
+                                  placeholder="Detail explanation..."
+                                  className="w-full bg-white rounded-xl px-4 py-2 text-sm outline-none border border-slate-200 focus:border-[#4B2A63]/20 focus:ring-2 focus:ring-[#4B2A63]/10 font-medium resize-none"
+                                />
+                              </div>
+                            </div>
+                            <div className="pt-2 border-t border-slate-100 mt-2">
+                              <MediaField
+                                fieldKey={`highlight-${index + 1}-image`}
+                                value={highlight.image}
+                                onChange={(url) => {
+                                  const newHighlights = [...highlights];
+                                  newHighlights[index].image = url;
+                                  setHighlights(newHighlights);
+                                }}
+                              />
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+
+                    <Button
+                      type="button"
+                      onClick={addHighlight}
+                      variant="outline"
+                      className="w-full border-dashed border-[#4B2A63]/30 hover:border-[#4B2A63] text-[#4B2A63] gap-2 rounded-xl py-4 h-auto shadow-none font-bold"
                     >
-                      <option value="Business Intelligence">Business Intelligence</option>
-                      <option value="ERP Solutions">ERP Solutions</option>
-                      <option value="IoT Solutions">IoT Solutions</option>
-                      <option value="Mobile App Solutions">Mobile App Solutions</option>
-                      <option value="CRM Solutions">CRM Solutions</option>
-                      <option value="Sales Force Automation">Sales Force Automation</option>
-                      <option value="After-Sales Service App">After-Sales Service App</option>
-                    </select>
-                  </div>
-                  <div className="space-y-1">
-                    <label className="text-xs font-semibold text-slate-500">
-                      Author Name
-                    </label>
-                    <input
-                      type="text"
-                      value={authorName}
-                      onChange={(e) => setAuthorName(e.target.value)}
-                      placeholder="e.g. Jason Francisco"
-                      className="w-full bg-slate-50 rounded-xl px-4 py-2.5 text-sm outline-none border border-transparent focus:border-[#4B2A63]/20 focus:ring-2 focus:ring-[#4B2A63]/10 font-medium"
+                      <Plus className="w-4 h-4" />
+                      Add Highlight
+                    </Button>
+
+                    <RichTextField
+                      fieldKey="conclusionHtml"
+                      value={conclusionHtml}
+                      onChange={setConclusionHtml}
+                      placeholder="Write concluding paragraphs here..."
                     />
                   </div>
-                  <div className="space-y-1">
-                    <label className="text-xs font-semibold text-slate-500">
-                      Publish Date String
-                    </label>
-                    <input
-                      type="text"
-                      value={date}
-                      onChange={(e) => setDate(e.target.value)}
-                      placeholder="e.g. May 15, 2026"
-                      className="w-full bg-slate-50 rounded-xl px-4 py-2.5 text-sm outline-none border border-transparent focus:border-[#4B2A63]/20 focus:ring-2 focus:ring-[#4B2A63]/10 font-medium"
-                    />
-                  </div>
-                </div>
-
-                <MediaField
-                  fieldKey="featuredImage"
-                  value={image}
-                  onChange={setImage}
-                />
-
-                <div className="space-y-1">
-                  <label className="text-xs font-semibold text-slate-500">
-                    Brief Description / Summary
-                  </label>
-                  <textarea
-                    rows={3}
-                    value={description}
-                    onChange={(e) => setDescription(e.target.value)}
-                    placeholder="Short excerpt for lists and previews..."
-                    className="w-full bg-slate-50 rounded-xl px-4 py-2.5 text-sm outline-none border border-transparent focus:border-[#4B2A63]/20 focus:ring-2 focus:ring-[#4B2A63]/10 font-medium resize-none"
-                  />
-                </div>
-
-                <RichTextField
-                  fieldKey="contentHtml"
-                  value={contentHtml}
-                  onChange={setContentHtml}
-                  placeholder="Start writing article content..."
-                />
+                )}
 
                 <div className="border-t border-slate-100 pt-4 flex items-center justify-between">
                   <div className="flex items-center gap-3">

@@ -390,6 +390,15 @@ export const SECTION_REGISTRY: SectionTypeDefinition[] = [
     defaultVariant: 'default',
     supportsVariants: false,
   },
+  {
+    type: 'testimonials-block',
+    label: 'Testimonials Section',
+    description: 'Dynamic customer testimonials listing with filter sidebar',
+    icon: Layers,
+    color: 'bg-violet-50 text-violet-600',
+    defaultVariant: 'default',
+    supportsVariants: false,
+  },
 ];
 
 export function getSectionDefinition(type: string): SectionTypeDefinition | undefined {

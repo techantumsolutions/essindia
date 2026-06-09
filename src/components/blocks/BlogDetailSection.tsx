@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button';
 interface HighlightPanel {
   title: string;
   description: string;
+  image?: string;
 }
 
 interface BlogAuthor {
@@ -267,7 +268,7 @@ export function BlogDetailSection({ content }: BlogDetailSectionProps) {
 
           {/* Large Featured Image */}
           {hasImage && image && (
-            <div className="w-full md:w-1/2 mx-auto rounded-[32px] overflow-hidden aspect-[16/10] shadow-md border border-slate-100 bg-slate-100">
+            <div className="w-full text-center md:w-1/2 mx-auto rounded-[32px] overflow-hidden aspect-[16/10] shadow-md border border-slate-100 bg-slate-100">
               <img
                 src={image}
                 alt={title}
@@ -284,78 +285,30 @@ export function BlogDetailSection({ content }: BlogDetailSectionProps) {
             <div dangerouslySetInnerHTML={{ __html: contentHtml }} />
           </div>
 
-          {/* Custom Styled Reconciliation Diagram */}
-          <div className="my-16 bg-slate-50 border border-slate-100 rounded-3xl p-8 shadow-sm">
-            <div className="grid grid-cols-1 md:grid-cols-7 gap-4 items-center relative">
-
-              {/* Box 1 */}
-              <div className="col-span-1 md:col-span-2 text-center p-5 bg-white border border-slate-200/80 rounded-2xl shadow-sm z-10">
-                <h4 className="text-sm font-black text-[#103D38] mb-1">{diagTitle1}</h4>
-                <p className="text-[10px] text-slate-400 font-medium leading-relaxed">{diagDesc1}</p>
+          {/* Key Highlights (Column Layout) */}
+          <div className="my-16 space-y-12">
+            {highlights.map((panel, index) => (
+              <div key={index} className="space-y-4">
+                <h3 className="text-xl md:text-2xl font-black text-slate-800 leading-tight">
+                  {panel.title}
+                </h3>
+                <p className="text-slate-600 leading-relaxed text-sm whitespace-pre-line">
+                  {panel.description}
+                </p>
+                {panel.image && (
+                  <div className="w-full md:w-1/2 mx-auto rounded-[24px] overflow-hidden aspect-[16/10] shadow-sm border border-slate-100 bg-slate-50">
+                    <img
+                      src={panel.image}
+                      alt={panel.title}
+                      className="w-full h-full object-cover"
+                      onError={(e) => {
+                        (e.target as HTMLImageElement).style.display = 'none';
+                      }}
+                    />
+                  </div>
+                )}
               </div>
-
-              {/* Arrow Line Left-to-Center */}
-              <div className="col-span-1 md:col-span-1 flex justify-center items-center">
-                <div className="h-0.5 bg-slate-300 w-12 hidden md:block" />
-              </div>
-
-              {/* Center Circle Box 2 */}
-              <div className="col-span-1 md:col-span-1 flex justify-center z-10">
-                <div className="w-28 h-28 rounded-full border-2 border-[#103D38] bg-white flex flex-col items-center justify-center text-center p-3 shadow-md hover:scale-105 transition-transform duration-300">
-                  <span className="text-[10px] font-black text-[#103D38] uppercase tracking-tighter leading-none mb-1">Business</span>
-                  <span className="text-[10px] font-black text-[#103D38] uppercase tracking-tighter leading-none mb-1">Logic</span>
-                  <span className="text-[9px] text-slate-400 font-medium leading-none">Reconciliation</span>
-                </div>
-              </div>
-
-              {/* Arrow Line Center-to-Right */}
-              <div className="col-span-1 md:col-span-1 flex justify-center items-center">
-                <div className="h-0.5 bg-slate-300 w-12 hidden md:block" />
-              </div>
-
-              {/* Box 3 */}
-              <div className="col-span-1 md:col-span-2 text-center p-5 bg-white border border-slate-200/80 rounded-2xl shadow-sm z-10">
-                <h4 className="text-sm font-black text-[#103D38] mb-1">{diagTitle3}</h4>
-                <p className="text-[10px] text-slate-400 font-medium leading-relaxed">{diagDesc3}</p>
-              </div>
-
-            </div>
-
-            {/* Sub-steps grid with lines connecting */}
-            <div className="mt-12 pt-8 border-t border-slate-200/60 grid grid-cols-1 md:grid-cols-3 gap-6 text-center">
-              <div className="space-y-1">
-                <div className="w-1.5 h-1.5 rounded-full bg-[#103D38] mx-auto mb-2" />
-                <h5 className="text-[11px] font-black text-slate-600 uppercase tracking-wider">{diagSub1}</h5>
-              </div>
-              <div className="space-y-1">
-                <div className="w-1.5 h-1.5 rounded-full bg-[#103D38] mx-auto mb-2" />
-                <h5 className="text-[11px] font-black text-slate-600 uppercase tracking-wider">{diagSub2}</h5>
-              </div>
-              <div className="space-y-1">
-                <div className="w-1.5 h-1.5 rounded-full bg-[#103D38] mx-auto mb-2" />
-                <h5 className="text-[11px] font-black text-slate-600 uppercase tracking-wider">{diagSub3}</h5>
-              </div>
-            </div>
-          </div>
-
-          {/* Key Highlights Grid */}
-          <div className="my-16 space-y-6">
-            <h3 className="text-lg font-black text-slate-800 uppercase tracking-wider border-b border-slate-100 pb-3">Key Solutions</h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {highlights.map((panel, index) => (
-                <div
-                  key={index}
-                  className="bg-blue-50/40 border border-blue-100/60 rounded-3xl p-6 shadow-sm flex flex-col gap-3"
-                >
-                  <h4 className="text-[15px] font-black text-[#103D38]">
-                    {panel.title}
-                  </h4>
-                  <p className="text-xs text-slate-500 font-normal leading-relaxed">
-                    {panel.description}
-                  </p>
-                </div>
-              ))}
-            </div>
+            ))}
           </div>
 
           {/* Conclusion */}
