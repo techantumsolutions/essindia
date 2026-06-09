@@ -188,10 +188,25 @@ export class PageAdminRepository {
         .set({ pageId: page.id, updatedAt: new Date() })
         .where(eq(megaMenuSubSubCategories.id, data.megaMenuSubSubCategoryId));
     } else if (data.megaMenuSubCategoryId) {
-      await db
-        .update(megaMenuSubCategories)
-        .set({ pageId: page.id, updatedAt: new Date() })
-        .where(eq(megaMenuSubCategories.id, data.megaMenuSubCategoryId));
+      // Append as a new leaf link under the selected sub-category
+      await db.insert(megaMenuSubSubCategories).values({
+        subCategoryId: data.megaMenuSubCategoryId,
+        name: data.title,
+        slug: pageSlug,
+        pageId: page.id,
+        orderIndex: 999,
+        status: 'active',
+      });
+    } else if (data.megaMenuCategoryId) {
+      // Append as a new sub-category (panel) under the selected category tab
+      await db.insert(megaMenuSubCategories).values({
+        categoryId: data.megaMenuCategoryId,
+        name: data.title,
+        slug: pageSlug,
+        pageId: page.id,
+        orderIndex: 999,
+        status: 'active',
+      });
     }
 
     if (data.templateId) {

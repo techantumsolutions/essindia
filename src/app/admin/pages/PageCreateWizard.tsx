@@ -269,7 +269,7 @@ export function PageCreateWizard({ open, onClose, templates, onSubmit }: Props) 
                           Mega Menu Linking (Optional)
                         </h4>
                         <p className="text-xs text-slate-500 mt-1">
-                          Select where in the dropdown this page should appear.
+                          Select the parent item. This page will be added as a new link underneath it.
                         </p>
                       </div>
 
@@ -303,7 +303,7 @@ export function PageCreateWizard({ open, onClose, templates, onSubmit }: Props) 
                                 megaMenuSubSubCategoryId: ''
                               })}
                             >
-                              <option value="">None — link directly to Category Tab</option>
+                              <option value="">None — create as a Sub Category Panel instead</option>
                               {activeCategory.subCategories.map((s) => (
                                 <option key={s.id} value={s.id}>{s.name}</option>
                               ))}
@@ -321,7 +321,7 @@ export function PageCreateWizard({ open, onClose, templates, onSubmit }: Props) 
                                 megaMenuSubSubCategoryId: val
                               })}
                             >
-                              <option value="">None — link directly to Sub Category</option>
+                              <option value="">None — create as a Leaf Link instead</option>
                               {activeSubCategory.subSubCategories.map((l) => (
                                 <option key={l.id} value={l.id}>{l.name}</option>
                               ))}

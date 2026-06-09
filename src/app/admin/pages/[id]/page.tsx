@@ -13,6 +13,13 @@ import {
   AlertCircle,
   Loader2,
   Layers,
+  Trash2,
+  Edit,
+  Calendar,
+  User,
+  Image as ImageIcon,
+  X,
+  BookOpen,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
@@ -24,6 +31,8 @@ import {
   setNestedValue,
 } from '@/components/admin/page-editor';
 import type { PageSection, JsonValue } from '@/components/admin/page-editor';
+import { RichTextField } from '@/components/admin/page-editor/RichTextField';
+import { MediaField } from '@/components/admin/page-editor/MediaField';
 
 // ---------------------------------------------------------------------------
 // Types
@@ -101,6 +110,585 @@ function findSchemaForSection(
 }
 
 // ---------------------------------------------------------------------------
+// Blog Posts Manager Component
+// ---------------------------------------------------------------------------
+
+interface BlogManagerProps {
+  pageId: string;
+  onRefresh: () => void;
+}
+
+function BlogManager({ pageId, onRefresh }: BlogManagerProps) {
+  const [blogs, setBlogs] = React.useState<any[]>([]);
+  const [templates, setTemplates] = React.useState<any[]>([]);
+  const [isLoading, setIsLoading] = React.useState(true);
+  const [showCreateModal, setShowCreateModal] = React.useState(false);
+  const [isCreating, setIsCreating] = React.useState(false);
+
+  // Form State
+  const [title, setTitle] = React.useState('');
+  const [slug, setSlug] = React.useState('');
+  const [slugTouched, setSlugTouched] = React.useState(false);
+  const [category, setCategory] = React.useState('Technology');
+  const [date, setDate] = React.useState('');
+  const [authorName, setAuthorName] = React.useState('Staff Writer');
+  const [image, setImage] = React.useState('');
+  const [description, setDescription] = React.useState('');
+  const [contentHtml, setContentHtml] = React.useState('');
+  const [status, setStatus] = React.useState<'draft' | 'published'>('draft');
+
+  // Load date on mount to avoid hydration mismatch
+  React.useEffect(() => {
+    setDate(
+      new Date().toLocaleDateString('en-US', {
+        month: 'long',
+        day: 'numeric',
+        year: 'numeric',
+      })
+    );
+  }, []);
+
+  const fetchBlogs = React.useCallback(async () => {
+    setIsLoading(true);
+    try {
+      const res = await fetch('/api/admin/pages');
+      if (res.ok) {
+        const tree = await res.json();
+        
+        // Find current page in tree
+        const findNode = (nodes: any[]): any => {
+          for (const node of nodes) {
+            if (node.id === pageId) return node;
+            if (node.children) {
+              const found = findNode(node.children);
+              if (found) return found;
+            }
+          }
+          return null;
+        };
+
+        const blogNode = findNode(tree);
+        if (blogNode && blogNode.children) {
+          setBlogs(blogNode.children);
+        } else {
+          setBlogs([]);
+        }
+      }
+    } catch (err) {
+      console.error('Failed to fetch blog pages', err);
+    } finally {
+      setIsLoading(false);
+    }
+  }, [pageId]);
+
+  const fetchTemplates = React.useCallback(async () => {
+    try {
+      const res = await fetch('/api/admin/templates');
+      if (res.ok) {
+        const data = await res.json();
+        setTemplates(data);
+      }
+    } catch (err) {
+      console.error('Failed to load templates', err);
+    }
+  }, []);
+
+  React.useEffect(() => {
+    fetchBlogs();
+    fetchTemplates();
+  }, [fetchBlogs, fetchTemplates]);
+
+  // Auto-slugify
+  React.useEffect(() => {
+    if (!slugTouched) {
+      const slugified = title
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, '-')
+        .replace(/(^-|-$)+/g, '');
+      setSlug(slugified);
+    }
+  }, [title, slugTouched]);
+
+  const handleDelete = async (id: string) => {
+    if (
+      !confirm(
+        'Are you sure you want to delete this blog post? This will permanently delete the page and all of its sections.'
+      )
+    )
+      return;
+    try {
+      const res = await fetch(`/api/admin/pages/${id}`, { method: 'DELETE' });
+      if (res.ok) {
+        toast.success('Blog post deleted successfully');
+        fetchBlogs();
+        onRefresh();
+      } else {
+        toast.error('Failed to delete blog post');
+      }
+    } catch (err) {
+      toast.error('Failed to delete blog post');
+    }
+  };
+
+  const handleCreate = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!title.trim()) {
+      toast.error('Title is required');
+      return;
+    }
+    if (!slug.trim()) {
+      toast.error('Slug is required');
+      return;
+    }
+    setIsCreating(true);
+    try {
+      // Find Blog Detail Template
+      const blogDetailTemplate = templates.find((t: any) =>
+        t.templateSections?.some((ts: any) => ts.type === 'blog-detail-block')
+      );
+      
+      const templateId = blogDetailTemplate?.id || null;
+      if (!templateId) {
+        throw new Error(
+          'Blog Detail Template not found in CMS. Please run seed script first.'
+        );
+      }
+
+      // 1. Create the page
+      const createPageRes = await fetch('/api/admin/pages', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          title,
+          slug,
+          parentId: pageId,
+          templateId,
+          pageType: 'standard',
+          status: 'draft',
+        }),
+      });
+
+      const pageData = await createPageRes.json();
+      if (!createPageRes.ok) {
+        throw new Error(pageData.error || 'Failed to create page');
+      }
+
+      // 2. Find detail section on new page
+      const detailSection = pageData.sections?.find(
+        (s: any) => s.type === 'blog-detail-block'
+      );
+      if (!detailSection) {
+        throw new Error('Created page does not contain blog-detail-block section');
+      }
+
+      // 3. Prepare section content
+      const defaultContent =
+        detailSection.content ||
+        blogDetailTemplate.templateSections?.find(
+          (ts: any) => ts.type === 'blog-detail-block'
+        )?.contentJson ||
+        {};
+
+      const updatedContent = {
+        ...defaultContent,
+        badgeText: defaultContent.badgeText || 'Latest Blogs',
+        headingText: defaultContent.headingText || 'Explore our knowledge hub',
+        subheadingText:
+          defaultContent.subheadingText ||
+          'Everything journalists, analysts, and partners need to cover ESS — from brand assets to company facts.',
+        category: category || 'Technology',
+        title: title,
+        authorName: authorName || 'Staff Writer',
+        authorAvatar: `https://api.dicebear.com/7.x/avataaars/svg?seed=${
+          authorName || 'Staff'
+        }`,
+        date:
+          date ||
+          new Date().toLocaleDateString('en-US', {
+            month: 'long',
+            day: 'numeric',
+            year: 'numeric',
+          }),
+        image: image || '',
+        description: description,
+        contentHtml: contentHtml,
+      };
+
+      // 4. Save section content
+      const updateSectionRes = await fetch(
+        `/api/admin/pages/${pageData.id}/sections/${detailSection.id}`,
+        {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ content: updatedContent }),
+        }
+      );
+
+      if (!updateSectionRes.ok) {
+        throw new Error('Failed to save content fields to section');
+      }
+
+      // 5. Publish if requested
+      if (status === 'published') {
+        const publishRes = await fetch(`/api/admin/pages/${pageData.id}/actions`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ action: 'publish' }),
+        });
+        if (!publishRes.ok) {
+          toast.warning(
+            'Blog post created but failed to publish automatically. You can publish it manually.'
+          );
+        }
+      }
+
+      toast.success('Blog post created successfully');
+      setShowCreateModal(false);
+      
+      // Reset form
+      setTitle('');
+      setSlug('');
+      setSlugTouched(false);
+      setCategory('Technology');
+      setDate(
+        new Date().toLocaleDateString('en-US', {
+          month: 'long',
+          day: 'numeric',
+          year: 'numeric',
+        })
+      );
+      setAuthorName('Staff Writer');
+      setImage('');
+      setDescription('');
+      setContentHtml('');
+      setStatus('draft');
+
+      fetchBlogs();
+      onRefresh();
+    } catch (err: any) {
+      toast.error(err.message || 'Failed to create blog post');
+    } finally {
+      setIsCreating(false);
+    }
+  };
+
+  return (
+    <div className="bg-white rounded-2xl border border-slate-100 p-6 space-y-6 shadow-sm">
+      <div className="flex items-center justify-between">
+        <div className="space-y-1">
+          <h2 className="font-bold text-slate-900 text-lg flex items-center gap-2">
+            <BookOpen className="w-5 h-5 text-[#4B2A63]" />
+            Blog Posts Manager
+          </h2>
+          <p className="text-xs text-slate-400">
+            Create, view, and delete articles nested under this blog listing page.
+          </p>
+        </div>
+        <Button
+          onClick={() => setShowCreateModal(true)}
+          className="bg-[#4B2A63] hover:bg-[#3B198F] text-white rounded-full px-6 gap-2 h-10 shadow-sm"
+        >
+          <Plus className="w-4 h-4" />
+          Add Blog Post
+        </Button>
+      </div>
+
+      {isLoading ? (
+        <div className="flex justify-center items-center py-12">
+          <Loader2 className="w-8 h-8 text-[#4B2A63] animate-spin" />
+        </div>
+      ) : blogs.length === 0 ? (
+        <div className="bg-slate-50 rounded-2xl p-10 text-center border border-dashed border-slate-200">
+          <BookOpen className="w-10 h-10 text-slate-200 mx-auto mb-3" />
+          <p className="text-slate-400 font-medium text-sm">No blog posts found</p>
+          <p className="text-xs text-slate-300 mt-1">
+            Click &ldquo;Add Blog Post&rdquo; to create your first article.
+          </p>
+        </div>
+      ) : (
+        <div className="overflow-x-auto">
+          <table className="w-full text-left border-collapse">
+            <thead>
+              <tr className="border-b border-slate-100 text-slate-400 text-xs font-black uppercase tracking-wider">
+                <th className="py-3 px-2">Article</th>
+                <th className="py-3 px-2">Category</th>
+                <th className="py-3 px-2">Publish Date</th>
+                <th className="py-3 px-2 text-center">Status</th>
+                <th className="py-3 px-2 text-right">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {blogs.map((blog: any) => (
+                <tr
+                  key={blog.id}
+                  className="border-b border-slate-50 hover:bg-slate-50/50 transition-colors text-sm font-medium"
+                >
+                  <td className="py-3.5 px-2 max-w-[280px]">
+                    <div className="flex items-center gap-3">
+                      <div className="w-12 h-8 rounded-lg overflow-hidden bg-slate-100 border border-slate-100 shrink-0">
+                        <img
+                          src={
+                            blog.previewThumbnail ||
+                            '/blog-1.png'
+                          }
+                          alt=""
+                          className="w-full h-full object-cover"
+                          onError={(e) => {
+                            (e.target as HTMLImageElement).src = '/blog-1.png';
+                          }}
+                        />
+                      </div>
+                      <div className="min-w-0">
+                        <span className="font-bold text-slate-800 block truncate">
+                          {blog.title}
+                        </span>
+                        <span className="text-[10px] font-mono text-slate-400 block truncate">
+                          {blog.fullPath}
+                        </span>
+                      </div>
+                    </div>
+                  </td>
+                  <td className="py-3.5 px-2 text-slate-500 text-xs">
+                    <span className="bg-slate-100 text-slate-600 px-2.5 py-0.5 rounded-full font-bold">
+                      {blog.categoryId || 'Technology'}
+                    </span>
+                  </td>
+                  <td className="py-3.5 px-2 text-slate-400 text-xs">
+                    {new Date(blog.updatedAt).toLocaleDateString()}
+                  </td>
+                  <td className="py-3.5 px-2 text-center">
+                    <span
+                      className={cn(
+                        'text-[9px] font-black px-2.5 py-0.5 rounded-full uppercase tracking-tighter',
+                        blog.status === 'published'
+                          ? 'bg-emerald-50 text-emerald-600'
+                          : 'bg-amber-50 text-amber-600'
+                      )}
+                    >
+                      {blog.status}
+                    </span>
+                  </td>
+                  <td className="py-3.5 px-2 text-right">
+                    <div className="flex justify-end gap-1">
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-8 w-8 text-[#4B2A63] hover:bg-[#4B2A63]/5"
+                        onClick={() => (window.location.href = `/admin/pages/${blog.id}`)}
+                        title="Edit Blog Post Content"
+                      >
+                        <Edit className="w-4 h-4" />
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-8 w-8 text-rose-500 hover:bg-rose-50"
+                        onClick={() => handleDelete(blog.id)}
+                        title="Delete Blog Post"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </Button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+
+      {/* ===== Create Blog Modal ===== */}
+      <AnimatePresence>
+        {showCreateModal && (
+          <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+            <motion.div
+              initial={{ scale: 0.95, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.95, opacity: 0 }}
+              className="bg-white rounded-3xl w-full max-w-3xl max-h-[85vh] overflow-hidden shadow-2xl border border-slate-100 flex flex-col"
+            >
+              {/* Modal Header */}
+              <div className="px-6 py-5 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
+                <div>
+                  <h3 className="font-bold text-slate-900 text-lg flex items-center gap-2">
+                    <BookOpen className="w-5 h-5 text-[#4B2A63]" />
+                    Create New Blog Post
+                  </h3>
+                  <p className="text-xs text-slate-400 mt-0.5">
+                    This will create a new dynamic page and pre-configure the blog details content.
+                  </p>
+                </div>
+                <button
+                  onClick={() => setShowCreateModal(false)}
+                  className="p-1.5 rounded-full hover:bg-slate-200 text-slate-400 hover:text-slate-600 transition-colors"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+
+              {/* Modal Form Scroll Area */}
+              <form onSubmit={handleCreate} className="flex-1 overflow-y-auto p-6 space-y-5">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div className="space-y-1">
+                    <label className="text-xs font-semibold text-slate-500">
+                      Blog Title
+                    </label>
+                    <input
+                      type="text"
+                      required
+                      value={title}
+                      onChange={(e) => setTitle(e.target.value)}
+                      placeholder="e.g. How Power BI Solves Mismatches"
+                      className="w-full bg-slate-50 rounded-xl px-4 py-2.5 text-sm outline-none border border-transparent focus:border-[#4B2A63]/20 focus:ring-2 focus:ring-[#4B2A63]/10 font-bold"
+                    />
+                  </div>
+                  <div className="space-y-1">
+                    <label className="text-xs font-semibold text-slate-500">
+                      URL Slug
+                    </label>
+                    <input
+                      type="text"
+                      required
+                      value={slug}
+                      onChange={(e) => {
+                        setSlug(e.target.value);
+                        setSlugTouched(true);
+                      }}
+                      placeholder="e.g. how-power-bi-solves-mismatches"
+                      className="w-full bg-slate-50 rounded-xl px-4 py-2.5 text-sm outline-none border border-transparent focus:border-[#4B2A63]/20 focus:ring-2 focus:ring-[#4B2A63]/10 font-mono"
+                    />
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                  <div className="space-y-1">
+                    <label className="text-xs font-semibold text-slate-500">
+                      Category / Topic
+                    </label>
+                    <select
+                      value={category}
+                      onChange={(e) => setCategory(e.target.value)}
+                      className="w-full bg-slate-50 rounded-xl px-4 py-2.5 text-sm outline-none border border-transparent focus:border-[#4B2A63]/20 focus:ring-2 focus:ring-[#4B2A63]/10 font-medium"
+                    >
+                      <option value="Business Intelligence">Business Intelligence</option>
+                      <option value="ERP Solutions">ERP Solutions</option>
+                      <option value="IoT Solutions">IoT Solutions</option>
+                      <option value="Mobile App Solutions">Mobile App Solutions</option>
+                      <option value="CRM Solutions">CRM Solutions</option>
+                      <option value="Sales Force Automation">Sales Force Automation</option>
+                      <option value="After-Sales Service App">After-Sales Service App</option>
+                    </select>
+                  </div>
+                  <div className="space-y-1">
+                    <label className="text-xs font-semibold text-slate-500">
+                      Author Name
+                    </label>
+                    <input
+                      type="text"
+                      value={authorName}
+                      onChange={(e) => setAuthorName(e.target.value)}
+                      placeholder="e.g. Jason Francisco"
+                      className="w-full bg-slate-50 rounded-xl px-4 py-2.5 text-sm outline-none border border-transparent focus:border-[#4B2A63]/20 focus:ring-2 focus:ring-[#4B2A63]/10 font-medium"
+                    />
+                  </div>
+                  <div className="space-y-1">
+                    <label className="text-xs font-semibold text-slate-500">
+                      Publish Date String
+                    </label>
+                    <input
+                      type="text"
+                      value={date}
+                      onChange={(e) => setDate(e.target.value)}
+                      placeholder="e.g. May 15, 2026"
+                      className="w-full bg-slate-50 rounded-xl px-4 py-2.5 text-sm outline-none border border-transparent focus:border-[#4B2A63]/20 focus:ring-2 focus:ring-[#4B2A63]/10 font-medium"
+                    />
+                  </div>
+                </div>
+
+                <MediaField
+                  fieldKey="featuredImage"
+                  value={image}
+                  onChange={setImage}
+                />
+
+                <div className="space-y-1">
+                  <label className="text-xs font-semibold text-slate-500">
+                    Brief Description / Summary
+                  </label>
+                  <textarea
+                    rows={3}
+                    value={description}
+                    onChange={(e) => setDescription(e.target.value)}
+                    placeholder="Short excerpt for lists and previews..."
+                    className="w-full bg-slate-50 rounded-xl px-4 py-2.5 text-sm outline-none border border-transparent focus:border-[#4B2A63]/20 focus:ring-2 focus:ring-[#4B2A63]/10 font-medium resize-none"
+                  />
+                </div>
+
+                <RichTextField
+                  fieldKey="contentHtml"
+                  value={contentHtml}
+                  onChange={setContentHtml}
+                  placeholder="Start writing article content..."
+                />
+
+                <div className="border-t border-slate-100 pt-4 flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <label className="text-xs font-semibold text-slate-500">
+                      Publish Immediately
+                    </label>
+                    <button
+                      type="button"
+                      role="switch"
+                      aria-checked={status === 'published'}
+                      onClick={() => setStatus(status === 'published' ? 'draft' : 'published')}
+                      className={cn(
+                        'relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors',
+                        status === 'published' ? 'bg-[#4B2A63]' : 'bg-slate-200'
+                      )}
+                    >
+                      <span
+                        className={cn(
+                          'pointer-events-none inline-block h-5 w-5 rounded-full bg-white shadow-lg transition-transform',
+                          status === 'published' ? 'translate-x-5' : 'translate-x-0'
+                        )}
+                      />
+                    </button>
+                  </div>
+
+                  <div className="flex gap-2">
+                    <button
+                      type="button"
+                      onClick={() => setShowCreateModal(false)}
+                      className="px-5 py-2.5 rounded-full border border-slate-200 hover:bg-slate-50 transition-colors text-slate-600 text-sm font-semibold cursor-pointer"
+                    >
+                      Cancel
+                    </button>
+                    <Button
+                      type="submit"
+                      disabled={isCreating}
+                      className="bg-[#4B2A63] hover:bg-[#3B198F] text-white rounded-full px-6 gap-2"
+                    >
+                      {isCreating ? (
+                        <>
+                          <Loader2 className="w-4 h-4 animate-spin" />
+                          Creating...
+                        </>
+                      ) : (
+                        'Create Blog Post'
+                      )}
+                    </Button>
+                  </div>
+                </div>
+              </form>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+    </div>
+  );
+}
+
+// ---------------------------------------------------------------------------
 // Skeleton Loader
 // ---------------------------------------------------------------------------
 
@@ -169,6 +757,10 @@ export default function PageEditor() {
   });
   const [savedSeoSnapshot, setSavedSeoSnapshot] = React.useState('');
   const [dirtySections, setDirtySections] = React.useState<Set<string>>(new Set());
+
+  const isBlogsListingPage = React.useMemo(() => {
+    return page?.sections.some((s) => s.type === 'blog-list-block') || false;
+  }, [page]);
 
   const isDirty = React.useMemo(() => {
     if (!page) return false;
@@ -569,6 +1161,10 @@ export default function PageEditor() {
               </div>
             </div>
           </div>
+
+          {isBlogsListingPage && (
+            <BlogManager pageId={pageId} onRefresh={fetchPage} />
+          )}
 
           {/* Sections Header */}
           <div className="flex items-center justify-between">

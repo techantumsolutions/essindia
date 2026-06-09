@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Roboto } from "next/font/google";
+import "flag-icons/css/flag-icons.min.css";
 import "./globals.css";
 import QueryProvider from "@/providers/query-provider";
 
