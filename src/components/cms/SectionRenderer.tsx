@@ -35,6 +35,10 @@ import CareerPositions from '@/components/blocks/CareerPositions';
 import CareerCta from '@/components/blocks/CareerCta';
 import JobDetailHero from '@/components/blocks/JobDetailHero';
 import JobDetailContent from '@/components/blocks/JobDetailContent';
+import { BlogListSection } from '@/components/blocks/BlogListSection';
+import { BlogDetailSection } from '@/components/blocks/BlogDetailSection';
+import { QualityHero } from '@/components/blocks/QualityHero';
+import { QualityContent } from '@/components/blocks/QualityContent';
 
 interface Section {
   id: string;
@@ -128,6 +132,14 @@ export function SectionRenderer({ section }: SectionRendererProps) {
       return <JobDetailHero content={section.content} />;
     case 'job-detail-content':
       return <JobDetailContent content={section.content} />;
+    case 'blog-list-block':
+      return <BlogListSection content={section.content} />;
+    case 'blog-detail-block':
+      return <BlogDetailSection content={section.content} />;
+    case 'quality-hero':
+      return <QualityHero content={section.content} />;
+    case 'quality-content':
+      return <QualityContent content={section.content} />;
     default:
       if (process.env.NODE_ENV === 'development') {
         return (
