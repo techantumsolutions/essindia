@@ -11,6 +11,7 @@ export interface CategoryTreeNode {
   imageUrl: string | null;
   orderIndex: number;
   status: string;
+  pageCount: number;
   children?: CategoryTreeNode[];
 }
 
