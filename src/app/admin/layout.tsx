@@ -43,6 +43,7 @@ const navGroups = [
     label: 'Content Assets',
     items: [
       { icon: ImageIcon, label: 'Media Library', href: '/admin/media' },
+      { icon: Briefcase, label: 'Careers', href: '/admin/careers' },
       { icon: Briefcase, label: 'Solutions', href: '/admin/solutions' },
       { icon: Globe, label: 'Industries', href: '/admin/industries' },
       { icon: FileText, label: 'Resources', href: '/admin/resources' },
