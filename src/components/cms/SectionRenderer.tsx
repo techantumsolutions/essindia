@@ -40,6 +40,21 @@ import { BlogDetailSection } from '@/components/blocks/BlogDetailSection';
 import { QualityHero } from '@/components/blocks/QualityHero';
 import { QualityContent } from '@/components/blocks/QualityContent';
 import { TestimonialsSection } from '@/components/blocks/TestimonialsSection';
+import { ContactHero } from '@/components/blocks/ContactHero';
+import { ContactInfoCards } from '@/components/blocks/ContactInfoCards';
+import { ContactFormFaq } from '@/components/blocks/ContactFormFaq';
+import { ContactLocations } from '@/components/blocks/ContactLocations';
+import { ContactMap } from '@/components/blocks/ContactMap';
+import { EmployeeSpotlightHero } from '@/components/blocks/EmployeeSpotlightHero';
+import { EmployeeSpotlightCards } from '@/components/blocks/EmployeeSpotlightCards';
+import { AboutUsHero } from '@/components/blocks/AboutUsHero';
+import { AboutUsCompanyIntro } from '@/components/blocks/AboutUsCompanyIntro';
+import { AboutUsMissionVision } from '@/components/blocks/AboutUsMissionVision';
+import { AboutUsServicesOverview } from '@/components/blocks/AboutUsServicesOverview';
+import { AboutUsTransformationSection } from '@/components/blocks/AboutUsTransformationSection';
+import { AboutUsWhyEss } from '@/components/blocks/AboutUsWhyEss';
+import { AboutUsCta } from '@/components/blocks/AboutUsCta';
+import { RetailWhyErp } from '@/components/blocks/RetailWhyErp';
 
 interface Section {
   id: string;
@@ -143,6 +158,36 @@ export function SectionRenderer({ section }: SectionRendererProps) {
       return <QualityContent content={section.content} />;
     case 'testimonials-block':
       return <TestimonialsSection content={section.content} />;
+    case 'contact-hero':
+      return <ContactHero content={section.content} />;
+    case 'contact-info-cards':
+      return <ContactInfoCards content={section.content} />;
+    case 'contact-form-faq':
+      return <ContactFormFaq content={section.content} />;
+    case 'contact-locations':
+      return <ContactLocations content={section.content} />;
+    case 'contact-map':
+      return <ContactMap content={section.content} />;
+    case 'employee-spotlight-hero':
+      return <EmployeeSpotlightHero content={section.content} />;
+    case 'employee-spotlight-cards':
+      return <EmployeeSpotlightCards content={section.content} />;
+    case 'about-us-hero':
+      return <AboutUsHero content={section.content} />;
+    case 'about-us-company-intro':
+      return <AboutUsCompanyIntro content={section.content} />;
+    case 'about-us-mission-vision':
+      return <AboutUsMissionVision content={section.content} />;
+    case 'about-us-services-overview':
+      return <AboutUsServicesOverview content={section.content} />;
+    case 'about-us-transformation-section':
+      return <AboutUsTransformationSection content={section.content} />;
+    case 'about-us-why-ess':
+      return <AboutUsWhyEss content={section.content} />;
+    case 'about-us-cta':
+      return <AboutUsCta content={section.content} />;
+    case 'retail-why-erp':
+      return <RetailWhyErp content={section.content} />;
     default:
       if (process.env.NODE_ENV === 'development') {
         return (
