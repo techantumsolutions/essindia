@@ -380,6 +380,11 @@ function ArrayField({
   depth: number;
 }) {
   const isPrimitive = value.length > 0 && typeof value[0] !== 'object';
+  const isImageArray = isPrimitive && (
+    fieldKey.toLowerCase().includes('image') ||
+    fieldKey.toLowerCase().includes('logo') ||
+    fieldKey.toLowerCase().includes('photo')
+  );
 
   return (
     <ArrayFieldEditor
@@ -389,6 +394,17 @@ function ArrayField({
       keyPathPrefix={keyPath}
       renderItem={(item, _idx, onItemChange, itemKeyPath) => {
         if (isPrimitive) {
+          if (isImageArray) {
+            return (
+              <div className="flex-1">
+                <MediaField
+                  fieldKey={`${fieldKey}-${_idx}`}
+                  value={String(item ?? '')}
+                  onChange={(v) => onItemChange(_idx, v)}
+                />
+              </div>
+            );
+          }
           return (
             <input
               type="text"

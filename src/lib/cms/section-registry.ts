@@ -211,6 +211,15 @@ export const SECTION_REGISTRY: SectionTypeDefinition[] = [
     supportsVariants: false,
   },
   {
+    type: 'retail-why-erp',
+    label: 'Retail Why ERP',
+    description: 'Detailed section explaining why ebizframe ERP is chosen for retail.',
+    icon: Layers,
+    color: 'bg-indigo-50 text-indigo-600',
+    defaultVariant: 'default',
+    supportsVariants: false,
+  },
+  {
     type: 'mfg-hero',
     label: 'Manufacturing Hero',
     description: 'Hero block for Manufacturing template',

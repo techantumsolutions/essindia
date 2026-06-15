@@ -3,8 +3,11 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { ArrowLeft, MapPin, Clock, Briefcase, Building } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 
 export default function JobDetailHero({ content }: { content?: any }) {
+  const router = useRouter();
+
   const {
     backLinkText = 'Back to Careers',
     backLinkUrl = '/careers',
@@ -28,6 +31,16 @@ export default function JobDetailHero({ content }: { content?: any }) {
     }
   };
 
+  const handleBack = () => {
+    // If there's a history stack, go back to the previous page (e.g. retail-services).
+    // Otherwise fall back to the configured backLinkUrl.
+    if (window.history.length > 1) {
+      router.back();
+    } else {
+      router.push(backLinkUrl);
+    }
+  };
+
   return (
     <section className="bg-[#e4e4e7] pt-32 pb-16 px-6 lg:px-8">
       <div className="container mx-auto max-w-7xl">
@@ -36,11 +49,14 @@ export default function JobDetailHero({ content }: { content?: any }) {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
         >
-          {/* Back Link */}
-          <a href={backLinkUrl} className="inline-flex items-center text-[13px] font-medium text-slate-500 hover:text-slate-800 transition-colors mb-8">
+          {/* Back Button */}
+          <button
+            onClick={handleBack}
+            className="inline-flex items-center text-[13px] font-medium text-slate-500 hover:text-slate-800 transition-colors mb-8 cursor-pointer"
+          >
             <ArrowLeft className="w-4 h-4 mr-2" />
             {backLinkText}
-          </a>
+          </button>
 
           {/* Tags */}
           <div className="flex items-center gap-3 mb-6">

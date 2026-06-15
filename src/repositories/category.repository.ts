@@ -1,6 +1,6 @@
 import { db } from '@/lib/db';
 import { categories, pages } from '@/lib/db/schema';
-import { and, asc, eq, isNull, ne, sql } from 'drizzle-orm';
+import { and, asc, eq, inArray, isNull, ne, sql } from 'drizzle-orm';
 import { buildCategoryTree, slugify } from '@/lib/cms/utils';
 import type { CategoryTreeNode } from '@/lib/cms/types';
 
@@ -13,8 +13,30 @@ export class CategoryRepository {
   }
 
   async getTree(): Promise<CategoryTreeNode[]> {
-    const all = await this.getAll();
-    return buildCategoryTree(all) as CategoryTreeNode[];
+    // Fetch categories + page counts in one query
+    const rows = await db
+      .select({
+        id: categories.id,
+        parentId: categories.parentId,
+        name: categories.name,
+        slug: categories.slug,
+        description: categories.description,
+        icon: categories.icon,
+        imageUrl: categories.imageUrl,
+        orderIndex: categories.orderIndex,
+        status: categories.status,
+        pageCount: sql<number>`count(${pages.id})::int`,
+      })
+      .from(categories)
+      .leftJoin(
+        pages,
+        and(eq(pages.categoryId, categories.id), ne(pages.status, 'archived'))
+      )
+      .where(ne(categories.status, 'archived'))
+      .groupBy(categories.id)
+      .orderBy(asc(categories.orderIndex), asc(categories.name));
+
+    return buildCategoryTree(rows) as CategoryTreeNode[];
   }
 
   async getById(id: string) {
@@ -29,6 +51,41 @@ export class CategoryRepository {
       where: parentId ? eq(categories.parentId, parentId) : isNull(categories.parentId),
       orderBy: [asc(categories.orderIndex)],
     });
+  }
+
+  /** Return all non-archived pages belonging to this category */
+  async getPagesForCategory(categoryId: string) {
+    return db.query.pages.findMany({
+      where: and(eq(pages.categoryId, categoryId), ne(pages.status, 'archived')),
+      columns: {
+        id: true,
+        title: true,
+        slug: true,
+        fullPath: true,
+        status: true,
+        pageType: true,
+        updatedAt: true,
+      },
+      orderBy: [asc(pages.title)],
+    });
+  }
+
+  /** Move selected pages to a different category */
+  async migratePages(pageIds: string[], targetCategoryId: string) {
+    if (!pageIds.length) return;
+
+    // Validate target exists
+    const target = await db.query.categories.findFirst({
+      where: eq(categories.id, targetCategoryId),
+    });
+    if (!target || target.status === 'archived') {
+      throw new Error('Target category not found');
+    }
+
+    await db
+      .update(pages)
+      .set({ categoryId: targetCategoryId, updatedAt: new Date() })
+      .where(inArray(pages.id, pageIds));
   }
 
   private async assertSlugUnique(slug: string, excludeId?: string) {
