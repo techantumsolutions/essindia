@@ -19,6 +19,7 @@ import { RetailFeatures } from '@/components/blocks/RetailFeatures';
 import { RetailOperations } from '@/components/blocks/RetailOperations';
 import { RetailMobileDashboard } from '@/components/blocks/RetailMobileDashboard';
 import { RetailClients } from '@/components/blocks/RetailClients';
+import { RetailWhyErp } from '@/components/blocks/RetailWhyErp';
 import ManufacturingHero from '@/components/blocks/ManufacturingHero';
 import ManufacturingIconRow from '@/components/blocks/ManufacturingIconRow';
 import ManufacturingDemand from '@/components/blocks/ManufacturingDemand';
@@ -118,6 +119,8 @@ export function SectionRenderer({ section }: SectionRendererProps) {
       return <RetailMobileDashboard content={section.content} />;
     case 'retail-clients':
       return <RetailClients content={section.content} />;
+    case 'retail-why-erp':
+      return <RetailWhyErp content={section.content} />;
     case 'mfg-hero':
       return <ManufacturingHero content={section.content} />;
     case 'mfg-icons':

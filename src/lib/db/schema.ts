@@ -447,3 +447,49 @@ export const megaMenuSubSubCategoriesRelations = relations(megaMenuSubSubCategor
   }),
   page: one(pages, { fields: [megaMenuSubSubCategories.pageId], references: [pages.id] }),
 }));
+
+// --- CAREERS & APPLICATIONS ---
+export const careers = pgTable('careers', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  title: varchar('title', { length: 255 }).notNull(),
+  slug: varchar('slug', { length: 300 }).notNull().unique(),
+  department: varchar('department', { length: 255 }).notNull(),
+  description: text('description').notNull(),
+  type: varchar('type', { length: 50 }).notNull().default('Full-Time'),
+  experience: varchar('experience', { length: 100 }).notNull(),
+  location: varchar('location', { length: 100 }).notNull(),
+  aboutText: text('about_text').notNull(),
+  requirements: jsonb('requirements').default('[]').notNull(),
+  responsibilities: jsonb('responsibilities').default('[]').notNull(),
+  niceToHave: jsonb('nice_to_have').default('[]').notNull(),
+  whatWeOffer: jsonb('what_we_offer').default('[]').notNull(),
+  status: varchar('status', { length: 50 }).notNull().default('active'),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+  updatedAt: timestamp('updated_at').defaultNow().notNull(),
+});
+
+export const applications = pgTable('applications', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  careerId: uuid('career_id').notNull().references(() => careers.id, { onDelete: 'cascade' }),
+  fullName: varchar('full_name', { length: 255 }).notNull(),
+  email: varchar('email', { length: 255 }).notNull(),
+  phone: varchar('phone', { length: 100 }).notNull(),
+  experience: varchar('experience', { length: 255 }).notNull(),
+  currentCompany: varchar('current_company', { length: 255 }),
+  noticePeriod: varchar('notice_period', { length: 100 }).notNull(),
+  linkedInProfile: varchar('linkedin_profile', { length: 500 }),
+  portfolioUrl: varchar('portfolio_url', { length: 500 }),
+  resumeUrl: text('resume_url').notNull(),
+  coverLetter: text('cover_letter'),
+  status: varchar('status', { length: 50 }).default('applied').notNull(), // 'applied', 'reviewed', 'shortlisted', 'rejected'
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+  updatedAt: timestamp('updated_at').defaultNow().notNull(),
+});
+
+export const careersRelations = relations(careers, ({ many }) => ({
+  applications: many(applications),
+}));
+
+export const applicationsRelations = relations(applications, ({ one }) => ({
+  career: one(careers, { fields: [applications.careerId], references: [careers.id] }),
+}));

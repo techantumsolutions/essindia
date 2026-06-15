@@ -29,6 +29,7 @@ import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
 import Link from 'next/link';
 import { SECTION_REGISTRY } from '@/lib/cms/section-registry';
+import { SectionRenderer } from '@/components/cms/SectionRenderer';
 import {
   SectionEditorCard,
   setNestedValue,
@@ -1410,6 +1411,8 @@ export default function PageEditor() {
   const [isPublishing, setIsPublishing] = React.useState(false);
   const [expandedSections, setExpandedSections] = React.useState<Set<string>>(new Set());
   const [showAddSection, setShowAddSection] = React.useState(false);
+  const [librarySections, setLibrarySections] = React.useState<any[]>([]);
+  const [previewSectionType, setPreviewSectionType] = React.useState<string | null>(null);
   const [seoForm, setSeoForm] = React.useState({
     title: '',
     description: '',
@@ -1478,9 +1481,22 @@ export default function PageEditor() {
     }
   }, [pageId, takeSnapshot]);
 
+  const fetchLibrarySections = React.useCallback(async () => {
+    try {
+      const res = await fetch('/api/admin/sections');
+      if (res.ok) {
+        const data = await res.json();
+        setLibrarySections(data);
+      }
+    } catch (err) {
+      console.error('Failed to load library sections', err);
+    }
+  }, []);
+
   React.useEffect(() => {
     fetchPage();
-  }, [fetchPage]);
+    fetchLibrarySections();
+  }, [fetchPage, fetchLibrarySections]);
 
   // ---- Save All ----
   const handleSaveAll = async () => {
@@ -1598,12 +1614,18 @@ export default function PageEditor() {
   };
 
   const addSection = async (type: string, afterIndex?: number) => {
+    const libSec = librarySections.find(
+      (s) => s.type === type && (s.variant === 'default' || !s.variant)
+    ) || librarySections.find((s) => s.type === type);
+
     const res = await fetch(`/api/admin/pages/${pageId}/sections`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         type,
         orderIndex: afterIndex !== undefined ? afterIndex + 1 : undefined,
+        sectionLibraryId: libSec?.id || null,
+        content: libSec?.contentJson || {},
       }),
     });
     if (res.ok) {
@@ -1874,24 +1896,43 @@ export default function PageEditor() {
                 initial={{ opacity: 0, height: 0 }}
                 animate={{ opacity: 1, height: 'auto' }}
                 exit={{ opacity: 0, height: 0 }}
-                className="bg-white rounded-2xl border-2 border-dashed border-[#4B2A63]/20 p-4 grid grid-cols-2 md:grid-cols-3 gap-2"
+                className="bg-white rounded-2xl border-2 border-dashed border-[#4B2A63]/20 p-6 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4"
               >
                 {SECTION_REGISTRY.filter(
                   (s) => !s.label.includes('Legacy')
                 ).map((s) => (
-                  <button
+                  <div
                     key={s.type}
-                    type="button"
-                    onClick={() => addSection(s.type)}
-                    className="p-3 rounded-xl bg-slate-50 hover:bg-[#4B2A63]/5 text-left transition-colors group"
+                    className="p-4 rounded-xl bg-slate-50 border border-slate-100 flex flex-col justify-between gap-3 group hover:border-[#4B2A63]/20 transition-all hover:shadow-sm"
                   >
-                    <p className="text-sm font-bold text-slate-700 group-hover:text-[#4B2A63]">
-                      {s.label}
-                    </p>
-                    <p className="text-[10px] text-slate-400 mt-0.5">
-                      {s.description}
-                    </p>
-                  </button>
+                    <div>
+                      <p className="text-sm font-bold text-slate-800">
+                        {s.label}
+                      </p>
+                      <p className="text-[10px] text-slate-400 mt-1 line-clamp-2">
+                        {s.description}
+                      </p>
+                    </div>
+                    <div className="flex gap-2 mt-auto">
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        type="button"
+                        onClick={() => setPreviewSectionType(s.type)}
+                        className="flex-1 text-xs py-1 h-8 rounded-lg border-[#4B2A63]/20 text-[#4B2A63] hover:bg-[#4B2A63]/5 font-semibold"
+                      >
+                        Preview
+                      </Button>
+                      <Button
+                        size="sm"
+                        type="button"
+                        onClick={() => addSection(s.type)}
+                        className="flex-1 text-xs py-1 h-8 rounded-lg bg-[#4B2A63] text-white hover:bg-[#3B198F] font-semibold"
+                      >
+                        Add
+                      </Button>
+                    </div>
+                  </div>
                 ))}
               </motion.div>
             )}
@@ -2054,6 +2095,75 @@ export default function PageEditor() {
           </div>
         </div>
       </div>
+
+      {/* ===== Section Preview Modal ===== */}
+      <AnimatePresence>
+        {previewSectionType && (
+          <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-md z-50 flex items-center justify-center p-4">
+            <motion.div
+              initial={{ scale: 0.95, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.95, opacity: 0 }}
+              className="bg-white rounded-3xl w-full max-w-6xl max-h-[90vh] overflow-hidden shadow-2xl border border-slate-100 flex flex-col"
+            >
+              {/* Modal Header */}
+              <div className="px-6 py-5 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
+                <div>
+                  <h3 className="font-bold text-slate-900 text-lg flex items-center gap-2">
+                    <Layers className="w-5 h-5 text-[#4B2A63]" />
+                    Section Preview: {SECTION_REGISTRY.find(s => s.type === previewSectionType)?.label || previewSectionType}
+                  </h3>
+                  <p className="text-xs text-slate-400 mt-0.5">
+                    This is a live preview showing how this block renders with default library content.
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setPreviewSectionType(null)}
+                  className="p-1.5 rounded-full hover:bg-slate-200 text-slate-400 hover:text-slate-600 transition-colors cursor-pointer"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+
+              {/* Modal Body: Scrollable Preview area */}
+              <div className="flex-1 overflow-y-auto p-6 bg-slate-100/50">
+                <div className="border border-slate-200 rounded-2xl overflow-hidden shadow-inner bg-white min-h-[300px]">
+                  <SectionRenderer
+                    section={{
+                      id: 'preview-temp-id',
+                      type: previewSectionType,
+                      content: librarySections.find(s => s.type === previewSectionType)?.contentJson || {},
+                    }}
+                  />
+                </div>
+              </div>
+
+              {/* Modal Footer */}
+              <div className="px-6 py-4 border-t border-slate-100 flex items-center justify-end gap-2 bg-slate-50/50">
+                <button
+                  type="button"
+                  onClick={() => setPreviewSectionType(null)}
+                  className="px-5 py-2.5 rounded-full border border-slate-200 hover:bg-slate-50 transition-colors text-slate-600 text-sm font-semibold cursor-pointer"
+                >
+                  Close
+                </button>
+                <Button
+                  type="button"
+                  onClick={() => {
+                    addSection(previewSectionType);
+                    setPreviewSectionType(null);
+                  }}
+                  className="bg-[#4B2A63] hover:bg-[#3B198F] text-white rounded-full px-6 gap-2 h-10 shadow-sm"
+                >
+                  <Plus className="w-4 h-4" />
+                  Add to Page
+                </Button>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
     </motion.div>
   );
 }

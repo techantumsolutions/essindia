@@ -6,7 +6,8 @@ import { motion } from 'framer-motion';
 export interface RetailOperationItem {
   title: string;
   description: string;
-  iconPath: string;
+  iconImage?: string;
+  iconPath?: string;
 }
 
 export interface RetailOperationsContent {
@@ -25,62 +26,62 @@ export function RetailOperations({ content }: { content: RetailOperationsContent
       { 
         title: 'Lorem Ipsum', 
         description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.', 
-        iconPath: '/industry-solution-Retail/Icon-.png' 
+        iconImage: '/industry-solution-Retail/Icon-.png' 
       },
       { 
         title: 'Lorem Ipsum', 
         description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.', 
-        iconPath: '/industry-solution-Retail/Icon-1.png' 
+        iconImage: '/industry-solution-Retail/Icon-1.png' 
       },
       { 
         title: 'Lorem Ipsum', 
         description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.', 
-        iconPath: '/industry-solution-Retail/Icon-2.png' 
+        iconImage: '/industry-solution-Retail/Icon-2.png' 
       },
       { 
         title: 'Lorem Ipsum', 
         description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.', 
-        iconPath: '/industry-solution-Retail/Icon-3.png' 
+        iconImage: '/industry-solution-Retail/Icon-3.png' 
       },
       { 
         title: 'Lorem Ipsum', 
         description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.', 
-        iconPath: '/industry-solution-Retail/Icon-4.png' 
+        iconImage: '/industry-solution-Retail/Icon-4.png' 
       },
       { 
         title: 'Lorem Ipsum', 
         description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.', 
-        iconPath: '/industry-solution-Retail/Icon-5.png' 
+        iconImage: '/industry-solution-Retail/Icon-5.png' 
       },
       { 
         title: 'Lorem Ipsum', 
         description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.', 
-        iconPath: '/industry-solution-Retail/Icon-6.png' 
+        iconImage: '/industry-solution-Retail/Icon-6.png' 
       },
       { 
         title: 'Lorem Ipsum', 
         description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.', 
-        iconPath: '/industry-solution-Retail/Icon-7.png' 
+        iconImage: '/industry-solution-Retail/Icon-7.png' 
       },
       { 
         title: 'Lorem Ipsum', 
         description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.', 
-        iconPath: '/industry-solution-Retail/Icon-8.png' 
+        iconImage: '/industry-solution-Retail/Icon-8.png' 
       },
       { 
         title: 'Lorem Ipsum', 
         description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.', 
-        iconPath: '/industry-solution-Retail/Icon-10.png' 
+        iconImage: '/industry-solution-Retail/Icon-10.png' 
       },
       { 
         title: 'Lorem Ipsum', 
         description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.', 
-        iconPath: '/industry-solution-Retail/Icon-11.png' 
+        iconImage: '/industry-solution-Retail/Icon-11.png' 
       },
       { 
         title: 'Lorem Ipsum', 
         description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.', 
-        iconPath: '/industry-solution-Retail/Icon-12.png' 
+        iconImage: '/industry-solution-Retail/Icon-12.png' 
       },
     ],
   } = content || {};
@@ -133,7 +134,7 @@ export function RetailOperations({ content }: { content: RetailOperationsContent
             >
               <div className="mb-2 h-14 flex items-center justify-start">
                 <img 
-                  src={op.iconPath} 
+                  src={op.iconImage || op.iconPath} 
                   alt={op.title} 
                   className="w-12 h-12 object-contain filter group-hover:brightness-75 transition-all" 
                 />
