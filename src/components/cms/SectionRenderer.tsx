@@ -37,6 +37,8 @@ import JobDetailHero from '@/components/blocks/JobDetailHero';
 import JobDetailContent from '@/components/blocks/JobDetailContent';
 import { BlogListSection } from '@/components/blocks/BlogListSection';
 import { BlogDetailSection } from '@/components/blocks/BlogDetailSection';
+import { CaseStudyListSection } from '@/components/blocks/CaseStudyListSection';
+import { CaseStudyDetailSection } from '@/components/blocks/CaseStudyDetailSection';
 import { QualityHero } from '@/components/blocks/QualityHero';
 import { QualityContent } from '@/components/blocks/QualityContent';
 import { TestimonialsSection } from '@/components/blocks/TestimonialsSection';
@@ -117,17 +119,17 @@ export function SectionRenderer({ section }: SectionRendererProps) {
     case 'retail-clients':
       return <RetailClients content={section.content} />;
     case 'mfg-hero':
-      return <ManufacturingHero />;
+      return <ManufacturingHero content={section.content} />;
     case 'mfg-icons':
-      return <ManufacturingIconRow />;
+      return <ManufacturingIconRow content={section.content} />;
     case 'mfg-demand':
-      return <ManufacturingDemand />;
+      return <ManufacturingDemand content={section.content} />;
     case 'mfg-process':
-      return <ManufacturingProcess />;
+      return <ManufacturingProcess content={section.content} />;
     case 'mfg-efficiency':
-      return <ManufacturingEfficiency />;
+      return <ManufacturingEfficiency content={section.content} />;
     case 'mfg-models':
-      return <ManufacturingModels />;
+      return <ManufacturingModels content={section.content} />;
     case 'career-hero':
       return <CareerHero content={section.content} />;
     case 'career-why-join':
@@ -152,6 +154,10 @@ export function SectionRenderer({ section }: SectionRendererProps) {
       return <BlogListSection content={section.content} />;
     case 'blog-detail-block':
       return <BlogDetailSection content={section.content} />;
+    case 'case-study-list':
+      return <CaseStudyListSection content={section.content} />;
+    case 'case-study-detail':
+      return <CaseStudyDetailSection content={section.content} />;
     case 'quality-hero':
       return <QualityHero content={section.content} />;
     case 'quality-content':

@@ -14,7 +14,7 @@ export function ContactHero({ content }: { content?: ContactHeroContent }) {
   return (
     <div className="w-full flex flex-col">
       {/* Dark Banner */}
-      <div className="relative bg-black w-full min-h-[50vh] flex flex-col items-center justify-center pt-30 pb-14">
+      <div className="relative bg-black w-full min-h-[50vh] flex flex-col items-center justify-center pt-40 pb-14">
         {/* Background Image Overlay */}
         <div
           className="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-50"
@@ -22,7 +22,7 @@ export function ContactHero({ content }: { content?: ContactHeroContent }) {
         ></div>
 
         {/* Content */}
-        <div className="relative z-10 text-center px-4 max-w-4xl mx-auto flex flex-col items-center space-y-6">
+        <div className="relative z-10 text-center px-4 max-w-4xl mx-auto flex flex-col items-center space-y-4">
           <div className="bg-white rounded-full px-6 py-2 shadow-md">
             <span className="text-[#5C2B6A] font-semibold text-sm">{badgeTitle}</span>
           </div>

@@ -1,10 +1,21 @@
 'use client';
 
-import React from 'react';
+import Link from 'next/link';
 import { motion } from 'framer-motion';
-import { ArrowRight } from 'lucide-react';
 
-export default function ManufacturingHero() {
+export default function ManufacturingHero({ content }: { content?: any }) {
+  const badge = content?.badge || 'Lorem ipsum ERP';
+  const title = content?.title || 'Loremipsum <br />Loremipsum <br />Lorem ipsum <br />Loremipsum';
+  const description = content?.description || 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam.';
+  
+  const primaryCtaLabel = content?.primaryCta?.label || 'Lorem ipsum';
+  const primaryCtaLink = content?.primaryCta?.link || '/about';
+  
+  const secondaryCtaLabel = content?.secondaryCta?.label || 'Lorem ipsum';
+  const secondaryCtaLink = content?.secondaryCta?.link || '/contact';
+
+  const image = content?.image || '/Modules-manufacturing/Banner-image.png';
+
   return (
     <section className="relative bg-[#27256b] text-white px-6 overflow-hidden py-14">
       <div className="container mx-auto max-w-7xl relative z-10">
@@ -18,27 +29,22 @@ export default function ManufacturingHero() {
             className="max-w-xl"
           >
             <div className="inline-flex items-center rounded-full border border-white/20 bg-[#391781] px-5 py-2 text-xs font-semibold text-white mb-8">
-              Lorem ipsum ERP
+              {badge}
             </div>
 
-            <h1 className="text-[3rem] md:text-[4rem] leading-[1.1] font-light tracking-wide text-white mb-6">
-              Loremipsum <br />
-              Loremipsum <br />
-              Lorem ipsum <br />
-              Loremipsum
-            </h1>
+            <h1 className="text-[3rem] md:text-[4rem] leading-[1.1] font-light tracking-wide text-white mb-6" dangerouslySetInnerHTML={{ __html: title }} />
 
             <p className="text-white/80 text-[15px] max-w-[480px] leading-relaxed mb-10">
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam.
+              {description}
             </p>
 
             <div className="flex flex-wrap items-center gap-4">
-              <button className="bg-[#FFD600] text-[#29245C] hover:bg-[#F0C800] px-8 py-3.5 cursor-pointer rounded-full text-sm font-bold transition-colors shadow-lg shadow-[#FFD600]/20">
-                Lorem ipsum
-              </button>
-              <button className="bg-white text-[#29245C] hover:bg-slate-50 px-8 py-3.5 cursor-pointer rounded-full text-sm font-bold transition-colors">
-                Lorem ipsum
-              </button>
+              <Link href={primaryCtaLink} className="bg-[#FFD600] text-[#29245C] hover:bg-[#F0C800] px-8 py-3.5 cursor-pointer rounded-full text-sm font-bold transition-colors shadow-lg shadow-[#FFD600]/20 inline-block text-center">
+                {primaryCtaLabel}
+              </Link>
+              <Link href={secondaryCtaLink} className="bg-white text-[#29245C] hover:bg-slate-50 px-8 py-3.5 cursor-pointer rounded-full text-sm font-bold transition-colors inline-block text-center">
+                {secondaryCtaLabel}
+              </Link>
             </div>
           </motion.div>
 
@@ -50,7 +56,7 @@ export default function ManufacturingHero() {
             className="relative w-full flex items-center justify-center lg:justify-end mt-12 lg:mt-0"
           >
             <img
-              src="/Modules-manufacturing/Banner-image.png"
+              src={image}
               alt="Manufacturing ERP Automation"
               className="w-full lg:w-[120%] max-w-full lg:max-w-none object-contain"
             />

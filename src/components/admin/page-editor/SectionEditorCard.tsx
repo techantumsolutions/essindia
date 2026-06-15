@@ -40,6 +40,61 @@ const TESTIMONIALS_TABS: Record<string, string[]> = {
   testimonials: ['testimonials']
 };
 
+const CASE_STUDY_DETAIL_TABS: Record<string, string[]> = {
+  hero: ['topic', 'description', 'image'],
+  overview: ['overview', 'overviewImages'],
+  challenge: ['challengeHtml', 'challengeTitle', 'challengeDescription', 'challengeImage', 'challengePoints'],
+  ess: ['solutionsTitle', 'solutionsDescription', 'solutionModules'],
+  results: ['resultsHtml', 'resultsTitle', 'resultsItems']
+};
+
+const DEFAULT_CASE_STUDY_CONTENT: Record<string, any> = {
+  title: '',
+  topic: '',
+  industry: '',
+  date: '',
+  description: '',
+  image: '',
+  challengeImage: '',
+  overview: '',
+  overviewImages: [''],
+  challengeHtml: '',
+  challengeTitle: '',
+  challengeDescription: '',
+  challengePoints: [{ title: '', description: '' }],
+  solutionsTitle: '',
+  solutionsDescription: '',
+  solutionModules: [{ name: '', description: '', icon: '' }],
+  resultsHtml: '',
+  resultsTitle: '',
+  resultsItems: ['']
+};
+
+const DEFAULT_BLOG_CONTENT: Record<string, any> = {
+  title: '',
+  category: '',
+  authorName: '',
+  authorAvatar: '',
+  date: '',
+  image: '',
+  description: '',
+  contentHtml: '',
+  badgeText: '',
+  headingText: '',
+  subheadingText: '',
+  bgImage: '',
+  highlights: [{ title: '', content: '', icon: '' }],
+  conclusionHtml: ''
+};
+
+const DEFAULT_TESTIMONIALS_CONTENT: Record<string, any> = {
+  badgeText: '',
+  headingText: '',
+  subheadingText: '',
+  bgImage: '',
+  testimonials: [{ quote: '', author: '', role: '', company: '', image: '', rating: 5 }]
+};
+
 interface SectionEditorCardProps {
   section: PageSection;
   schema?: Record<string, unknown> | null;
@@ -72,13 +127,39 @@ export function SectionEditorCard({
   const meta = getSectionDefinition(section.type);
 
   const mergedContent = React.useMemo(() => {
+    let baseSchema = schema as Record<string, JsonValue> | undefined;
+    
+    // Inject defaults if schema is missing or empty
+    if (!baseSchema || Object.keys(baseSchema).length === 0) {
+      if (section.type === 'case-study-detail') {
+        baseSchema = DEFAULT_CASE_STUDY_CONTENT as Record<string, JsonValue>;
+      } else if (section.type === 'blog-detail-block') {
+        baseSchema = DEFAULT_BLOG_CONTENT as Record<string, JsonValue>;
+      } else if (section.type === 'testimonials-block') {
+        baseSchema = DEFAULT_TESTIMONIALS_CONTENT as Record<string, JsonValue>;
+      }
+    }
+
     return mergeSchemaWithContent(
-      schema as Record<string, JsonValue> | undefined,
+      baseSchema,
       section.content as Record<string, JsonValue>
     );
-  }, [schema, section.content]);
+  }, [schema, section.content, section.type]);
 
-  const contentKeys = Object.keys(mergedContent);
+  const contentKeys = React.useMemo(() => {
+    const keys = Object.keys(mergedContent);
+    if (meta?.fieldOrder) {
+      return keys.sort((a, b) => {
+        const indexA = meta.fieldOrder!.indexOf(a);
+        const indexB = meta.fieldOrder!.indexOf(b);
+        if (indexA !== -1 && indexB !== -1) return indexA - indexB;
+        if (indexA !== -1) return -1;
+        if (indexB !== -1) return 1;
+        return 0;
+      });
+    }
+    return keys;
+  }, [mergedContent, meta]);
 
   const handleSave = async () => {
     setSaving(true);
@@ -190,7 +271,7 @@ export function SectionEditorCard({
                     This section may use default content from the template.
                   </p>
                 </div>
-              ) : section.type === 'blog-detail-block' || section.type === 'testimonials-block' ? (
+              ) : section.type === 'blog-detail-block' || section.type === 'testimonials-block' || section.type === 'case-study-detail' ? (
                 <div className="space-y-4">
                   {/* Tabs Navigation */}
                   <div className="flex border-b border-slate-100 bg-slate-50/50 rounded-t-xl shrink-0 -mx-5 -mt-5 px-3">
@@ -200,14 +281,29 @@ export function SectionEditorCard({
                             { id: 'hero', label: 'Hero Banner' },
                             { id: 'testimonials', label: 'Testimonials' },
                           ]
+                        : section.type === 'case-study-detail'
+                        ? [
+                            { id: 'hero', label: 'Hero Section' },
+                            { id: 'overview', label: 'Overview' },
+                            { id: 'challenge', label: 'Challenge' },
+                            { id: 'ess', label: 'ESS' },
+                            { id: 'results', label: 'Results' },
+                          ]
                         : [
                             { id: 'basic', label: 'Basic Info' },
                             { id: 'hero', label: 'Hero Banner' },
                             { id: 'highlights', label: 'Highlights & Conclusion' },
                           ];
                       // Fallback tab if currently activeTab is not valid for the switch
-                      const tabsMap = section.type === 'testimonials-block' ? TESTIMONIALS_TABS : BLOG_DETAIL_TABS;
-                      const validTab = tabsMap[activeTab] ? activeTab : (section.type === 'testimonials-block' ? 'hero' : 'basic');
+                      const tabsMap = section.type === 'testimonials-block' 
+                        ? TESTIMONIALS_TABS 
+                        : section.type === 'case-study-detail'
+                        ? CASE_STUDY_DETAIL_TABS
+                        : BLOG_DETAIL_TABS;
+                      
+                      const validTab = tabsMap[activeTab] 
+                        ? activeTab 
+                        : (section.type === 'testimonials-block' || section.type === 'case-study-detail' ? 'hero' : 'basic');
                       
                       return tabs.map((tab) => (
                         <button
@@ -215,7 +311,7 @@ export function SectionEditorCard({
                           type="button"
                           onClick={() => setActiveTab(tab.id)}
                           className={cn(
-                            'px-4 py-3 text-xs font-bold border-b-2 transition-colors cursor-pointer',
+                            'px-4 py-3 text-xs font-bold border-b-2 transition-colors cursor-pointer whitespace-nowrap',
                             validTab === tab.id
                               ? 'border-[#4B2A63] text-[#4B2A63] border-b-[#4B2A63]'
                               : 'border-transparent text-slate-400 hover:text-slate-600'
@@ -230,8 +326,13 @@ export function SectionEditorCard({
                   {/* Tab Content Fields */}
                   <div className="space-y-4 pt-2">
                     {(() => {
-                      const tabsMap = section.type === 'testimonials-block' ? TESTIMONIALS_TABS : BLOG_DETAIL_TABS;
-                      const activeKeys = tabsMap[activeTab] || (section.type === 'testimonials-block' ? tabsMap.hero : tabsMap.basic);
+                      const tabsMap = section.type === 'testimonials-block' 
+                        ? TESTIMONIALS_TABS 
+                        : section.type === 'case-study-detail'
+                        ? CASE_STUDY_DETAIL_TABS
+                        : BLOG_DETAIL_TABS;
+                      
+                      const activeKeys = tabsMap[activeTab] || (section.type === 'testimonials-block' || section.type === 'case-study-detail' ? tabsMap.hero : tabsMap.basic);
                       return activeKeys.map((key) => {
                         if (!contentKeys.includes(key)) return null;
                         return (

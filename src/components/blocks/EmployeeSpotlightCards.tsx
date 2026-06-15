@@ -13,15 +13,15 @@ const EMPLOYEES = [
     image: '/About-employee spot light/image 112.png',
     nameColor: 'text-[#4a2c5a]',
     stats: [
-      { icon: '/About-employee spot light/Container/Vector.png', value: '100 DAYS', label: 'No Days Missed' },
-      { icon: '/About-employee spot light/Container/Frame 213.png', value: '1,116 KM', label: 'Total Distance Covered' },
-      { icon: '/About-employee spot light/Container/weight-dumbbells_svgrepo.com.png', value: '12 Kg', label: 'Weight Lost' },
-      { icon: '/About-employee spot light/Container/Group.png', value: '500M TO 5KM', label: 'Struggle Into Strength' }
+      { iconImage: '/About-employee spot light/Container/Vector.png', value: '100 DAYS', label: 'No Days Missed' },
+      { iconImage: '/About-employee spot light/Container/Frame 213.png', value: '1,116 KM', label: 'Total Distance Covered' },
+      { iconImage: '/About-employee spot light/Container/weight-dumbbells_svgrepo.com.png', value: '12 Kg', label: 'Weight Lost' },
+      { iconImage: '/About-employee spot light/Container/Group.png', value: '500M TO 5KM', label: 'Struggle Into Strength' }
     ],
     pills: [
-      { icon: '/About-employee spot light/Container/Frame 210.png', title: '280th', subtitle: 'out of 10,806 participants' },
-      { icon: '/About-employee spot light/Container/Frame 214.png', title: '73rd', subtitle: 'in his age group' },
-      { icon: '/About-employee spot light/Container/Frame 215.png', title: 'Finisher Medal', subtitle: 'Proudly earned from his coach' }
+      { iconImage: '/About-employee spot light/Container/Frame 210.png', title: '280th', subtitle: 'out of 10,806 participants' },
+      { iconImage: '/About-employee spot light/Container/Frame 214.png', title: '73rd', subtitle: 'in his age group' },
+      { iconImage: '/About-employee spot light/Container/Frame 215.png', title: 'Finisher Medal', subtitle: 'Proudly earned from his coach' }
     ]
   },
   {
@@ -33,10 +33,10 @@ const EMPLOYEES = [
     image: '/About-employee spot light/image 113.png',
     nameColor: 'text-[#5C2B6A]',
     stats: [
-      { icon: '/About-employee spot light/Container/plant-pot-plant_svgrepo.com.png', value: '100+', label: 'Plants' },
-      { icon: '/About-employee spot light/Container/calendar-tick_svgrepo.com-1.png', value: '10', label: 'Years Composting' },
-      { icon: '/About-employee spot light/Vector.png', value: '50 KG', label: 'Organic Manure / Year' },
-      { icon: '/About-employee spot light/Container/recycle-3_svgrepo.com.png', value: '2-3 KG', label: 'Waste Recycled Daily' }
+      { iconImage: '/About-employee spot light/Container/plant-pot-plant_svgrepo.com.png', value: '100+', label: 'Plants' },
+      { iconImage: '/About-employee spot light/Container/calendar-tick_svgrepo.com-1.png', value: '10', label: 'Years Composting' },
+      { iconImage: '/About-employee spot light/Vector.png', value: '50 KG', label: 'Organic Manure / Year' },
+      { iconImage: '/About-employee spot light/Container/recycle-3_svgrepo.com.png', value: '2-3 KG', label: 'Waste Recycled Daily' }
     ]
   },
   {
@@ -48,10 +48,10 @@ const EMPLOYEES = [
     image: '/About-employee spot light/image 115.png',
     nameColor: 'text-[#4a2c5a]',
     stats: [
-      { icon: '/About-employee spot light/Container/bicycle_svgrepo.com.png', value: '42 Km', label: 'Every Day Rides To Work' },
-      { icon: '/About-employee spot light/Container/calendar-tick_svgrepo.com-1.png', value: '3 Years', label: 'Of Consistent Cyclingt' },
-      { icon: '/About-employee spot light/Container/co2_svgrepo.com.png', value: '2 Tons', label: 'Reducing CO₂ Every Year' },
-      { icon: '/About-employee spot light/Container/eco-ecology-nature-4_svgrepo.com.png', value: '2-3 KG', label: 'Healthier Lifestyle' }
+      { iconImage: '/About-employee spot light/Container/bicycle_svgrepo.com.png', value: '42 Km', label: 'Every Day Rides To Work' },
+      { iconImage: '/About-employee spot light/Container/calendar-tick_svgrepo.com-1.png', value: '3 Years', label: 'Of Consistent Cyclingt' },
+      { iconImage: '/About-employee spot light/Container/co2_svgrepo.com.png', value: '2 Tons', label: 'Reducing CO₂ Every Year' },
+      { iconImage: '/About-employee spot light/Container/eco-ecology-nature-4_svgrepo.com.png', value: '2-3 KG', label: 'Healthier Lifestyle' }
     ]
   },
   {
@@ -63,22 +63,24 @@ const EMPLOYEES = [
     image: '/About-employee spot light/Rectangle 4306.png',
     nameColor: 'text-[#5C2B6A]',
     stats: [
-      { icon: '/About-employee spot light/Container/bicycle_svgrepo.com.png', value: '22,000+ KM', label: 'Cycled In 3 Years' },
-      { icon: '/About-employee spot light/Container/route_svgrepo.com.png', value: '25 KM', label: 'Daily Commute\n(Home To Office & Back)' },
-      { icon: '/About-employee spot light/Container/bicycle_svgrepo.com.png', value: '150 KM', label: 'Every Week' },
-      { icon: '/About-employee spot light/Container/co2_svgrepo.com.png', value: '100 KM', label: 'Reducing CO₂ Every Year' }
+      { iconImage: '/About-employee spot light/Container/bicycle_svgrepo.com.png', value: '22,000+ KM', label: 'Cycled In 3 Years' },
+      { iconImage: '/About-employee spot light/Container/route_svgrepo.com.png', value: '25 KM', label: 'Daily Commute\n(Home To Office & Back)' },
+      { iconImage: '/About-employee spot light/Container/bicycle_svgrepo.com.png', value: '150 KM', label: 'Every Week' },
+      { iconImage: '/About-employee spot light/Container/co2_svgrepo.com.png', value: '100 KM', label: 'Reducing CO₂ Every Year' }
     ]
   }
 ];
 
 export function EmployeeSpotlightCards({ content }: { content?: any }) {
+  const employees = content?.employees || EMPLOYEES;
+
   return (
     <section className="py-20 bg-slate-50">
       <div className="container mx-auto px-4 max-w-7xl">
         <div className="space-y-16">
-          {EMPLOYEES.map((emp, index) => (
+          {employees.map((emp: any, index: number) => (
             <motion.div
-              key={emp.id}
+              key={emp.id || index}
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
@@ -102,7 +104,7 @@ export function EmployeeSpotlightCards({ content }: { content?: any }) {
                   </p>
 
                   <div className="font-bold text-black text-xl md:text-2xl pt-2">
-                    {emp.quote.split('\n').map((line, idx) => (
+                    {emp.quote.split('\n').map((line: string, idx: number) => (
                       <React.Fragment key={idx}>
                         {line}
                         {idx < emp.quote.split('\n').length - 1 && <br />}
@@ -112,10 +114,10 @@ export function EmployeeSpotlightCards({ content }: { content?: any }) {
 
                   {/* Stats Grid */}
                   <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 lg:gap-4 pt-6">
-                    {emp.stats.map((stat, i) => (
+                    {emp.stats.map((stat: any, i: number) => (
                       <div key={i} className="bg-white border border-[#4a2c5a] rounded-2xl py-4 px-1 flex flex-col items-center justify-center text-center">
                         <div className="h-[33px] flex items-center justify-center mb-3">
-                          <img src={stat.icon} alt={stat.label} className="max-h-full max-w-full object-contain" />
+                          <img src={stat.iconImage || stat.icon} alt={stat.label} className="max-h-full max-w-full object-contain" />
                         </div>
                         <div className="font-light text-[#333333] text-[12px] lg:text-[15px] leading-none mb-1.5 uppercase whitespace-nowrap">{stat.value}</div>
                         <div className="text-[10px] text-black font-bold tracking-tight leading-none whitespace-pre-line">{stat.label}</div>
@@ -126,9 +128,9 @@ export function EmployeeSpotlightCards({ content }: { content?: any }) {
                   {/* Pills if any */}
                   {emp.pills && (
                     <div className="w-full md:w-fit max-w-full flex flex-wrap md:flex-nowrap gap-4 lg:gap-8 items-center justify-start bg-white rounded-2xl px-4 lg:px-6 py-4 border border-gray-200 shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07)] mt-4">
-                      {emp.pills.map((pill, i) => (
+                      {emp.pills.map((pill: any, i: number) => (
                         <div key={i} className="flex items-center gap-2 min-w-0">
-                          <img src={pill.icon} alt={pill.subtitle} className="w-8 h-8 lg:w-11 lg:h-11 object-contain shrink-0" />
+                          <img src={pill.iconImage || pill.icon} alt={pill.subtitle} className="w-8 h-8 lg:w-11 lg:h-11 object-contain shrink-0" />
                           <div className="flex flex-col min-w-0">
                             <span className="text-[12px] lg:text-[18px] font-light text-[#333333] leading-none mb-1 whitespace-nowrap">{pill.title}</span>
                             <span className="text-[12px] text-[#666666] leading-[1.2] whitespace-normal">{pill.subtitle}</span>
