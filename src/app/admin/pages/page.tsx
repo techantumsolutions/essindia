@@ -76,6 +76,9 @@ function PagesModuleContent() {
           templateId: form.templateId || null,
           navigationItemId: form.navigationItemId || null,
           categoryId: form.categoryId || null,
+          megaMenuCategoryId: form.megaMenuCategoryId || null,
+          megaMenuSubCategoryId: form.megaMenuSubCategoryId || null,
+          megaMenuSubSubCategoryId: form.megaMenuSubSubCategoryId || null,
         }),
       });
       const data = await res.json();
