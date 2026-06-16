@@ -5,26 +5,11 @@ import { eq } from 'drizzle-orm';
 import { megaMenuRepository } from '@/repositories/mega-menu.repository';
 import { navigationRepository } from '@/repositories/navigation.repository';
 import { navigationTreeRepository } from '@/repositories/navigation-tree.repository';
-import { createServerClient } from '@supabase/ssr';
-import { cookies } from 'next/headers';
-
-async function isAdmin() {
-  const cookieStore = await cookies();
-  const supabase = createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://mock.supabase.co',
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'mock-anon-key',
-    {
-      cookies: {
-        getAll() { return cookieStore.getAll() },
-        setAll() {}
-      }
-    }
-  );
-  return true; 
-}
+import { isAdminRequest } from '@/lib/cms/auth';
+import { unauthorized } from '@/lib/cms/api-response';
 
 export async function POST(request: Request) {
-  if (!(await isAdmin())) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  if (!(await isAdminRequest())) return unauthorized();
 
   try {
     const body = await request.json();

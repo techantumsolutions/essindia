@@ -4,54 +4,43 @@ import { navigationItems } from '@/lib/db/schema';
 import { eq } from 'drizzle-orm';
 import { megaMenuRepository } from '@/repositories/mega-menu.repository';
 import { navigationRepository } from '@/repositories/navigation.repository';
-import { createServerClient } from '@supabase/ssr';
-import { cookies } from 'next/headers';
+import { navigationTreeRepository } from '@/repositories/navigation-tree.repository';
+import { isAdminRequest } from '@/lib/cms/auth';
+import { unauthorized } from '@/lib/cms/api-response';
 
-async function isAdmin() {
-  const cookieStore = await cookies();
-  const supabase = createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://mock.supabase.co',
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'mock-anon-key',
-    {
-      cookies: {
-        getAll() { return cookieStore.getAll() },
-        setAll() {}
-      }
-    }
-  );
-  // Bypassing for demo since we might be using mock envs
-  return true; 
-}
-
-export async function PUT(request: Request, props: { params: Promise<{ id: string }> }) {
-  if (!(await isAdmin())) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+export async function PUT(
+  request: Request,
+  props: { params: Promise<{ id: string }> }
+) {
+  if (!(await isAdminRequest())) return unauthorized();
 
   try {
     const params = await props.params;
     const body = await request.json();
-    const { label, slug, url, icon, isActive, orderIndex, megaMenuEnabled, megaMenuConfig, pageId } = body;
+    const { label, slug, url, icon, isActive, orderIndex, megaMenuEnabled, megaMenuConfig, pageId } =
+      body;
 
-    const updated = await db.update(navigationItems)
-       .set({ 
-         label, 
-         slug,
-         url, 
-         pageId: pageId !== undefined ? (pageId ?? null) : undefined,
-         icon, 
-         isActive, 
-         orderIndex, 
-         megaMenuEnabled,
-         megaMenuConfig,
-         updatedAt: new Date() 
-       })
-       .where(eq(navigationItems.id, params.id))
-       .returning();
+    const updated = await db
+      .update(navigationItems)
+      .set({
+        label,
+        slug,
+        url,
+        pageId: pageId !== undefined ? (pageId ?? null) : undefined,
+        icon,
+        isActive,
+        orderIndex,
+        megaMenuEnabled,
+        megaMenuConfig,
+        updatedAt: new Date(),
+      })
+      .where(eq(navigationItems.id, params.id))
+      .returning();
 
     if (!updated.length) return NextResponse.json({ error: 'Item not found' }, { status: 404 });
 
     await megaMenuRepository.clearCacheForNavItem(params.id, 'header-main');
     await navigationRepository.clearCache('header-main');
-    const { navigationTreeRepository } = await import('@/repositories/navigation-tree.repository');
     await navigationTreeRepository.clearCache('header-main');
 
     return NextResponse.json(updated[0]);
@@ -61,18 +50,21 @@ export async function PUT(request: Request, props: { params: Promise<{ id: strin
   }
 }
 
-export async function DELETE(request: Request, props: { params: Promise<{ id: string }> }) {
-  if (!(await isAdmin())) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+export async function DELETE(
+  request: Request,
+  props: { params: Promise<{ id: string }> }
+) {
+  if (!(await isAdminRequest())) return unauthorized();
 
   try {
     const params = await props.params;
-    const deleted = await db.delete(navigationItems)
+    const deleted = await db
+      .delete(navigationItems)
       .where(eq(navigationItems.id, params.id))
       .returning();
 
     if (!deleted.length) return NextResponse.json({ error: 'Item not found' }, { status: 404 });
 
-    const { navigationTreeRepository } = await import('@/repositories/navigation-tree.repository');
     await navigationTreeRepository.clearCache('header-main');
     await navigationRepository.clearCache('header-main');
 

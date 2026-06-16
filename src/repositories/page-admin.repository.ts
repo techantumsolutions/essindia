@@ -725,7 +725,9 @@ export class PageAdminRepository {
 
   private async invalidateNavigationCache() {
     await navigationTreeRepository.clearCache('header-main');
-    revalidatePath('/', 'layout');
+    // Revalidate public pages only — revalidating root layout also refreshes /admin
+    // and can trigger Supabase middleware churn that looks like a logout.
+    revalidatePath('/', 'page');
   }
 
   private async syncNavigationLinks(

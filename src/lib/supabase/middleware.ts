@@ -2,6 +2,17 @@ import { createServerClient } from '@supabase/ssr'
 import { NextResponse, type NextRequest } from 'next/server'
 
 export async function updateSession(request: NextRequest) {
+  const isMockAuthenticated = request.cookies.get('mock-admin-session')?.value === 'true'
+  const isAdminRoute =
+    request.nextUrl.pathname.startsWith('/admin') &&
+    !request.nextUrl.pathname.startsWith('/admin/login')
+
+  // Mock admin sessions must skip Supabase refresh — getUser() can rewrite cookies
+  // and cause spurious redirects to /admin/login on in-app navigation.
+  if (isMockAuthenticated && isAdminRoute) {
+    return NextResponse.next({ request })
+  }
+
   let supabaseResponse = NextResponse.next({
     request,
   })
@@ -15,7 +26,7 @@ export async function updateSession(request: NextRequest) {
           return request.cookies.getAll()
         },
         setAll(cookiesToSet) {
-          cookiesToSet.forEach(({ name, value, options }) => request.cookies.set(name, value))
+          cookiesToSet.forEach(({ name, value }) => request.cookies.set(name, value))
           supabaseResponse = NextResponse.next({
             request,
           })
@@ -27,30 +38,15 @@ export async function updateSession(request: NextRequest) {
     }
   )
 
-  // Do not run code between createServerClient and
-  // supabase.auth.getUser(). A simple mistake could make it very hard to debug
-  // issues with users being randomly logged out.
-
-  // IMPORTANT: DO NOT REMOVE auth.getUser()
-
-  let user = null;
+  let user = null
   try {
-    const { data } = await supabase.auth.getUser();
-    user = data.user;
+    const { data } = await supabase.auth.getUser()
+    user = data.user
   } catch (error) {
-    console.warn('[Supabase Middleware] Failed to get user:', error);
+    console.warn('[Supabase Middleware] Failed to get user:', error)
   }
 
-  // For the demo/simulation, we allow access to admin routes if the user is using the mock credentials.
-  // In a real app, this would check for a valid session.
-  const isMockAuthenticated = request.cookies.get('mock-admin-session')?.value === 'true';
-
-  if (
-    !user &&
-    !isMockAuthenticated &&
-    request.nextUrl.pathname.startsWith('/admin') &&
-    !request.nextUrl.pathname.startsWith('/admin/login')
-  ) {
+  if (!user && !isMockAuthenticated && isAdminRoute) {
     const url = request.nextUrl.clone()
     url.pathname = '/admin/login'
     return NextResponse.redirect(url)

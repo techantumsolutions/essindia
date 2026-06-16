@@ -116,12 +116,6 @@ export class NavigationTreeRepository {
       orderBy: [asc(navigationItems.orderIndex)],
     });
 
-    for (const item of items) {
-      if (item.megaMenuEnabled) {
-        await ensureNavPagesSyncedToMegaMenu(item.id);
-      }
-    }
-
     const navItemIds = items.map((item) => item.id);
     const pagesByNavItem = await this.loadPagesGroupedByNavItem(navItemIds);
     const result: Record<string, NavigationPageNode[]> = {};

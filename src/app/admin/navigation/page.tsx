@@ -37,8 +37,8 @@ export default function NavigationModule() {
     async function initData() {
       try {
         const [menusRes, pagesRes] = await Promise.all([
-          fetch('/api/admin/navigation'),
-          fetch('/api/admin/pages?registry=true')
+          fetch('/api/admin/navigation', { credentials: 'same-origin', cache: 'no-store' }),
+          fetch('/api/admin/pages?registry=true', { credentials: 'same-origin', cache: 'no-store' }),
         ]);
         
         if (menusRes.ok) {
@@ -70,17 +70,25 @@ export default function NavigationModule() {
       if (!activeMenuLocation) return;
       setIsLoading(true);
       try {
-        const res = await fetch(`/api/admin/navigation?location=${activeMenuLocation}`);
+        const res = await fetch(`/api/admin/navigation?location=${activeMenuLocation}`, {
+          credentials: 'same-origin',
+          cache: 'no-store',
+        });
+        if (res.status === 401) {
+          toast.error('Session expired. Please sign in again from Admin Login.');
+          return;
+        }
+        if (!res.ok) {
+          toast.error('Failed to load navigation items');
+          return;
+        }
         const data = await res.json();
         if (data.items) {
-          // Sort items by orderIndex initially
           const sorted = data.items.sort((a: any, b: any) => a.orderIndex - b.orderIndex);
           setItems(sorted);
-          if (sorted.length > 0) {
-            setSelectedItemId(sorted[0].id);
-          } else {
-            setSelectedItemId(null);
-          }
+          setSelectedItemId((prev) =>
+            prev && sorted.some((item: { id: string }) => item.id === prev) ? prev : sorted[0]?.id ?? null
+          );
         }
         if (data.linkedPagesByNavItem) {
           setLinkedPagesByNavItem(data.linkedPagesByNavItem);
@@ -125,6 +133,7 @@ export default function NavigationModule() {
     try {
       const res = await fetch(`/api/admin/navigation/${selectedItemId}`, {
         method: 'PUT',
+        credentials: 'same-origin',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           label: selectedItem.label,
@@ -157,6 +166,7 @@ export default function NavigationModule() {
     try {
       const res = await fetch('/api/admin/navigation', {
         method: 'POST',
+        credentials: 'same-origin',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           type: 'item',
@@ -185,6 +195,7 @@ export default function NavigationModule() {
     try {
       const res = await fetch(`/api/admin/navigation/${selectedItemId}`, {
         method: 'DELETE',
+        credentials: 'same-origin',
       });
 
       if (res.ok) {
@@ -226,6 +237,7 @@ export default function NavigationModule() {
     try {
       const res = await fetch('/api/admin/navigation/reorder', {
         method: 'POST',
+        credentials: 'same-origin',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           items: updatedItems.map(item => ({ id: item.id, orderIndex: item.orderIndex }))

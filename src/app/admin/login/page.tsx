@@ -32,7 +32,7 @@ export default function AdminLogin() {
 
       if (username === 'admin@essindia.com' && password === 'admin123') {
         // Set mock session cookie for middleware
-        document.cookie = "mock-admin-session=true; path=/; max-age=3600";
+        document.cookie = "mock-admin-session=true; path=/; max-age=604800; SameSite=Lax";
         setIsLoading(false);
         router.push('/admin/dashboard');
       } else {
