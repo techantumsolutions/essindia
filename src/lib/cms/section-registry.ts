@@ -7,6 +7,7 @@ import {
   FileText,
   MousePointer,
   Layers,
+  Users,
   LucideIcon,
 } from 'lucide-react';
 
@@ -18,6 +19,7 @@ export interface SectionTypeDefinition {
   color: string;
   defaultVariant: string;
   supportsVariants: boolean;
+  fieldOrder?: string[];
 }
 
 export const SECTION_REGISTRY: SectionTypeDefinition[] = [
@@ -227,6 +229,7 @@ export const SECTION_REGISTRY: SectionTypeDefinition[] = [
     color: 'bg-indigo-50 text-indigo-600',
     defaultVariant: 'default',
     supportsVariants: false,
+    fieldOrder: ['badge', 'title', 'description', 'primaryCta', 'secondaryCta', 'image'],
   },
   {
     type: 'mfg-icons',
@@ -254,6 +257,7 @@ export const SECTION_REGISTRY: SectionTypeDefinition[] = [
     color: 'bg-purple-50 text-purple-600',
     defaultVariant: 'default',
     supportsVariants: false,
+    fieldOrder: ['sectionTitle', 'sectionSubtitle', 'sectionDescription', 'processes'],
   },
   {
     type: 'mfg-efficiency',
@@ -267,11 +271,32 @@ export const SECTION_REGISTRY: SectionTypeDefinition[] = [
   {
     type: 'mfg-models',
     label: 'Manufacturing Operating Models',
-    description: 'Operating models grid',
+    description: 'Operating models grid block',
     icon: Grid,
-    color: 'bg-amber-50 text-amber-600',
+    color: 'bg-emerald-50 text-emerald-600',
     defaultVariant: 'default',
     supportsVariants: false,
+    fieldOrder: ['sectionTitle', 'sectionSubtitle', 'sectionDescription', 'models'],
+  },
+  {
+    type: 'employee-spotlight-hero',
+    label: 'Employee Spotlight Hero',
+    description: 'Hero section for employee spotlight',
+    icon: Layout,
+    color: 'bg-indigo-50 text-indigo-600',
+    defaultVariant: 'default',
+    supportsVariants: false,
+    fieldOrder: ['badge', 'title', 'description', 'image'],
+  },
+  {
+    type: 'employee-spotlight-cards',
+    label: 'Employee Spotlight Cards',
+    description: 'Cards showcasing employee stories',
+    icon: Users,
+    color: 'bg-pink-50 text-pink-600',
+    defaultVariant: 'default',
+    supportsVariants: false,
+    fieldOrder: ['employees'],
   },
   {
     type: 'career-hero',
@@ -405,6 +430,14 @@ export const SECTION_REGISTRY: SectionTypeDefinition[] = [
     description: 'Dynamic customer testimonials listing with filter sidebar',
     icon: Layers,
     color: 'bg-violet-50 text-violet-600',
+    supportsVariants: false,
+  },
+  {
+    type: 'case-study-detail',
+    label: 'Case Study Detail Content',
+    description: 'Detailed layout for Case Studies including overview, challenges, solutions, and results',
+    icon: FileText,
+    color: 'bg-purple-50 text-purple-600',
     defaultVariant: 'default',
     supportsVariants: false,
   },

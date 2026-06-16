@@ -3,31 +3,36 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 
-const steps = [
-  { img: '/Modules-manufacturing/Production flow-1.png', label: 'DEMAND', desc: 'Quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea nisi ut aliqu ipsum lorem.' },
-  { img: '/Modules-manufacturing/Production flow-2.png', label: 'PLAN', desc: 'Quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea nisi ut aliqu ipsum lorem.' },
-  { img: '/Modules-manufacturing/Production flow-3.png', label: 'EXECUTE', desc: 'Quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea nisi ut aliqu ipsum lorem.' },
-  { img: '/Modules-manufacturing/Production flow-4.png', label: 'IMPROVE', desc: 'Quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea nisi ut aliqu ipsum lorem.' },
+const defaultSteps = [
+  { image: '/Modules-manufacturing/Production flow-1.png', label: 'DEMAND', desc: 'Quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea nisi ut aliqu ipsum lorem.' },
+  { image: '/Modules-manufacturing/Production flow-2.png', label: 'PLAN', desc: 'Quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea nisi ut aliqu ipsum lorem.' },
+  { image: '/Modules-manufacturing/Production flow-3.png', label: 'EXECUTE', desc: 'Quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea nisi ut aliqu ipsum lorem.' },
+  { image: '/Modules-manufacturing/Production flow-4.png', label: 'IMPROVE', desc: 'Quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea nisi ut aliqu ipsum lorem.' },
 ];
 
-export default function ManufacturingProcess() {
+export default function ManufacturingProcess({ content }: { content?: any }) {
+  const sectionTitle = content?.sectionTitle || 'Process ipsum';
+  const sectionSubtitle = content?.sectionSubtitle || 'Lorem ipsum dolor sit amet, consectetur.';
+  const sectionDescription = content?.sectionDescription || 'Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea nisi ut aliquip';
+  const steps = content?.processes || defaultSteps;
+
   return (
     <section className="py-14 bg-white px-6">
       <div className="container mx-auto max-w-7xl">
         <div className="text-center mb-8 space-y-2">
           <div className="text-[14px] font-bold text-slate-900">
-            Process ipsum
+            {sectionTitle}
           </div>
           <h2 className="text-3xl md:text-4xl font-bold text-[#27256b] tracking-tight">
-            Lorem ipsum dolor sit amet, consectetur.
+            {sectionSubtitle}
           </h2>
           <p className="text-slate-500 max-w-2xl mx-auto text-[15px]">
-            Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea nisi ut aliquip
+            {sectionDescription}
           </p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-          {steps.map((step, i) => (
+          {steps.map((step: any, i: number) => (
             <motion.div
               key={i}
               initial={{ opacity: 0, y: 30 }}
@@ -37,7 +42,7 @@ export default function ManufacturingProcess() {
               className="flex flex-col items-center text-center relative group"
             >
               <div className="relative mb-2 z-10 transition-transform group-hover:scale-105">
-                <img src={step.img} alt={step.label} className="w-[160px] h-[160px] object-contain mx-auto" />
+                <img src={step.image || '/Modules-manufacturing/Production flow-1.png'} alt={step.label} className="w-[160px] h-[160px] object-contain mx-auto" />
               </div>
 
               <h3 className="text-[16px] font-extrabold text-[#27256b] uppercase mb-2">{step.label}</h3>
