@@ -13,7 +13,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   if (page) {
     return {
       title: `${page.title} | ESS India`,
-      description: page.description || `Read about ${page.title} at ESS India`,
+      description: page.seo?.description || `Read about ${page.title} at ESS India`,
     };
   }
 

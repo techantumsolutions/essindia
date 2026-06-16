@@ -430,6 +430,7 @@ export const SECTION_REGISTRY: SectionTypeDefinition[] = [
     description: 'Dynamic customer testimonials listing with filter sidebar',
     icon: Layers,
     color: 'bg-violet-50 text-violet-600',
+    defaultVariant: 'default',
     supportsVariants: false,
   },
   {
