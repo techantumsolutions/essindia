@@ -57,7 +57,9 @@ import { AboutUsServicesOverview } from '@/components/blocks/AboutUsServicesOver
 import { AboutUsTransformationSection } from '@/components/blocks/AboutUsTransformationSection';
 import { AboutUsWhyEss } from '@/components/blocks/AboutUsWhyEss';
 import { AboutUsCta } from '@/components/blocks/AboutUsCta';
-import { RetailWhyErp } from '@/components/blocks/RetailWhyErp';
+import { JudicialHero } from '@/components/blocks/JudicialHero';
+import { JudicialOverview } from '@/components/blocks/JudicialOverview';
+import { JudicialFeatures } from '@/components/blocks/JudicialFeatures';
 
 interface Section {
   id: string;
@@ -73,6 +75,12 @@ export function SectionRenderer({ section }: SectionRendererProps) {
   switch (section.type) {
     case 'hero':
       return <HeroSection content={section.content} />;
+    case 'judicial-hero':
+      return <JudicialHero content={section.content} />;
+    case 'judicial-overview':
+      return <JudicialOverview content={section.content} />;
+    case 'judicial-features':
+      return <JudicialFeatures content={section.content} />;
     case 'trusted-brands':
       return <TrustedBrands content={section.content} />;
     case 'intro':
@@ -119,8 +127,6 @@ export function SectionRenderer({ section }: SectionRendererProps) {
       return <RetailMobileDashboard content={section.content} />;
     case 'retail-clients':
       return <RetailClients content={section.content} />;
-    case 'retail-why-erp':
-      return <RetailWhyErp content={section.content} />;
     case 'mfg-hero':
       return <ManufacturingHero content={section.content} />;
     case 'mfg-icons':
@@ -195,8 +201,6 @@ export function SectionRenderer({ section }: SectionRendererProps) {
       return <AboutUsWhyEss content={section.content} />;
     case 'about-us-cta':
       return <AboutUsCta content={section.content} />;
-    case 'retail-why-erp':
-      return <RetailWhyErp content={section.content} />;
     default:
       if (process.env.NODE_ENV === 'development') {
         return (
