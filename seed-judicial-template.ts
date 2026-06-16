@@ -1,4 +1,5 @@
 import 'dotenv/config';
+import { eq } from 'drizzle-orm';
 import { db } from './src/lib/db';
 import { templates, templateSections } from './src/lib/db/schema';
 import { slugify } from './src/lib/cms/utils';
@@ -17,8 +18,8 @@ async function seed() {
   if (existingTemplate) {
     console.log(`ℹ️ Template "${templateName}" already exists. Deleting it to recreate...`);
     // Drizzle cascade delete handles template_sections if configured, but let's delete explicitly
-    await db.delete(templateSections).where((ts, { eq }) => eq(ts.templateId, existingTemplate.id));
-    await db.delete(templates).where((t, { eq }) => eq(t.id, existingTemplate.id));
+    await db.delete(templateSections).where(eq(templateSections.templateId, existingTemplate.id));
+    await db.delete(templates).where(eq(templates.id, existingTemplate.id));
   }
 
   // Create Template

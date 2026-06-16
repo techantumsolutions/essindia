@@ -1,4 +1,9 @@
 import React from 'react';
+import { toast } from 'sonner';
+import { Layers, Plus, Loader2, X, BookOpen, ImageIcon, SlidersHorizontal, LayoutGrid, BarChart3, Edit, Trash2 } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { cn } from '@/lib/utils';
+import { AnimatePresence, motion } from 'framer-motion';
 
 // ---------------------------------------------------------------------------
 // Case Study Posts Manager Component

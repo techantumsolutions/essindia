@@ -323,8 +323,8 @@ function CaseStudyManager({ pageId, onRefresh }: { pageId: string; onRefresh: ()
       setTitle(''); setSlug(''); setTopic(''); setIndustry(''); setDate(''); setImage('');
       setOverview(''); setOverviewImage1(''); setOverviewImage2('');
       setChallengeTitle(''); setChallengeDescription(''); setChallengePoints([{title:'', description:''}]);
-      setSolutionsTitle(''); setSolutionsDescription(''); setSolutionModules([{title:'', description:''}]);
-      setResultsTitle(''); setResultsItems([{metric:'', label:''}]);
+      setSolutionsTitle(''); setSolutionsDescription(''); setSolutionModules([{name:'', description:'', icon:''}]);
+      setResultsTitle(''); setResultsItems(['']);
       setActiveTab('basic');
 
       fetchStudies();
@@ -455,7 +455,7 @@ function CaseStudyManager({ pageId, onRefresh }: { pageId: string; onRefresh: ()
                       </div>
                       <div className="space-y-1">
                         <label className="text-xs font-semibold text-slate-500">Hero Image URL</label>
-                        <MediaField value={image} onChange={(val) => setImage(val)} />
+                        <MediaField fieldKey="hero-image" value={image} onChange={(val) => setImage(val)} />
                       </div>
                       <div className="space-y-1">
                         <label className="text-xs font-semibold text-slate-500">Initial Status</label>
@@ -475,11 +475,11 @@ function CaseStudyManager({ pageId, onRefresh }: { pageId: string; onRefresh: ()
                       </div>
                       <div className="space-y-1">
                         <label className="text-xs font-semibold text-slate-500">Overview Image 1 URL</label>
-                        <MediaField value={overviewImage1} onChange={(val) => setOverviewImage1(val)} />
+                        <MediaField fieldKey="overview-image-1" value={overviewImage1} onChange={(val) => setOverviewImage1(val)} />
                       </div>
                       <div className="space-y-1">
                         <label className="text-xs font-semibold text-slate-500">Overview Image 2 URL</label>
-                        <MediaField value={overviewImage2} onChange={(val) => setOverviewImage2(val)} />
+                        <MediaField fieldKey="overview-image-2" value={overviewImage2} onChange={(val) => setOverviewImage2(val)} />
                       </div>
                     </div>
                   )}
@@ -496,7 +496,7 @@ function CaseStudyManager({ pageId, onRefresh }: { pageId: string; onRefresh: ()
                       </div>
                       <div className="space-y-1">
                         <label className="text-xs font-semibold text-slate-500">Challenge Image</label>
-                        <MediaField value={challengeImage} onChange={(val) => setChallengeImage(val)} />
+                        <MediaField fieldKey="challenge-image" value={challengeImage} onChange={(val) => setChallengeImage(val)} />
                       </div>
                       <div className="space-y-3">
                         <label className="text-xs font-semibold text-slate-500">Challenge Points</label>
@@ -527,7 +527,7 @@ function CaseStudyManager({ pageId, onRefresh }: { pageId: string; onRefresh: ()
                         {solutionModules.map((mod, idx) => (
                           <div key={idx} className="flex gap-3 items-start bg-slate-50 p-3 rounded-xl border border-slate-100">
                             <div className="w-20 shrink-0">
-                              <MediaField value={mod.icon} onChange={val => { const n = [...solutionModules]; n[idx].icon = val; setSolutionModules(n); }} />
+                              <MediaField fieldKey={`solution-icon-${idx}`} value={mod.icon} onChange={val => { const n = [...solutionModules]; n[idx].icon = val; setSolutionModules(n); }} />
                             </div>
                             <div className="flex-1 space-y-2">
                               <input type="text" placeholder="Module Name" value={mod.name} onChange={e => { const n = [...solutionModules]; n[idx].name = e.target.value; setSolutionModules(n); }} className="w-full bg-white rounded-lg px-3 py-2 text-sm outline-none border focus:border-[#4B2A63]/20" />

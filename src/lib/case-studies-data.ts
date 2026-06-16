@@ -5,6 +5,8 @@ export interface CaseStudyPost {
   date: string;
   topic: string;
   industries: string[];
+  industry?: string;
+  description?: string;
   image: string;
   authors: { name: string; role: string; avatar: string }[];
   overviewHtml: string;
