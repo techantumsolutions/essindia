@@ -8,7 +8,8 @@ export async function GET(request: Request) {
   try {
     const tree = await navigationTreeRepository.getTreeByLocation(location);
     const megaMenus = await navigationTreeRepository.getMegaMenusByLocation(location);
-    return NextResponse.json({ location, tree, megaMenus });
+    const navigation = await navigationTreeRepository.getNavigationByLocation(location, 'public');
+    return NextResponse.json({ location, tree, megaMenus, navigation });
   } catch (error) {
     console.error('[API Navigation Tree]', error);
     return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });

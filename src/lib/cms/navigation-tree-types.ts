@@ -28,6 +28,8 @@ export type NavigationTreeCategory = {
   name: string;
   slug: string;
   orderIndex: number;
+  pageId?: string | null;
+  href?: string;
   subCategories: NavigationTreeSub[];
 };
 

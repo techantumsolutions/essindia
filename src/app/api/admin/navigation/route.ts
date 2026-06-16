@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { navigationMenus, navigationItems } from '@/lib/db/schema';
 import { eq } from 'drizzle-orm';
+import { navigationTreeRepository } from '@/repositories/navigation-tree.repository';
 import { createServerClient } from '@supabase/ssr';
 import { cookies } from 'next/headers';
 
@@ -52,7 +53,13 @@ export async function GET(request: Request) {
           }));
       };
 
-      return NextResponse.json({ menu, items: buildTree(items) });
+      const linkedPagesByNavItem =
+        await navigationTreeRepository.getLinkedPagesByNavItemForAdmin(location);
+
+      return NextResponse.json(
+        { menu, items: buildTree(items), linkedPagesByNavItem },
+        { headers: { 'Cache-Control': 'no-store, max-age=0' } }
+      );
     }
 
     const menus = await db.query.navigationMenus.findMany();

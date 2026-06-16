@@ -25,6 +25,7 @@ export default function NavigationModule() {
   const [menus, setMenus] = useState<any[]>([]);
   const [activeMenuLocation, setActiveMenuLocation] = useState('header-main');
   const [items, setItems] = useState<any[]>([]);
+  const [linkedPagesByNavItem, setLinkedPagesByNavItem] = useState<Record<string, any[]>>({});
   const [registryPages, setRegistryPages] = useState<any[]>([]);
   const [selectedItemId, setSelectedItemId] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -81,6 +82,9 @@ export default function NavigationModule() {
             setSelectedItemId(null);
           }
         }
+        if (data.linkedPagesByNavItem) {
+          setLinkedPagesByNavItem(data.linkedPagesByNavItem);
+        }
       } catch (error) {
         toast.error('Failed to load navigation items');
       } finally {
@@ -91,6 +95,23 @@ export default function NavigationModule() {
   }, [activeMenuLocation]);
 
   const selectedItem = items.find(item => item.id === selectedItemId);
+  const selectedLinkedPages = selectedItemId ? linkedPagesByNavItem[selectedItemId] ?? [] : [];
+
+  const renderLinkedPages = (nodes: any[], depth = 0): React.ReactNode =>
+    nodes.map((node) => (
+      <div key={`${node.fullPath}-${depth}`} className={cn('mt-2', depth > 0 && 'ml-4 border-l border-slate-100 pl-3')}>
+        <div className="flex items-center justify-between gap-2 rounded-xl bg-slate-50 px-3 py-2">
+          <span className="text-[13px] font-bold text-slate-700 truncate">{node.title}</span>
+          <span className={cn(
+            'text-[9px] font-black px-2 py-0.5 rounded-full uppercase tracking-tighter shrink-0',
+            node.status === 'published' ? 'bg-emerald-50 text-emerald-600' : 'bg-amber-50 text-amber-600'
+          )}>
+            {node.status}
+          </span>
+        </div>
+        {node.children?.length > 0 ? renderLinkedPages(node.children, depth + 1) : null}
+      </div>
+    ));
 
   const handleUpdateItemField = (field: string, value: any) => {
     setItems(prev => prev.map(item => 
@@ -309,6 +330,21 @@ export default function NavigationModule() {
               <Plus className="w-4 h-4" />
               Add Menu Item
             </Button>
+
+            {selectedItemId && (
+              <div className="mt-8 pt-6 border-t border-slate-100">
+                <h4 className="text-[11px] font-black text-slate-400 uppercase tracking-widest mb-3">
+                  Linked CMS Pages
+                </h4>
+                {selectedLinkedPages.length > 0 ? (
+                  <div className="space-y-1">{renderLinkedPages(selectedLinkedPages)}</div>
+                ) : (
+                  <p className="text-xs text-slate-400 font-medium">
+                    No pages linked to this menu item yet. Create a page under this nav item in CMS → Pages.
+                  </p>
+                )}
+              </div>
+            )}
           </div>
         </div>
 

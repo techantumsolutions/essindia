@@ -23,6 +23,8 @@
     "db:seed-testimonials-template": "npx tsx scripts/create-testimonials-template.ts",
     "db:apply-registry": "npx tsx scripts/apply-page-registry-migration.ts",
     "db:apply-page-nav": "npx tsx scripts/apply-page-nav-migration.ts",
+    "db:apply-page-hierarchy": "npx tsx scripts/apply-page-hierarchy-migration.ts",
+    "db:backfill-page-hierarchy": "npx tsx scripts/backfill-page-hierarchy.ts",
     "db:apply-pages-template-id": "npx tsx scripts/apply-pages-template-id-migration.ts",
     "db:apply-all": "npx tsx scripts/apply-all-migrations.ts",
     "db:clear-mega-demo": "npx tsx scripts/clear-mega-menu-demo.ts"

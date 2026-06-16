@@ -13,7 +13,7 @@ import {
   templates,
   templateSections,
 } from '@/lib/db/schema';
-import { asc, desc, eq, or } from 'drizzle-orm';
+import { asc, desc, eq, or, and, isNull } from 'drizzle-orm';
 import { buildFullPath, buildPageTree, slugify } from '@/lib/cms/utils';
 import {
   buildPagePathFromNavAndCategorySlugs,
@@ -23,8 +23,17 @@ import {
 import { templateRepository } from './template.repository';
 import { sectionLibraryRepository } from './section-library.repository';
 import { pageRegistryRepository } from './page-registry.repository';
-import { navigationTreeRepository } from './navigation-tree.repository';
+import {
+  assertNoCircularParent,
+  computeDepthFromMegaMenuSelection,
+  computeDepthFromParent,
+} from '@/lib/cms/page-navigation';
 import { safeRedisDel, safeRedisKeys } from '@/lib/redis';
+import { revalidatePath } from 'next/cache';
+import { isMissingSchemaError } from '@/lib/cms/pg-error';
+import { syncPageToMegaMenu, updateMegaMenuFromPage } from '@/lib/cms/sync-page-to-mega-menu';
+import { navigationTreeRepository } from './navigation-tree.repository';
+
 import type { PageTreeNode } from '@/lib/cms/types';
 
 export class PageAdminRepository {
@@ -85,11 +94,18 @@ export class PageAdminRepository {
     megaMenuSubSubCategoryId?: string | null;
   }) {
     const pageSlug = resolvePageSlug(data.title, data.slug);
+    const placement = await this.resolveNavigationPlacement(data);
     let fullPath: string;
 
-    if (data.navigationItemId) {
+    if (placement.parentId) {
+      const parent = await db.query.pages.findFirst({
+        where: eq(pages.id, placement.parentId),
+        columns: { fullPath: true },
+      });
+      fullPath = buildFullPath(parent?.fullPath || null, pageSlug);
+    } else if (placement.navigationItemId) {
       const nav = await db.query.navigationItems.findFirst({
-        where: eq(navigationItems.id, data.navigationItemId),
+        where: eq(navigationItems.id, placement.navigationItemId),
       });
       if (!nav) throw new Error('Invalid navigation menu item');
 
@@ -145,15 +161,7 @@ export class PageAdminRepository {
       const existing = await db.query.pages.findFirst({ where: eq(pages.fullPath, fullPath) });
       if (existing) throw new Error('A page with this route already exists');
     } else {
-      let parentPath: string | null = null;
-      if (data.parentId) {
-        const parent = await db.query.pages.findFirst({
-          where: eq(pages.id, data.parentId),
-          columns: { fullPath: true },
-        });
-        parentPath = parent?.fullPath || null;
-      }
-      fullPath = buildFullPath(parentPath, pageSlug);
+      fullPath = buildFullPath(null, pageSlug);
     }
 
     const duplicate = await db.query.pages.findFirst({ where: eq(pages.fullPath, fullPath) });
@@ -161,26 +169,29 @@ export class PageAdminRepository {
 
     const [seo] = await db.insert(seoMetadata).values({ title: data.title }).returning();
 
-    const [page] = await db
-      .insert(pages)
-      .values({
-        title: data.title,
-        slug: pageSlug,
-        fullPath,
-        parentId: data.parentId || null,
-        categoryId: data.categoryId || null,
-        templateId: data.templateId || null,
-        navigationItemId: data.navigationItemId || null,
-        megaMenuCategoryId: data.megaMenuCategoryId || null,
-        megaMenuSubCategoryId: data.megaMenuSubCategoryId || null,
-        megaMenuSubSubCategoryId: data.megaMenuSubSubCategoryId || null,
-        pageType: data.pageType || 'standard',
-        status: data.status || 'draft',
-        publishedAt: data.status === 'published' ? new Date() : null,
-        seoId: seo.id,
-        isTemplate: false,
-      })
-      .returning();
+    const pageValues = {
+      title: data.title,
+      slug: pageSlug,
+      fullPath,
+      parentId: placement.parentId,
+      categoryId: data.categoryId || null,
+      templateId: data.templateId || null,
+      navigationItemId: placement.navigationItemId,
+      megaMenuCategoryId: data.megaMenuCategoryId || null,
+      megaMenuSubCategoryId: data.megaMenuSubCategoryId || null,
+      megaMenuSubSubCategoryId: data.megaMenuSubSubCategoryId || null,
+      pageType: data.pageType || 'standard',
+      status: data.status || 'draft',
+      publishedAt: data.status === 'published' ? new Date() : null,
+      seoId: seo.id,
+      isTemplate: false,
+    };
+
+    const [page] = await this.insertPageRecord({
+      ...pageValues,
+      depthLevel: placement.depthLevel,
+      sortOrder: placement.sortOrder,
+    });
 
     if (data.megaMenuSubSubCategoryId) {
       await db
@@ -207,6 +218,16 @@ export class PageAdminRepository {
         orderIndex: 999,
         status: 'active',
       });
+    } else if (placement.navigationItemId) {
+      await syncPageToMegaMenu({
+        id: page.id,
+        title: page.title,
+        slug: page.slug,
+        navigationItemId: placement.navigationItemId,
+        parentId: placement.parentId,
+        depthLevel: placement.depthLevel,
+        sortOrder: placement.sortOrder,
+      });
     }
 
     if (data.templateId) {
@@ -231,7 +252,7 @@ export class PageAdminRepository {
     }
 
     await pageRegistryRepository.registerCmsPage(page);
-    await navigationTreeRepository.clearCache('header-main');
+    await this.invalidateNavigationCache();
     await this.invalidateCache(fullPath);
     return this.getById(page.id);
   }
@@ -246,15 +267,41 @@ export class PageAdminRepository {
       status: string;
       pageType: string;
       publishedAt: Date | null;
+      navigationItemId: string | null;
+      depthLevel: number;
+      sortOrder: number;
     }>
   ) {
     const current = await this.getById(id);
     if (!current) return null;
 
     let fullPath = current.fullPath;
+    let parentId = data.parentId !== undefined ? data.parentId : current.parentId;
+    let navigationItemId =
+      data.navigationItemId !== undefined ? data.navigationItemId : current.navigationItemId;
+    let depthLevel = current.depthLevel ?? 0;
+    let sortOrder = current.sortOrder ?? 0;
+
+    if (data.parentId !== undefined || data.navigationItemId !== undefined) {
+      const placement = await this.resolveNavigationPlacement(
+        {
+          title: current.title,
+          parentId,
+          navigationItemId,
+          megaMenuCategoryId: current.megaMenuCategoryId,
+          megaMenuSubCategoryId: current.megaMenuSubCategoryId,
+          megaMenuSubSubCategoryId: current.megaMenuSubSubCategoryId,
+        },
+        id
+      );
+      parentId = placement.parentId;
+      navigationItemId = placement.navigationItemId;
+      depthLevel = placement.depthLevel;
+      sortOrder = placement.sortOrder;
+    }
+
     if (data.slug || data.parentId !== undefined) {
       let parentPath: string | null = null;
-      const parentId = data.parentId !== undefined ? data.parentId : current.parentId;
       if (parentId) {
         const parent = await db.query.pages.findFirst({
           where: eq(pages.id, parentId),
@@ -265,20 +312,41 @@ export class PageAdminRepository {
       fullPath = buildFullPath(parentPath, data.slug || current.slug);
     }
 
-    const [updated] = await db
-      .update(pages)
-      .set({
-        ...data,
-        fullPath,
-        updatedAt: new Date(),
-        ...(data.status === 'published' && !current.publishedAt
-          ? { publishedAt: new Date() }
-          : {}),
-      })
-      .where(eq(pages.id, id))
-      .returning();
+    const updatePayload = {
+      ...data,
+      parentId,
+      navigationItemId,
+      depthLevel,
+      sortOrder,
+      fullPath,
+      updatedAt: new Date(),
+      ...(data.status === 'published' && !current.publishedAt
+        ? { publishedAt: new Date() }
+        : {}),
+    };
+
+    let updated;
+    try {
+      [updated] = await db.update(pages).set(updatePayload).where(eq(pages.id, id)).returning();
+    } catch (error) {
+      if (!isMissingSchemaError(error)) throw error;
+      const { depthLevel: _depth, sortOrder: _sort, ...basePayload } = updatePayload;
+      [updated] = await db.update(pages).set(basePayload).where(eq(pages.id, id)).returning();
+    }
 
     await this.saveRevision(id);
+    await this.syncNavigationLinks(updated.id, {
+      title: updated.title,
+      slug: updated.slug,
+      navigationItemId: updated.navigationItemId,
+      parentId: updated.parentId,
+      depthLevel: updated.depthLevel ?? depthLevel,
+      sortOrder: updated.sortOrder ?? sortOrder,
+      megaMenuCategoryId: updated.megaMenuCategoryId,
+      megaMenuSubCategoryId: updated.megaMenuSubCategoryId,
+      megaMenuSubSubCategoryId: updated.megaMenuSubSubCategoryId,
+    });
+    await this.invalidateNavigationCache();
     await this.invalidateCache(current.fullPath);
     if (fullPath !== current.fullPath) await this.invalidateCache(fullPath);
 
@@ -436,6 +504,12 @@ export class PageAdminRepository {
         parentId: page.parentId,
         categoryId: page.categoryId,
         templateId: page.templateId,
+        navigationItemId: page.navigationItemId,
+        depthLevel: page.depthLevel,
+        sortOrder: page.sortOrder,
+        megaMenuCategoryId: page.megaMenuCategoryId,
+        megaMenuSubCategoryId: page.megaMenuSubCategoryId,
+        megaMenuSubSubCategoryId: page.megaMenuSubSubCategoryId,
         pageType: page.pageType,
         status: 'draft',
         seoId: seo.id,
@@ -499,9 +573,200 @@ export class PageAdminRepository {
     }
 
     await pageRegistryRepository.removeByRoute(page.fullPath);
-    await navigationTreeRepository.clearCache('header-main');
+    await this.invalidateNavigationCache();
     await this.invalidateCache(page.fullPath);
     return true;
+  }
+
+  private async resolveNavigationPlacement(
+    data: {
+      title: string;
+      parentId?: string | null;
+      navigationItemId?: string | null;
+      megaMenuCategoryId?: string | null;
+      megaMenuSubCategoryId?: string | null;
+      megaMenuSubSubCategoryId?: string | null;
+    },
+    pageId: string | null = null
+  ) {
+    let navigationItemId = data.navigationItemId || null;
+    let parentId = data.parentId || null;
+    let parentDepth: number | null = null;
+
+    if (parentId) {
+      const parentPage = await this.getParentPageForPlacement(parentId);
+      if (!parentPage) throw new Error('Invalid parent page');
+
+      if (
+        navigationItemId &&
+        parentPage.navigationItemId &&
+        navigationItemId !== parentPage.navigationItemId
+      ) {
+        throw new Error('Parent page belongs to a different navigation item');
+      }
+
+      if (!navigationItemId && parentPage.navigationItemId) {
+        navigationItemId = parentPage.navigationItemId;
+      }
+
+      parentDepth = parentPage.depthLevel;
+    }
+
+    if (navigationItemId) {
+      const nav = await db.query.navigationItems.findFirst({
+        where: eq(navigationItems.id, navigationItemId),
+        columns: { id: true },
+      });
+      if (!nav) throw new Error('Invalid navigation menu item');
+    }
+
+    const hierarchyRows = await db
+      .select({ id: pages.id, parentId: pages.parentId })
+      .from(pages)
+      .where(eq(pages.isTemplate, false));
+    assertNoCircularParent(pageId, parentId, hierarchyRows);
+
+    const depthLevel = parentId
+      ? computeDepthFromParent(parentDepth)
+      : navigationItemId
+        ? computeDepthFromMegaMenuSelection(data)
+        : 0;
+
+    const sortOrder =
+      navigationItemId || parentId
+        ? await this.getNextSortOrder(navigationItemId, parentId, pageId)
+        : 0;
+
+    return { navigationItemId, parentId, depthLevel, sortOrder };
+  }
+
+  private async getNextSortOrder(
+    navigationItemId: string | null,
+    parentId: string | null,
+    excludePageId: string | null = null
+  ) {
+    try {
+      const conditions = [eq(pages.isTemplate, false)];
+
+      if (navigationItemId) {
+        conditions.push(eq(pages.navigationItemId, navigationItemId));
+      }
+      conditions.push(parentId ? eq(pages.parentId, parentId) : isNull(pages.parentId));
+
+      const rows = await db
+        .select({ sortOrder: pages.sortOrder, id: pages.id })
+        .from(pages)
+        .where(and(...conditions));
+
+      const siblingOrders = rows
+        .filter((row) => row.id !== excludePageId)
+        .map((row) => row.sortOrder ?? 0);
+
+      return (siblingOrders.length ? Math.max(...siblingOrders) : -1) + 1;
+    } catch (error) {
+      if (isMissingSchemaError(error)) return 0;
+      throw error;
+    }
+  }
+
+  private async getParentPageForPlacement(parentId: string): Promise<{
+    id: string;
+    parentId: string | null;
+    navigationItemId: string | null;
+    depthLevel: number | null;
+  } | null> {
+    try {
+      const parentPage = await db.query.pages.findFirst({
+        where: eq(pages.id, parentId),
+        columns: {
+          id: true,
+          parentId: true,
+          navigationItemId: true,
+          depthLevel: true,
+        },
+      });
+      return parentPage
+        ? {
+            ...parentPage,
+            depthLevel: parentPage.depthLevel ?? null,
+          }
+        : null;
+    } catch (error) {
+      if (!isMissingSchemaError(error)) throw error;
+      const parentPage = await db.query.pages.findFirst({
+        where: eq(pages.id, parentId),
+        columns: {
+          id: true,
+          parentId: true,
+          navigationItemId: true,
+        },
+      });
+      return parentPage
+        ? {
+            ...parentPage,
+            depthLevel: null,
+          }
+        : null;
+    }
+  }
+
+  private async insertPageRecord(
+    values: typeof pages.$inferInsert & { depthLevel?: number; sortOrder?: number }
+  ) {
+    try {
+      const [page] = await db.insert(pages).values(values).returning();
+      return [page];
+    } catch (error) {
+      if (!isMissingSchemaError(error)) throw error;
+      const { depthLevel: _depth, sortOrder: _sort, ...baseValues } = values;
+      return db.insert(pages).values(baseValues).returning();
+    }
+  }
+
+  private async invalidateNavigationCache() {
+    await navigationTreeRepository.clearCache('header-main');
+    revalidatePath('/', 'layout');
+  }
+
+  private async syncNavigationLinks(
+    pageId: string,
+    page: {
+      title: string;
+      slug: string;
+      navigationItemId: string | null;
+      parentId: string | null;
+      depthLevel: number;
+      sortOrder: number;
+      megaMenuCategoryId: string | null;
+      megaMenuSubCategoryId: string | null;
+      megaMenuSubSubCategoryId: string | null;
+    }
+  ) {
+    if (!page.navigationItemId) return;
+
+    if (page.megaMenuCategoryId || page.megaMenuSubCategoryId || page.megaMenuSubSubCategoryId) {
+      await updateMegaMenuFromPage({
+        id: pageId,
+        title: page.title,
+        slug: page.slug,
+        navigationItemId: page.navigationItemId,
+        parentId: page.parentId,
+        megaMenuCategoryId: page.megaMenuCategoryId,
+        megaMenuSubCategoryId: page.megaMenuSubCategoryId,
+        megaMenuSubSubCategoryId: page.megaMenuSubSubCategoryId,
+      });
+      return;
+    }
+
+    await syncPageToMegaMenu({
+      id: pageId,
+      title: page.title,
+      slug: page.slug,
+      navigationItemId: page.navigationItemId,
+      parentId: page.parentId,
+      depthLevel: page.depthLevel,
+      sortOrder: page.sortOrder,
+    });
   }
 
   private async findTemplateSummary(templateId: string | null) {

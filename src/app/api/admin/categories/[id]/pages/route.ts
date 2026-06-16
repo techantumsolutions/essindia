@@ -1,9 +1,7 @@
 import { NextResponse } from 'next/server';
 import { isAdminRequest } from '@/lib/cms/auth';
 import { categoryRepository } from '@/repositories/category.repository';
-import { db } from '@/lib/db';
-import { pages, templates, pageSections, templateSections } from '@/lib/db/schema';
-import { eq } from 'drizzle-orm';
+import { pageAdminRepository } from '@/repositories/page-admin.repository';
 import { badRequest, notFound, serverError, unauthorized } from '@/lib/cms/api-response';
 import { slugify } from '@/lib/cms/utils';
 
@@ -43,50 +41,17 @@ export async function POST(
     if (!title?.trim()) return badRequest('Page title is required');
 
     const slug = rawSlug?.trim() || slugify(title);
-    // Build full path: /category-slug/page-slug (simplified — nav can override)
-    const fullPath = `/${category.slug}/${slug}`;
 
-    // Create the page with categoryId pre-set
-    const [newPage] = await db
-      .insert(pages)
-      .values({
-        title: title.trim(),
-        slug,
-        fullPath,
-        status: 'draft',
-        categoryId,
-        templateId: templateId || null,
-        navigationItemId: navigationItemId || null,
-      })
-      .returning();
+    const page = await pageAdminRepository.create({
+      title: title.trim(),
+      slug,
+      categoryId,
+      templateId: templateId || null,
+      navigationItemId: navigationItemId || null,
+      status: 'draft',
+    });
 
-    // If a template was chosen, copy its sections into the new page
-    if (templateId) {
-      const tmpl = await db.query.templates.findFirst({
-        where: eq(templates.id, templateId),
-        with: { templateSections: true },
-      });
-
-      if (tmpl?.templateSections?.length) {
-        const sectionRows = tmpl.templateSections.map((ts: any) => ({
-          pageId: newPage.id,
-          sectionLibraryId: ts.sectionLibraryId || null,
-          type: ts.type,
-          variant: ts.variant || 'default',
-          content: ts.contentJson as any,
-          styleJson: ts.styleJson as any,
-          settingsJson: ts.settingsJson as any,
-          responsiveJson: ts.responsiveJson as any,
-          animationJson: ts.animationJson as any,
-          orderIndex: ts.orderIndex,
-          isActive: true,
-        }));
-
-        await db.insert(pageSections).values(sectionRows);
-      }
-    }
-
-    return NextResponse.json(newPage, { status: 201 });
+    return NextResponse.json(page, { status: 201 });
   } catch (error) {
     return serverError(error);
   }

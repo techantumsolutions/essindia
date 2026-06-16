@@ -56,6 +56,8 @@ export const pages = pgTable('pages', {
   templateId: uuid('template_id').references((): AnyPgColumn => templates.id, { onDelete: 'set null' }),
   categoryId: uuid('category_id').references(() => categories.id, { onDelete: 'set null' }),
   navigationItemId: uuid('navigation_item_id'),
+  depthLevel: integer('depth_level').notNull().default(0),
+  sortOrder: integer('sort_order').notNull().default(0),
   megaMenuCategoryId: uuid('mega_menu_category_id'),
   megaMenuSubCategoryId: uuid('mega_menu_sub_category_id'),
   megaMenuSubSubCategoryId: uuid('mega_menu_sub_sub_category_id'),
@@ -69,6 +71,8 @@ export const pages = pgTable('pages', {
 }, (table) => ({
   idxPagesSlug: index('idx_pages_slug').on(table.slug),
   idxPagesParent: index('idx_pages_parent').on(table.parentId),
+  idxPagesNavigationDepth: index('idx_pages_navigation_depth').on(table.navigationItemId, table.depthLevel),
+  idxPagesNavSort: index('idx_pages_nav_sort').on(table.navigationItemId, table.sortOrder),
   uniquePath: uniqueIndex('unique_page_path').on(table.fullPath),
 }));
 

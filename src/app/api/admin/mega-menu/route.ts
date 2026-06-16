@@ -24,12 +24,15 @@ export async function GET(request: Request) {
     return NextResponse.json({ error: 'navigationItemId required' }, { status: 400 });
   }
 
-  const payload = await megaMenuRepository.getMegaMenuByNavigationItemId(navigationItemId);
+  const payload = await navigationTreeRepository.getAdminMegaMenuPayload(navigationItemId);
   const navItem = await db.query.navigationItems.findFirst({
     where: eq(navigationItems.id, navigationItemId),
   });
 
-  return NextResponse.json({ navItem, megaMenu: payload });
+  return NextResponse.json(
+    { navItem, megaMenu: payload },
+    { headers: { 'Cache-Control': 'no-store, max-age=0' } }
+  );
 }
 
 export async function POST(request: Request) {

@@ -72,6 +72,10 @@ export async function DELETE(request: Request, props: { params: Promise<{ id: st
 
     if (!deleted.length) return NextResponse.json({ error: 'Item not found' }, { status: 404 });
 
+    const { navigationTreeRepository } = await import('@/repositories/navigation-tree.repository');
+    await navigationTreeRepository.clearCache('header-main');
+    await navigationRepository.clearCache('header-main');
+
     return NextResponse.json({ success: true, deleted: deleted[0] });
   } catch (error) {
     console.error('[API Navigation DELETE]', error);
