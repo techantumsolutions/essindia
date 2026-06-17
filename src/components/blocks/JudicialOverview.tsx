@@ -20,7 +20,7 @@ interface JudicialOverviewProps {
 export function JudicialOverview({ content }: JudicialOverviewProps) {
   const heading = content?.heading || "Judicial Automation";
   const description = content?.description || "ebizframeJustice is an advanced Judicial Automation solution designed to help courts and legal departments streamline case management, hearing schedules, court workflows, event notifications, and legal processes efficiently. Built to support different court scheduling models, the platform also enables the creation of strong e-justice networks while providing powerful search capabilities and access to over 1,00,000 judgments from the Supreme Court, High Courts, tribunals, commissions along with central and state acts and rules for faster and more convenient legal research.";
-  
+
   const defaultCards = [
     {
       title: "Court-wise Databases",
@@ -38,11 +38,11 @@ export function JudicialOverview({ content }: JudicialOverviewProps) {
 
   return (
     <section className="py-14 px-6 bg-white">
-      <div className="container mx-auto max-w-6xl text-center">
-        <h2 className="text-3xl md:text-4xl font-bold text-[#2a2d7c] mb-6">
+      <div className="container mx-auto max-w-7xl">
+        <h2 className="text-3xl md:text-4xl font-bold text-[#2a2d7c] mb-6 text-center">
           {heading}
         </h2>
-        <p className="text-gray-600 max-w-5xl mx-auto mb-16 text-sm md:text-base leading-relaxed">
+        <p className="text-gray-600 max-w-7xl mx-auto mb-16 text-sm md:text-base leading-relaxed">
           {description}
         </p>
 
@@ -58,7 +58,7 @@ export function JudicialOverview({ content }: JudicialOverviewProps) {
                 />
               </div>
               <h3 className="text-xl font-bold text-gray-900 mb-4">{card.title}</h3>
-              <p className="text-gray-600 text-sm leading-relaxed text-center">
+              <p className="text-gray-600 text-sm leading-relaxed">
                 {card.description}
               </p>
             </div>

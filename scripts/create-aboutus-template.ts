@@ -73,7 +73,7 @@ async function main() {
   // 3. Define content payload for all 7 sections based on AboutUs components
   const sectionsData = [
     {
-      type: 'AboutUsHero',
+      type: 'about-us-hero',
       orderIndex: 0,
       contentJson: {
         title: "Empowering Global Enterprises Through Digital Excellence",
@@ -88,7 +88,7 @@ async function main() {
       }
     },
     {
-      type: 'AboutUsCompanyIntro',
+      type: 'about-us-company-intro',
       orderIndex: 1,
       contentJson: {
         title: "Eastern Software Solutions",
@@ -115,7 +115,7 @@ async function main() {
       }
     },
     {
-      type: 'AboutUsMissionVision',
+      type: 'about-us-mission-vision',
       orderIndex: 2,
       contentJson: {
         title: "Our Purpose & Direction",
@@ -145,7 +145,7 @@ async function main() {
       }
     },
     {
-      type: 'AboutUsServicesOverview',
+      type: 'about-us-services-overview',
       orderIndex: 3,
       contentJson: {
         title: "Core Offerings & Solutions",
@@ -170,7 +170,7 @@ async function main() {
       }
     },
     {
-      type: 'AboutUsTransformationSection',
+      type: 'about-us-transformation-section',
       orderIndex: 4,
       contentJson: {
         title: "D2K Migration or Technology Upgradation Services",
@@ -200,7 +200,7 @@ async function main() {
       }
     },
     {
-      type: 'AboutUsWhyEss',
+      type: 'about-us-why-ess',
       orderIndex: 5,
       contentJson: {
         title: "Why Businesses Trust ESS",
@@ -240,7 +240,7 @@ async function main() {
       }
     },
     {
-      type: 'AboutUsCta',
+      type: 'about-us-cta',
       orderIndex: 6,
       contentJson: {
         title: "Schedule Your Free Demo",

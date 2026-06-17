@@ -1,8 +1,8 @@
 import 'dotenv/config';
 import { eq } from 'drizzle-orm';
-import { db } from './src/lib/db';
-import { templates, templateSections } from './src/lib/db/schema';
-import { slugify } from './src/lib/cms/utils';
+import { db } from '../src/lib/db';
+import { templates, templateSections } from '../src/lib/db/schema';
+import { slugify } from '../src/lib/cms/utils';
 
 async function seed() {
   console.log('🚀 Seeding Judicial Automation Template...');
@@ -41,7 +41,7 @@ async function seed() {
         title: "Intelligent IT & Judicial<br />Automation Solutions",
         subtitle: "Streamline legal operations, modernize enterprise infrastructure, and optimize business performance with secure, scalable, and technology-driven solutions from ESS.",
         primaryCta: { label: "Get started", url: "#" },
-        image: "/Judicial Automation/More solutions-Judicial Automation.png"
+        image: '/Judicial Automation/Rectangle 196.png'
       },
       order: 10
     },

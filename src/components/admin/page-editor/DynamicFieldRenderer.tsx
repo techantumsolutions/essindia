@@ -417,9 +417,21 @@ function ArrayField({
 
         if (typeof item === 'object' && item !== null && !Array.isArray(item)) {
           const objItem = item as Record<string, JsonValue>;
+          
+          // Heuristic to sort common fields logically
+          const priorityKeys = ['tag', 'iconImage', 'icon', 'image', 'title', 'tags', 'name', 'heading', 'label', 'description', 'bgImage', 'ctaText', 'ctaUrl', 'items', 'points', 'cards'];
+          const sortedKeys = Object.keys(objItem).sort((a, b) => {
+            const indexA = priorityKeys.indexOf(a);
+            const indexB = priorityKeys.indexOf(b);
+            if (indexA !== -1 && indexB !== -1) return indexA - indexB;
+            if (indexA !== -1) return -1;
+            if (indexB !== -1) return 1;
+            return 0;
+          });
+
           return (
             <>
-              {Object.keys(objItem).map((k) => (
+              {sortedKeys.map((k) => (
                 <DynamicFieldRenderer
                   key={k}
                   keyPath={`${itemKeyPath}.${k}`}

@@ -60,6 +60,16 @@ import { AboutUsCta } from '@/components/blocks/AboutUsCta';
 import { JudicialHero } from '@/components/blocks/JudicialHero';
 import { JudicialOverview } from '@/components/blocks/JudicialOverview';
 import { JudicialFeatures } from '@/components/blocks/JudicialFeatures';
+import { HospitalHero } from '@/components/blocks/HospitalHero';
+import { HospitalOverview } from '@/components/blocks/HospitalOverview';
+import { HospitalFeatures } from '@/components/blocks/HospitalFeatures';
+import { HospitalRegulatory } from '@/components/blocks/HospitalRegulatory';
+import { HospitalTechSpecs } from '@/components/blocks/HospitalTechSpecs';
+import { StaffingHero } from '@/components/blocks/StaffingHero';
+import { StaffingAugmentation } from '@/components/blocks/StaffingAugmentation';
+import { StaffingTechnologies } from '@/components/blocks/StaffingTechnologies';
+import { StaffingWhyEss } from '@/components/blocks/StaffingWhyEss';
+import { StaffingBenefits } from '@/components/blocks/StaffingBenefits';
 
 interface Section {
   id: string;
@@ -81,6 +91,26 @@ export function SectionRenderer({ section }: SectionRendererProps) {
       return <JudicialOverview content={section.content} />;
     case 'judicial-features':
       return <JudicialFeatures content={section.content} />;
+    case 'hospital-hero':
+      return <HospitalHero content={section.content} />;
+    case 'hospital-overview':
+      return <HospitalOverview content={section.content} />;
+    case 'hospital-features':
+      return <HospitalFeatures content={section.content} />;
+    case 'hospital-regulatory':
+      return <HospitalRegulatory content={section.content} />;
+    case 'hospital-tech-specs':
+      return <HospitalTechSpecs content={section.content} />;
+    case 'staffing-hero':
+      return <StaffingHero content={section.content} />;
+    case 'staffing-augmentation':
+      return <StaffingAugmentation content={section.content} />;
+    case 'staffing-technologies':
+      return <StaffingTechnologies content={section.content} />;
+    case 'staffing-why-ess':
+      return <StaffingWhyEss content={section.content} />;
+    case 'staffing-benefits':
+      return <StaffingBenefits content={section.content} />;
     case 'trusted-brands':
       return <TrustedBrands content={section.content} />;
     case 'intro':
