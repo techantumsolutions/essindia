@@ -9,10 +9,12 @@ import { Spotlight } from '@/components/ui/Spotlight';
 const Icon1 = () => <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1" className="text-slate-700"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>;
 
 interface Service {
+  iconImage?: string;
   title: string;
   description: string;
   bgImage: string;
-  icon?: string;
+  ctaText?: string;
+  ctaUrl?: string;
 }
 
 interface ServicesContent {
@@ -28,34 +30,52 @@ interface ServicesSectionProps {
 
 const defaultServices = [
   {
+    iconImage: '',
     title: 'Robotic Process Automation Solutions',
     description: 'Most trusted outcome -driven automation implementation partner of India',
     bgImage: '/service-rpa.png', 
+    ctaText: 'View more',
+    ctaUrl: '/solutions/rpa'
   },
   {
+    iconImage: '',
     title: 'ORACLE',
     description: 'Trusted Oracle solutions partner for enterprise-scale transformation.',
     bgImage: '/service-oracle.png', 
+    ctaText: 'View more',
+    ctaUrl: '/solutions/oracle'
   },
   {
+    iconImage: '',
     title: 'Business Intelligence',
     description: 'BI Dashboards with integrated AI to transform data into actionable decisions and insights.',
     bgImage: '/service-bi.png',
+    ctaText: 'View more',
+    ctaUrl: '/solutions/business-intelligence'
   },
   {
+    iconImage: '',
     title: 'Enterprise Resource Planning (ERP)',
     description: 'Unify your business operations with AI-powered insights and automation for faster, smarter....',
     bgImage: '/service-erp.png',
+    ctaText: 'View more',
+    ctaUrl: '/solutions/erp'
   },
   {
+    iconImage: '',
     title: 'Enterprise Mobility Solutions (EMS)',
     description: 'Smarter mobility for a secure and connected workforce.',
     bgImage: '/service-ems.png',
+    ctaText: 'View more',
+    ctaUrl: '/solutions/ems'
   },
   {
+    iconImage: '',
     title: 'Other solutions',
     description: 'Explore more solutions built to support business growth.',
     bgImage: '/service-bi.png',
+    ctaText: 'View more',
+    ctaUrl: '/solutions'
   },
 ];
 
@@ -94,7 +114,13 @@ export function ServicesSection({ content }: ServicesSectionProps) {
                 {/* === Default State (White Card) === */}
                 <div className="absolute inset-0 p-8 flex flex-col transition-all duration-500 ease-in-out group-hover:opacity-0 z-10">
                   <div className="mb-8 transform group-hover:scale-110 transition-transform duration-500 origin-left">
-                    <Icon1 />
+                    {service.iconImage ? (
+                      <div className="w-8 h-8 relative">
+                        <img src={service.iconImage} alt={service.title} className="w-full h-full object-contain" />
+                      </div>
+                    ) : (
+                      <Icon1 />
+                    )}
                   </div>
                   <h3 className="text-xl font-bold text-slate-900 leading-tight mb-4 pr-4">
                     {service.title}
@@ -103,10 +129,17 @@ export function ServicesSection({ content }: ServicesSectionProps) {
                     {service.description}
                   </p>
                   <div className="mt-8">
-                    <div className="inline-flex items-center text-[#4B2A63] text-[13px] font-bold group/btn cursor-pointer hover:opacity-80 transition-opacity">
-                      View more
-                      <svg className="ml-2 w-4 h-4 transform group-hover/btn:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" /></svg>
-                    </div>
+                    {service.ctaUrl ? (
+                      <a href={service.ctaUrl} className="inline-flex items-center text-[#4B2A63] text-[13px] font-bold group/btn hover:opacity-80 transition-opacity">
+                        {service.ctaText || 'View more'}
+                        <svg className="ml-2 w-4 h-4 transform group-hover/btn:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" /></svg>
+                      </a>
+                    ) : (
+                      <div className="inline-flex items-center text-[#4B2A63] text-[13px] font-bold group/btn cursor-pointer hover:opacity-80 transition-opacity">
+                        {service.ctaText || 'View more'}
+                        <svg className="ml-2 w-4 h-4 transform group-hover/btn:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" /></svg>
+                      </div>
+                    )}
                   </div>
                 </div>
 
@@ -123,7 +156,13 @@ export function ServicesSection({ content }: ServicesSectionProps) {
                   
                   <div className="mb-8">
                     <div className="text-white brightness-200">
-                      <Icon1 />
+                      {service.iconImage ? (
+                        <div className="w-8 h-8 relative">
+                          <img src={service.iconImage} alt={service.title} className="w-full h-full object-contain" />
+                        </div>
+                      ) : (
+                        <Icon1 />
+                      )}
                     </div>
                   </div>
                   <h3 className="text-xl font-bold text-white leading-tight mb-4">
@@ -133,9 +172,15 @@ export function ServicesSection({ content }: ServicesSectionProps) {
                     {service.description}
                   </p>
                   <div className="mt-8">
-                    <Button className="bg-white text-[#4B2A63] hover:bg-slate-50 rounded-full px-8 h-12 text-[14px] font-bold shadow-2xl transition-all duration-300 active:scale-95 cursor-pointer">
-                      View more
-                    </Button>
+                    {service.ctaUrl ? (
+                      <a href={service.ctaUrl} className="inline-flex items-center justify-center bg-white text-[#4B2A63] hover:bg-slate-50 rounded-full px-8 h-12 text-[14px] font-bold shadow-2xl transition-all duration-300 active:scale-95">
+                        {service.ctaText || 'View more'}
+                      </a>
+                    ) : (
+                      <Button className="bg-white text-[#4B2A63] hover:bg-slate-50 rounded-full px-8 h-12 text-[14px] font-bold shadow-2xl transition-all duration-300 active:scale-95 cursor-pointer">
+                        {service.ctaText || 'View more'}
+                      </Button>
+                    )}
                   </div>
                 </div>
 

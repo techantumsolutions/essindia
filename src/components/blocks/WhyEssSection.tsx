@@ -4,22 +4,25 @@ import { motion } from 'framer-motion';
 import { TextReveal } from '@/components/animations/TextReveal';
 import { MotionSection, StaggerContainer } from '@/components/animations/MotionSection';
 
-interface Reason {
+interface Point {
   title: string;
   description: string;
 }
 
 interface WhyEssContent {
-  heading?: string;
-  subheading?: string;
-  reasons?: Reason[];
+  title?: string;
+  description?: string;
+  image1?: string;
+  image2?: string;
+  image3?: string;
+  points?: Point[];
 }
 
 interface WhyEssSectionProps {
   content?: WhyEssContent;
 }
 
-const defaultReasons = [
+const defaultPoints = [
   {
     title: 'INDUSTRY EXPERTS',
     description: 'We bring deep knowledge of how industries work, so every solution fit actual operations.',
@@ -39,9 +42,12 @@ const defaultReasons = [
 ];
 
 export function WhyEssSection({ content }: WhyEssSectionProps) {
-  const heading = content?.heading || "Why ESS?";
-  const subheading = content?.subheading || "We pioneer groundbreaking innovations while our competitors struggle to keep pace.";
-  const reasons = content?.reasons || defaultReasons;
+  const heading = content?.title || "Why ESS?";
+  const subheading = content?.description || "We pioneer groundbreaking innovations while our competitors struggle to keep pace.";
+  const image1 = content?.image1 || "/why-ess-main.png";
+  const image2 = content?.image2 || "/why-ess-revenue.png";
+  const image3 = content?.image3 || "/why-ess-stats.png";
+  const points = content?.points || defaultPoints;
 
   return (
     <section className="py-24 bg-[#F8F9FA] overflow-hidden relative">
@@ -71,7 +77,7 @@ export function WhyEssSection({ content }: WhyEssSectionProps) {
               <motion.img 
                 whileHover={{ scale: 1.02 }}
                 transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
-                src="/why-ess-main.png" 
+                src={image1} 
                 alt="ESS Platform Interface" 
                 className="w-full h-auto rounded-[32px] shadow-[0_32px_64px_-12px_rgba(0,0,0,0.15)] object-cover"
               />
@@ -85,7 +91,7 @@ export function WhyEssSection({ content }: WhyEssSectionProps) {
                 viewport={{ once: true }}
                 className="absolute -left-10 md:-left-16 -bottom-12 md:-bottom-20 w-[200px] md:w-[240px] rounded-2xl overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.1)] z-10 bg-white"
               >
-                <img src="/why-ess-revenue.png" alt="Revenue Chart" className="w-full h-auto" />
+                <img src={image2} alt="Revenue Chart" className="w-full h-auto" />
               </motion.div>
 
               {/* Floating Statistics Card */}
@@ -97,14 +103,14 @@ export function WhyEssSection({ content }: WhyEssSectionProps) {
                 viewport={{ once: true }}
                 className="absolute -right-8 md:-right-12 -bottom-8 md:-bottom-12 w-[180px] md:w-[220px] rounded-2xl overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.1)] z-10 bg-white"
               >
-                <img src="/why-ess-stats.png" alt="Statistics Chart" className="w-full h-auto" />
+                <img src={image3} alt="Statistics Chart" className="w-full h-auto" />
               </motion.div>
             </MotionSection>
           </div>
 
           {/* Right Side - Cards List */}
           <StaggerContainer className="w-full lg:w-1/2 flex flex-col justify-center gap-6 lg:pl-16 mt-20 lg:mt-0">
-            {reasons.map((reason, index) => (
+            {points.map((point, index) => (
               <motion.div
                 key={index}
                 variants={{
@@ -116,12 +122,12 @@ export function WhyEssSection({ content }: WhyEssSectionProps) {
               >
                 <div className="flex items-start gap-4">
                   <div className="w-2 h-2 rounded-full bg-[#4B2A63] mt-2 group-hover:scale-150 transition-transform duration-300" />
-                  <div>
+                  <div className="flex-1">
                     <h3 className="text-lg font-bold text-[#4B2A63] mb-3 tracking-wide uppercase text-[15px]">
-                      {reason.title}
+                      {point.title}
                     </h3>
                     <p className="text-[14px] text-slate-500 leading-relaxed font-normal">
-                      {reason.description}
+                      {point.description}
                     </p>
                   </div>
                 </div>

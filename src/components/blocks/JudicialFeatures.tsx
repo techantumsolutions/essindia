@@ -54,40 +54,45 @@ export function JudicialFeatures({ content }: JudicialFeaturesProps) {
   const features = content?.features || defaultFeatures;
 
   return (
-    <section className="py-14 px-6 bg-gray-50">
+    <section className="py-14 px-6 bg-white">
       <div className="container mx-auto max-w-7xl">
-        <div className="text-center mb-16">
-          <h2 className="text-3xl md:text-4xl font-bold text-[#2a2d7c] mb-6">
-            {heading}
-          </h2>
-          <p className="text-gray-600 max-w-4xl mx-auto text-sm md:text-base leading-relaxed">
-            {description}
-          </p>
-        </div>
-
-        <div className="flex flex-col lg:flex-row items-start gap-12">
+        <div className="flex flex-col lg:flex-row items-stretch gap-16">
           {/* Left Image */}
-          <div className="lg:w-1/2 w-full">
-            <div className="relative w-full aspect-square max-w-md mx-auto rounded-3xl overflow-hidden shadow-lg">
-              <Image
-                src={sideImage}
-                alt="Features Side Graphic"
-                fill
-                className="object-cover"
-              />
-            </div>
+          <div className="lg:w-1/2 w-full hidden lg:block relative min-h-[600px]">
+            <Image
+              src={sideImage}
+              alt="Features Side Graphic"
+              fill
+              className="object-cover"
+            />
+          </div>
+          <div className="lg:hidden w-full relative h-[300px]">
+            <Image
+              src={sideImage}
+              alt="Features Side Graphic"
+              fill
+              className="object-cover"
+            />
           </div>
 
           {/* Right Features List */}
-          <div className="lg:w-1/2 w-full flex flex-col gap-4">
+          <div className="lg:w-1/2 w-full flex flex-col gap-4 justify-center">
+            <div className="mb-4">
+              <h2 className="text-3xl md:text-4xl font-bold text-[#2a2d7c] mb-4">
+                {heading}
+              </h2>
+              <p className="text-gray-500 text-sm leading-relaxed">
+                {description}
+              </p>
+            </div>
             {features.map((feature, idx) => (
-              <div key={idx} className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 flex items-start gap-6 hover:shadow-md transition-shadow">
-                <div className="flex-shrink-0 pt-1 relative w-[32px] h-[32px]">
+              <div key={idx} className="bg-white p-5 md:p-6 rounded-xl shadow-[0_4px_20px_rgb(0,0,0,0.08)] flex items-start gap-6 border border-gray-50">
+                <div className="flex-shrink-0 pt-1 relative w-[40px] h-[40px]">
                   <Image src={feature.icon} alt={feature.title} fill className="object-contain" />
                 </div>
                 <div>
-                  <h4 className="text-lg font-semibold text-gray-900 mb-1">{feature.title}</h4>
-                  <p className="text-gray-600 text-sm leading-relaxed">
+                  <h4 className="text-lg text-gray-800 font-normal mb-1">{feature.title}</h4>
+                  <p className="text-gray-500 text-sm leading-relaxed">
                     {feature.description}
                   </p>
                 </div>

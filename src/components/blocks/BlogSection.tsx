@@ -9,7 +9,8 @@ interface Blog {
   title: string;
   description: string;
   image: string;
-  link: string;
+  ctaText?: string;
+  ctaUrl?: string;
 }
 
 interface BlogContent {
@@ -28,19 +29,22 @@ const defaultBlogs = [
     title: 'Why Are More Finance Departments Adopting RPA for Core Processes?',
     description: 'How RPA Is Reshaping the Way Finance Departments Operate In most finance departments....',
     image: '/blog-1.png',
-    link: '#',
+    ctaText: 'Read More',
+    ctaUrl: '#',
   },
   {
     title: 'Which Enterprise IT Solutions Are High-Performing Companies Quietly Investing In?',
     description: 'The Patterns Shaping Enterprise IT Solutions Today Not every business investment is visible. Some of the most.....',
     image: '/blog-2.png',
-    link: '#',
+    ctaText: 'Read More',
+    ctaUrl: '#',
   },
   {
     title: 'Is Your Business Ready for Oracle Migration? A Checklist for Decision-Makers',
     description: 'Ready for Oracle Migration? Check This First In our previous blogs, we discussed why businesses should....',
     image: '/blog-3.png',
-    link: '#',
+    ctaText: 'Read More',
+    ctaUrl: '#',
   },
 ];
 
@@ -106,8 +110,17 @@ export function BlogSection({ content }: BlogSectionProps) {
 
               {/* Link */}
               <div className="text-[#FF3B3B] text-[15px] font-bold group-hover:text-[#CC2E2E] transition-all flex items-center mt-auto cursor-pointer">
-                Read More
-                <svg className="ml-2 w-4 h-4 transform group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" /></svg>
+                {blog.ctaUrl ? (
+                  <a href={blog.ctaUrl} className="flex items-center">
+                    {blog.ctaText || 'Read More'}
+                    <svg className="ml-2 w-4 h-4 transform group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" /></svg>
+                  </a>
+                ) : (
+                  <>
+                    {blog.ctaText || 'Read More'}
+                    <svg className="ml-2 w-4 h-4 transform group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" /></svg>
+                  </>
+                )}
               </div>
             </motion.div>
           ))}
