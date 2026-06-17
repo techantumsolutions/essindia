@@ -16,6 +16,8 @@ export type FieldType =
   | 'null';
 
 export function humanLabel(key: string): string {
+  if (key === 'subtitle') return 'Tag';
+  if (key === 'bgImage') return 'Background Image';
   return key
     .replace(/([a-z])([A-Z])/g, '$1 $2')
     .replace(/[_-]/g, ' ')

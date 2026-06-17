@@ -419,7 +419,7 @@ function ArrayField({
           const objItem = item as Record<string, JsonValue>;
           
           // Heuristic to sort common fields logically
-          const priorityKeys = ['tag', 'iconImage', 'icon', 'image', 'title', 'tags', 'name', 'heading', 'label', 'description', 'bgImage', 'ctaText', 'ctaUrl', 'items', 'points', 'cards'];
+          const priorityKeys = ['subtitle', 'iconImage', 'icon', 'image', 'title', 'tags', 'name', 'heading', 'label', 'description', 'bgImage', 'ctaText', 'ctaUrl', 'items', 'points', 'cards'];
           const sortedKeys = Object.keys(objItem).sort((a, b) => {
             const indexA = priorityKeys.indexOf(a);
             const indexB = priorityKeys.indexOf(b);

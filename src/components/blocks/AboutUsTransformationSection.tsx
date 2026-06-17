@@ -5,9 +5,9 @@ import { motion } from 'framer-motion';
 import { StaggerContainer } from '@/components/animations/MotionSection';
 
 interface TransformItem {
+  image?: string;
   title?: string;
   description?: string;
-  icon?: string;
 }
 
 interface AboutUsTransformationContent {
@@ -21,28 +21,28 @@ interface AboutUsTransformationSectionProps {
 
 const defaultItems: TransformItem[] = [
   {
+    image: '/about-us/what-enable.png',
     title: 'WHAT IT ENABLES',
     description:
       'Eastern Software Solutions is a global leader specializing in the digital transformation of every facet of your organization. We combine deep domain expertise with matured building blocks and an entrepreneurial delivery model.',
-    icon: 'enable',
   },
   {
+    image: '/about-us/migration.png',
     title: 'WHAT IT ENABLES',
     description:
       'Migration to latest technology of Forms and DB Upgrade to latest APEX Technology.',
-    icon: 'migration',
   },
   {
+    image: '/about-us/why-matter.png',
     title: 'WHY IT MATTERS',
     description:
       'Legacy systems limit flexibility, increase dependency, and slow growth. D2K migration modernizes existing applications while preserving core business logic, data, and processes.',
-    icon: 'matter',
   },
   {
+    image: '/about-us/how-help.png',
     title: 'HOW IT HELPS',
     description:
       'Businesses achieve faster development, improved usability, simpler maintenance, and AI enabled future-ready platforms that support scaling and integration without the cost and risk of a complete rebuild.',
-    icon: 'help',
   },
 ];
 
@@ -53,25 +53,6 @@ export function AboutUsTransformationSection({
     content?.title || 'D2K Migration or Technology Upgradation Services';
 
   const items = content?.items || defaultItems;
-
-  const getImage = (icon?: string) => {
-    switch (icon) {
-      case 'enable':
-        return '/about-us/what-enable.png';
-
-      case 'migration':
-        return '/about-us/migration.png';
-
-      case 'matter':
-        return '/about-us/why-matter.png';
-
-      case 'help':
-        return '/about-us/how-help.png';
-
-      default:
-        return '/about-us/what-enable.png';
-    }
-  };
 
   return (
     <section className="py-8 md:py-24">
@@ -107,7 +88,7 @@ export function AboutUsTransformationSection({
                 {/* Image */}
                 <div className="md:w-[240px] flex-shrink-0">
                   <Image
-                    src={getImage(item.icon)}
+                    src={item.image || '/about-us/what-enable.png'}
                     alt={item.title || ''}
                     width={240}
                     height={240}

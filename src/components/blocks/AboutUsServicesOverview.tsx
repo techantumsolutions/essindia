@@ -5,14 +5,12 @@ import { motion } from 'framer-motion';
 import { StaggerContainer } from '@/components/animations/MotionSection';
 
 interface ServiceItem {
+  image?: string;
   title?: string;
-  description?: string;
-  icon?: string;
+  subtitle?: string;
 }
 
 interface AboutUsServicesOverviewContent {
-  title?: string;
-  subtitle?: string;
   items?: ServiceItem[];
 }
 
@@ -22,16 +20,19 @@ interface AboutUsServicesOverviewProps {
 
 const defaultServices: ServiceItem[] = [
   {
+    image: '/about-us/smartDecision.png',
     title: 'Smarter Decisions Through Data',
-    icon: 'data',
+    subtitle: 'BUSINESS INTELLIGENCE (BI)',
   },
   {
+    image: '/about-us/inteligentProcess.png',
     title: 'Intelligent Process Automation',
-    icon: 'automation',
+    subtitle: 'ROBOTIC PROCESS AUTOMATION (RPA)',
   },
   {
+    image: '/about-us/enterpriseMobility.png',
     title: 'Enterprise Mobility Simplified',
-    icon: 'mobility',
+    subtitle: 'MOBILE APPLICATIONS & CUSTOM APPS',
   },
 ];
 
@@ -39,38 +40,6 @@ export function AboutUsServicesOverview({
   content,
 }: AboutUsServicesOverviewProps) {
   const services = content?.items || defaultServices;
-
-  const getImage = (icon?: string) => {
-    switch (icon) {
-      case 'data':
-        return '/about-us/smartDecision.png';
-
-      case 'automation':
-        return '/about-us/inteligentProcess.png';
-
-      case 'mobility':
-        return '/about-us/enterpriseMobility.png';
-
-      default:
-        return '/about-us/smartDecision.png';
-    }
-  };
-
-  const getCategory = (icon?: string) => {
-    switch (icon) {
-      case 'data':
-        return 'BUSINESS INTELLIGENCE (BI)';
-
-      case 'automation':
-        return 'ROBOTIC PROCESS AUTOMATION (RPA)';
-
-      case 'mobility':
-        return 'MOBILE APPLICATIONS & CUSTOM APPS';
-
-      default:
-        return '';
-    }
-  };
 
   return (
     <section className="py-8 md:py-24 border border-b border-gray-300 md:border-b-white">
@@ -92,7 +61,7 @@ export function AboutUsServicesOverview({
               {/* Image */}
               <div className="relative w-full flex justify-center items-center mb-10">
                 <Image
-                  src={getImage(service.icon)}
+                  src={service.image || '/about-us/smartDecision.png'}
                   alt={service.title || ''}
                   width={320}
                   height={260}
@@ -103,8 +72,8 @@ export function AboutUsServicesOverview({
 
               <div className="">
                 {/* Category */}
-                <span className="text-[#4A4E92] uppercase tracking-wide text-[15px] md:text-[16px] font-medium mb-4">
-                  {getCategory(service.icon)}
+                <span className="text-[#4A4E92] uppercase tracking-wide text-[15px] md:text-[16px] font-medium mb-4 block">
+                  {service.subtitle}
                 </span>
 
                 {/* Heading */}
