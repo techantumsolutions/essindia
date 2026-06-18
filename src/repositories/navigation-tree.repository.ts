@@ -151,7 +151,7 @@ export class NavigationTreeRepository {
         pageId: cat.pageId ?? null,
         href:
           cat.href ??
-          buildMegaMenuHref(item.slug, cat.slug, undefined, undefined, null),
+          buildMegaMenuHref(item.slug, cat.slug, undefined, undefined, cat.page?.fullPath ?? null),
         subCategories: cat.subCategories.map((sub) => ({
           id: sub.id,
           name: sub.name,
@@ -165,6 +165,7 @@ export class NavigationTreeRepository {
             undefined,
             sub.page?.fullPath ?? null
           ),
+          pageId: sub.pageId ?? null,
           subSubCategories: sub.subSubCategories.map((leaf) => ({
             id: leaf.id,
             name: leaf.name,
@@ -176,6 +177,7 @@ export class NavigationTreeRepository {
               leaf.slug,
               leaf.page?.fullPath ?? null
             ),
+            pageId: leaf.pageId ?? null,
           })),
         })),
       })),
@@ -433,16 +435,15 @@ export class NavigationTreeRepository {
       });
 
       const pageIds = new Set<string>();
-      if (mode === 'public') {
-        categories.forEach((c) =>
-          c.subCategories.forEach((s) => {
-            if (s.pageId) pageIds.add(s.pageId);
-            s.subSubCategories.forEach((l) => {
-              if (l.pageId) pageIds.add(l.pageId);
-            });
-          })
-        );
-      }
+      categories.forEach((c) => {
+        if (c.pageId) pageIds.add(c.pageId);
+        c.subCategories.forEach((s) => {
+          if (s.pageId) pageIds.add(s.pageId);
+          s.subSubCategories.forEach((l) => {
+            if (l.pageId) pageIds.add(l.pageId);
+          });
+        });
+      });
 
       const pageMap =
         mode === 'public'
@@ -456,6 +457,8 @@ export class NavigationTreeRepository {
           name: cat.name,
           slug: cat.slug,
           orderIndex: cat.orderIndex,
+          pageId: cat.pageId,
+          page: cat.pageId ? pageMap.get(cat.pageId) ?? null : null,
           subCategories: cat.subCategories
             .map((sub) => ({
               id: sub.id,
@@ -463,6 +466,7 @@ export class NavigationTreeRepository {
               slug: sub.slug,
               description: sub.description,
               orderIndex: sub.orderIndex,
+              pageId: sub.pageId,
               page:
                 sub.pageId ? pageMap.get(sub.pageId) ?? null : null,
               subSubCategories: sub.subSubCategories
@@ -471,6 +475,7 @@ export class NavigationTreeRepository {
                   name: leaf.name,
                   slug: leaf.slug,
                   orderIndex: leaf.orderIndex,
+                  pageId: leaf.pageId,
                   page:
                     leaf.pageId ? pageMap.get(leaf.pageId) ?? null : null,
                 }))
@@ -478,7 +483,7 @@ export class NavigationTreeRepository {
             }))
             .filter((sub) => sub.name?.trim()),
         }))
-        .filter((cat) => mode === 'admin' || cat.subCategories.length > 0);
+        .filter((cat) => mode === 'admin' || cat.subCategories.length > 0 || cat.pageId);
 
       const pageCategories = pagesToNavigationTreeCategories(
         pagesByNavItem.get(item.id) ?? [],

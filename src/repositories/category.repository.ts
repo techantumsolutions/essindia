@@ -18,6 +18,7 @@ export class CategoryRepository {
       .select({
         id: categories.id,
         parentId: categories.parentId,
+        pageId: categories.pageId,
         name: categories.name,
         slug: categories.slug,
         description: categories.description,
@@ -42,7 +43,7 @@ export class CategoryRepository {
   async getById(id: string) {
     return db.query.categories.findFirst({
       where: eq(categories.id, id),
-      with: { seo: true, children: true },
+      with: { seo: true, children: true, page: true },
     });
   }
 
@@ -135,6 +136,7 @@ export class CategoryRepository {
     name: string;
     slug?: string;
     parentId?: string | null;
+    pageId?: string | null;
     description?: string;
     icon?: string;
     imageUrl?: string;
@@ -151,6 +153,7 @@ export class CategoryRepository {
         name: data.name,
         slug,
         parentId: data.parentId || null,
+        pageId: data.pageId || null,
         description: data.description,
         icon: data.icon,
         imageUrl: data.imageUrl || null,
@@ -167,6 +170,7 @@ export class CategoryRepository {
       name: string;
       slug: string;
       parentId: string | null;
+      pageId: string | null;
       description: string;
       icon: string;
       imageUrl: string;

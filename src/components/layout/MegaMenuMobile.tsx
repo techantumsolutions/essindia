@@ -65,6 +65,15 @@ export function MegaMenuMobile({ data, onNavigate }: Props) {
                 transition={{ duration: 0.25 }}
                 className="pl-3 flex flex-col gap-1 mt-1"
               >
+                {cat.pageId && (
+                  <Link
+                    href={cat.href || '#'}
+                    onClick={onNavigate}
+                    className="text-sm font-semibold text-slate-700 hover:text-[#4B2A63] py-1 underline"
+                  >
+                    Go to {cat.name} Page
+                  </Link>
+                )}
                 {cat.subCategories.map((sub) => (
                   <div key={sub.id}>
                     <button
@@ -92,20 +101,31 @@ export function MegaMenuMobile({ data, onNavigate }: Props) {
                           exit={{ opacity: 0 }}
                           className="pl-3 flex flex-col gap-1 pb-2"
                         >
-                          {sub.subSubCategories.map((leaf) => (
+                          {sub.pageId && (
                             <Link
-                              key={leaf.id}
-                              href={leaf.href}
+                              href={sub.href || '#'}
                               onClick={onNavigate}
-                              className="text-sm text-slate-500 hover:text-[#4B2A63]"
+                              className="text-sm font-semibold text-slate-600 hover:text-[#4B2A63] py-1 underline"
                             >
-                              {leaf.name}
+                              Go to {sub.name} Page
                             </Link>
-                          ))}
+                          )}
+                          {sub.subSubCategories
+                            .filter((leaf) => !!leaf.pageId)
+                            .map((leaf) => (
+                              <Link
+                                key={leaf.id}
+                                href={leaf.href}
+                                onClick={onNavigate}
+                                className="text-sm text-slate-500 hover:text-[#4B2A63]"
+                              >
+                                {leaf.name}
+                              </Link>
+                            ))}
                         </motion.div>
                       )}
                     </AnimatePresence>
-                    {sub.subSubCategories.length === 0 && (
+                    {sub.subSubCategories.length === 0 && sub.pageId && (
                       <Link
                         href={sub.href}
                         onClick={onNavigate}

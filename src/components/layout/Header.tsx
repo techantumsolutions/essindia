@@ -47,23 +47,23 @@ export function Header({ navData = [] }: { navData?: NavItem[] }) {
       "fixed inset-x-0 z-50 flex justify-center px-4 transition-all duration-500 ease-[0.22, 1, 0.36, 1]",
       scrolled ? "top-4" : "top-8"
     )}>
-      <motion.div 
+      <motion.div
         initial={{ y: -20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
         className={cn(
           "flex w-full max-w-7xl items-center justify-between rounded-full px-4 md:px-8 transition-all duration-500 ease-[0.22, 1, 0.36, 1]",
-          scrolled 
-            ? "bg-white/80 backdrop-blur-xl py-2 shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-white/20" 
+          scrolled
+            ? "bg-white/80 backdrop-blur-xl py-2 shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-white/20"
             : "bg-white py-3 shadow-[0_4px_25px_-5px_rgba(0,0,0,0.1)] border border-slate-200"
         )}
       >
-        
+
         {/* Logo */}
         <Link href="/" className="flex items-center group">
-         <div className="relative">
+          <div className="relative">
             <img src="/footer-logo.png" alt="Eastern Software Solutions Pvt.Ltd" className="h-10 w-[160px]" />
-             {/* <span className="font-bold text-lg text-[#4B2A63] transition-transform duration-500 group-hover:scale-105 inline-block">EASTERN</span> */}
+            {/* <span className="font-bold text-lg text-[#4B2A63] transition-transform duration-500 group-hover:scale-105 inline-block">EASTERN</span> */}
           </div>
         </Link>
 
@@ -94,7 +94,7 @@ export function Header({ navData = [] }: { navData?: NavItem[] }) {
       {/* Mobile Menu Dropdown */}
       <AnimatePresence>
         {isMobileMenuOpen && (
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, y: 10, scale: 0.95 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 10, scale: 0.95 }}
@@ -140,7 +140,7 @@ export function Header({ navData = [] }: { navData?: NavItem[] }) {
                 </motion.div>
               ))}
             </nav>
-            
+
             <div className="pt-4 border-t border-slate-100">
               <Button className="w-full bg-[#111] hover:bg-black text-white rounded-full h-12 text-lg transition-all duration-300 hover:shadow-xl">
                 Get started

@@ -3,6 +3,7 @@ export type MegaMenuLeaf = {
   name: string;
   slug: string;
   href: string;
+  pageId?: string | null;
 };
 
 export type MegaMenuSubCategory = {
@@ -12,6 +13,7 @@ export type MegaMenuSubCategory = {
   description: string | null;
   thumbnail: string | null;
   href: string;
+  pageId?: string | null;
   subSubCategories: MegaMenuLeaf[];
 };
 

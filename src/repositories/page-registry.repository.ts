@@ -145,7 +145,7 @@ export class PageRegistryRepository {
         id: page.id,
         pageId: page.id,
         routePath: page.fullPath,
-        title: page.title,
+        title: page.seo?.title || page.title,
         slug: page.slug,
         pageType: page.pageType || 'standard',
         status: page.status,
@@ -233,6 +233,30 @@ export class PageRegistryRepository {
     const megaSubById = new Map(megaSubs.map((s) => [s.id, s]));
     const megaSubSubById = new Map(megaSubSubs.map((l) => [l.id, l]));
 
+    const pageIds = allPages.map((p) => p.id);
+    const megaCatsByPage = pageIds.length > 0
+      ? await db.query.megaMenuCategories.findMany({
+          where: inArray(megaMenuCategories.pageId, pageIds),
+          columns: { name: true, pageId: true },
+        })
+      : [];
+    const megaSubsByPage = pageIds.length > 0
+      ? await db.query.megaMenuSubCategories.findMany({
+          where: inArray(megaMenuSubCategories.pageId, pageIds),
+          columns: { name: true, pageId: true },
+        })
+      : [];
+    const megaSubSubsByPage = pageIds.length > 0
+      ? await db.query.megaMenuSubSubCategories.findMany({
+          where: inArray(megaMenuSubSubCategories.pageId, pageIds),
+          columns: { name: true, pageId: true },
+        })
+      : [];
+
+    const megaCatByPageId = new Map(megaCatsByPage.map((c) => [c.pageId, c.name]));
+    const megaSubByPageId = new Map(megaSubsByPage.map((s) => [s.pageId, s.name]));
+    const megaSubSubByPageId = new Map(megaSubSubsByPage.map((l) => [l.pageId, l.name]));
+
     const resolveCmsCategoryLabels = (categoryId: string) => {
       const leaf = catById.get(categoryId);
       if (!leaf) return { category: '', subCategory: '', subSubCategory: '' };
@@ -268,12 +292,20 @@ export class PageRegistryRepository {
       } else {
         if (page.megaMenuCategoryId) {
           category = megaCatById.get(page.megaMenuCategoryId)?.name ?? '';
+        } else if (page.id && megaCatByPageId.has(page.id)) {
+          category = megaCatByPageId.get(page.id) || '';
         }
+
         if (page.megaMenuSubCategoryId) {
           subCategory = megaSubById.get(page.megaMenuSubCategoryId)?.name ?? '';
+        } else if (page.id && megaSubByPageId.has(page.id)) {
+          subCategory = megaSubByPageId.get(page.id) || '';
         }
+
         if (page.megaMenuSubSubCategoryId) {
           subSubCategory = megaSubSubById.get(page.megaMenuSubSubCategoryId)?.name ?? '';
+        } else if (page.id && megaSubSubByPageId.has(page.id)) {
+          subSubCategory = megaSubSubByPageId.get(page.id) || '';
         }
       }
 

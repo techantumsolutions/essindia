@@ -4,6 +4,7 @@ export type EntityStatus = 'active' | 'inactive' | 'draft' | 'published';
 export interface CategoryTreeNode {
   id: string;
   parentId: string | null;
+  pageId?: string | null;
   name: string;
   slug: string;
   description: string | null;

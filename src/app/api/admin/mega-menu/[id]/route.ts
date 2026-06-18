@@ -4,9 +4,14 @@ import {
   megaMenuCategories,
   megaMenuSubCategories,
   megaMenuSubSubCategories,
+  pages,
 } from '@/lib/db/schema';
 import { eq } from 'drizzle-orm';
 import { isAdminRequest } from '@/lib/cms/auth';
+
+function isValidUuid(id: string): boolean {
+  return /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id);
+}
 import { slugify } from '@/lib/cms/utils';
 import { megaMenuRepository } from '@/repositories/mega-menu.repository';
 import { navigationRepository } from '@/repositories/navigation.repository';
@@ -20,6 +25,10 @@ export async function PUT(request: Request, props: { params: Promise<{ id: strin
   const params = await props.params;
   const body = await request.json();
   const { level, name, slug, description, thumbnail, pageId, orderIndex, status } = body;
+
+  if (!isValidUuid(params.id)) {
+    return NextResponse.json({ error: 'Invalid ID format' }, { status: 400 });
+  }
 
   try {
     if (level === 'category') {
@@ -35,8 +44,45 @@ export async function PUT(request: Request, props: { params: Promise<{ id: strin
         })
         .where(eq(megaMenuCategories.id, params.id))
         .returning();
-      if (row) await clearCaches(row.navigationItemId);
-      return NextResponse.json(row);
+
+      if (row) {
+        if (row.pageId) {
+          await db
+            .update(pages)
+            .set({
+              sortOrder: orderIndex,
+              title: name,
+              slug: slug || (name ? slugify(name) : undefined),
+              updatedAt: new Date(),
+            })
+            .where(eq(pages.id, row.pageId));
+        }
+        await clearCaches(row.navigationItemId);
+        return NextResponse.json(row);
+      } else {
+        const [pageRow] = await db
+          .update(pages)
+          .set({
+            sortOrder: orderIndex,
+            title: name,
+            slug: slug || (name ? slugify(name) : undefined),
+            updatedAt: new Date(),
+          })
+          .where(eq(pages.id, params.id))
+          .returning();
+
+        if (pageRow) {
+          if (pageRow.navigationItemId) await clearCaches(pageRow.navigationItemId);
+          return NextResponse.json({
+            id: pageRow.id,
+            name: pageRow.title,
+            slug: pageRow.slug,
+            orderIndex: pageRow.sortOrder,
+            status: pageRow.status === 'published' ? 'active' : 'inactive',
+          });
+        }
+      }
+      return NextResponse.json({ error: 'Category not found' }, { status: 404 });
     }
 
     if (level === 'sub') {
@@ -54,13 +100,48 @@ export async function PUT(request: Request, props: { params: Promise<{ id: strin
         })
         .where(eq(megaMenuSubCategories.id, params.id))
         .returning();
+
       if (row) {
+        if (row.pageId) {
+          await db
+            .update(pages)
+            .set({
+              sortOrder: orderIndex,
+              title: name,
+              slug: slug || (name ? slugify(name) : undefined),
+              updatedAt: new Date(),
+            })
+            .where(eq(pages.id, row.pageId));
+        }
         const cat = await db.query.megaMenuCategories.findFirst({
           where: eq(megaMenuCategories.id, row.categoryId),
         });
         if (cat) await clearCaches(cat.navigationItemId);
+        return NextResponse.json(row);
+      } else {
+        const [pageRow] = await db
+          .update(pages)
+          .set({
+            sortOrder: orderIndex,
+            title: name,
+            slug: slug || (name ? slugify(name) : undefined),
+            updatedAt: new Date(),
+          })
+          .where(eq(pages.id, params.id))
+          .returning();
+
+        if (pageRow) {
+          if (pageRow.navigationItemId) await clearCaches(pageRow.navigationItemId);
+          return NextResponse.json({
+            id: pageRow.id,
+            name: pageRow.title,
+            slug: pageRow.slug,
+            orderIndex: pageRow.sortOrder,
+            status: pageRow.status === 'published' ? 'active' : 'inactive',
+          });
+        }
       }
-      return NextResponse.json(row);
+      return NextResponse.json({ error: 'Subcategory not found' }, { status: 404 });
     }
 
     if (level === 'sub-sub') {
@@ -76,7 +157,19 @@ export async function PUT(request: Request, props: { params: Promise<{ id: strin
         })
         .where(eq(megaMenuSubSubCategories.id, params.id))
         .returning();
+
       if (row) {
+        if (row.pageId) {
+          await db
+            .update(pages)
+            .set({
+              sortOrder: orderIndex,
+              title: name,
+              slug: slug || (name ? slugify(name) : undefined),
+              updatedAt: new Date(),
+            })
+            .where(eq(pages.id, row.pageId));
+        }
         const sub = await db.query.megaMenuSubCategories.findFirst({
           where: eq(megaMenuSubCategories.id, row.subCategoryId),
           with: { category: true },
@@ -85,8 +178,31 @@ export async function PUT(request: Request, props: { params: Promise<{ id: strin
         if (category && !Array.isArray(category) && 'navigationItemId' in category) {
           await clearCaches(category.navigationItemId as string);
         }
+        return NextResponse.json(row);
+      } else {
+        const [pageRow] = await db
+          .update(pages)
+          .set({
+            sortOrder: orderIndex,
+            title: name,
+            slug: slug || (name ? slugify(name) : undefined),
+            updatedAt: new Date(),
+          })
+          .where(eq(pages.id, params.id))
+          .returning();
+
+        if (pageRow) {
+          if (pageRow.navigationItemId) await clearCaches(pageRow.navigationItemId);
+          return NextResponse.json({
+            id: pageRow.id,
+            name: pageRow.title,
+            slug: pageRow.slug,
+            orderIndex: pageRow.sortOrder,
+            status: pageRow.status === 'published' ? 'active' : 'inactive',
+          });
+        }
       }
-      return NextResponse.json(row);
+      return NextResponse.json({ error: 'Leaf link not found' }, { status: 404 });
     }
 
     return NextResponse.json({ error: 'Invalid level' }, { status: 400 });
@@ -104,6 +220,10 @@ export async function DELETE(request: Request, props: { params: Promise<{ id: st
   const params = await props.params;
   const { searchParams } = new URL(request.url);
   const level = searchParams.get('level');
+
+  if (!isValidUuid(params.id)) {
+    return NextResponse.json({ success: true });
+  }
 
   try {
     if (level === 'category') {

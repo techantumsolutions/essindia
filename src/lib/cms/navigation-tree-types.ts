@@ -10,6 +10,7 @@ export type NavigationTreeSubSub = {
   name: string;
   slug: string;
   orderIndex: number;
+  pageId?: string | null;
   page: NavigationTreePageRef;
 };
 
@@ -19,6 +20,7 @@ export type NavigationTreeSub = {
   slug: string;
   description: string | null;
   orderIndex: number;
+  pageId?: string | null;
   page: NavigationTreePageRef;
   subSubCategories: NavigationTreeSubSub[];
 };
@@ -29,6 +31,7 @@ export type NavigationTreeCategory = {
   slug: string;
   orderIndex: number;
   pageId?: string | null;
+  page?: NavigationTreePageRef;
   href?: string;
   subCategories: NavigationTreeSub[];
 };
