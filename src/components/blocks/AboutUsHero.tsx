@@ -9,6 +9,7 @@ interface StatItem {
 }
 
 interface AboutUsHeroContent {
+  subtitle?: string; // used for the badge
   title?: string;
   description?: string;
   bgImage?: string;
@@ -27,6 +28,7 @@ const defaultStats: StatItem[] = [
 ];
 
 export function AboutUsHero({ content }: AboutUsHeroProps) {
+  const badge = content?.subtitle || "Our Legacy & Future";
   const title = content?.title || "Empowering Global Enterprises Through Digital Excellence";
   const description = content?.description || "At Eastern Software Solutions, we build technology solutions that drive transformation, create long-term value, and shape the future of business.";
   const stats = content?.items || defaultStats;
@@ -40,6 +42,16 @@ export function AboutUsHero({ content }: AboutUsHeroProps) {
         style={{ backgroundImage: `url('${bgImage}')` }}
       />
       <div className="container relative z-10 mx-auto px-4 md:px-8 max-w-7xl flex-grow flex flex-col justify-center items-center text-center">
+
+        {/* Badge */}
+        <motion.div
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+          className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-blue-400/20 bg-white text-blue-900 text-xs md:text-sm font-medium tracking-wide mb-8 capitalize"
+        >
+          {badge}
+        </motion.div>
 
         {/* Heading */}
         <motion.h1

@@ -554,7 +554,7 @@ export const SECTION_REGISTRY: SectionTypeDefinition[] = [
     color: 'bg-emerald-50 text-emerald-600',
     defaultVariant: 'default',
     supportsVariants: false,
-    fieldOrder: ['bgImage', 'title', 'description', 'items'],
+    fieldOrder: ['subtitle', 'bgImage', 'title', 'description', 'items'],
   },
   {
     type: 'about-us-company-intro',
@@ -564,6 +564,7 @@ export const SECTION_REGISTRY: SectionTypeDefinition[] = [
     color: 'bg-emerald-50 text-emerald-600',
     defaultVariant: 'default',
     supportsVariants: false,
+    fieldOrder: ['subtitle', 'title', 'description', 'description2', 'items', 'image'],
   },
   {
     type: 'about-us-mission-vision',
@@ -591,6 +592,7 @@ export const SECTION_REGISTRY: SectionTypeDefinition[] = [
     color: 'bg-emerald-50 text-emerald-600',
     defaultVariant: 'default',
     supportsVariants: false,
+    fieldOrder: ['title', 'items'],
   },
   {
     type: 'about-us-why-ess',
@@ -600,6 +602,7 @@ export const SECTION_REGISTRY: SectionTypeDefinition[] = [
     color: 'bg-emerald-50 text-emerald-600',
     defaultVariant: 'default',
     supportsVariants: false,
+    fieldOrder: ['title', 'description', 'items'],
   },
   {
     type: 'about-us-cta',

@@ -15,7 +15,7 @@ import {
 interface HighlightItem {
   title?: string;
   description?: string;
-  icon?: string;
+  iconImage?: string;
 }
 
 interface AboutUsCompanyIntroContent {
@@ -36,19 +36,19 @@ const defaultHighlights: HighlightItem[] = [
     title: 'Integrated Enterprise Solutions',
     description:
       'We deliver connected ERP ecosystems that unify finance, HR, sales, inventory, manufacturing, and core business operations.',
-    icon: 'layers',
+    iconImage: '',
   },
   {
     title: 'Industry-Focused Expertise',
     description:
       'Our solutions are designed to support businesses across multiple industries with scalable and adaptable technologies.',
-    icon: 'zap',
+    iconImage: '',
   },
   {
     title: 'Innovation & Digital Transformation',
     description:
       'From Business Intelligence to Automation and Mobile Apps, we help organizations modernize processes and improve productivity.',
-    icon: 'globe',
+    iconImage: '',
   },
 ];
 
@@ -75,22 +75,11 @@ export function AboutUsCompanyIntro({
   const highlights =
     content?.items || defaultHighlights;
 
-  const renderIcon = (iconName?: string) => {
-    switch (iconName) {
-      case 'layers':
-        return <Layers className="w-5 h-5 text-orange-500" />;
-
-      case 'zap':
-        return <Zap className="w-5 h-5 text-emerald-500" />;
-
-      case 'globe':
-        return <Globe className="w-5 h-5 text-amber-500" />;
-
-      default:
-        return (
-          <CheckCircle2 className="w-5 h-5 text-orange-500" />
-        );
+  const renderIcon = (iconUrl?: string) => {
+    if (iconUrl) {
+      return <img src={iconUrl} alt="icon" className="w-6 h-6 object-contain" />;
     }
+    return <CheckCircle2 className="w-5 h-5 text-orange-500" />;
   };
 
   const getCardStyles = (index: number) => {
@@ -191,7 +180,7 @@ export function AboutUsCompanyIntro({
                           ${styles.bg}
                         `}
                       >
-                        {renderIcon(item.icon)}
+                        {renderIcon(item.iconImage)}
                       </div>
 
                       <div>

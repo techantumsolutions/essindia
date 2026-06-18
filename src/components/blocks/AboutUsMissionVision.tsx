@@ -7,13 +7,11 @@ import { MotionSection } from '@/components/animations/MotionSection';
 interface MissionVisionItem {
   title?: string;
   description?: string;
-  icon?: string;
+  image?: string;
   subItems?: string[];
 }
 
 interface AboutUsMissionVisionContent {
-  title?: string;
-  subtitle?: string;
   items?: MissionVisionItem[];
 }
 
@@ -26,7 +24,7 @@ const defaultItems: MissionVisionItem[] = [
     title: 'Our Mission',
     description:
       'To provide world-class software solutions and services to our clients, enabling them to achieve their business goals. We strive to build long-term relationships with our clients based on trust, integrity, and mutual respect.',
-    icon: 'mission',
+    image: '/about-us/mission.png',
     subItems: [
       'Focus on delivering measurable business value',
       'Commitment to continuous innovation and quality',
@@ -37,7 +35,7 @@ const defaultItems: MissionVisionItem[] = [
     title: 'Our Vision',
     description:
       'To be a leading global IT solutions provider, recognized for our technical excellence, customer centricity, and commitment to quality. We aim to empower businesses with innovative technology solutions that drive growth and efficiency.',
-    icon: 'vision',
+    image: '/about-us/vission.png',
     subItems: [
       'Leadership through technological excellence',
       'Foster a culture of collaboration and continuous learning',
@@ -49,8 +47,6 @@ const defaultItems: MissionVisionItem[] = [
 export function AboutUsMissionVision({
   content,
 }: AboutUsMissionVisionProps) {
-  const title = content?.title || 'Our Purpose & Direction';
-  const subtitle = content?.subtitle || 'Mission & Vision';
   const items = content?.items || defaultItems;
 
   return (
@@ -59,8 +55,7 @@ export function AboutUsMissionVision({
 
         <div className="space-y-10">
           {items.map((item, index) => {
-            const imageSrc =
-              item.icon === 'vision' ? '/about-us/vission.png' : '/about-us/mission.png';
+            const imageSrc = item.image || '/about-us/mission.png';
 
             return (
               <MotionSection
