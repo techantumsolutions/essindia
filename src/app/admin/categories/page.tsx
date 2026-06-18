@@ -101,6 +101,7 @@ export default function CategoriesModule() {
   const [registryPages, setRegistryPages] = React.useState<any[]>([]);
   const [navItems, setNavItems] = React.useState<any[]>([]);
   const [selectedNavId, setSelectedNavId] = React.useState<string>('');
+  const [isNavLoading, setIsNavLoading] = React.useState(true);
   const [isLoading, setIsLoading] = React.useState(true);
   const [isModalOpen, setIsModalOpen] = React.useState(false);
   const [editingId, setEditingId] = React.useState<string | null>(null);
@@ -133,6 +134,8 @@ export default function CategoriesModule() {
       }
     } catch (e) {
       console.error('Failed to load navigation items', e);
+    } finally {
+      setIsNavLoading(false);
     }
   }, []);
 
@@ -152,7 +155,9 @@ export default function CategoriesModule() {
 
   const fetchCategories = React.useCallback(async () => {
     if (!selectedNavId) {
-      setIsLoading(false);
+      if (!isNavLoading) {
+        setIsLoading(false);
+      }
       return;
     }
     setIsLoading(true);
@@ -170,7 +175,12 @@ export default function CategoriesModule() {
     } finally {
       setIsLoading(false);
     }
-  }, [selectedNavId]);
+  }, [selectedNavId, isNavLoading]);
+
+  const handleRefresh = React.useCallback(() => {
+    fetchCategories();
+    fetchRegistryPages();
+  }, [fetchCategories, fetchRegistryPages]);
 
   React.useEffect(() => {
     fetchNavItems();
@@ -281,7 +291,7 @@ export default function CategoriesModule() {
       setEditingId(null);
       setNewSubParentId(null);
       setForm(emptyForm);
-      fetchCategories();
+      handleRefresh();
     } catch (e: unknown) {
       toast.error(e instanceof Error ? e.message : 'Save failed');
     }
@@ -334,7 +344,7 @@ export default function CategoriesModule() {
                 depth={0}
                 allCategories={flat}
                 registryPages={registryPages}
-                onRefresh={fetchCategories}
+                onRefresh={handleRefresh}
                 onEdit={openEdit}
                 onAddSubCategory={(parentId) => openCreate(parentId)}
               />

@@ -145,7 +145,7 @@ export class PageRegistryRepository {
         id: page.id,
         pageId: page.id,
         routePath: page.fullPath,
-        title: page.seo?.title || page.title,
+        title: page.title,
         slug: page.slug,
         pageType: page.pageType || 'standard',
         status: page.status,
@@ -191,9 +191,9 @@ export class PageRegistryRepository {
     const navRows =
       navIds.length > 0
         ? await db.query.navigationItems.findMany({
-            where: inArray(navigationItems.id, navIds),
-            columns: { id: true, label: true },
-          })
+          where: inArray(navigationItems.id, navIds),
+          columns: { id: true, label: true },
+        })
         : [];
     const navById = new Map(navRows.map((n) => [n.id, n]));
 
@@ -210,23 +210,23 @@ export class PageRegistryRepository {
     const megaCats =
       megaCatIds.length > 0
         ? await db.query.megaMenuCategories.findMany({
-            where: inArray(megaMenuCategories.id, megaCatIds),
-            columns: { id: true, name: true },
-          })
+          where: inArray(megaMenuCategories.id, megaCatIds),
+          columns: { id: true, name: true },
+        })
         : [];
     const megaSubs =
       megaSubIds.length > 0
         ? await db.query.megaMenuSubCategories.findMany({
-            where: inArray(megaMenuSubCategories.id, megaSubIds),
-            columns: { id: true, name: true },
-          })
+          where: inArray(megaMenuSubCategories.id, megaSubIds),
+          columns: { id: true, name: true },
+        })
         : [];
     const megaSubSubs =
       megaSubSubIds.length > 0
         ? await db.query.megaMenuSubSubCategories.findMany({
-            where: inArray(megaMenuSubSubCategories.id, megaSubSubIds),
-            columns: { id: true, name: true },
-          })
+          where: inArray(megaMenuSubSubCategories.id, megaSubSubIds),
+          columns: { id: true, name: true },
+        })
         : [];
 
     const megaCatById = new Map(megaCats.map((c) => [c.id, c]));
@@ -236,21 +236,21 @@ export class PageRegistryRepository {
     const pageIds = allPages.map((p) => p.id);
     const megaCatsByPage = pageIds.length > 0
       ? await db.query.megaMenuCategories.findMany({
-          where: inArray(megaMenuCategories.pageId, pageIds),
-          columns: { name: true, pageId: true },
-        })
+        where: inArray(megaMenuCategories.pageId, pageIds),
+        columns: { name: true, pageId: true },
+      })
       : [];
     const megaSubsByPage = pageIds.length > 0
       ? await db.query.megaMenuSubCategories.findMany({
-          where: inArray(megaMenuSubCategories.pageId, pageIds),
-          columns: { name: true, pageId: true },
-        })
+        where: inArray(megaMenuSubCategories.pageId, pageIds),
+        columns: { name: true, pageId: true },
+      })
       : [];
     const megaSubSubsByPage = pageIds.length > 0
       ? await db.query.megaMenuSubSubCategories.findMany({
-          where: inArray(megaMenuSubSubCategories.pageId, pageIds),
-          columns: { name: true, pageId: true },
-        })
+        where: inArray(megaMenuSubSubCategories.pageId, pageIds),
+        columns: { name: true, pageId: true },
+      })
       : [];
 
     const megaCatByPageId = new Map(megaCatsByPage.map((c) => [c.pageId, c.name]));
