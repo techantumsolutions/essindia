@@ -18,6 +18,15 @@ export type FieldType =
 export function humanLabel(key: string): string {
   if (key === 'subtitle') return 'Tag';
   if (key === 'bgImage') return 'Background Image';
+  if (key === 'badgeBgColor') return 'Badge Background Color';
+  if (key === 'badgeColor') return 'Badge Text Color';
+  if (key === 'titleColor') return 'Title Text Color';
+  if (key === 'titleSecondaryColor') return 'Title Secondary Color (Highlights 4th, 5th, 7th words)';
+  if (key === 'descriptionColor') return 'Description Text Color';
+  if (key === 'button1Color') return 'Button 1 Text Color';
+  if (key === 'button2Color') return 'Button 2 Text Color';
+  if (key === 'bgColor') return 'Background Color';
+  
   return key
     .replace(/([a-z])([A-Z])/g, '$1 $2')
     .replace(/[_-]/g, ' ')
@@ -26,7 +35,7 @@ export function humanLabel(key: string): string {
 
 const IMAGE_PATTERNS = ['image', 'thumbnail', 'avatar', 'logo', 'ogimage', 'photo', 'banner', 'icon_url', 'icon_image'];
 const URL_PATTERNS = ['url', 'href', 'link'];
-const RICHTEXT_PATTERNS = ['description', 'body', 'content', 'html', 'paragraph', 'text', 'summary', 'excerpt', 'answer', 'quote'];
+const RICHTEXT_PATTERNS = ['description', 'desc', 'body', 'content', 'html', 'paragraph', 'text', 'summary', 'excerpt', 'answer', 'quote'];
 const TEXTAREA_PATTERNS = ['subtitle', 'subheading', 'note', 'message'];
 const COLOR_PATTERN = /^#([0-9a-f]{3}){1,2}$/i;
 const ICON_PATTERNS = ['icon'];
@@ -50,7 +59,7 @@ export function detectFieldType(key: string, value: JsonValue): FieldType {
     if (ICON_PATTERNS.some((p) => lower === p) && value.length < 50) return 'icon';
     if (lower === 'countrycode' || lower === 'country_code') return 'countryCode';
 
-    if (RICHTEXT_PATTERNS.some((p) => lower === p || lower.endsWith(p.charAt(0).toUpperCase() + p.slice(1)))) return 'richtext';
+    if (RICHTEXT_PATTERNS.some((p) => lower.includes(p))) return 'richtext';
     if (TEXTAREA_PATTERNS.some((p) => lower.includes(p))) return 'textarea';
     if (value.length > 120) return 'textarea';
 

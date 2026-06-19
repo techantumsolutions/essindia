@@ -157,6 +157,8 @@ export function SectionRenderer({ section }: SectionRendererProps) {
       return <RetailMobileDashboard content={section.content} />;
     case 'retail-clients':
       return <RetailClients content={section.content} />;
+    case 'retail-why-erp':
+      return <RetailWhyErp content={section.content} />;
     case 'mfg-hero':
       return <ManufacturingHero content={section.content} />;
     case 'mfg-icons':

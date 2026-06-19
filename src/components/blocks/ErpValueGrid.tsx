@@ -6,16 +6,16 @@ import { Button } from '@/components/ui/button';
 import { MotionSection } from '@/components/animations/MotionSection';
 
 interface ErpValueCard {
-  title: string;
-  desc: string;
-  image: string;
+  image?: string;
+  title?: string;
+  description?: string;
 }
 
 interface ErpValueGridContent {
   heading?: string;
-  subheading?: string;
-  ctaButton?: { label: string; url: string };
-  valueCards?: ErpValueCard[];
+  description?: string;
+  badgeText?: string;
+  values?: ErpValueCard[];
 }
 
 interface ErpValueGridProps {
@@ -24,15 +24,15 @@ interface ErpValueGridProps {
 
 export function ErpValueGrid({ content }: ErpValueGridProps) {
   const heading = content?.heading || 'ERP Advances Business Value';
-  const subheading = content?.subheading || 'Enterprise Resource Planning Companies are more likely to deploy a full-service suite of ERP technology.ERP modules are available to automate processes that broadly are:';
-  const ctaButton = content?.ctaButton || { label: 'So what benefits do businesses get from ERP Software?', url: '#' };
-  const valueCards = content?.valueCards || [
-    { title: 'Efficiency', desc: 'Removes repetitive processes and reduces manual entry of information. Business processes are therefore streamlined and efficient as they work on information from common source.', image: '/ErpOverview/value-1.png' },
-    { title: 'Integrated Information', desc: 'Removes repetitive processes and reduces manual entry of information. Business processes are therefore streamlined and efficient as they work on information from common source.', image: '/ErpOverview/value-2.png' },
-    { title: 'Reporting', desc: 'Removes repetitive processes and reduces manual entry of information. Business processes are therefore streamlined and efficient as they work on information from common source.', image: '/ErpOverview/value-3.png' },
-    { title: 'Customer Service', desc: 'Removes repetitive processes and reduces manual entry of information. Business processes are therefore streamlined and efficient as they work on information from common source.', image: '/ErpOverview/value-4.png' },
-    { title: 'Decision making', desc: 'Removes repetitive processes and reduces manual entry of information. Business processes are therefore streamlined and efficient as they work on information from common source.', image: '/ErpOverview/value-5.png' },
-    { title: 'Profitability', desc: 'Removes repetitive processes and reduces manual entry of information. Business processes are therefore streamlined and efficient as they work on information from common source.', image: '/ErpOverview/value-6.png' },
+  const description = content?.description || 'Enterprise Resource Planning Companies are more likely to deploy a full-service suite of ERP technology.ERP modules are available to automate processes that broadly are:';
+  const badgeText = content?.badgeText || 'So what benefits do businesses get from ERP Software?';
+  const values = content?.values || [
+    { title: 'Efficiency', description: 'Removes repetitive processes and reduces manual entry of information. Business processes are therefore streamlined and efficient as they work on information from common source.', image: '/ErpOverview/value-1.png' },
+    { title: 'Integrated Information', description: 'Removes repetitive processes and reduces manual entry of information. Business processes are therefore streamlined and efficient as they work on information from common source.', image: '/ErpOverview/value-2.png' },
+    { title: 'Reporting', description: 'Removes repetitive processes and reduces manual entry of information. Business processes are therefore streamlined and efficient as they work on information from common source.', image: '/ErpOverview/value-3.png' },
+    { title: 'Customer Service', description: 'Removes repetitive processes and reduces manual entry of information. Business processes are therefore streamlined and efficient as they work on information from common source.', image: '/ErpOverview/value-4.png' },
+    { title: 'Decision making', description: 'Removes repetitive processes and reduces manual entry of information. Business processes are therefore streamlined and efficient as they work on information from common source.', image: '/ErpOverview/value-5.png' },
+    { title: 'Profitability', description: 'Removes repetitive processes and reduces manual entry of information. Business processes are therefore streamlined and efficient as they work on information from common source.', image: '/ErpOverview/value-6.png' },
   ];
 
   const containerVariants = {
@@ -67,9 +67,16 @@ export function ErpValueGrid({ content }: ErpValueGridProps) {
             <h2 className="text-3xl md:text-4xl lg:[42px] font-bold text-[#462294] tracking-tight">
               {heading}
             </h2>
-            <p className="text-[#777777] text-lg font-normal">
-              {subheading}
-            </p>
+            {description.includes('<p>') ? (
+              <div 
+                className="text-[#777777] text-lg font-normal prose prose-lg max-w-none prose-p:my-2 mx-auto"
+                dangerouslySetInnerHTML={{ __html: description }}
+              />
+            ) : (
+              <p className="text-[#777777] text-lg font-normal">
+                {description}
+              </p>
+            )}
           </MotionSection>
 
           {/* Central Accent CTA Button */}
@@ -84,12 +91,11 @@ export function ErpValueGrid({ content }: ErpValueGridProps) {
               </div>
 
               {/* Badge */}
-              <Button
-                onClick={() => (window.location.href = ctaButton.url)}
-                className="bg-[#4A36F4] hover:bg-[#462294] text-white rounded-full px-8 md:px-10 h-12 text-sm md:text-base font-semibold shadow-lg transition-all duration-300"
+              <div
+                className="bg-[#4A36F4] text-white rounded-full px-8 md:px-10 h-12 flex items-center justify-center text-sm md:text-base font-semibold shadow-lg"
               >
-                {ctaButton.label}
-              </Button>
+                {badgeText}
+              </div>
 
               {/* Right Line */}
               <div className="hidden md:flex flex-1 items-center justify-start">
@@ -108,7 +114,7 @@ export function ErpValueGrid({ content }: ErpValueGridProps) {
           viewport={{ once: true, margin: '-100px' }}
           className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
         >
-          {valueCards.map((card, idx) => (
+          {values.map((card, idx) => (
             <motion.div
               key={idx}
               variants={cardVariants}
@@ -142,9 +148,16 @@ export function ErpValueGrid({ content }: ErpValueGridProps) {
                   {card.title}
                 </h3>
 
-                <p className="text-[#6E6E73] text-[15px] font-normal">
-                  {card.desc}
-                </p>
+                {card.description?.includes('<p>') ? (
+                  <div 
+                    className="text-[#6E6E73] text-[15px] font-normal prose prose-sm max-w-none prose-p:my-1"
+                    dangerouslySetInnerHTML={{ __html: card.description }}
+                  />
+                ) : (
+                  <p className="text-[#6E6E73] text-[15px] font-normal">
+                    {card.description}
+                  </p>
+                )}
 
                 {/* Bottom Accent */}
                 {/* <div className="mt-6 flex items-center gap-2">

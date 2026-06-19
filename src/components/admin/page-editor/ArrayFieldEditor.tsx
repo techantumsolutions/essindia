@@ -60,7 +60,25 @@ export function ArrayFieldEditor({
       const template = createEmptyFromTemplate(value[0]);
       onChange([...value, template]);
     } else {
-      onChange([...value, '']);
+      // Fallback schemas based on typical field keys when array is empty
+      let defaultObj: any = '';
+      const lowerKey = fieldKey.toLowerCase();
+      
+      if (lowerKey === 'features' || lowerKey === 'tabs') {
+        defaultObj = { image: '', title: '', desc: '', desc2: '' };
+      } else if (lowerKey === 'modules') {
+        defaultObj = { image: '', title: '', description: '', ctaLabel: 'READ MORE', ctaUrl: '#' };
+      } else if (lowerKey === 'values') {
+        defaultObj = { image: '', title: '', description: '' };
+      } else if (lowerKey === 'faqs') {
+        defaultObj = { question: '', answer: '' };
+      } else if (lowerKey === 'processes') {
+        defaultObj = { title: '', description: '' };
+      } else if (['items', 'cards', 'blocks', 'steps'].includes(lowerKey)) {
+        defaultObj = { image: '', title: '', description: '' };
+      }
+      
+      onChange([...value, defaultObj]);
     }
   };
 

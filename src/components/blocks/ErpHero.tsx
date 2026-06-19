@@ -6,11 +6,23 @@ import { Button } from '@/components/ui/button';
 import { MotionSection } from '@/components/animations/MotionSection';
 
 interface ErpHeroContent {
-  badge?: string;
-  title?: string;
-  subtitle?: string;
-  primaryCta?: { label: string; url: string };
-  secondaryCta?: { label: string; url: string };
+  bgColor?: string;
+  badgeBgColor?: string;
+  badgeText?: string;
+  badgeColor?: string;
+  titleText?: string;
+  titleColor?: string;
+  titleSecondaryColor?: string;
+  descriptionText?: string;
+  descriptionColor?: string;
+  button1Text?: string;
+  button1Color?: string;
+  button1BgColor?: string;
+  button1Url?: string;
+  button2Text?: string;
+  button2Color?: string;
+  button2BgColor?: string;
+  button2Url?: string;
   image?: string;
 }
 
@@ -19,23 +31,33 @@ interface ErpHeroProps {
 }
 
 export function ErpHero({ content }: ErpHeroProps) {
-  const badge = content?.badge || 'ERP Overview';
-  const title = content?.title || "It's all about Streamline, Automate, and Accelerate for Business Fitness";
-  const subtitle = content?.subtitle || 'Simply connect business processes, increase agility with our user-friendly and result-oriented software';
-  const primaryCta = content?.primaryCta || { label: 'RPA PORTAL', url: '/rpa' };
-  const secondaryCta = content?.secondaryCta || { label: 'ERP OFFERINGS', url: '/erp-offerings' };
+  const bgColor = content?.bgColor || '#fdfeff';
+  const badgeBgColor = content?.badgeBgColor || '#391781';
+  const badgeText = content?.badgeText || 'ERP Overview';
+  const badgeColor = content?.badgeColor || '#ffffff';
+  const titleText = content?.titleText || "It's all about Streamline, Automate, and Accelerate for Business Fitness";
+  const titleColor = content?.titleColor || '#000000';
+  const titleSecondaryColor = content?.titleSecondaryColor || '#462294';
+  const descriptionText = content?.descriptionText || 'Simply connect business processes, increase agility with our user-friendly and result-oriented software';
+  const descriptionColor = content?.descriptionColor || '#000000';
+  const button1Text = content?.button1Text || 'RPA PORTAL';
+  const button1Color = content?.button1Color || '#ffffff';
+  const button1BgColor = content?.button1BgColor || '#462294';
+  const button1Url = content?.button1Url || '/rpa';
+  const button2Text = content?.button2Text || 'ERP OFFERINGS';
+  const button2Color = content?.button2Color || '#ffffff';
+  const button2BgColor = content?.button2BgColor || '#0f172a'; // slate-900 roughly
+  const button2Url = content?.button2Url || '/erp-offerings';
   const image = content?.image || '/BANNER-IMMAGE-LEFT.png';
-  // Highlight words in the title
+  // Highlight 4th, 5th, and 7th words (indices 3, 4, 6)
   const highlightTitle = (text: string) => {
-    const highlights = ['Streamline', 'Automate', 'Accelerate'];
     const words = text.split(' ');
     return words.map((word, idx) => {
-      const cleanWord = word.replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g, '');
-      const isHighlight = highlights.includes(cleanWord);
+      const isHighlight = idx === 3 || idx === 4 || idx === 6;
       return (
         <span
           key={idx}
-          className={isHighlight ? 'text-[#462294]' : 'text-black'}
+          style={{ color: isHighlight ? titleSecondaryColor : undefined }}
         >
           {word}{' '}
         </span>
@@ -44,7 +66,7 @@ export function ErpHero({ content }: ErpHeroProps) {
   };
 
   return (
-    <section className="relative w-full py-16 bg-[#fdfeff] overflow-hidden">
+    <section className="relative w-full py-16 overflow-hidden" style={{ backgroundColor: bgColor }}>
       {/* Background Grid Pattern */}
       {/* <div className="absolute inset-0 bg-[linear-gradient(to_right,#e2e8f0_1px,transparent_1px),linear-gradient(to_bottom,#e2e8f0_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)] opacity-60 -z-10" /> */}
 
@@ -60,8 +82,8 @@ export function ErpHero({ content }: ErpHeroProps) {
               transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
               className="inline-block pb-6"
             >
-              <span className="bg-[#391781] text-white text-sm font-semibold px-5 py-3.5 rounded-full">
-                {badge}
+              <span className="text-sm font-semibold px-5 py-3.5 rounded-full" style={{ backgroundColor: badgeBgColor, color: badgeColor }}>
+                {badgeText}
               </span>
             </motion.div>
 
@@ -71,8 +93,9 @@ export function ErpHero({ content }: ErpHeroProps) {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
               className="text-4xl md:text-5xl pb-2 font-medium tracking-tight leading-[1.15]"
+              style={{ color: titleColor }}
             >
-              {highlightTitle(title)}
+              {highlightTitle(titleText)}
             </motion.h1>
 
             {/* Sub-headline */}
@@ -80,9 +103,10 @@ export function ErpHero({ content }: ErpHeroProps) {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
-              className="text-black text-lg md:text-xl font-light leading-relaxed max-w-xl"
+              className="text-lg md:text-xl font-light leading-relaxed max-w-xl"
+              style={{ color: descriptionColor }}
             >
-              {subtitle}
+              {descriptionText}
             </motion.p>
 
             {/* Action Buttons */}
@@ -93,17 +117,19 @@ export function ErpHero({ content }: ErpHeroProps) {
               className="flex flex-wrap gap-4 pt-2"
             >
               <Button
-                onClick={() => (window.location.href = primaryCta.url)}
-                className="bg-[#462294] hover:bg-white hover:text-black hover:border hover:border-black text-white rounded-full px-8 h-9 text-sm font-medium transition-all duration-300 active:scale-95 cursor-pointer"
+                onClick={() => (window.location.href = button1Url)}
+                style={{ backgroundColor: button1BgColor, color: button1Color }}
+                className="hover:opacity-90 border-transparent hover:border hover:border-black rounded-full px-8 h-9 text-sm font-medium transition-all duration-300 active:scale-95 cursor-pointer"
               >
-                {primaryCta.label}
+                {button1Text}
               </Button>
               <Button
                 variant="outline"
-                onClick={() => (window.location.href = secondaryCta.url)}
-                className="bg-slate-900 border-slate-900 text-white hover:bg-white rounded-full px-8 h-9 text-sm font-medium shadow-md transition-all duration-300 active:scale-95 cursor-pointer"
+                onClick={() => (window.location.href = button2Url)}
+                style={{ backgroundColor: button2BgColor, color: button2Color, borderColor: button2BgColor }}
+                className="hover:opacity-90 rounded-full px-8 h-9 text-sm font-medium shadow-md transition-all duration-300 active:scale-95 cursor-pointer"
               >
-                {secondaryCta.label}
+                {button2Text}
               </Button>
             </motion.div>
           </div>
@@ -120,7 +146,7 @@ export function ErpHero({ content }: ErpHeroProps) {
 
               {/* ERP Image */}
               <img
-                src={content?.image || '/BANNER-IMMAGE-LEFT.png'}
+                src={image}
                 alt="ERP Dashboard"
                 className=" rounded-lg object-cover w-full h-auto"
               />

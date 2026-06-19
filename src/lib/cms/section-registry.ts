@@ -117,6 +117,26 @@ export const SECTION_REGISTRY: SectionTypeDefinition[] = [
     color: 'bg-indigo-50 text-indigo-600',
     defaultVariant: 'default',
     supportsVariants: false,
+    fieldOrder: [
+      'bgColor',
+      'badgeBgColor',
+      'badgeText',
+      'badgeColor',
+      'titleText',
+      'titleColor',
+      'titleSecondaryColor',
+      'descriptionText',
+      'descriptionColor',
+      'button1Text',
+      'button1Color',
+      'button1BgColor',
+      'button1Url',
+      'button2Text',
+      'button2Color',
+      'button2BgColor',
+      'button2Url',
+      'image'
+    ],
   },
   {
     type: 'erp-intro',
@@ -126,6 +146,7 @@ export const SECTION_REGISTRY: SectionTypeDefinition[] = [
     color: 'bg-slate-50 text-slate-600',
     defaultVariant: 'default',
     supportsVariants: false,
+    fieldOrder: ['title', 'description'],
   },
   {
     type: 'erp-modules',
@@ -135,6 +156,7 @@ export const SECTION_REGISTRY: SectionTypeDefinition[] = [
     color: 'bg-emerald-50 text-emerald-600',
     defaultVariant: 'default',
     supportsVariants: false,
+    fieldOrder: ['heading', 'subheading', 'modules'],
   },
   {
     type: 'erp-features',
@@ -144,6 +166,7 @@ export const SECTION_REGISTRY: SectionTypeDefinition[] = [
     color: 'bg-blue-50 text-blue-600',
     defaultVariant: 'default',
     supportsVariants: false,
+    fieldOrder: ['heading', 'subheading', 'features'],
   },
   {
     type: 'erp-value',
@@ -153,6 +176,7 @@ export const SECTION_REGISTRY: SectionTypeDefinition[] = [
     color: 'bg-purple-50 text-purple-600',
     defaultVariant: 'default',
     supportsVariants: false,
+    fieldOrder: ['heading', 'description', 'badgeText', 'values'],
   },
   {
     type: 'erp-transform',
@@ -162,6 +186,7 @@ export const SECTION_REGISTRY: SectionTypeDefinition[] = [
     color: 'bg-rose-50 text-rose-600',
     defaultVariant: 'default',
     supportsVariants: false,
+    fieldOrder: ['heading', 'description', 'items'],
   },
   {
     type: 'retail-hero',
@@ -171,6 +196,21 @@ export const SECTION_REGISTRY: SectionTypeDefinition[] = [
     color: 'bg-indigo-50 text-indigo-600',
     defaultVariant: 'default',
     supportsVariants: false,
+    fieldOrder: [
+      'bgColor',
+      'badgeBgColor',
+      'badgeText',
+      'badgeTextColor',
+      'title',
+      'titleColor',
+      'description',
+      'descriptionColor',
+      'buttonBgColor',
+      'buttonText',
+      'buttonTextColor',
+      'buttonUrl',
+      'image'
+    ],
   },
   {
     type: 'retail-nurture',
@@ -180,6 +220,14 @@ export const SECTION_REGISTRY: SectionTypeDefinition[] = [
     color: 'bg-slate-50 text-slate-600',
     defaultVariant: 'default',
     supportsVariants: false,
+    fieldOrder: [
+      'title',
+      'paragraphs',
+      'images',
+      'whyImagePath',
+      'whyTitle',
+      'whyParagraph'
+    ],
   },
   {
     type: 'retail-features',
@@ -216,6 +264,7 @@ export const SECTION_REGISTRY: SectionTypeDefinition[] = [
     color: 'bg-amber-50 text-amber-600',
     defaultVariant: 'default',
     supportsVariants: false,
+    fieldOrder: ['title', 'logos'],
   },
   {
     type: 'retail-why-erp',
@@ -234,7 +283,25 @@ export const SECTION_REGISTRY: SectionTypeDefinition[] = [
     color: 'bg-indigo-50 text-indigo-600',
     defaultVariant: 'default',
     supportsVariants: false,
-    fieldOrder: ['badge', 'title', 'description', 'primaryCta', 'secondaryCta', 'image'],
+    fieldOrder: [
+      'bgColor',
+      'badgeBgColor',
+      'badgeText',
+      'badgeTextColor',
+      'title',
+      'titleColor',
+      'description',
+      'descriptionColor',
+      'primaryButtonBgColor',
+      'primaryButtonText',
+      'primaryButtonTextColor',
+      'primaryButtonUrl',
+      'secondaryButtonBgColor',
+      'secondaryButtonText',
+      'secondaryButtonTextColor',
+      'secondaryButtonUrl',
+      'image'
+    ],
   },
   {
     type: 'mfg-icons',
@@ -244,6 +311,7 @@ export const SECTION_REGISTRY: SectionTypeDefinition[] = [
     color: 'bg-emerald-50 text-emerald-600',
     defaultVariant: 'default',
     supportsVariants: false,
+    fieldOrder: ['icons']
   },
   {
     type: 'mfg-demand',
@@ -272,6 +340,7 @@ export const SECTION_REGISTRY: SectionTypeDefinition[] = [
     color: 'bg-cyan-50 text-cyan-600',
     defaultVariant: 'default',
     supportsVariants: false,
+    fieldOrder: ['sectionTitle', 'sectionSubtitle', 'description', 'metrics', 'image'],
   },
   {
     type: 'mfg-models',
@@ -311,6 +380,7 @@ export const SECTION_REGISTRY: SectionTypeDefinition[] = [
     color: 'bg-indigo-50 text-indigo-600',
     defaultVariant: 'default',
     supportsVariants: false,
+    fieldOrder: ['bgImage', 'ctaText', 'title', 'description'],
   },
   {
     type: 'career-why-join',
@@ -320,6 +390,7 @@ export const SECTION_REGISTRY: SectionTypeDefinition[] = [
     color: 'bg-rose-50 text-rose-600',
     defaultVariant: 'default',
     supportsVariants: false,
+    fieldOrder: ['title', 'tag', 'mapImage', 'stats'],
   },
   {
     type: 'career-offices',
@@ -338,6 +409,7 @@ export const SECTION_REGISTRY: SectionTypeDefinition[] = [
     color: 'bg-blue-50 text-blue-600',
     defaultVariant: 'default',
     supportsVariants: false,
+    fieldOrder: ['title', 'tag', 'products'],
   },
   {
     type: 'career-perks',
@@ -347,6 +419,7 @@ export const SECTION_REGISTRY: SectionTypeDefinition[] = [
     color: 'bg-emerald-50 text-emerald-600',
     defaultVariant: 'default',
     supportsVariants: false,
+    fieldOrder: ['title', 'tag', 'perks'],
   },
   {
     type: 'career-life',
@@ -392,6 +465,7 @@ export const SECTION_REGISTRY: SectionTypeDefinition[] = [
     color: 'bg-slate-50 text-slate-600',
     defaultVariant: 'default',
     supportsVariants: false,
+    fieldOrder: ['title', 'subtitle', 'ctaText', 'ctaUrl'],
   },
   {
     type: 'blog-list-block',
@@ -455,6 +529,25 @@ export const SECTION_REGISTRY: SectionTypeDefinition[] = [
     color: 'bg-indigo-50 text-indigo-600',
     defaultVariant: 'default',
     supportsVariants: false,
+    fieldOrder: [
+      'bgColor',
+      'badgeBgColor',
+      'badgeText',
+      'badgeTextColor',
+      'title',
+      'titleColor',
+      'description',
+      'descriptionColor',
+      'primaryButtonBgColor',
+      'primaryButtonText',
+      'primaryButtonTextColor',
+      'primaryButtonUrl',
+      'secondaryButtonBgColor',
+      'secondaryButtonText',
+      'secondaryButtonTextColor',
+      'secondaryButtonUrl',
+      'image'
+    ],
   },
   {
     type: 'hospital-overview',
@@ -504,7 +597,22 @@ export const SECTION_REGISTRY: SectionTypeDefinition[] = [
     color: 'bg-indigo-50 text-indigo-600',
     defaultVariant: 'default',
     supportsVariants: false,
-    fieldOrder: ['badge', 'title', 'description', 'primaryCta', 'image'],
+    fieldOrder: [
+      'bgColor',
+      'badgeBgColor',
+      'badgeBorderColor',
+      'badgeText',
+      'badgeTextColor',
+      'title',
+      'titleColor',
+      'description',
+      'descriptionColor',
+      'buttonBgColor',
+      'buttonText',
+      'buttonTextColor',
+      'buttonUrl',
+      'image'
+    ],
   },
   {
     type: 'staffing-augmentation',
@@ -613,6 +721,59 @@ export const SECTION_REGISTRY: SectionTypeDefinition[] = [
     defaultVariant: 'default',
     supportsVariants: false,
   },
+  {
+    type: 'judicial-hero',
+    label: 'Judicial Hero',
+    description: 'Header block for Judicial Automation',
+    icon: Layout,
+    color: 'bg-indigo-50 text-indigo-600',
+    defaultVariant: 'default',
+    supportsVariants: false,
+    fieldOrder: [
+      'bgColor',
+      'badgeBgColor',
+      'badgeText',
+      'badgeTextColor',
+      'title',
+      'titleColor',
+      'description',
+      'descriptionColor',
+      'buttonBgColor',
+      'buttonText',
+      'buttonTextColor',
+      'buttonUrl',
+      'image'
+    ],
+  },
+  {
+    type: 'judicial-overview',
+    label: 'Judicial Overview',
+    description: 'Overview block for Judicial Automation',
+    icon: FileText,
+    color: 'bg-emerald-50 text-emerald-600',
+    defaultVariant: 'default',
+    supportsVariants: false,
+    fieldOrder: [
+      'heading',
+      'description',
+      'cards'
+    ],
+  },
+  {
+    type: 'judicial-features',
+    label: 'Judicial Features',
+    description: 'Features block for Judicial Automation',
+    icon: Layout,
+    color: 'bg-emerald-50 text-emerald-600',
+    defaultVariant: 'default',
+    supportsVariants: false,
+    fieldOrder: [
+      'sideImage',
+      'heading',
+      'description',
+      'features'
+    ],
+  }
 ];
 
 export function getSectionDefinition(type: string): SectionTypeDefinition | undefined {

@@ -37,11 +37,22 @@ async function seed() {
     {
       type: 'hospital-hero',
       content: {
-        badge: "Hospital Management",
+        bgColor: '#320965',
+        badgeBgColor: '#ffffff',
+        badgeText: "Hospital Management",
+        badgeTextColor: '#2a2d7c',
         title: "Smart Hospital<br />Management System (HMS)<br />for Connected Healthcare",
-        subtitle: "A comprehensive healthcare solution that integrates clinical, financial, and operational systems to deliver better patient care, streamline workflows, and ensure regulatory compliance across medical institutions.",
-        primaryCta: { label: "Get started", url: "#" },
-        secondaryCta: { label: "Explore features", url: "#" },
+        titleColor: '#ffffff',
+        description: "A comprehensive healthcare solution that integrates clinical, financial, and operational systems to deliver better patient care, streamline workflows, and ensure regulatory compliance across medical institutions.",
+        descriptionColor: 'rgba(255,255,255,0.9)',
+        primaryButtonText: "Get started",
+        primaryButtonUrl: "#",
+        primaryButtonBgColor: '#ffffff',
+        primaryButtonTextColor: '#2a2d7c',
+        secondaryButtonText: "Explore features",
+        secondaryButtonUrl: "#",
+        secondaryButtonBgColor: 'transparent',
+        secondaryButtonTextColor: '#ffffff',
         image: "/Hospital Management/Rectangle 197.png"
       },
       order: 10

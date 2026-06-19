@@ -140,10 +140,26 @@ export function SectionEditorCard({
       }
     }
 
-    return mergeSchemaWithContent(
+    const merged = mergeSchemaWithContent(
       baseSchema,
       section.content as Record<string, JsonValue>
     );
+
+    const finalMerged = { ...merged };
+    if (meta?.fieldOrder) {
+      meta.fieldOrder.forEach((key) => {
+        if (!(key in finalMerged)) {
+          // Default arrays for known list fields
+          if (['items', 'processes', 'features', 'faqs', 'cards', 'values', 'modules'].includes(key)) {
+            finalMerged[key] = [];
+          } else {
+            finalMerged[key] = '';
+          }
+        }
+      });
+    }
+
+    return finalMerged;
   }, [schema, section.content, section.type]);
 
   const contentKeys = React.useMemo(() => {

@@ -5,9 +5,9 @@ import { motion } from 'framer-motion';
 import { MotionSection } from '@/components/animations/MotionSection';
 
 interface ErpModule {
-  title: string;
-  desc: string;
-  iconImage: string;
+  image?: string;
+  title?: string;
+  description?: string;
   ctaLabel?: string;
   ctaUrl?: string;
 }
@@ -26,14 +26,14 @@ export function ErpModulesGrid({ content }: ErpModulesGridProps) {
   const heading = content?.heading || 'ERP Modules';
   const subheading = content?.subheading || 'Choose standard version or customizable version of our technology. ERP modules contribute to business growth in the following ways';
   const modules = content?.modules || [
-    { title: 'FINANCE & TAX AUDIT', desc: 'Ensure compliance, gain audits and financial security.', iconImage: '/ErpOverview/ERP-1.png', ctaLabel: 'READ MORE', ctaUrl: '#' },
-    { title: 'SUPPLY CHAIN & PROCUREMENT', desc: 'Ensure seamless supply chain, reduce storage cost, ready parts dynamically.', iconImage: '/ErpOverview/ERP-2.png', ctaLabel: 'READ MORE', ctaUrl: '#' },
-    { title: 'CUSTOMER RELATIONSHIP MANAGEMENT', desc: 'Ensure customer success, track lead pipeline, close deals faster.', iconImage: '/ErpOverview/ERP-3.png', ctaLabel: 'READ MORE', ctaUrl: '#' },
-    { title: 'PROJECT MANAGEMENT', desc: 'Manage projects efficiently, keep track of budgets and deliver on time.', iconImage: '/ErpOverview/ERP-4.png', ctaLabel: 'READ MORE', ctaUrl: '#' },
-    { title: 'MANUFACTURING PLANNING', desc: 'Optimize factory floors, automate billing materials, increase production capacity.', iconImage: '/ErpOverview/ERP-5.png', ctaLabel: 'READ MORE', ctaUrl: '#' },
-    { title: 'BI & ANALYTICS', desc: 'Generate executive dashboards, forecast sales, get real-time operational reports.', iconImage: '/ErpOverview/ERP-6.png', ctaLabel: 'READ MORE', ctaUrl: '#' },
-    { title: 'QUALITY ASSURANCE', desc: 'Ensure high-quality standards in manufacturing and operations.', iconImage: '/ErpOverview/ERP-7.png', ctaLabel: 'READ MORE', ctaUrl: '#' },
-    { title: 'HR & PAYROLL', desc: 'Manage attendance, payroll generation, track appraisals, and recruitment.', iconImage: '/ErpOverview/ERP-8.png', ctaLabel: 'READ MORE', ctaUrl: '#' },
+    { image: '/ErpOverview/ERP-1.png', title: 'FINANCE & TAX AUDIT', description: 'Ensure compliance, gain audits and financial security.', ctaLabel: 'READ MORE', ctaUrl: '#' },
+    { image: '/ErpOverview/ERP-2.png', title: 'SUPPLY CHAIN & PROCUREMENT', description: 'Ensure seamless supply chain, reduce storage cost, ready parts dynamically.', ctaLabel: 'READ MORE', ctaUrl: '#' },
+    { image: '/ErpOverview/ERP-3.png', title: 'CUSTOMER RELATIONSHIP MANAGEMENT', description: 'Ensure customer success, track lead pipeline, close deals faster.', ctaLabel: 'READ MORE', ctaUrl: '#' },
+    { image: '/ErpOverview/ERP-4.png', title: 'PROJECT MANAGEMENT', description: 'Manage projects efficiently, keep track of budgets and deliver on time.', ctaLabel: 'READ MORE', ctaUrl: '#' },
+    { image: '/ErpOverview/ERP-5.png', title: 'MANUFACTURING PLANNING', description: 'Optimize factory floors, automate billing materials, increase production capacity.', ctaLabel: 'READ MORE', ctaUrl: '#' },
+    { image: '/ErpOverview/ERP-6.png', title: 'BI & ANALYTICS', description: 'Generate executive dashboards, forecast sales, get real-time operational reports.', ctaLabel: 'READ MORE', ctaUrl: '#' },
+    { image: '/ErpOverview/ERP-7.png', title: 'QUALITY ASSURANCE', description: 'Ensure high-quality standards in manufacturing and operations.', ctaLabel: 'READ MORE', ctaUrl: '#' },
+    { image: '/ErpOverview/ERP-8.png', title: 'HR & PAYROLL', description: 'Manage attendance, payroll generation, track appraisals, and recruitment.', ctaLabel: 'READ MORE', ctaUrl: '#' },
   ];
 
   // Grid container and item animations
@@ -94,7 +94,7 @@ export function ErpModulesGrid({ content }: ErpModulesGridProps) {
                 {/* Icon Image inside a beautiful rounded card box */}
                 <div className="w-28 h-28 transition-transform duration-500 group-hover:scale-110 group-hover:rotate-3 shrink-0">
                   <img 
-                    src={module.iconImage} 
+                    src={module.image || '/ErpOverview/ERP-1.png'} 
                     alt="" 
                     className="w-full h-full rounded-full" 
                   />
@@ -105,9 +105,16 @@ export function ErpModulesGrid({ content }: ErpModulesGridProps) {
                   <h3 className="text-base font-black tracking-wide text-[#4B2A63] leading-snug group-hover:text-slate-900 transition-colors duration-300">
                     {module.title}
                   </h3>
-                  <p className="text-[#777777] text-sm font-medium">
-                    {module.desc}
-                  </p>
+                  {module.description?.includes('<p>') ? (
+                    <div 
+                      className="text-[#777777] text-sm font-medium prose prose-sm max-w-none prose-p:my-1"
+                      dangerouslySetInnerHTML={{ __html: module.description }}
+                    />
+                  ) : (
+                    <p className="text-[#777777] text-sm font-medium">
+                      {module.description}
+                    </p>
+                  )}
                 </div>
 
                 {/* Read More dynamic CTA */}

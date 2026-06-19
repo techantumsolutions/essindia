@@ -6,7 +6,7 @@ import { motion } from 'framer-motion';
 export default function CareerWhyJoin({ content }: { content?: any }) {
   const {
     title = 'Why Join ESS?',
-    subtitle = 'With offices in 30 global locations and customers\nspread across 35+ countries.',
+    tag = 'With offices in 30 global locations and customers\nspread across 35+ countries.',
     mapImage = '/Career-Page/Group 1.png',
     stats = [
       { value: '500+', label: 'Team Members' },
@@ -23,7 +23,7 @@ export default function CareerWhyJoin({ content }: { content?: any }) {
           <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-4">{title}</h2>
           <p
             className="text-[#71717A] max-w-2xl mx-auto text-2xl font-light leading-none"
-            dangerouslySetInnerHTML={{ __html: subtitle.replace(/\n/g, '<br />') }}
+            dangerouslySetInnerHTML={{ __html: tag.replace(/\n/g, '<br />') }}
           />
         </div>
 

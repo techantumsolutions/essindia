@@ -3,12 +3,14 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { ArrowRight } from 'lucide-react';
+import Link from 'next/link';
 
 export default function CareerCta({ content }: { content?: any }) {
   const {
     title = 'Ready To Start Your Career Journey?',
     subtitle = 'Join our team and be part of an innovative culture that values your growth and contributions.',
-    ctaText = 'Join Us'
+    ctaText = 'Join Us',
+    ctaUrl = '#'
   } = content || {};
 
   return (
@@ -26,10 +28,10 @@ export default function CareerCta({ content }: { content?: any }) {
           <p className="max-w-2xl mx-auto text-xl font-medium leading-none mb-6">
             {subtitle}
           </p>
-          <button className="bg-[#0D1A5C] text-white hover:bg-[#07103a] px-8 py-3 rounded-full font-medium transition-colors inline-flex items-center gap-2">
+          <Link href={ctaUrl} className="bg-[#0D1A5C] text-white hover:bg-[#07103a] px-8 py-3 rounded-full font-medium transition-colors inline-flex items-center gap-2">
             {ctaText}
             <ArrowRight className="w-4 h-4" />
-          </button>
+          </Link>
         </motion.div>
       </div>
     </section>
