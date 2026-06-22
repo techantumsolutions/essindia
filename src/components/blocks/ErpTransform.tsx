@@ -5,14 +5,14 @@ import { motion } from 'framer-motion';
 import { MotionSection } from '@/components/animations/MotionSection';
 
 interface ErpTransformItem {
-  title: string;
-  desc: string;
-  iconImage?: string;
+  image?: string;
+  title?: string;
+  description?: string;
 }
 
 interface ErpTransformContent {
   heading?: string;
-  subheading?: string;
+  description?: string;
   items?: ErpTransformItem[];
 }
 
@@ -22,7 +22,7 @@ interface ErpTransformProps {
 
 export function ErpTransform({ content }: ErpTransformProps) {
   const heading = content?.heading || 'Transform Your Business';
-  const subheading = content?.subheading || 'Learn how modern ERP automates workflows and drives efficiency across departments.';
+  const description = content?.description || 'Learn how modern ERP automates workflows and drives efficiency across departments.';
   
   const defaultImages = [
     '/ErpOverview/transform-1.png',
@@ -33,19 +33,19 @@ export function ErpTransform({ content }: ErpTransformProps) {
   const items = (content?.items || [
     { 
       title: 'OPERATIONAL EXCELLENCE', 
-      desc: 'OE can be defined as a state of excellence an organization attains if all its resources perform at their optimum levels following the processes laid down to increase the productivity of the organization. Operational excellence is often quantified in the form of cost reduction and the reduction in the number and cycle time of various processes. ebizframe ERP Software in India is the best tool for an enterprise to achieve operational excellence in any business vertical. It streamlines the processes across the enterprise, eliminating redundant data, reducing costs, and improving quality. ebizframe ERP Software in India also provides you with actionable insights so that you can take corrective measures to attain optimum performance for your business in the least time possible.' 
+      description: 'OE can be defined as a state of excellence an organization attains if all its resources perform at their optimum levels following the processes laid down to increase the productivity of the organization. Operational excellence is often quantified in the form of cost reduction and the reduction in the number and cycle time of various processes. ebizframe ERP Software in India is the best tool for an enterprise to achieve operational excellence in any business vertical. It streamlines the processes across the enterprise, eliminating redundant data, reducing costs, and improving quality. ebizframe ERP Software in India also provides you with actionable insights so that you can take corrective measures to attain optimum performance for your business in the least time possible.' 
     },
     { 
       title: 'MANAGERIAL EFFECTIVENESS', 
-      desc: 'OE can be defined as a state of excellence an organization attains if all its resources perform at their optimum levels following the processes laid down to increase the productivity of the organization. Operational excellence is often quantified in the form of cost reduction and the reduction in the number and cycle time of various processes. ebizframe ERP Software in India is the best tool for an enterprise to achieve operational excellence in any business vertical. It streamlines the processes across the enterprise, eliminating redundant data, reducing costs, and improving quality. ebizframe ERP Software in India also provides you with actionable insights so that you can take corrective measures to attain optimum performance for your business in the least time possible.' 
+      description: 'OE can be defined as a state of excellence an organization attains if all its resources perform at their optimum levels following the processes laid down to increase the productivity of the organization. Operational excellence is often quantified in the form of cost reduction and the reduction in the number and cycle time of various processes. ebizframe ERP Software in India is the best tool for an enterprise to achieve operational excellence in any business vertical. It streamlines the processes across the enterprise, eliminating redundant data, reducing costs, and improving quality. ebizframe ERP Software in India also provides you with actionable insights so that you can take corrective measures to attain optimum performance for your business in the least time possible.' 
     },
     { 
       title: 'STRATEGIC INVESTMENT', 
-      desc: 'OE can be defined as a state of excellence an organization attains if all its resources perform at their optimum levels following the processes laid down to increase the productivity of the organization. Operational excellence is often quantified in the form of cost reduction and the reduction in the number and cycle time of various processes. ebizframe ERP Software in India is the best tool for an enterprise to achieve operational excellence in any business vertical. It streamlines the processes across the enterprise, eliminating redundant data, reducing costs, and improving quality. ebizframe ERP Software in India also provides you with actionable insights so that you can take corrective measures to attain optimum performance for your business in the least time possible.' 
+      description: 'OE can be defined as a state of excellence an organization attains if all its resources perform at their optimum levels following the processes laid down to increase the productivity of the organization. Operational excellence is often quantified in the form of cost reduction and the reduction in the number and cycle time of various processes. ebizframe ERP Software in India is the best tool for an enterprise to achieve operational excellence in any business vertical. It streamlines the processes across the enterprise, eliminating redundant data, reducing costs, and improving quality. ebizframe ERP Software in India also provides you with actionable insights so that you can take corrective measures to attain optimum performance for your business in the least time possible.' 
     },
   ]).map((item, idx) => ({
     ...item,
-    iconImage: item.iconImage || defaultImages[idx % defaultImages.length],
+    image: item.image || defaultImages[idx % defaultImages.length],
   }));
 
   const containerVariants = {
@@ -84,9 +84,16 @@ export function ErpTransform({ content }: ErpTransformProps) {
           </MotionSection>
           
           <MotionSection variant="fadeUp" delay={0.15}>
-            <p className="text-slate-500 text-lg">
-              {subheading}
-            </p>
+            {description.includes('<p>') ? (
+              <div 
+                className="text-slate-500 text-lg prose prose-lg max-w-none prose-p:my-2 mx-auto"
+                dangerouslySetInnerHTML={{ __html: description }}
+              />
+            ) : (
+              <p className="text-slate-500 text-lg">
+                {description}
+              </p>
+            )}
           </MotionSection>
         </div>
 
@@ -107,9 +114,9 @@ export function ErpTransform({ content }: ErpTransformProps) {
               {/* Left Side: Custom Image Container */}
               <div className=" rounded-3xl flex items-center justify-center shrink-0 transition-colors duration-300 overflow-hidden">
                 <div className="w-full h-full flex items-center justify-center transition-transform duration-500 group-hover:scale-105">
-                  {item.iconImage ? (
+                  {item.image ? (
                     <img 
-                      src={item.iconImage} 
+                      src={item.image} 
                       alt={item.title} 
                       className="w-full h-full object-contain"
                     />
@@ -124,9 +131,16 @@ export function ErpTransform({ content }: ErpTransformProps) {
                 <h3 className="text-lg md:text-3xl font-medium text-[#777777] tracking-tight group-hover:text-slate-900 transition-colors duration-300">
                   {item.title}
                 </h3>
-                <p className="text-slate-500 text-base text-justify">
-                  {item.desc}
-                </p>
+                {item.description?.includes('<p>') ? (
+                  <div 
+                    className="text-slate-500 text-base text-justify prose prose-sm max-w-none prose-p:my-2"
+                    dangerouslySetInnerHTML={{ __html: item.description }}
+                  />
+                ) : (
+                  <p className="text-slate-500 text-base text-justify">
+                    {item.description}
+                  </p>
+                )}
               </div>
             </motion.div>
           ))}

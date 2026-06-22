@@ -4,19 +4,18 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { MotionSection } from '@/components/animations/MotionSection';
 
-interface ErpTab {
-  id: string;
-  title: string;
-  contentImage: string;
-  contentHeading: string;
-  contentParagraphs: string[];
-  illustrationUrl?: string;
+interface ErpFeature {
+  id?: string;
+  image?: string;
+  title?: string;
+  desc?: string;
+  desc2?: string;
 }
 
 interface ErpFeaturesTabContent {
   heading?: string;
   subheading?: string;
-  tabs?: ErpTab[];
+  features?: ErpFeature[];
 }
 
 interface ErpFeaturesTabProps {
@@ -26,61 +25,46 @@ interface ErpFeaturesTabProps {
 export function ErpFeaturesTab({ content }: ErpFeaturesTabProps) {
   const heading = content?.heading || 'Choosing the Right ERP Solution for Modern Businesses';
   const subheading = content?.subheading || 'Select standard version or customizable version';
-  const tabs = content?.tabs || [
+  const features = content?.features || [
     {
       id: 'standard',
-      contentImage: '/ErpOverview/featureTav1.png',
+      image: '/ErpOverview/featureTav1.png',
       title: 'STANDARD VERSION OR WITH CUSTOMIZATION',
-      contentHeading: 'FOR STANDARD VERSION OR WITH CUSTOMIZATION',
-      contentParagraphs: [
-        'Our standard ERP edition offers an immediately deployable software suite built around best practices in supply chain, invoicing, core accounting, and materials procurement.',
-        'It is designed to get your business up and running in record time while preserving options to configure fields, triggers, and reports to match your unique organizational flow.',
-      ],
+      desc: 'Our standard ERP edition offers an immediately deployable software suite built around best practices in supply chain, invoicing, core accounting, and materials procurement.',
+      desc2: 'It is designed to get your business up and running in record time while preserving options to configure fields, triggers, and reports to match your unique organizational flow.',
     },
     {
       id: 'global',
-      contentImage: '/ErpOverview/ERP-2.png',
+      image: '/ErpOverview/ERP-2.png',
       title: 'GLOBAL STANDARD EDITION',
-      contentHeading: 'GLOBAL STANDARD EDITION',
-      contentParagraphs: [
-        'A global-scale ERP suite engineered for multi-national operations, multi-currency ledgers, and consolidated international accounting reporting.',
-        'Built with multi-company hierarchy, global supply logistics controllers, and international taxation audit support out-of-the-box.',
-      ],
+      desc: 'A global-scale ERP suite engineered for multi-national operations, multi-currency ledgers, and consolidated international accounting reporting.',
+      desc2: 'Built with multi-company hierarchy, global supply logistics controllers, and international taxation audit support out-of-the-box.',
     },
     {
       id: 'commerce',
-      contentImage: '/ErpOverview/ERP-3.png',
+      image: '/ErpOverview/ERP-3.png',
       title: 'COMMERCE ENGINE SPECIAL EDITION',
-      contentHeading: 'COMMERCE ENGINE SPECIAL EDITION',
-      contentParagraphs: [
-        'Omnichannel e-commerce integration with high-velocity dispatch control, real-time stock synching, and automated order fulfillment systems.',
-        'Designed to bridge warehouses directly with digital web store fronts, retail POS networks, and direct delivery APIs.',
-      ],
+      desc: 'Omnichannel e-commerce integration with high-velocity dispatch control, real-time stock synching, and automated order fulfillment systems.',
+      desc2: 'Designed to bridge warehouses directly with digital web store fronts, retail POS networks, and direct delivery APIs.',
     },
     {
       id: 'enterprise',
-      contentImage: '/ErpOverview/ERP-4.png',
+      image: '/ErpOverview/ERP-4.png',
       title: 'ENTERPRISE SPECIFICATIONS',
-      contentHeading: 'ENTERPRISE SPECIFICATIONS',
-      contentParagraphs: [
-        'Our most comprehensive ERP suite offering advanced process engineering, dedicated database scaling, and high-fidelity customization frameworks.',
-        'Perfect for conglomerates requiring strict compliance controls, infinite modularity, and deep API integrations across corporate portfolios.',
-      ],
+      desc: 'Our most comprehensive ERP suite offering advanced process engineering, dedicated database scaling, and high-fidelity customization frameworks.',
+      desc2: 'Perfect for conglomerates requiring strict compliance controls, infinite modularity, and deep API integrations across corporate portfolios.',
     },
     {
       id: 'multisite',
-      contentImage: '/ErpOverview/ERP-5.png',
+      image: '/ErpOverview/ERP-5.png',
       title: 'MULTI-SITE SYSTEM EDITION',
-      contentHeading: 'MULTI-SITE SYSTEM EDITION',
-      contentParagraphs: [
-        'Synchronized multi-facility operations, consolidated material tracking, inter-branch ledger reconciliations, and centralized warehousing management.',
-        'Enables transparent control over dozens of brick-and-mortar locations, distribution hubs, or secondary factory setups.',
-      ],
+      desc: 'Synchronized multi-facility operations, consolidated material tracking, inter-branch ledger reconciliations, and centralized warehousing management.',
+      desc2: 'Enables transparent control over dozens of brick-and-mortar locations, distribution hubs, or secondary factory setups.',
     },
   ];
 
-  const [activeTabId, setActiveTabId] = useState(tabs[0]?.id || 'standard');
-  const activeTab = tabs.find((tab) => tab.id === activeTabId) || tabs[0];
+  const [activeTabId, setActiveTabId] = useState(features[0]?.id || '0');
+  const activeTab = features.find((f, idx) => (f.id || idx.toString()) === activeTabId) || features[0];
 
   return (
     <section className="relative w-full py-16 bg-[#462294] text-white overflow-hidden border-b border-slate-900">
@@ -110,26 +94,24 @@ export function ErpFeaturesTab({ content }: ErpFeaturesTabProps) {
           
           {/* Left Column: Sidebar Selector Buttons */}
           <div className="lg:col-span-5 justify-center items-center flex flex-col gap-3.5 w-full">
-            {tabs.map((tab, idx) => {
-              const isActive = tab.id === activeTabId;
+            {features.map((feature, idx) => {
+              const currentId = feature.id || idx.toString();
+              const isActive = currentId === activeTabId;
               return (
                 <motion.button
-                  key={tab.id}
+                  key={currentId}
                   initial={{ opacity: 0, x: -20 }}
                   whileInView={{ opacity: 1, x: 0 }}
                   viewport={{ once: true }}
                   transition={{ duration: 0.5, delay: idx * 0.08, ease: [0.22, 1, 0.36, 1] }}
-                  onClick={() => setActiveTabId(tab.id)}
+                  onClick={() => setActiveTabId(currentId)}
                   className={`w-full text-left px-6 py-5 rounded-full transition-all duration-300 active:scale-98 cursor-pointer flex items-center justify-between group border text-xs md:text-sm tracking-wider font-extrabold ${
                     isActive
                       ? 'bg-[#FFD54F] text-[#4B2A63] border-[#FFD54F] shadow-lg shadow-[#FFD54F]/10'
                       : 'bg-white border-white/10 text-[#462294] hover:bg-white/10 hover:text-white hover:border-white/20'
                   }`}
                 >
-                  <span className="truncate pr-4">{tab.title}</span>
-                  {/* <span className={`transition-transform duration-300 ${isActive ? 'translate-x-1' : 'group-hover:translate-x-1 opacity-60'}`}>
-                    →
-                  </span> */}
+                  <span className="truncate pr-4">{feature.title}</span>
                 </motion.button>
               );
             })}
@@ -141,7 +123,7 @@ export function ErpFeaturesTab({ content }: ErpFeaturesTabProps) {
               <div className="absolute top-0 right-0 w-64 h-64 rounded-full -mr-16 -mt-16 pointer-events-none" />
 
                 <motion.div
-                  key={activeTab.id}
+                  key={activeTab.id || activeTabId}
                   initial={{ opacity: 0, y: 15 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -15 }}
@@ -149,23 +131,39 @@ export function ErpFeaturesTab({ content }: ErpFeaturesTabProps) {
                   className=""
                 >
                   <div className="mb-6">
-                    <img src={activeTab?.contentImage || 'ErpOverview/featureTav1.png'} alt={activeTab.contentHeading} />
+                    <img src={activeTab?.image || 'ErpOverview/featureTav1.png'} alt={activeTab.title} />
                   </div>
                   {/* text and paragraphs */}
                   <div className="">
                     <h3 className="text-xl md:text-3xl font-light text-white tracking-tight leading-10">
-                      {activeTab.contentHeading}
+                      {activeTab.title}
                     </h3>
                     
-                    <div className="space-y-4">
-                      {activeTab.contentParagraphs.map((para, pIdx) => (
-                        <p
-                          key={pIdx}
-                          className="text-purple-100 text-[13px] md:text-sm font-light leading-relaxed"
-                        >
-                          {para}
-                        </p>
-                      ))}
+                    <div className="space-y-4 mt-4">
+                      {activeTab.desc && (
+                        activeTab.desc.includes('<p>') ? (
+                          <div 
+                            className="text-purple-100 text-[13px] md:text-sm font-light leading-relaxed prose prose-sm prose-invert max-w-none prose-p:my-1"
+                            dangerouslySetInnerHTML={{ __html: activeTab.desc }}
+                          />
+                        ) : (
+                          <p className="text-purple-100 text-[13px] md:text-sm font-light leading-relaxed">
+                            {activeTab.desc}
+                          </p>
+                        )
+                      )}
+                      {activeTab.desc2 && (
+                        activeTab.desc2.includes('<p>') ? (
+                          <div 
+                            className="text-purple-100 text-[13px] md:text-sm font-light leading-relaxed prose prose-sm prose-invert max-w-none prose-p:my-1"
+                            dangerouslySetInnerHTML={{ __html: activeTab.desc2 }}
+                          />
+                        ) : (
+                          <p className="text-purple-100 text-[13px] md:text-sm font-light leading-relaxed">
+                            {activeTab.desc2}
+                          </p>
+                        )
+                      )}
                     </div>
                   </div>
 

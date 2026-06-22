@@ -6,12 +6,12 @@ import { motion } from 'framer-motion';
 export default function CareerExperience({ content }: { content?: any }) {
   const {
     title = 'Get hands-on experience on cutting\nedge enterprise software products.',
-    subtitle = 'We believe great engineers deserve more than a desk\nand a deadline.',
+    tag = 'We believe great engineers deserve more than a desk\nand a deadline.',
     products = [
-      { name: 'Aviation Software', icon: '/Career-Page/aprs_svgrepo.com.png' },
-      { name: 'Global Payroll', icon: '/Career-Page/global-payroll 1.png' },
-      { name: 'ERP Software', icon: '/Career-Page/erp-software 1.png' },
-      { name: 'Logistics Software', icon: '/Career-Page/logistics-software 1.png' },
+      { title: 'Aviation Software', image: '/Career-Page/aprs_svgrepo.com.png' },
+      { title: 'Global Payroll', image: '/Career-Page/global-payroll 1.png' },
+      { title: 'ERP Software', image: '/Career-Page/erp-software 1.png' },
+      { title: 'Logistics Software', image: '/Career-Page/logistics-software 1.png' },
     ]
   } = content || {};
 
@@ -24,7 +24,7 @@ export default function CareerExperience({ content }: { content?: any }) {
         />
         <p
           className="text-[#9CA3AF] max-w-2xl mx-auto text-2xl font-light leading-snug mb-20"
-          dangerouslySetInnerHTML={{ __html: subtitle.replace(/\n/g, '<br />') }}
+          dangerouslySetInnerHTML={{ __html: tag.replace(/\n/g, '<br />') }}
         />
 
         <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
@@ -39,13 +39,13 @@ export default function CareerExperience({ content }: { content?: any }) {
             >
               <div className="w-24 h-24 mb-6 relative transition-transform duration-300 group-hover:-translate-y-2">
                 <img
-                  src={product.icon}
-                  alt={product.name}
+                  src={product.image || product.icon}
+                  alt={product.title || product.name}
                   className="w-full h-full object-contain"
                 />
               </div>
               <h3 className="text-[20px] font-light text-[#3F3F46]">
-                {product.name}
+                {product.title || product.name}
               </h3>
             </motion.div>
           ))}

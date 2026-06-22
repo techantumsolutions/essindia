@@ -6,7 +6,7 @@ import { motion } from 'framer-motion';
 export default function CareerHero({ content }: { content?: any }) {
   const {
     title = 'Join us to shape the future of\nemployment',
-    subtitle = "We're building a culture at ESS where amazing people (like you) can do their best work.\nIf you're ready to accelerate your career and transform the employment landscape, we'd\nlove for you to come work with us!",
+    description = "We're building a culture at ESS where amazing people (like you) can do their best work.\nIf you're ready to accelerate your career and transform the employment landscape, we'd\nlove for you to come work with us!",
     ctaText = 'Careers',
     bgImage = '/Career-Page/Career.png'
   } = content || {};
@@ -38,7 +38,7 @@ export default function CareerHero({ content }: { content?: any }) {
 
           <p
             className="text-white/90 text-sm md:text-[15px] max-w-2xl mx-auto leading-tight tracking-wide"
-            dangerouslySetInnerHTML={{ __html: subtitle.replace(/\n/g, '<br />') }}
+            dangerouslySetInnerHTML={{ __html: description.replace(/\n/g, '<br />') }}
           />
         </motion.div>
       </div>

@@ -6,7 +6,7 @@ import { motion } from 'framer-motion';
 export default function CareerPerks({ content }: { content?: any }) {
   const {
     title = 'Perks & Benefits',
-    subtitle = 'We care about our people so they can take care of our clients',
+    tag = 'We care about our people so they can take care of our clients',
     perks = [
       { text: "Health & Wellness Benefits" },
       { text: "Performance Bonuses" },
@@ -22,7 +22,7 @@ export default function CareerPerks({ content }: { content?: any }) {
       <div className="container mx-auto max-w-7xl text-center">
         <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-4">{title}</h2>
         <p className="text-[#71717A] max-w-2xl mx-auto text-2xl font-light leading-none mb-8">
-          {subtitle}
+          {tag}
         </p>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">

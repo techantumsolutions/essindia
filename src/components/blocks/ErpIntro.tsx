@@ -5,8 +5,8 @@ import { motion } from 'framer-motion';
 import { MotionSection } from '@/components/animations/MotionSection';
 
 interface ErpIntroContent {
-  heading?: string;
-  bodyParagraphs?: string[];
+  title?: string;
+  description?: string;
 }
 
 interface ErpIntroProps {
@@ -14,11 +14,8 @@ interface ErpIntroProps {
 }
 
 export function ErpIntro({ content }: ErpIntroProps) {
-  const heading = content?.heading || 'Optimizing operations with real-time visibility';
-  const bodyParagraphs = content?.bodyParagraphs || [
-    'ERP systems have become essential to run, scale, and transform business operations. A modern ERP unifies diverse functions—from finance and inventory management to manufacturing planning and HR—into a singular ecosystem.',
-    'This integration eliminates data silos, helping businesses maintain accuracy, improve compliance, and streamline operations to keep pace with an evolving market.',
-  ];
+  const title = content?.title || 'Optimizing operations with real-time visibility';
+  const description = content?.description || 'ERP systems have become essential to run, scale, and transform business operations. A modern ERP unifies diverse functions—from finance and inventory management to manufacturing planning and HR—into a singular ecosystem.\n\nThis integration eliminates data silos, helping businesses maintain accuracy, improve compliance, and streamline operations to keep pace with an evolving market.';
 
   return (
     <section className="relative w-full py-16 bg-[#e8ecf0] overflow-hidden border-b border-slate-100">
@@ -30,7 +27,7 @@ export function ErpIntro({ content }: ErpIntroProps) {
         <MotionSection variant="fadeUp" className="space-y-4">
           {/* Main Heading */}
           <h2 className="text-3xl md:text-4xl lg:text-[42px] leading-[1.2] font-[400] tracking-tight">
-            {heading}
+            {title}
           </h2>
 
           {/* Styled Separator Line */}
@@ -42,18 +39,26 @@ export function ErpIntro({ content }: ErpIntroProps) {
 
           {/* Description Paragraphs */}
           <div className="">
-            {bodyParagraphs.map((paragraph, index) => (
-              <motion.p
-                key={index}
+            {description.includes('<p>') ? (
+              <motion.div
                 initial={{ opacity: 0, y: 15 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                transition={{ duration: 0.8, delay: index * 0.15, ease: [0.22, 1, 0.36, 1] }}
-                className="text-gray-500 text-base md:text-lg font-light leading-6 text-justify md:text-center"
+                transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
+                className="text-gray-500 text-base md:text-lg font-light leading-6 text-justify md:text-center prose prose-sm max-w-none prose-p:my-2"
+                dangerouslySetInnerHTML={{ __html: description }}
+              />
+            ) : (
+              <motion.p
+                initial={{ opacity: 0, y: 15 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
+                className="text-gray-500 text-base md:text-lg font-light leading-6 text-justify md:text-center whitespace-pre-wrap"
               >
-                {paragraph}
+                {description}
               </motion.p>
-            ))}
+            )}
           </div>
         </MotionSection>
       </div>
