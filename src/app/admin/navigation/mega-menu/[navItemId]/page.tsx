@@ -4,11 +4,18 @@ import React, { useCallback, useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ArrowLeft, Plus, Trash2, Layers, GripVertical, Settings } from 'lucide-react';
+import { ArrowLeft, Plus, Trash2, Layers, GripVertical, Settings, Edit2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
 import type { MegaMenuPayload } from '@/lib/cms/mega-menu-types';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 
 export default function MegaMenuBuilderPage() {
   const params = useParams();
@@ -28,6 +35,9 @@ export default function MegaMenuBuilderPage() {
   const [modalName, setModalName] = useState('');
   const [modalDesc, setModalDesc] = useState('');
   const [modalPageId, setModalPageId] = useState('');
+
+  // Editing state
+  const [editingItem, setEditingItem] = useState<{ id: string; name: string; description?: string; pageId?: string | null; level: 'category' | 'sub' | 'sub-sub' } | null>(null);
 
   // Drag states
   const [draggedCatIndex, setDraggedCatIndex] = useState<number | null>(null);
@@ -72,6 +82,7 @@ export default function MegaMenuBuilderPage() {
 
   // Modal open helper
   const openModal = (type: 'category' | 'sub' | 'sub-sub') => {
+    setEditingItem(null);
     setModalType(type);
     setModalName('');
     setModalDesc('');
@@ -79,7 +90,22 @@ export default function MegaMenuBuilderPage() {
     setIsModalOpen(true);
   };
 
-  // Submit new item
+  const openEditModal = (item: any, level: 'category' | 'sub' | 'sub-sub') => {
+    setEditingItem({
+      id: item.id,
+      name: item.name,
+      description: item.description,
+      pageId: item.pageId,
+      level
+    });
+    setModalType(level);
+    setModalName(item.name);
+    setModalDesc(item.description || '');
+    setModalPageId(item.pageId || '');
+    setIsModalOpen(true);
+  };
+
+  // Submit new/edited item
   const handleModalSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!modalName.trim()) {
@@ -90,31 +116,56 @@ export default function MegaMenuBuilderPage() {
     setIsModalOpen(false);
     
     try {
-      let body: any = { level: modalType, name: modalName };
-      
-      if (modalType === 'category') {
-        body.navigationItemId = navItemId;
-        body.pageId = modalPageId || null;
-      } else if (modalType === 'sub') {
-        body.categoryId = activeCategoryId;
-        body.description = modalDesc;
-        body.pageId = modalPageId || null;
-      } else if (modalType === 'sub-sub') {
-        body.subCategoryId = activeSubId;
-        body.pageId = modalPageId || null;
-      }
+      if (editingItem) {
+        const body: any = { 
+          level: editingItem.level, 
+          name: modalName,
+          pageId: modalPageId || null,
+        };
+        if (editingItem.level === 'sub') {
+          body.description = modalDesc;
+        }
 
-      const res = await fetch('/api/admin/mega-menu', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(body),
-      });
+        const res = await fetch(`/api/admin/mega-menu/${editingItem.id}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(body),
+        });
 
-      if (res.ok) {
-        toast.success(`${modalType} added successfully`);
-        await load();
+        if (res.ok) {
+          toast.success(`${editingItem.level} updated successfully`);
+          setEditingItem(null);
+          await load();
+        } else {
+          toast.error(`Failed to update ${editingItem.level}`);
+        }
       } else {
-        toast.error(`Failed to add ${modalType}`);
+        let body: any = { level: modalType, name: modalName };
+        
+        if (modalType === 'category') {
+          body.navigationItemId = navItemId;
+          body.pageId = modalPageId || null;
+        } else if (modalType === 'sub') {
+          body.categoryId = activeCategoryId;
+          body.description = modalDesc;
+          body.pageId = modalPageId || null;
+        } else if (modalType === 'sub-sub') {
+          body.subCategoryId = activeSubId;
+          body.pageId = modalPageId || null;
+        }
+
+        const res = await fetch('/api/admin/mega-menu', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(body),
+        });
+
+        if (res.ok) {
+          toast.success(`${modalType} added successfully`);
+          await load();
+        } else {
+          toast.error(`Failed to add ${modalType}`);
+        }
       }
     } catch {
       toast.error('Error submitting form');
@@ -293,6 +344,19 @@ export default function MegaMenuBuilderPage() {
                   {cat.name}
                 </button>
                 <button
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    openEditModal(cat, 'category');
+                  }}
+                  className={cn(
+                    "p-1 rounded hover:bg-black/10 shrink-0 opacity-0 group-hover:opacity-100 transition-opacity border-none bg-transparent cursor-pointer",
+                    activeCategoryId === cat.id ? "text-white" : "text-slate-500"
+                  )}
+                >
+                  <Edit2 className="w-3.5 h-3.5" />
+                </button>
+                <button
                   onClick={(e) => {
                     e.stopPropagation();
                     deleteItem(cat.id, 'category');
@@ -338,16 +402,28 @@ export default function MegaMenuBuilderPage() {
                 <div className="flex-1 min-w-0">
                   <div className="flex justify-between items-start gap-2">
                     <span className="font-bold text-sm text-slate-800 break-words">{sub.name}</span>
-                    <button
-                      type="button"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        deleteItem(sub.id, 'sub');
-                      }}
-                      className="text-slate-300 hover:text-rose-500 opacity-0 group-hover:opacity-100 transition-opacity border-none bg-transparent cursor-pointer shrink-0"
-                    >
-                      <Trash2 className="w-3.5 h-3.5" />
-                    </button>
+                    <div className="flex gap-1">
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          openEditModal(sub, 'sub');
+                        }}
+                        className="text-slate-300 hover:text-slate-600 opacity-0 group-hover:opacity-100 transition-opacity border-none bg-transparent cursor-pointer shrink-0"
+                      >
+                        <Edit2 className="w-3.5 h-3.5" />
+                      </button>
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          deleteItem(sub.id, 'sub');
+                        }}
+                        className="text-slate-300 hover:text-rose-500 opacity-0 group-hover:opacity-100 transition-opacity border-none bg-transparent cursor-pointer shrink-0"
+                      >
+                        <Trash2 className="w-3.5 h-3.5" />
+                      </button>
+                    </div>
                   </div>
                   {sub.description && (
                     <p className="text-xs text-slate-400 mt-1 line-clamp-2">{sub.description}</p>
@@ -379,13 +455,25 @@ export default function MegaMenuBuilderPage() {
                 className="flex items-center justify-between p-3 rounded-lg bg-slate-50 text-sm text-slate-600 group"
               >
                 <span className="font-bold text-[13px] text-slate-700 truncate mr-2">{leaf.name}</span>
-                <button
-                  type="button"
-                  onClick={() => deleteItem(leaf.id, 'sub-sub')}
-                  className="text-slate-300 hover:text-rose-500 border-none bg-transparent cursor-pointer shrink-0"
-                >
-                  <Trash2 className="w-3.5 h-3.5" />
-                </button>
+                <div className="flex gap-1">
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      openEditModal(leaf, 'sub-sub');
+                    }}
+                    className="text-slate-300 hover:text-slate-600 border-none bg-transparent cursor-pointer shrink-0"
+                  >
+                    <Edit2 className="w-3.5 h-3.5" />
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => deleteItem(leaf.id, 'sub-sub')}
+                    className="text-slate-300 hover:text-rose-500 border-none bg-transparent cursor-pointer shrink-0"
+                  >
+                    <Trash2 className="w-3.5 h-3.5" />
+                  </button>
+                </div>
               </div>
             ))}
           </div>
@@ -420,9 +508,11 @@ export default function MegaMenuBuilderPage() {
               <div>
                 <h3 className="text-xl font-bold text-slate-900 flex items-center gap-2">
                   <Settings className="w-5 h-5 text-[#4B2A63]" />
-                  Add {modalType === 'category' ? 'Category Tab' : modalType === 'sub' ? 'Sub Category' : 'Leaf Link'}
+                  {editingItem ? 'Edit' : 'Add'} {modalType === 'category' ? 'Category Tab' : modalType === 'sub' ? 'Sub Category' : 'Leaf Link'}
                 </h3>
-                <p className="text-xs text-slate-400 mt-1 font-medium uppercase tracking-wider">Configure new hierarchy node settings</p>
+                <p className="text-xs text-slate-400 mt-1 font-medium uppercase tracking-wider">
+                  {editingItem ? 'Update details for this hierarchy node' : 'Configure new hierarchy node settings'}
+                </p>
               </div>
 
               <form onSubmit={handleModalSubmit} className="space-y-4">
@@ -453,18 +543,57 @@ export default function MegaMenuBuilderPage() {
 
                 <div className="space-y-1">
                   <label className="text-[11px] font-black text-slate-400 uppercase tracking-widest ml-1">Link to CMS Page</label>
-                  <select
+                  <Select
                     value={modalPageId}
-                    onChange={(e) => setModalPageId(e.target.value)}
-                    className="w-full bg-slate-50 border-2 border-transparent focus:border-[#4B2A63]/10 focus:bg-white focus:ring-4 focus:ring-[#4B2A63]/5 rounded-2xl px-5 py-3 text-sm font-bold outline-none transition-all"
+                    onValueChange={(val) => setModalPageId(val || '')}
                   >
-                    <option value="">No Page (Direct Node Only)</option>
-                    {registryPages.map((page) => (
-                      <option key={page.id} value={page.id}>
-                        {page.title} ({page.routePath})
-                      </option>
-                    ))}
-                  </select>
+                    <SelectTrigger className="w-full bg-slate-50 border border-slate-200 focus:border-[#4B2A63]/10 focus:bg-white rounded-2xl px-5 py-3 text-sm font-bold outline-none flex items-center justify-between text-slate-700 h-12">
+                      {modalPageId ? (
+                        (() => {
+                          const selectedPage = registryPages.find((p) => p.id === modalPageId);
+                          return selectedPage ? (
+                            <span className="text-slate-700">
+                              {selectedPage.title} <span className="text-slate-400 text-xs font-mono">({selectedPage.routePath})</span>
+                            </span>
+                          ) : (
+                            <SelectValue placeholder="No Page (Direct Node Only)" />
+                          );
+                        })()
+                      ) : (
+                        <SelectValue placeholder="No Page (Direct Node Only)" />
+                      )}
+                    </SelectTrigger>
+                    <SelectContent className="bg-white border border-slate-100 rounded-2xl shadow-xl p-2 z-[999] max-h-60 overflow-y-auto">
+                      <SelectItem value="">No Page (Direct Node Only)</SelectItem>
+                      {registryPages.map((page) => {
+                        const isAssigned = !!(
+                          page.navigationLabel ||
+                          page.categoryLabel ||
+                          page.subCategoryLabel ||
+                          page.subSubCategoryLabel
+                        );
+                        const pageVal = page.id || '';
+                        return (
+                          <SelectItem key={pageVal} value={pageVal}>
+                            <div className="flex items-center justify-between w-full max-w-[400px] overflow-x-auto gap-4 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+                              <span className="font-bold text-slate-800">{page.title}</span>
+                              <span className="text-slate-400 text-xs font-mono">({page.routePath})</span>
+                              <span
+                                className={cn(
+                                  'ml-auto px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider shrink-0',
+                                  isAssigned
+                                    ? 'bg-rose-50 text-rose-600 border border-rose-100'
+                                    : 'bg-emerald-50 text-emerald-600 border border-emerald-100'
+                                )}
+                              >
+                                {isAssigned ? 'Assigned' : 'Available'}
+                              </span>
+                            </div>
+                          </SelectItem>
+                        );
+                      })}
+                    </SelectContent>
+                  </Select>
                 </div>
 
                 <div className="flex gap-3 pt-4">
@@ -480,7 +609,7 @@ export default function MegaMenuBuilderPage() {
                     type="submit"
                     className="flex-1 bg-[#4B2A63] hover:bg-[#3B198F] text-white rounded-full h-11 font-bold shadow-lg shadow-[#4B2A63]/10 cursor-pointer"
                   >
-                    Create Node
+                    {editingItem ? 'Save Changes' : 'Create Node'}
                   </Button>
                 </div>
               </form>

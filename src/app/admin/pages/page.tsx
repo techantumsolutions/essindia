@@ -179,7 +179,7 @@ function PagesModuleContent() {
         className="bg-white rounded-[32px] border border-slate-100 shadow-[0_20px_50px_-15px_rgba(0,0,0,0.03)] overflow-hidden"
       >
         <div className="bg-slate-50/50 px-6 py-4 grid grid-cols-12 gap-2 text-[10px] font-black text-slate-400 uppercase tracking-[0.15em] border-b border-slate-100">
-          <div className="col-span-3">Page / Nav mapping</div>
+          <div className="col-span-3">Page</div>
           <div className="col-span-2">Route</div>
           <div className="col-span-1 text-center">Type</div>
           <div className="col-span-1 text-center">Status</div>
@@ -236,9 +236,7 @@ function RegistryPageRow({
         <motion.div>
           <h4 className="text-[15px] font-bold text-slate-900">{page.title}</h4>
           <p className="text-[10px] text-slate-400 truncate">
-            {[page.navigationLabel, page.categoryLabel, page.subCategoryLabel, page.subSubCategoryLabel]
-              .filter(Boolean)
-              .join(' → ') || page.source}
+            {page.source}
           </p>
         </motion.div>
       </motion.div>

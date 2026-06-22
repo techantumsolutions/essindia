@@ -350,3 +350,6 @@ export async function ensureNavPagesSyncedToMegaMenu(navigationItemId: string): 
     });
   }
 }
+
+// Trigger HMR cache reload
+

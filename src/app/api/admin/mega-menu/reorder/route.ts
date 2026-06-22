@@ -8,6 +8,10 @@ import { navigationTreeRepository } from '@/repositories/navigation-tree.reposit
 import { isAdminRequest } from '@/lib/cms/auth';
 import { unauthorized } from '@/lib/cms/api-response';
 
+function isValidUuid(id: string): boolean {
+  return /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id);
+}
+
 export async function POST(request: Request) {
   if (!(await isAdminRequest())) return unauthorized();
 
@@ -22,12 +26,14 @@ export async function POST(request: Request) {
     await db.transaction(async (tx) => {
       if (level === 'category') {
         for (const item of items) {
+          if (!isValidUuid(item.id)) continue;
           await tx.update(megaMenuCategories)
             .set({ orderIndex: item.orderIndex })
             .where(eq(megaMenuCategories.id, item.id));
         }
       } else if (level === 'sub') {
         for (const item of items) {
+          if (!isValidUuid(item.id)) continue;
           await tx.update(megaMenuSubCategories)
             .set({ orderIndex: item.orderIndex })
             .where(eq(megaMenuSubCategories.id, item.id));

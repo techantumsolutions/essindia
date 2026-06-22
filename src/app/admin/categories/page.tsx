@@ -11,28 +11,28 @@ import {
   Trash2,
   Edit2,
   FileText,
-  MoveRight,
-  AlertTriangle,
-  ExternalLink,
-  X,
-  Layers,
-  CheckSquare,
-  Square,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
-import { useRouter } from 'next/navigation';
 import type { CategoryTreeNode } from '@/lib/cms/types';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 
 // ─────────────────────────────────────────────────────────────────
-// Types
+// Types & Helpers
 // ─────────────────────────────────────────────────────────────────
 
 type CategoryForm = {
   name: string;
   slug: string;
   parentId: string;
+  pageId: string;
   description: string;
   orderIndex: number;
   status: 'active' | 'inactive';
@@ -42,22 +42,54 @@ const emptyForm: CategoryForm = {
   name: '',
   slug: '',
   parentId: '',
+  pageId: '',
   description: '',
-  orderIndex: 0,
+  orderIndex: 1,
   status: 'active',
 };
 
-type PageItem = {
-  id: string;
-  title: string;
-  slug: string;
-  fullPath: string;
-  status: string;
-  pageType: string | null;
-  updatedAt: string;
-};
-
-type Template = { id: string; name: string };
+function mapMegaCategoriesToTree(categories: any[]): CategoryTreeNode[] {
+  return categories.map((cat) => ({
+    id: cat.id,
+    parentId: null,
+    pageId: cat.pageId,
+    name: cat.name,
+    slug: cat.slug,
+    description: cat.description || null,
+    icon: cat.icon || null,
+    imageUrl: null,
+    orderIndex: cat.orderIndex ?? 1,
+    status: cat.status || 'active',
+    pageCount: cat.pageId ? 1 : 0,
+    children: (cat.subCategories || []).map((sub: any) => ({
+      id: sub.id,
+      parentId: cat.id,
+      pageId: sub.pageId,
+      name: sub.name,
+      slug: sub.slug,
+      description: sub.description || null,
+      icon: null,
+      imageUrl: null,
+      orderIndex: sub.orderIndex ?? 1,
+      status: sub.status || 'active',
+      pageCount: sub.pageId ? 1 : 0,
+      children: (sub.subSubCategories || []).map((leaf: any) => ({
+        id: leaf.id,
+        parentId: sub.id,
+        pageId: leaf.pageId,
+        name: leaf.name,
+        slug: leaf.slug,
+        description: null,
+        icon: null,
+        imageUrl: null,
+        orderIndex: leaf.orderIndex ?? 1,
+        status: leaf.status || 'active',
+        pageCount: leaf.pageId ? 1 : 0,
+        children: [],
+      })),
+    })),
+  }));
+}
 
 // ─────────────────────────────────────────────────────────────────
 // Main Component
@@ -66,11 +98,14 @@ type Template = { id: string; name: string };
 export default function CategoriesModule() {
   const [tree, setTree] = React.useState<CategoryTreeNode[]>([]);
   const [flat, setFlat] = React.useState<CategoryTreeNode[]>([]);
+  const [registryPages, setRegistryPages] = React.useState<any[]>([]);
+  const [navItems, setNavItems] = React.useState<any[]>([]);
+  const [selectedNavId, setSelectedNavId] = React.useState<string>('');
+  const [isNavLoading, setIsNavLoading] = React.useState(true);
   const [isLoading, setIsLoading] = React.useState(true);
   const [isModalOpen, setIsModalOpen] = React.useState(false);
   const [editingId, setEditingId] = React.useState<string | null>(null);
   const [form, setForm] = React.useState<CategoryForm>(emptyForm);
-  // For "Add sub-category under" — track parent for warning
   const [newSubParentId, setNewSubParentId] = React.useState<string | null>(null);
 
   const flatten = (nodes: CategoryTreeNode[], acc: CategoryTreeNode[] = []) => {
@@ -81,19 +116,76 @@ export default function CategoriesModule() {
     return acc;
   };
 
-  const fetchCategories = React.useCallback(async () => {
+  const fetchNavItems = React.useCallback(async () => {
     try {
-      const res = await fetch('/api/admin/categories?tree=true');
+      const res = await fetch('/api/navigation/tree?location=header-main');
+      if (res.ok) {
+        const data = await res.json();
+        const items = data.tree || [];
+        const megaNavs = items.filter((item: any) => item.megaMenuEnabled);
+        setNavItems(megaNavs);
+
+        // Find Solutions or fallback to first
+        const solutionsItem = megaNavs.find(
+          (item: any) => item.slug === 'solutions' || item.label.toLowerCase() === 'solutions'
+        );
+        const defaultId = solutionsItem?.id || megaNavs[0]?.id || '';
+        setSelectedNavId(defaultId);
+      }
+    } catch (e) {
+      console.error('Failed to load navigation items', e);
+    } finally {
+      setIsNavLoading(false);
+    }
+  }, []);
+
+  const fetchRegistryPages = React.useCallback(async () => {
+    try {
+      const res = await fetch('/api/admin/pages?registry=true');
+      if (res.ok) {
+        const data = await res.json();
+        if (Array.isArray(data)) {
+          setRegistryPages(data);
+        }
+      }
+    } catch (e) {
+      console.error('Failed to load registry pages', e);
+    }
+  }, []);
+
+  const fetchCategories = React.useCallback(async () => {
+    if (!selectedNavId) {
+      if (!isNavLoading) {
+        setIsLoading(false);
+      }
+      return;
+    }
+    setIsLoading(true);
+    try {
+      const res = await fetch(`/api/admin/mega-menu?navigationItemId=${selectedNavId}`);
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || 'Failed to load categories');
-      setTree(data);
-      setFlat(flatten(data));
+
+      const megaMenuCategories = data.megaMenu?.categories || [];
+      const mappedTree = mapMegaCategoriesToTree(megaMenuCategories);
+      setTree(mappedTree);
+      setFlat(flatten(mappedTree));
     } catch (e: unknown) {
       toast.error(e instanceof Error ? e.message : 'Failed to load categories');
     } finally {
       setIsLoading(false);
     }
-  }, []);
+  }, [selectedNavId, isNavLoading]);
+
+  const handleRefresh = React.useCallback(() => {
+    fetchCategories();
+    fetchRegistryPages();
+  }, [fetchCategories, fetchRegistryPages]);
+
+  React.useEffect(() => {
+    fetchNavItems();
+    fetchRegistryPages();
+  }, [fetchNavItems, fetchRegistryPages]);
 
   React.useEffect(() => {
     fetchCategories();
@@ -102,7 +194,7 @@ export default function CategoriesModule() {
   const openCreate = (parentId?: string) => {
     setEditingId(null);
     setNewSubParentId(parentId || null);
-    setForm({ ...emptyForm, parentId: parentId || '' });
+    setForm({ ...emptyForm, parentId: parentId || '', pageId: '' });
     setIsModalOpen(true);
   };
 
@@ -113,16 +205,13 @@ export default function CategoriesModule() {
       name: category.name,
       slug: category.slug,
       parentId: category.parentId || '',
+      pageId: category.pageId || '',
       description: category.description || '',
-      orderIndex: category.orderIndex,
+      orderIndex: category.orderIndex !== undefined && category.orderIndex !== null ? category.orderIndex : 1,
       status: (category.status === 'inactive' ? 'inactive' : 'active') as 'active' | 'inactive',
     });
     setIsModalOpen(true);
   };
-
-  // Find the parent category node for the warning banner
-  const parentForWarning = newSubParentId ? flat.find((c) => c.id === newSubParentId) : null;
-  const parentHasPages = parentForWarning && parentForWarning.pageCount > 0;
 
   const handleSave = async () => {
     if (!form.name.trim()) {
@@ -130,26 +219,69 @@ export default function CategoriesModule() {
       return;
     }
     try {
-      const payload = {
+      let level: 'category' | 'sub' | 'sub-sub' = 'category';
+      let parentIdToUse: string | null = null;
+
+      if (editingId) {
+        const editingNode = flat.find((n) => n.id === editingId);
+        if (!editingNode) throw new Error('Category not found');
+
+        const findDepth = (nodeId: string): number => {
+          const node = flat.find((n) => n.id === nodeId);
+          if (!node || !node.parentId) return 0;
+          return 1 + findDepth(node.parentId);
+        };
+        const nodeDepth = findDepth(editingId);
+        if (nodeDepth === 1) level = 'sub';
+        if (nodeDepth === 2) level = 'sub-sub';
+      } else {
+        if (newSubParentId) {
+          parentIdToUse = newSubParentId;
+          const parentNode = flat.find((n) => n.id === newSubParentId);
+          if (!parentNode) throw new Error('Parent not found');
+
+          const findDepth = (nodeId: string): number => {
+            const node = flat.find((n) => n.id === nodeId);
+            if (!node || !node.parentId) return 0;
+            return 1 + findDepth(node.parentId);
+          };
+          const parentDepth = findDepth(newSubParentId);
+          if (parentDepth === 0) level = 'sub';
+          else if (parentDepth === 1) level = 'sub-sub';
+          else throw new Error('Cannot create sub-categories past 3 levels');
+        }
+      }
+
+      const payload: any = {
+        level,
         name: form.name.trim(),
         slug: form.slug.trim() || undefined,
-        parentId: form.parentId || null,
-        description: form.description.trim() || undefined,
+        pageId: form.pageId || null,
         orderIndex: form.orderIndex,
         status: form.status,
       };
 
+      if (!editingId) {
+        if (level === 'category') {
+          payload.navigationItemId = selectedNavId;
+        } else if (level === 'sub') {
+          payload.categoryId = parentIdToUse;
+        } else if (level === 'sub-sub') {
+          payload.subCategoryId = parentIdToUse;
+        }
+      }
+
       const res = editingId
-        ? await fetch(`/api/admin/categories/${editingId}`, {
-            method: 'PATCH',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(payload),
-          })
-        : await fetch('/api/admin/categories', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(payload),
-          });
+        ? await fetch(`/api/admin/mega-menu/${editingId}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload),
+        })
+        : await fetch('/api/admin/mega-menu', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload),
+        });
 
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || 'Save failed');
@@ -159,7 +291,7 @@ export default function CategoriesModule() {
       setEditingId(null);
       setNewSubParentId(null);
       setForm(emptyForm);
-      fetchCategories();
+      handleRefresh();
     } catch (e: unknown) {
       toast.error(e instanceof Error ? e.message : 'Save failed');
     }
@@ -170,15 +302,30 @@ export default function CategoriesModule() {
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
         <div>
           <h1 className="text-3xl font-bold text-slate-900 tracking-tight mb-2">Categories</h1>
-          <p className="text-slate-500 font-medium">Hierarchical taxonomy for page creation and navigation.</p>
+          <p className="text-slate-500 font-medium">Manage hierarchy and page mappings for live website menus.</p>
         </div>
-        <Button
-          onClick={() => openCreate()}
-          className="bg-[#4B2A63] hover:bg-[#3B198F] text-white rounded-full px-8 h-12 font-bold shadow-lg shadow-[#4B2A63]/20"
-        >
-          <Plus className="w-5 h-5 mr-2" />
-          Add Category
-        </Button>
+        <div className="flex items-center gap-4 flex-wrap">
+          {navItems.length > 0 && (
+            <select
+              value={selectedNavId}
+              onChange={(e) => setSelectedNavId(e.target.value)}
+              className="bg-white border border-slate-200 rounded-full px-6 h-12 font-bold outline-none shadow-sm focus:ring-4 focus:ring-[#4B2A63]/5 text-slate-700"
+            >
+              {navItems.map((item) => (
+                <option key={item.id} value={item.id}>
+                  {item.label} Menu
+                </option>
+              ))}
+            </select>
+          )}
+          <Button
+            onClick={() => openCreate()}
+            className="bg-[#4B2A63] hover:bg-[#3B198F] text-white rounded-full px-8 h-12 font-bold shadow-lg shadow-[#4B2A63]/20"
+          >
+            <Plus className="w-5 h-5 mr-2" />
+            Add Category
+          </Button>
+        </div>
       </div>
 
       <div className="bg-white rounded-[32px] border border-slate-100 shadow-[0_20px_50px_-15px_rgba(0,0,0,0.03)] overflow-hidden">
@@ -196,7 +343,8 @@ export default function CategoriesModule() {
                 category={cat}
                 depth={0}
                 allCategories={flat}
-                onRefresh={fetchCategories}
+                registryPages={registryPages}
+                onRefresh={handleRefresh}
                 onEdit={openEdit}
                 onAddSubCategory={(parentId) => openCreate(parentId)}
               />
@@ -227,20 +375,6 @@ export default function CategoriesModule() {
                 {editingId ? 'Edit Category' : newSubParentId ? `Add Sub-category` : 'New Category'}
               </h2>
 
-              {/* Warning banner when parent has pages */}
-              {!editingId && parentHasPages && (
-                <div className="flex items-start gap-3 bg-amber-50 border border-amber-200 rounded-2xl p-4">
-                  <AlertTriangle className="w-5 h-5 text-amber-500 flex-shrink-0 mt-0.5" />
-                  <div>
-                    <p className="text-sm font-bold text-amber-800">This category has pages assigned</p>
-                    <p className="text-xs text-amber-700 mt-1">
-                      Once you add sub-categories, use the <strong>Migrate Pages</strong> tool in the category row to
-                      move the relevant pages to the correct sub-category.
-                    </p>
-                  </div>
-                </div>
-              )}
-
               <input
                 placeholder="Category name"
                 value={form.name}
@@ -253,23 +387,6 @@ export default function CategoriesModule() {
                 onChange={(e) => setForm({ ...form, slug: e.target.value })}
                 className="w-full bg-slate-50 rounded-2xl px-6 py-4 font-bold outline-none focus:ring-4 focus:ring-[#4B2A63]/10"
               />
-              {/* Only show parent picker for the general "Add Category" flow */}
-              {!newSubParentId && (
-                <select
-                  value={form.parentId}
-                  onChange={(e) => setForm({ ...form, parentId: e.target.value })}
-                  className="w-full bg-slate-50 rounded-2xl px-6 py-4 font-bold outline-none"
-                >
-                  <option value="">No parent (top level)</option>
-                  {flat
-                    .filter((c) => c.id !== editingId)
-                    .map((c) => (
-                      <option key={c.id} value={c.id}>
-                        {c.name}
-                      </option>
-                    ))}
-                </select>
-              )}
               {newSubParentId && (
                 <p className="text-sm text-slate-500 bg-slate-50 rounded-2xl px-6 py-4">
                   Parent: <strong>{flat.find((c) => c.id === newSubParentId)?.name}</strong>
@@ -286,7 +403,13 @@ export default function CategoriesModule() {
                   type="number"
                   placeholder="Sort order"
                   value={form.orderIndex}
-                  onChange={(e) => setForm({ ...form, orderIndex: Number(e.target.value) || 0 })}
+                  onChange={(e) => {
+                    const val = Number(e.target.value);
+                    setForm({
+                      ...form,
+                      orderIndex: e.target.value === '' ? 1 : (val < 1 ? (editingId ? val : 1) : val)
+                    });
+                  }}
                   className="w-full bg-slate-50 rounded-2xl px-6 py-4 font-bold outline-none"
                 />
                 <select
@@ -298,6 +421,65 @@ export default function CategoriesModule() {
                   <option value="inactive">Inactive</option>
                 </select>
               </div>
+
+              {/* Link to CMS Page select input */}
+              <div className="space-y-1">
+                <label className="text-[11px] font-black text-slate-400 uppercase tracking-widest block mb-2">
+                  Link to CMS Page (Optional)
+                </label>
+                <Select
+                  value={form.pageId}
+                  onValueChange={(val) => setForm({ ...form, pageId: val || '' })}
+                >
+                  <SelectTrigger className="w-full bg-slate-50 border border-slate-200 focus:border-[#4B2A63]/10 focus:bg-white rounded-2xl px-6 py-4 font-bold outline-none flex items-center justify-between text-slate-700 h-14">
+                    {form.pageId ? (
+                      (() => {
+                        const selectedPage = registryPages.find((p) => p.id === form.pageId);
+                        return selectedPage ? (
+                          <span className="text-slate-700">
+                            {selectedPage.title} <span className="text-slate-400 text-xs font-mono">({selectedPage.routePath})</span>
+                          </span>
+                        ) : (
+                          <SelectValue placeholder="No Page (Direct Category Only)" />
+                        );
+                      })()
+                    ) : (
+                      <SelectValue placeholder="No Page (Direct Category Only)" />
+                    )}
+                  </SelectTrigger>
+                  <SelectContent className="bg-white border border-slate-100 rounded-2xl shadow-xl p-2 z-[999] max-h-60 overflow-y-auto">
+                    <SelectItem value="">No Page (Direct Category Only)</SelectItem>
+                    {registryPages.map((page) => {
+                      const isAssigned = !!(
+                        page.navigationLabel ||
+                        page.categoryLabel ||
+                        page.subCategoryLabel ||
+                        page.subSubCategoryLabel
+                      );
+                      const pageVal = page.id || '';
+                      return (
+                        <SelectItem key={pageVal} value={pageVal}>
+                          <div className="flex items-center justify-between w-full max-w-[400px] overflow-x-auto gap-4 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+                            <span className="font-bold text-slate-800">{page.title}</span>
+                            <span className="text-slate-400 text-xs font-mono">({page.routePath})</span>
+                            <span
+                              className={cn(
+                                'ml-auto px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider shrink-0',
+                                isAssigned
+                                  ? 'bg-rose-50 text-rose-600 border border-rose-100'
+                                  : 'bg-emerald-50 text-emerald-600 border border-emerald-100'
+                              )}
+                            >
+                              {isAssigned ? 'Assigned' : 'Available'}
+                            </span>
+                          </div>
+                        </SelectItem>
+                      );
+                    })}
+                  </SelectContent>
+                </Select>
+              </div>
+
               <div className="flex gap-3 justify-end">
                 <Button variant="ghost" onClick={() => setIsModalOpen(false)} className="rounded-full">
                   Cancel
@@ -322,6 +504,7 @@ function CategoryRow({
   category,
   depth,
   allCategories,
+  registryPages,
   onRefresh,
   onEdit,
   onAddSubCategory,
@@ -329,47 +512,41 @@ function CategoryRow({
   category: CategoryTreeNode;
   depth: number;
   allCategories: CategoryTreeNode[];
+  registryPages: any[];
   onRefresh: () => void;
   onEdit: (category: CategoryTreeNode) => void;
   onAddSubCategory: (parentId: string) => void;
 }) {
   const [open, setOpen] = React.useState(depth < 1);
-  const [pagesOpen, setPagesOpen] = React.useState(false);
-  const [pages, setPages] = React.useState<PageItem[]>([]);
-  const [pagesLoading, setPagesLoading] = React.useState(false);
-  const [showAddPage, setShowAddPage] = React.useState(false);
-  const [showMigrate, setShowMigrate] = React.useState(false);
 
   const hasChildren = category.children && category.children.length > 0;
-  const hasPages = category.pageCount > 0;
-
-  const loadPages = async () => {
-    if (pagesLoading) return;
-    setPagesLoading(true);
-    try {
-      const res = await fetch(`/api/admin/categories/${category.id}/pages`);
-      if (res.ok) setPages(await res.json());
-    } finally {
-      setPagesLoading(false);
-    }
-  };
-
-  const togglePages = () => {
-    if (!pagesOpen && pages.length === 0) loadPages();
-    setPagesOpen((v) => !v);
-  };
 
   const handleDelete = async () => {
     if (!confirm(`Delete "${category.name}"?`)) return;
-    const res = await fetch(`/api/admin/categories/${category.id}`, { method: 'DELETE' });
+
+    const findDepth = (nodeId: string): number => {
+      const node = allCategories.find((n) => n.id === nodeId);
+      if (!node || !node.parentId) return 0;
+      return 1 + findDepth(node.parentId);
+    };
+    const nodeDepth = findDepth(category.id);
+    let level: 'category' | 'sub' | 'sub-sub' = 'category';
+    if (nodeDepth === 1) level = 'sub';
+    if (nodeDepth === 2) level = 'sub-sub';
+
+    const res = await fetch(`/api/admin/mega-menu/${category.id}?level=${level}`, { method: 'DELETE' });
     const data = await res.json().catch(() => ({}));
     if (res.ok) {
-      toast.success('Category archived');
+      toast.success('Category deleted');
       onRefresh();
     } else {
       toast.error(data.error || 'Failed to delete category');
     }
   };
+
+  const linkedPage = category.pageId
+    ? registryPages.find((p) => p.id === category.pageId)
+    : null;
 
   return (
     <div>
@@ -398,37 +575,33 @@ function CategoryRow({
 
         {/* Name & slug */}
         <div className="flex-1 min-w-0">
-          <p className="font-bold text-slate-900">{category.name}</p>
+          <div className="flex items-center gap-2 flex-wrap">
+            <p className="font-bold text-slate-900">{category.name}</p>
+            {linkedPage && (
+              <span className="inline-flex items-center gap-1 bg-emerald-50 text-emerald-700 text-[10px] font-bold px-2 py-0.5 rounded-md border border-emerald-100">
+                <FileText className="w-3 h-3" />
+                Linked Page: {linkedPage.title}
+              </span>
+            )}
+          </div>
           <p className="text-xs text-slate-400 font-mono">/{category.slug}</p>
         </div>
-
-        {/* Pages badge */}
-        <button
-          onClick={togglePages}
-          className={cn(
-            'flex items-center gap-1.5 text-xs font-bold px-3 py-1 rounded-full transition-colors',
-            hasPages
-              ? 'bg-[#4B2A63]/10 text-[#4B2A63] hover:bg-[#4B2A63]/20'
-              : 'bg-slate-100 text-slate-400 hover:bg-slate-200'
-          )}
-        >
-          <Layers className="w-3.5 h-3.5" />
-          {category.pageCount} {category.pageCount === 1 ? 'page' : 'pages'}
-        </button>
 
         <span className="text-[10px] font-black uppercase tracking-widest text-slate-300">{category.status}</span>
 
         {/* Action buttons */}
         <div className="opacity-0 group-hover:opacity-100 flex gap-1 transition-opacity">
-          <Button
-            variant="ghost"
-            size="icon"
-            className="rounded-xl h-8 w-8"
-            title="Add sub-category"
-            onClick={() => onAddSubCategory(category.id)}
-          >
-            <Plus className="w-4 h-4" />
-          </Button>
+          {depth < 2 && (
+            <Button
+              variant="ghost"
+              size="icon"
+              className="rounded-xl h-8 w-8"
+              title="Add sub-category"
+              onClick={() => onAddSubCategory(category.id)}
+            >
+              <Plus className="w-4 h-4" />
+            </Button>
+          )}
           <Button variant="ghost" size="icon" className="rounded-xl h-8 w-8" onClick={() => onEdit(category)}>
             <Edit2 className="w-4 h-4" />
           </Button>
@@ -438,49 +611,7 @@ function CategoryRow({
         </div>
       </motion.div>
 
-      {/* Pages sub-panel */}
-      <AnimatePresence>
-        {pagesOpen && (
-          <motion.div
-            initial={{ height: 0, opacity: 0 }}
-            animate={{ height: 'auto', opacity: 1 }}
-            exit={{ height: 0, opacity: 0 }}
-            className={cn('overflow-hidden', depth > 0 ? 'ml-12' : 'ml-6')}
-          >
-            <div className="border-l-2 border-[#4B2A63]/20 ml-4 pl-4 py-2 space-y-1">
-              {pagesLoading ? (
-                <p className="text-xs text-slate-400 py-2">Loading pages...</p>
-              ) : pages.length === 0 ? (
-                <p className="text-xs text-slate-400 py-2">No pages yet in this category.</p>
-              ) : (
-                pages.map((page) => (
-                  <PageItemRow
-                    key={page.id}
-                    page={page}
-                    categoryId={category.id}
-                    allCategories={allCategories}
-                    onRefresh={() => {
-                      loadPages();
-                      onRefresh();
-                    }}
-                  />
-                ))
-              )}
-
-              {/* Add Page from Template */}
-              <button
-                onClick={() => setShowAddPage(true)}
-                className="flex items-center gap-2 text-xs font-bold text-[#4B2A63] hover:text-[#3B198F] py-2 px-3 rounded-xl hover:bg-[#4B2A63]/5 transition-colors w-full text-left"
-              >
-                <Plus className="w-3.5 h-3.5" />
-                Add Page from Template
-              </button>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-
-      {/* Children */}
+      {/* Children recursive */}
       <AnimatePresence>
         {open && hasChildren && (
           <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }}>
@@ -490,6 +621,7 @@ function CategoryRow({
                 category={child}
                 depth={depth + 1}
                 allCategories={allCategories}
+                registryPages={registryPages}
                 onRefresh={onRefresh}
                 onEdit={onEdit}
                 onAddSubCategory={onAddSubCategory}
@@ -498,319 +630,6 @@ function CategoryRow({
           </motion.div>
         )}
       </AnimatePresence>
-
-      {/* Add Page modal */}
-      {showAddPage && (
-        <AddPageModal
-          categoryId={category.id}
-          categoryName={category.name}
-          onClose={() => setShowAddPage(false)}
-          onSuccess={() => {
-            setShowAddPage(false);
-            loadPages();
-            onRefresh();
-          }}
-        />
-      )}
     </div>
-  );
-}
-
-// ─────────────────────────────────────────────────────────────────
-// Page Item Row (inside pages sub-panel)
-// ─────────────────────────────────────────────────────────────────
-
-function PageItemRow({
-  page,
-  categoryId,
-  allCategories,
-  onRefresh,
-}: {
-  page: PageItem;
-  categoryId: string;
-  allCategories: CategoryTreeNode[];
-  onRefresh: () => void;
-}) {
-  const [showMigrateRow, setShowMigrateRow] = React.useState(false);
-  const [targetCategoryId, setTargetCategoryId] = React.useState('');
-  const [migrating, setMigrating] = React.useState(false);
-
-  const otherCategories = allCategories.filter((c) => c.id !== categoryId && c.status !== 'archived' && c.status !== 'inactive');
-
-  const handleMigrate = async () => {
-    if (!targetCategoryId) {
-      toast.error('Select a target category');
-      return;
-    }
-    setMigrating(true);
-    try {
-      const res = await fetch(`/api/admin/categories/${categoryId}/migrate-pages`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ pageIds: [page.id], targetCategoryId }),
-      });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error || 'Migration failed');
-      toast.success(`Page moved successfully`);
-      setShowMigrateRow(false);
-      onRefresh();
-    } catch (e: unknown) {
-      toast.error(e instanceof Error ? e.message : 'Migration failed');
-    } finally {
-      setMigrating(false);
-    }
-  };
-
-  return (
-    <div>
-      <div className="flex items-center gap-3 py-1.5 px-3 rounded-xl hover:bg-slate-50 group/page">
-        <FileText className="w-3.5 h-3.5 text-slate-400 flex-shrink-0" />
-        <div className="flex-1 min-w-0">
-          <p className="text-[13px] font-semibold text-slate-700 truncate">{page.title}</p>
-          <p className="text-[10px] font-mono text-slate-400 truncate">{page.fullPath}</p>
-        </div>
-        <span
-          className={cn(
-            'text-[9px] font-black px-2 py-0.5 rounded-full uppercase',
-            page.status === 'published' ? 'bg-emerald-50 text-emerald-600' : 'bg-amber-50 text-amber-600'
-          )}
-        >
-          {page.status}
-        </span>
-        <div className="opacity-0 group-hover/page:opacity-100 flex gap-1 transition-opacity">
-          <a href={`/admin/pages/${page.id}`} target="_blank" rel="noopener noreferrer">
-            <Button variant="ghost" size="icon" className="h-7 w-7 rounded-lg">
-              <ExternalLink className="w-3 h-3" />
-            </Button>
-          </a>
-          <Button
-            variant="ghost"
-            size="icon"
-            className="h-7 w-7 rounded-lg"
-            title="Migrate to another category"
-            onClick={() => setShowMigrateRow((v) => !v)}
-          >
-            <MoveRight className="w-3 h-3" />
-          </Button>
-        </div>
-      </div>
-
-      {/* Inline migrate row */}
-      <AnimatePresence>
-        {showMigrateRow && (
-          <motion.div
-            initial={{ height: 0, opacity: 0 }}
-            animate={{ height: 'auto', opacity: 1 }}
-            exit={{ height: 0, opacity: 0 }}
-            className="overflow-hidden"
-          >
-            <div className="flex items-center gap-2 pl-8 pr-3 py-2">
-              <MoveRight className="w-3.5 h-3.5 text-slate-400 flex-shrink-0" />
-              <select
-                value={targetCategoryId}
-                onChange={(e) => setTargetCategoryId(e.target.value)}
-                className="flex-1 bg-slate-50 border border-slate-200 rounded-xl px-3 py-1.5 text-xs font-semibold outline-none"
-              >
-                <option value="">Select target category...</option>
-                {otherCategories.map((c) => (
-                  <option key={c.id} value={c.id}>
-                    {c.name}
-                  </option>
-                ))}
-              </select>
-              <Button
-                onClick={handleMigrate}
-                disabled={migrating || !targetCategoryId}
-                className="bg-[#4B2A63] text-white rounded-xl h-8 px-4 text-xs font-bold"
-              >
-                {migrating ? 'Moving...' : 'Move'}
-              </Button>
-              <Button
-                variant="ghost"
-                size="icon"
-                className="h-8 w-8 rounded-xl"
-                onClick={() => setShowMigrateRow(false)}
-              >
-                <X className="w-3.5 h-3.5" />
-              </Button>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </div>
-  );
-}
-
-// ─────────────────────────────────────────────────────────────────
-// Add Page from Template Modal
-// ─────────────────────────────────────────────────────────────────
-
-function AddPageModal({
-  categoryId,
-  categoryName,
-  onClose,
-  onSuccess,
-}: {
-  categoryId: string;
-  categoryName: string;
-  onClose: () => void;
-  onSuccess: (pageId: string) => void;
-}) {
-  const router = useRouter();
-  const [templates, setTemplates] = React.useState<Template[]>([]);
-  const [selectedTemplateId, setSelectedTemplateId] = React.useState('');
-  const [title, setTitle] = React.useState('');
-  const [slug, setSlug] = React.useState('');
-  const [submitting, setSubmitting] = React.useState(false);
-  const [loading, setLoading] = React.useState(true);
-
-  React.useEffect(() => {
-    fetch('/api/admin/templates')
-      .then((r) => r.json())
-      .then((data) => setTemplates(Array.isArray(data) ? data : []))
-      .catch(() => setTemplates([]))
-      .finally(() => setLoading(false));
-  }, []);
-
-  const handleCreate = async () => {
-    if (!title.trim()) {
-      toast.error('Page title is required');
-      return;
-    }
-    setSubmitting(true);
-    try {
-      const res = await fetch(`/api/admin/categories/${categoryId}/pages`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          title: title.trim(),
-          slug: slug.trim() || undefined,
-          templateId: selectedTemplateId || null,
-        }),
-      });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error || 'Failed to create page');
-      toast.success('Page created! Opening editor...');
-      onSuccess(data.id);
-      router.push(`/admin/pages/${data.id}`);
-    } catch (e: unknown) {
-      toast.error(e instanceof Error ? e.message : 'Failed to create page');
-    } finally {
-      setSubmitting(false);
-    }
-  };
-
-  return (
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      className="fixed inset-0 bg-slate-900/40 z-[200] flex items-center justify-center p-6"
-      onClick={onClose}
-    >
-      <motion.div
-        initial={{ scale: 0.95, opacity: 0, y: 16 }}
-        animate={{ scale: 1, opacity: 1, y: 0 }}
-        exit={{ scale: 0.95, opacity: 0, y: 16 }}
-        transition={{ type: 'spring', stiffness: 300, damping: 28 }}
-        onClick={(e) => e.stopPropagation()}
-        className="bg-white w-full max-w-lg rounded-[32px] shadow-2xl max-h-[90vh] overflow-y-auto"
-      >
-        {/* Header */}
-        <div className="bg-slate-50 px-8 py-6 border-b border-slate-100 flex items-center justify-between rounded-t-[32px]">
-          <div>
-            <h2 className="text-lg font-bold text-slate-900">Add Page from Template</h2>
-            <p className="text-xs text-slate-400 mt-0.5">Category: <strong>{categoryName}</strong></p>
-          </div>
-          <button onClick={onClose} className="text-slate-400 hover:text-slate-600 transition-colors">
-            <X className="w-5 h-5" />
-          </button>
-        </div>
-
-        <div className="p-8 space-y-6">
-          {/* Page details */}
-          <div className="space-y-4">
-            <div>
-              <label className="text-[11px] font-black text-slate-400 uppercase tracking-widest block mb-2">
-                Page Title *
-              </label>
-              <input
-                placeholder="e.g. Retail ERP Overview"
-                value={title}
-                onChange={(e) => setTitle(e.target.value)}
-                className="w-full bg-slate-50 rounded-2xl px-6 py-4 font-bold outline-none focus:ring-4 focus:ring-[#4B2A63]/10"
-                autoFocus
-              />
-            </div>
-            <div>
-              <label className="text-[11px] font-black text-slate-400 uppercase tracking-widest block mb-2">
-                URL Slug <span className="font-normal normal-case">(optional — auto-generated)</span>
-              </label>
-              <input
-                placeholder="auto-generated from title"
-                value={slug}
-                onChange={(e) => setSlug(e.target.value)}
-                className="w-full bg-slate-50 rounded-2xl px-6 py-4 font-bold outline-none focus:ring-4 focus:ring-[#4B2A63]/10"
-              />
-            </div>
-          </div>
-
-          {/* Template picker */}
-          <div>
-            <label className="text-[11px] font-black text-slate-400 uppercase tracking-widest block mb-3">
-              Template
-            </label>
-            {loading ? (
-              <p className="text-slate-400 text-sm">Loading templates...</p>
-            ) : (
-              <div className="grid grid-cols-2 gap-3">
-                {/* Blank page option */}
-                <button
-                  type="button"
-                  onClick={() => setSelectedTemplateId('')}
-                  className={cn(
-                    'p-4 rounded-2xl border-2 text-left font-bold text-sm transition-all',
-                    !selectedTemplateId
-                      ? 'border-[#4B2A63] bg-[#4B2A63] text-white'
-                      : 'border-slate-100 hover:border-slate-200 text-slate-700'
-                  )}
-                >
-                  Blank Page
-                </button>
-                {templates.map((t) => (
-                  <button
-                    key={t.id}
-                    type="button"
-                    onClick={() => setSelectedTemplateId(t.id)}
-                    className={cn(
-                      'p-4 rounded-2xl border-2 text-left font-bold text-sm transition-all',
-                      selectedTemplateId === t.id
-                        ? 'border-[#4B2A63] bg-[#4B2A63] text-white'
-                        : 'border-slate-100 hover:border-slate-200 text-slate-700'
-                    )}
-                  >
-                    {t.name}
-                  </button>
-                ))}
-              </div>
-            )}
-          </div>
-        </div>
-
-        {/* Footer */}
-        <div className="px-8 py-6 bg-slate-50 border-t border-slate-100 flex justify-between items-center rounded-b-[32px]">
-          <Button variant="ghost" onClick={onClose} className="rounded-full" disabled={submitting}>
-            Cancel
-          </Button>
-          <Button
-            onClick={handleCreate}
-            disabled={submitting || !title.trim()}
-            className="bg-[#4B2A63] hover:bg-[#3B198F] text-white rounded-full px-8 h-11 font-bold"
-          >
-            {submitting ? 'Creating...' : 'Create Page & Edit'}
-          </Button>
-        </div>
-      </motion.div>
-    </motion.div>
   );
 }

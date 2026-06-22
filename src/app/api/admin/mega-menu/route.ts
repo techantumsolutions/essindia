@@ -13,6 +13,10 @@ import { megaMenuRepository } from '@/repositories/mega-menu.repository';
 import { navigationRepository } from '@/repositories/navigation.repository';
 import { navigationTreeRepository } from '@/repositories/navigation-tree.repository';
 
+function isValidUuid(id: string): boolean {
+  return /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id);
+}
+
 export async function GET(request: Request) {
   if (!(await isAdminRequest())) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
@@ -22,6 +26,9 @@ export async function GET(request: Request) {
   const navigationItemId = searchParams.get('navigationItemId');
   if (!navigationItemId) {
     return NextResponse.json({ error: 'navigationItemId required' }, { status: 400 });
+  }
+  if (!isValidUuid(navigationItemId)) {
+    return NextResponse.json({ error: 'Invalid navigationItemId format' }, { status: 400 });
   }
 
   const payload = await navigationTreeRepository.getAdminMegaMenuPayload(navigationItemId);
@@ -48,6 +55,9 @@ export async function POST(request: Request) {
       if (!navigationItemId || !name) {
         return NextResponse.json({ error: 'navigationItemId and name required' }, { status: 400 });
       }
+      if (!isValidUuid(navigationItemId)) {
+        return NextResponse.json({ error: 'Invalid navigationItemId format' }, { status: 400 });
+      }
       const [row] = await db
         .insert(megaMenuCategories)
         .values({
@@ -66,6 +76,9 @@ export async function POST(request: Request) {
     if (level === 'sub') {
       if (!categoryId || !name) {
         return NextResponse.json({ error: 'categoryId and name required' }, { status: 400 });
+      }
+      if (!isValidUuid(categoryId)) {
+        return NextResponse.json({ error: 'Invalid categoryId format' }, { status: 400 });
       }
       const [row] = await db
         .insert(megaMenuSubCategories)
@@ -87,6 +100,9 @@ export async function POST(request: Request) {
     if (level === 'sub-sub') {
       if (!subCategoryId || !name) {
         return NextResponse.json({ error: 'subCategoryId and name required' }, { status: 400 });
+      }
+      if (!isValidUuid(subCategoryId)) {
+        return NextResponse.json({ error: 'Invalid subCategoryId format' }, { status: 400 });
       }
       const [row] = await db
         .insert(megaMenuSubSubCategories)
@@ -118,6 +134,7 @@ async function invalidateMegaMenuCache(navigationItemId: string) {
 }
 
 async function invalidateMegaMenuCacheByCategory(categoryId: string) {
+  if (!isValidUuid(categoryId)) return;
   const cat = await db.query.megaMenuCategories.findFirst({
     where: eq(megaMenuCategories.id, categoryId),
   });
@@ -125,6 +142,7 @@ async function invalidateMegaMenuCacheByCategory(categoryId: string) {
 }
 
 async function invalidateMegaMenuCacheBySubCategory(subCategoryId: string) {
+  if (!isValidUuid(subCategoryId)) return;
   const sub = await db.query.megaMenuSubCategories.findFirst({
     where: eq(megaMenuSubCategories.id, subCategoryId),
     with: { category: true },

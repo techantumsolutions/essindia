@@ -29,6 +29,7 @@ export const seoMetadata = pgTable('seo_metadata', {
 export const categories = pgTable('categories', {
   id: uuid('id').primaryKey().defaultRandom(),
   parentId: uuid('parent_id'),
+  pageId: uuid('page_id').references((): AnyPgColumn => pages.id, { onDelete: 'set null' }),
   name: varchar('name', { length: 255 }).notNull(),
   slug: varchar('slug', { length: 255 }).notNull(),
   description: text('description'),
@@ -366,6 +367,7 @@ export const categoriesRelations = relations(categories, ({ one, many }) => ({
   parent: one(categories, { fields: [categories.parentId], references: [categories.id], relationName: 'category_hierarchy' }),
   children: many(categories, { relationName: 'category_hierarchy' }),
   seo: one(seoMetadata, { fields: [categories.seoId], references: [seoMetadata.id] }),
+  page: one(pages, { fields: [categories.pageId], references: [pages.id] }),
   pages: many(pages),
   templates: many(templates),
 }));
@@ -497,3 +499,6 @@ export const careersRelations = relations(careers, ({ many }) => ({
 export const applicationsRelations = relations(applications, ({ one }) => ({
   career: one(careers, { fields: [applications.careerId], references: [careers.id] }),
 }));
+
+// Trigger HMR cache reload
+

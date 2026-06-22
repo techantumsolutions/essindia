@@ -4,6 +4,7 @@ export const categorySchema = z.object({
   name: z.string().min(1).max(255),
   slug: z.string().min(1).max(255).optional(),
   parentId: z.string().uuid().nullable().optional(),
+  pageId: z.string().uuid().nullable().optional(),
   description: z.string().optional(),
   icon: z.string().max(100).optional(),
   imageUrl: z.string().url().optional().or(z.literal('')),
