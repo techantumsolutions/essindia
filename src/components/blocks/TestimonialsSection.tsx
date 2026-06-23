@@ -18,8 +18,15 @@ interface Testimonial {
 
 interface TestimonialsContent {
   badgeText?: string;
+  badgeBgColor?: string;
+  badgeTextColor?: string;
   headingText?: string;
+  title?: string;
+  titleColor?: string;
   subheadingText?: string;
+  description?: string;
+  descriptionColor?: string;
+  bgColor?: string;
   bgImage?: string;
   testimonials?: Testimonial[];
 }
@@ -49,8 +56,13 @@ const DEFAULT_INDUSTRIES = [
 
 export function TestimonialsSection({ content }: TestimonialsSectionProps) {
   const badge = content?.badgeText || 'Testimonials';
-  const heading = content?.headingText || 'Trusted by Businesses Worldwide';
-  const subheading = content?.subheadingText || 'Empowering enterprises across industries with scalable digital solutions and intelligent automation. Trusted by growing businesses and enterprise teams across multiple countries for delivering innovation, efficiency, and measurable business outcomes.';
+  const badgeBgColor = content?.badgeBgColor || '#ffffff';
+  const badgeTextColor = content?.badgeTextColor || '#0d0720';
+  const heading = content?.title || content?.headingText || 'Trusted by Businesses Worldwide';
+  const headingColor = content?.titleColor || '#ffffff';
+  const subheading = content?.description || content?.subheadingText || 'Empowering enterprises across industries with scalable digital solutions and intelligent automation. Trusted by growing businesses and enterprise teams across multiple countries for delivering innovation, efficiency, and measurable business outcomes.';
+  const subheadingColor = content?.descriptionColor || '#cbd5e1';
+  const bgColor = content?.bgColor || '#0d0720';
   const bgImage = content?.bgImage;
   const testimonials = content?.testimonials || [];
 
@@ -99,13 +111,14 @@ export function TestimonialsSection({ content }: TestimonialsSectionProps) {
     <section className="bg-white min-h-screen">
       {/* Premium Dark Glowing Hero Banner */}
       <div
-        className="relative pt-40 pb-28 text-center px-4 overflow-hidden bg-[#0d0720]"
-        style={bgImage ? {
-          backgroundImage: `url('${bgImage}')`,
+        className="relative pt-40 pb-28 text-center px-4 overflow-hidden"
+        style={{
+          backgroundColor: bgColor,
+          backgroundImage: bgImage ? `url('${bgImage}')` : undefined,
           backgroundSize: 'cover',
           backgroundPosition: 'center',
           backgroundRepeat: 'no-repeat',
-        } : undefined}
+        }}
       >
         {!bgImage && (
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(99,102,241,0.18)_0%,transparent_60%)] pointer-events-none" />
@@ -115,7 +128,11 @@ export function TestimonialsSection({ content }: TestimonialsSectionProps) {
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.6 }}
-            className="px-6 py-1.5 rounded-full bg-white text-[#0d0720] text-xs font-bold shadow-md uppercase tracking-wider mb-6"
+            className="px-6 py-1.5 rounded-full text-xs font-bold shadow-md uppercase tracking-wider mb-6"
+            style={{
+              backgroundColor: badgeBgColor,
+              color: badgeTextColor,
+            }}
           >
             {badge}
           </motion.div>
@@ -123,7 +140,8 @@ export function TestimonialsSection({ content }: TestimonialsSectionProps) {
             initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.1 }}
-            className="text-4xl md:text-6xl font-black font-extralight text-white tracking-tight leading-tight mb-4"
+            className="text-4xl md:text-6xl font-black font-extralight tracking-tight leading-tight mb-4"
+            style={{ color: headingColor }}
           >
             {heading}
           </motion.h1>
@@ -131,7 +149,8 @@ export function TestimonialsSection({ content }: TestimonialsSectionProps) {
             initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.2 }}
-            className="text-sm text-slate-300/90 max-w-2xl font-light leading-relaxed"
+            className="text-sm max-w-2xl font-light leading-relaxed"
+            style={{ color: subheadingColor }}
           >
             {subheading}
           </motion.p>

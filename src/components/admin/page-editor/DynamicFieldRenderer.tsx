@@ -103,6 +103,24 @@ export function DynamicFieldRenderer({
         />
       );
 
+    case 'topicSelect':
+      return (
+        <TopicSelectField
+          fieldKey={fieldKey}
+          value={value as string}
+          onChange={(v) => onChange(keyPath, v)}
+        />
+      );
+
+    case 'industrySelect':
+      return (
+        <IndustrySelectField
+          fieldKey={fieldKey}
+          value={value as string}
+          onChange={(v) => onChange(keyPath, v)}
+        />
+      );
+
     case 'richtext':
       return (
         <RichTextField
@@ -405,6 +423,17 @@ function ArrayField({
               </div>
             );
           }
+          if (fieldKey === 'paragraphs') {
+            return (
+              <div className="flex-1">
+                <RichTextField
+                  fieldKey={`${fieldKey}-${_idx}`}
+                  value={String(item ?? '')}
+                  onChange={(v) => onItemChange(_idx, v)}
+                />
+              </div>
+            );
+          }
           return (
             <input
               type="text"
@@ -418,16 +447,67 @@ function ArrayField({
         if (typeof item === 'object' && item !== null && !Array.isArray(item)) {
           const objItem = item as Record<string, JsonValue>;
           
-          // Heuristic to sort common fields logically
-          const priorityKeys = ['subtitle', 'iconImage', 'icon', 'image', 'title', 'tags', 'name', 'heading', 'label', 'description', 'bgImage', 'ctaText', 'ctaUrl', 'items', 'points', 'cards'];
-          const sortedKeys = Object.keys(objItem).sort((a, b) => {
-            const indexA = priorityKeys.indexOf(a);
-            const indexB = priorityKeys.indexOf(b);
-            if (indexA !== -1 && indexB !== -1) return indexA - indexB;
-            if (indexA !== -1) return -1;
-            if (indexB !== -1) return 1;
-            return 0;
-          });
+          let sortedKeys = Object.keys(objItem);
+          if (fieldKey === 'testimonials') {
+            const testimonialOrder = ['topic', 'industry', 'companyName', 'quote', 'authorAvatar', 'authorName', 'authorTitle'];
+            sortedKeys = sortedKeys.filter(k => k !== 'logoUrl');
+            sortedKeys.sort((a, b) => {
+              const indexA = testimonialOrder.indexOf(a);
+              const indexB = testimonialOrder.indexOf(b);
+              if (indexA !== -1 && indexB !== -1) return indexA - indexB;
+              if (indexA !== -1) return -1;
+              if (indexB !== -1) return 1;
+              return 0;
+            });
+          } else if (fieldKey === 'cards') {
+            const cardOrder = ['icon', 'title', 'description', 'contact'];
+            sortedKeys = cardOrder.filter(k => k in objItem);
+          } else if (fieldKey === 'faqs') {
+            if (!('quotation' in objItem)) {
+              if ('qutation' in objItem) {
+                objItem.quotation = objItem.qutation;
+                delete objItem.qutation;
+              } else if ('question' in objItem) {
+                objItem.quotation = objItem.question;
+                delete objItem.question;
+              }
+            }
+            const faqOrder = ['quotation', 'answer'];
+            sortedKeys = faqOrder;
+          } else if (fieldKey === 'locations') {
+            if (!('name' in objItem) && 'person' in objItem) {
+              objItem.name = objItem.person;
+              delete objItem.person;
+            }
+            const locationOrder = ['city', 'address', 'name', 'phone', 'email'];
+            sortedKeys = locationOrder;
+          } else if (fieldKey === 'sections' && 'items' in objItem) {
+            const sectionOrder = ['title', 'items'];
+            sortedKeys = sectionOrder;
+          } else if (fieldKey.toLowerCase().includes('items')) {
+            const itemOrder = ['icon', 'text', 'title', 'description'];
+            sortedKeys = itemOrder.filter(k => k in objItem);
+          } else if (fieldKey === 'steps') {
+            const stepOrder = ['image', 'title', 'description'];
+            sortedKeys = stepOrder.filter(k => k in objItem);
+          } else if (fieldKey === 'features') {
+            const featureOrder = ['icon', 'title', 'description'];
+            sortedKeys = featureOrder.filter(k => k in objItem);
+          } else if (fieldKey === 'stats') {
+            const statOrder = ['value', 'label'];
+            sortedKeys = statOrder.filter(k => k in objItem);
+          } else {
+            // Heuristic to sort common fields logically
+            const priorityKeys = ['subtitle', 'iconImage', 'icon', 'image', 'title', 'tags', 'name', 'heading', 'label', 'description', 'bgImage', 'ctaText', 'ctaUrl', 'items', 'points', 'cards'];
+            sortedKeys.sort((a, b) => {
+              const indexA = priorityKeys.indexOf(a);
+              const indexB = priorityKeys.indexOf(b);
+              if (indexA !== -1 && indexB !== -1) return indexA - indexB;
+              if (indexA !== -1) return -1;
+              if (indexB !== -1) return 1;
+              return 0;
+            });
+          }
 
           return (
             <>
@@ -482,6 +562,80 @@ function CountryCodeField({
         {ALL_COUNTRIES_LIST.map((c) => (
           <option key={c.code} value={c.code}>
             {c.name} ({c.code.toUpperCase()})
+          </option>
+        ))}
+      </select>
+    </div>
+  );
+}
+
+const TOPIC_OPTIONS = [
+  'Business Intelligence',
+  'ERP Solutions',
+  'IoT Solutions',
+  'Mobile App Solutions',
+  'CRM Solutions',
+  'Sales Force Automation',
+  'After-Sales Service App'
+];
+
+function TopicSelectField({
+  fieldKey,
+  value,
+  onChange,
+}: {
+  fieldKey: string;
+  value: string;
+  onChange: (value: string) => void;
+}) {
+  return (
+    <div className="space-y-1.5 flex-1 min-w-[200px]">
+      <label className="text-xs font-semibold text-slate-500">{humanLabel(fieldKey)}</label>
+      <select
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        className="w-full bg-slate-50 rounded-xl px-4 py-2.5 text-sm font-medium outline-none focus:ring-2 focus:ring-[#4B2A63]/10 border border-transparent focus:border-[#4B2A63]/20"
+      >
+        <option value="">Select a topic...</option>
+        {TOPIC_OPTIONS.map((t) => (
+          <option key={t} value={t}>
+            {t}
+          </option>
+        ))}
+      </select>
+    </div>
+  );
+}
+
+const INDUSTRY_OPTIONS = [
+  'FMCG',
+  'Pharma',
+  'Manufacturing',
+  'Retail',
+  'Electronics'
+];
+
+function IndustrySelectField({
+  fieldKey,
+  value,
+  onChange,
+}: {
+  fieldKey: string;
+  value: string;
+  onChange: (value: string) => void;
+}) {
+  return (
+    <div className="space-y-1.5 flex-1 min-w-[200px]">
+      <label className="text-xs font-semibold text-slate-500">{humanLabel(fieldKey)}</label>
+      <select
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        className="w-full bg-slate-50 rounded-xl px-4 py-2.5 text-sm font-medium outline-none focus:ring-2 focus:ring-[#4B2A63]/10 border border-transparent focus:border-[#4B2A63]/20"
+      >
+        <option value="">Select an industry...</option>
+        {INDUSTRY_OPTIONS.map((i) => (
+          <option key={i} value={i}>
+            {i}
           </option>
         ))}
       </select>

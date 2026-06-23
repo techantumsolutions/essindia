@@ -70,6 +70,17 @@ import { StaffingAugmentation } from '@/components/blocks/StaffingAugmentation';
 import { StaffingTechnologies } from '@/components/blocks/StaffingTechnologies';
 import { StaffingWhyEss } from '@/components/blocks/StaffingWhyEss';
 import { StaffingBenefits } from '@/components/blocks/StaffingBenefits';
+import { AssHero } from '@/components/blocks/AssHero';
+import { AssIntro } from '@/components/blocks/AssIntro';
+import { AssFunctionalities } from '@/components/blocks/AssFunctionalities';
+import { AssBenefits } from '@/components/blocks/AssBenefits';
+import { AssEnterprise } from '@/components/blocks/AssEnterprise';
+import { AssStats } from '@/components/blocks/AssStats';
+import { AssProcess } from '@/components/blocks/AssProcess';
+import { AssWhyChoose } from '@/components/blocks/AssWhyChoose';
+import { AssFeaturesGrid } from '@/components/blocks/AssFeaturesGrid';
+import { AssCta } from '@/components/blocks/AssCta';
+import { AssClients } from '@/components/blocks/AssClients';
 
 interface Section {
   id: string;
@@ -233,6 +244,28 @@ export function SectionRenderer({ section }: SectionRendererProps) {
       return <AboutUsWhyEss content={section.content} />;
     case 'about-us-cta':
       return <AboutUsCta content={section.content} />;
+    case 'ass-hero':
+      return <AssHero content={section.content} />;
+    case 'ass-intro':
+      return <AssIntro content={section.content} />;
+    case 'ass-functionalities':
+      return <AssFunctionalities content={section.content} />;
+    case 'ass-benefits':
+      return <AssBenefits content={section.content} />;
+    case 'ass-enterprise':
+      return <AssEnterprise content={section.content} />;
+    case 'ass-stats':
+      return <AssStats content={section.content} />;
+    case 'ass-process':
+      return <AssProcess content={section.content} />;
+    case 'ass-why-choose':
+      return <AssWhyChoose content={section.content} />;
+    case 'ass-features-grid':
+      return <AssFeaturesGrid content={section.content} />;
+    case 'ass-cta':
+      return <AssCta content={section.content} />;
+    case 'ass-clients':
+      return <AssClients content={section.content} />;
     default:
       if (process.env.NODE_ENV === 'development') {
         return (

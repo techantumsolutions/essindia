@@ -71,10 +71,20 @@ export function ArrayFieldEditor({
       } else if (lowerKey === 'values') {
         defaultObj = { image: '', title: '', description: '' };
       } else if (lowerKey === 'faqs') {
-        defaultObj = { question: '', answer: '' };
+        defaultObj = { quotation: '', answer: '' };
+      } else if (lowerKey === 'locations') {
+        defaultObj = { city: '', address: '', name: '', phone: '', email: '' };
       } else if (lowerKey === 'processes') {
         defaultObj = { title: '', description: '' };
-      } else if (['items', 'cards', 'blocks', 'steps'].includes(lowerKey)) {
+      } else if (lowerKey === 'cards') {
+        defaultObj = { icon: '', title: '', description: '', contact: '' };
+      } else if (lowerKey.includes('items')) {
+        defaultObj = { icon: '', image: '', title: '', description: '', text: '' };
+      } else if (lowerKey === 'sections') {
+        defaultObj = { title: '', items: [''] };
+      } else if (lowerKey === 'stats') {
+        defaultObj = { value: '', label: '' };
+      } else if (['blocks', 'steps'].includes(lowerKey)) {
         defaultObj = { image: '', title: '', description: '' };
       }
       

@@ -15,8 +15,25 @@ export interface CaseStudyPost {
   challengeImage: string;
   solutionHtml: string;
   solutionModules: { name: string; icon: string }[];
-  resultsHtml: string;
-  resultsItems: string[];
+  resultsHtml?: string;
+  resultsItems?: string[];
+  bgColor?: string;
+  badgeBgColor?: string;
+  badgeBorderColor?: string;
+  badgeText?: string;
+  badgeTextColor?: string;
+  dateColor?: string;
+  titleColor?: string;
+  descriptionColor?: string;
+  overviewTitle?: string;
+  overviewParagraphs?: string[];
+  challengeTitle?: string;
+  challengeDescription?: string;
+  solutionsTitle?: string;
+  solutionsDescription?: string;
+  resultsTitle?: string;
+  resultsSubtitle?: string;
+  resultsCtaDescription?: string;
 }
 
 export const defaultCaseStudies: CaseStudyPost[] = [
@@ -152,10 +169,27 @@ export const defaultCaseStudies: CaseStudyPost[] = [
     slug: 'leading-retail-chain-drc-opts-ebizframe-erp',
     badge: 'ebizframe',
     title: 'Leading Retail Chain in DRC opts for ebizframe ERP',
-    date: 'December 10, 2023',
+    date: 'December 18, 2025',
     topic: 'ERP Solutions',
     industries: ['Retail'],
-    image: '/Case-studies/image 103-7.png',
+    image: '/Case-studies details/right_card.png',
+    bgColor: 'linear-gradient(135deg, #1e2445 0%, #292048 100%)',
+    badgeBgColor: '#ffffff',
+    badgeBorderColor: '#7c3aed',
+    badgeText: 'Caetrory Name',
+    badgeTextColor: '#7c3aed',
+    dateColor: '#ffffff',
+    titleColor: '#ffffff',
+    description: 'About the Client The client is a wholesaler & retailer of FMCG products. They have been doing this business for the past 20 years. The company started its operations in a small shop and has now grown into a large trading house with three branches in Accra. They supply products such as rice, sugar, edible oil, detergent, etc.',
+    descriptionColor: '#e2e8f0',
+    overviewTitle: 'Overview',
+    overviewParagraphs: [
+      'The client is a well-established wholesaler and retailer of FMCG products with over 20 years of experience in the industry. What began as a small neighborhood shop has steadily evolved into a large and trusted trading business known for its strong customer relationships, reliable service, and consistent market presence. Through dedication, operational efficiency, and a deep understanding of customer needs, the company has built a solid reputation in the FMCG sector.',
+      'Over the years, the business has expanded significantly and now operates through three major branches located across Accra. This expansion reflects the company\'s continuous growth and increasing demand for its products within the market. By maintaining strong supplier networks and efficient distribution practices, the company has been able to serve a wide customer base ranging from retailers and supermarkets to local businesses and individual consumers.',
+      'The company supplies a wide range of essential FMCG products including rice, sugar, edible oil, detergents, and other daily-use consumer goods. Their focus on product availability, competitive pricing, and dependable delivery has helped them become a preferred partner for many customers. With decades of industry experience and a growing operational network, the company continues to strengthen its position as a leading FMCG trading business in the region.'
+    ],
+    challengeTitle: 'The Challenge',
+    challengeDescription: '<p>The retail chain was previously using locally developed software. As the company grew exponentially in the last few years, due to lack of a unified system across all their branches, they started facing a lot of difficulties in managing operations. To ensure they met their business objectives, they identified the need to implement a robust and comprehensive ERP software solution. One of the major challenges they faced was related to delayed order fulfillment, discrepancies in stock levels, and inability to track goods in transit accurately.</p>',
     authors: [
       { name: 'Benjamin Thomson', role: 'Head Designer', avatar: '/Case-studies details/image 104.png' },
       { name: 'Grace Taylor', role: 'Project Manager', avatar: '/Case-studies details/image 108.png' },
@@ -169,20 +203,24 @@ export const defaultCaseStudies: CaseStudyPost[] = [
     ],
     challengeHtml: '<p>The retail chain was previously using locally developed software. As the company grew exponentially in the last few years, due to lack of a unified system across all their branches, they started facing a lot of difficulties in managing operations. To ensure they met their business objectives, they identified the need to implement a robust and comprehensive ERP software solution. One of the major challenges they faced was related to delayed order fulfillment, discrepancies in stock levels, and inability to track goods in transit accurately.</p>',
     challengeImage: '/Case-studies details/Frame 216.png',
+    solutionsTitle: 'ESS Solution Choice',
+    solutionsDescription: 'ebizframe ERP is to be implemented for the following functions',
     solutionHtml: '<p>ebizframe ERP is being implemented for the following functions:</p>',
     solutionModules: [
-      { name: 'Finance', icon: '/Case-studies details/Container/finance-strategy_svgrepo.com.png' },
+      { name: 'Finance', icon: '/Case-studies details/finance-strategy_svgrepo.com.png' },
       { name: 'Sales', icon: '/Case-studies details/sales--connect_1_.png' },
-      { name: 'Material Management', icon: '/Case-studies details/Container/finance-strategy_svgrepo.com.png' }
+      { name: 'Materials Management', icon: '/Case-studies details/Frame 216.png' }
     ],
-    resultsHtml: '<p>The client is experiencing the following benefits from ebizframe:</p>',
+    resultsTitle: 'The Results',
+    resultsSubtitle: 'The client is expecting the following benefits from ebizframe :',
     resultsItems: [
-      'Accurate stock balances',
-      'Real-time reporting',
-      'Tighter security and control over data and workflows',
-      'Better visibility for top management with consolidated business reports',
-      'Seamless communication across different departments and branches'
-    ]
+      'Integrated Solution',
+      'Financial Reporting',
+      'Tighter control and process orientation with workflow',
+      'Better visibility for top management with online user based Dashboards',
+      'Better coordination between different departments and branches'
+    ],
+    resultsCtaDescription: '<p>For more information on how <a href="/contact-us">ebizframe</a> can help you transform your business, please leave your contact details in the contact form or mail us at <a href="mailto:marketing@essindia.com">marketing@essindia.com</a>.</p>'
   },
   {
     slug: 'leading-ghanian-oil-gas',

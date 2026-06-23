@@ -36,38 +36,85 @@ const BLOG_DETAIL_TABS: Record<string, string[]> = {
 };
 
 const TESTIMONIALS_TABS: Record<string, string[]> = {
-  hero: ['badgeText', 'headingText', 'subheadingText', 'bgImage'],
+  hero: [
+    'bgColor',
+    'badgeBgColor',
+    'badgeText',
+    'badgeTextColor',
+    'title',
+    'titleColor',
+    'description',
+    'descriptionColor',
+    'bgImage'
+  ],
   testimonials: ['testimonials']
 };
 
 const CASE_STUDY_DETAIL_TABS: Record<string, string[]> = {
-  hero: ['topic', 'description', 'image'],
-  overview: ['overview', 'overviewImages'],
-  challenge: ['challengeHtml', 'challengeTitle', 'challengeDescription', 'challengeImage', 'challengePoints'],
+  hero: [
+    'bgColor',
+    'badgeBgColor',
+    'badgeBorderColor',
+    'badgeText',
+    'badgeTextColor',
+    'date',
+    'dateColor',
+    'title',
+    'titleColor',
+    'description',
+    'descriptionColor',
+    'image'
+  ],
+  overview: ['overviewTitle', 'overviewParagraphs', 'overviewImages'],
+  challenge: ['challengeTitle', 'challengeDescription', 'challengeImage'],
   ess: ['solutionsTitle', 'solutionsDescription', 'solutionModules'],
-  results: ['resultsHtml', 'resultsTitle', 'resultsItems']
+  results: ['resultsTitle', 'resultsSubtitle', 'resultsItems', 'resultsCtaDescription']
 };
 
 const DEFAULT_CASE_STUDY_CONTENT: Record<string, any> = {
-  title: '',
-  topic: '',
-  industry: '',
-  date: '',
-  description: '',
-  image: '',
-  challengeImage: '',
-  overview: '',
-  overviewImages: [''],
-  challengeHtml: '',
-  challengeTitle: '',
-  challengeDescription: '',
-  challengePoints: [{ title: '', description: '' }],
-  solutionsTitle: '',
-  solutionsDescription: '',
-  solutionModules: [{ name: '', description: '', icon: '' }],
-  resultsHtml: '',
-  resultsTitle: '',
-  resultsItems: ['']
+  title: 'Leading Retail Chain in DRC opts for ebizframe ERP',
+  titleColor: '#ffffff',
+  bgColor: 'linear-gradient(135deg, #1e2445 0%, #292048 100%)',
+  badgeBgColor: '#ffffff',
+  badgeBorderColor: '#7c3aed',
+  badgeText: 'Caetrory Name',
+  badgeTextColor: '#7c3aed',
+  date: 'December 18, 2025',
+  dateColor: '#ffffff',
+  description: 'About the Client The client is a wholesaler & retailer of FMCG products. They have been doing this business for the past 20 years. The company started its operations in a small shop and has now grown into a large trading house with three branches in Accra. They supply products such as rice, sugar, edible oil, detergent, etc.',
+  descriptionColor: '#e2e8f0',
+  image: '/Case-studies details/right_card.png',
+  overviewTitle: 'Overview',
+  overviewParagraphs: [
+    'The client is a well-established wholesaler and retailer of FMCG products with over 20 years of experience in the industry. What began as a small neighborhood shop has steadily evolved into a large and trusted trading business known for its strong customer relationships, reliable service, and consistent market presence. Through dedication, operational efficiency, and a deep understanding of customer needs, the company has built a solid reputation in the FMCG sector.',
+    'Over the years, the business has expanded significantly and now operates through three major branches located across Accra. This expansion reflects the company\'s continuous growth and increasing demand for its products within the market. By maintaining strong supplier networks and efficient distribution practices, the company has been able to serve a wide customer base ranging from retailers and supermarkets to local businesses and individual consumers.',
+    'The company supplies a wide range of essential FMCG products including rice, sugar, edible oil, detergents, and other daily-use consumer goods. Their focus on product availability, competitive pricing, and dependable delivery has helped them become a preferred partner for many customers. With decades of industry experience and a growing operational network, the company continues to strengthen its position as a leading FMCG trading business in the region.'
+  ],
+  overviewImages: [
+    '/Case-studies details/image 105.png',
+    '/Case-studies details/image 106.png',
+    '/Case-studies details/image 107.png'
+  ],
+  challengeTitle: 'The Challenge',
+  challengeDescription: '<p>The retail chain was previously using locally developed software. As the company grew exponentially in the last few years, due to lack of a unified system across all their branches, they started facing a lot of difficulties in managing operations. To ensure they met their business objectives, they identified the need to implement a robust and comprehensive ERP software solution. One of the major challenges they faced was related to delayed order fulfillment, discrepancies in stock levels, and inability to track goods in transit accurately.</p>',
+  challengeImage: '/Case-studies details/image 108.png',
+  solutionsTitle: 'ESS Solution Choice',
+  solutionsDescription: 'ebizframe ERP is to be implemented for the following functions',
+  solutionModules: [
+    { name: 'Finance', icon: '/Case-studies details/finance-strategy_svgrepo.com.png' },
+    { name: 'Sales', icon: '/Case-studies details/sales--connect_1_.png' },
+    { name: 'Materials Management', icon: '/Case-studies details/Frame 216.png' }
+  ],
+  resultsTitle: 'The Results',
+  resultsSubtitle: 'The client is expecting the following benefits from ebizframe :',
+  resultsItems: [
+    'Integrated Solution',
+    'Financial Reporting',
+    'Tighter control and process orientation with workflow',
+    'Better visibility for top management with online user based Dashboards',
+    'Better coordination between different departments and branches'
+  ],
+  resultsCtaDescription: '<p>For more information on how <a href="/contact-us">ebizframe</a> can help you transform your business, please leave your contact details in the contact form or mail us at <a href="mailto:marketing@essindia.com">marketing@essindia.com</a>.</p>'
 };
 
 const DEFAULT_BLOG_CONTENT: Record<string, any> = {
@@ -88,11 +135,87 @@ const DEFAULT_BLOG_CONTENT: Record<string, any> = {
 };
 
 const DEFAULT_TESTIMONIALS_CONTENT: Record<string, any> = {
-  badgeText: '',
-  headingText: '',
-  subheadingText: '',
+  bgColor: '#0d0720',
+  badgeBgColor: '#ffffff',
+  badgeText: 'Testimonials',
+  badgeTextColor: '#0d0720',
+  title: 'Trusted by Businesses Worldwide',
+  titleColor: '#ffffff',
+  description: 'Empowering enterprises across industries with scalable digital solutions and intelligent automation. Trusted by growing businesses and enterprise teams across multiple countries for delivering innovation, efficiency, and measurable business outcomes.',
+  descriptionColor: '#cbd5e1',
   bgImage: '',
-  testimonials: [{ quote: '', author: '', role: '', company: '', image: '', rating: 5 }]
+  testimonials: [{ topic: 'ERP Solutions', industry: 'FMCG', companyName: '', quote: '', authorAvatar: '', authorName: '', authorTitle: '' }]
+};
+
+const DEFAULT_CONTACT_HERO_CONTENT: Record<string, any> = {
+  bgColor: '#000000',
+  badgeBgColor: '#ffffff',
+  badgeText: 'Contact Our Team',
+  badgeTextColor: '#5C2B6A',
+  title: 'How can we help you\nsucceed?',
+  titleColor: '#ffffff',
+  description: 'Have questions about our platform or need a custom solution? Our experts are here to help your business scale with Finspring.',
+  descriptionColor: '#d1d5db',
+};
+
+const DEFAULT_JOB_DETAIL_HERO_CONTENT: Record<string, any> = {
+  bgColor: '#e4e4e7',
+  buttonText: 'Back to Careers',
+  buttonTextColor: '#64748b',
+  buttonArrowColor: '#64748b',
+  tag1BgColor: '#ffffff',
+  tag1Text: 'Engineering',
+  tag1TextColor: '#1e293b',
+  tag2BgColor: '#ffffff',
+  tag2Text: 'Full-time',
+  tag2TextColor: '#1e293b',
+  titleText: 'Microsoft .NET Backend Developer',
+  titleTextColor: '#0f172a',
+  items: [
+    { icon: '/Contact us/location-pin-alt-1_svgrepo.com.png', text: 'India' },
+    { icon: '/Contact us/location-pin-alt-1_svgrepo.com.png', text: '3-5 years' },
+    { icon: '/Contact us/location-pin-alt-1_svgrepo.com.png', text: 'Full-time' },
+    { icon: '/Contact us/location-pin-alt-1_svgrepo.com.png', text: 'Engineering' }
+  ],
+};
+
+const DEFAULT_JOB_DETAIL_CONTENT: Record<string, any> = {
+  aboutTitle: 'About the Role',
+  aboutText: 'We are seeking a highly skilled Senior Software Engineer with expertise in .NET Core to design, develop, and maintain robust backend services.',
+  sections: [
+    {
+      title: 'Key Responsibilities',
+      items: [
+        'Write clean, scalable, and maintainable code',
+        'Design and develop RESTful APIs for backend services'
+      ]
+    }
+  ],
+  formHeader: 'Apply Now',
+  formSubheader: 'Join our team',
+};
+
+const DEFAULT_ASS_HERO_CONTENT: Record<string, any> = {
+  bgColor: '#161f38',
+  badgeBgColor: '#ffffff',
+  badgeBorderColor: '#ffffff',
+  badgeText: 'After Sales Service',
+  badgeTextColor: '#2a2b6a',
+  title: 'Transform Customer\nSupport with Smart\nAfter-Sales Service',
+  titleColor: '#ffffff',
+  description: 'Digitize service operations, improve field productivity, and deliver faster customer resolution with a connected after-sales platform.',
+  descriptionColor: '#cbd5e1',
+  button1BgColor: '#2a2b6a',
+  button1BorderColor: '#2a2b6a',
+  button1Text: 'Request Demo',
+  button1TextColor: '#ffffff',
+  button1Url: '/contact-us',
+  button2BgColor: '#ffffff',
+  button2BorderColor: '#ffffff',
+  button2Text: 'Explore Features',
+  button2TextColor: '#2a2b6a',
+  button2Url: '#features',
+  image: '/App-After Sales Service/002b2026-6c0c-4820-958f-344b26611bc6 1.png'
 };
 
 interface SectionEditorCardProps {
@@ -137,6 +260,14 @@ export function SectionEditorCard({
         baseSchema = DEFAULT_BLOG_CONTENT as Record<string, JsonValue>;
       } else if (section.type === 'testimonials-block') {
         baseSchema = DEFAULT_TESTIMONIALS_CONTENT as Record<string, JsonValue>;
+      } else if (section.type === 'contact-hero') {
+        baseSchema = DEFAULT_CONTACT_HERO_CONTENT as Record<string, JsonValue>;
+      } else if (section.type === 'job-detail-hero') {
+        baseSchema = DEFAULT_JOB_DETAIL_HERO_CONTENT as Record<string, JsonValue>;
+      } else if (section.type === 'job-detail-content') {
+        baseSchema = DEFAULT_JOB_DETAIL_CONTENT as Record<string, JsonValue>;
+      } else if (section.type === 'ass-hero') {
+        baseSchema = DEFAULT_ASS_HERO_CONTENT as Record<string, JsonValue>;
       }
     }
 
@@ -150,7 +281,7 @@ export function SectionEditorCard({
       meta.fieldOrder.forEach((key) => {
         if (!(key in finalMerged)) {
           // Default arrays for known list fields
-          if (['items', 'processes', 'features', 'faqs', 'cards', 'values', 'modules'].includes(key)) {
+          if (['items', 'processes', 'features', 'faqs', 'cards', 'values', 'modules', 'paragraphs', 'leftItems', 'rightItems', 'steps', 'logos', 'stats'].includes(key)) {
             finalMerged[key] = [];
           } else {
             finalMerged[key] = '';
@@ -164,6 +295,9 @@ export function SectionEditorCard({
 
   const contentKeys = React.useMemo(() => {
     const keys = Object.keys(mergedContent);
+    if ((section.type === 'contact-hero' || section.type === 'job-detail-hero' || section.type === 'job-detail-content' || section.type.startsWith('ass-')) && meta?.fieldOrder) {
+      return meta.fieldOrder;
+    }
     if (meta?.fieldOrder) {
       return keys.sort((a, b) => {
         const indexA = meta.fieldOrder!.indexOf(a);
@@ -175,7 +309,7 @@ export function SectionEditorCard({
       });
     }
     return keys;
-  }, [mergedContent, meta]);
+  }, [mergedContent, meta, section.type]);
 
   const handleSave = async () => {
     setSaving(true);
