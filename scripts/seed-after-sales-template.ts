@@ -110,43 +110,43 @@ async function seed() {
       order: 40
     },
     {
-      type: 'ass-enterprise',
+      type: 'ass-process',
       content: {
-        title: 'Integration & Enterprise Scalability',
-        description: 'ebizframe After Sales Service is built to integrate seamlessly with your core ERP and CRM systems, ensuring unified data across operations.',
-        cards: [
-          { icon: '/App-After Sales Service/Image-10.png', title: 'Seamless ERP Sync', description: 'Real-time sync of parts inventory, customer details, and invoices.' },
-          { icon: '/App-After Sales Service/Image-11.png', title: 'Offline Operations', description: 'Keep working even without network coverage; sync automatically when back online.' },
-          { icon: '/App-After Sales Service/Image-12.png', title: 'Advanced Security', description: 'Enterprise-grade encryption and role-based access control.' }
+        title: 'End-to-End After-Sales Service Journy',
+        steps: [
+          { image: '/App-After Sales Service/Process 1.png', title: 'Customer Complaint', description: 'Customer raises a complaint through the app, web, or support channel.' },
+          { image: '/App-After Sales Service/Process 2.png', title: 'Assignment', description: 'The system auto-assigns the complaint to the most suitable technician.' },
+          { image: '/App-After Sales Service/Process 3.png', title: 'Technician Visit', description: 'Technician is notified, visits the site, and inspects the reported issue.' },
+          { image: '/App-After Sales Service/Process 4.png', title: 'Resolution', description: 'Technician resolves the issue and updates the status in real-time.' },
+          { image: '/App-After Sales Service/Process 5.png', title: 'Feedback', description: 'Customer shares feedback and rates the service experience.' }
         ]
       },
       order: 50
     },
     {
-      type: 'ass-stats',
+      type: 'ass-enterprise',
       content: {
-        image: '/App-After Sales Service/stats-left.png',
-        badgeText: 'Proven Performance',
-        title: 'Empower Teams & Optimize Customer Service',
-        description: 'Track key metrics, optimize dispatcher workflows, and scale your field service operations with data-driven insights.',
-        stats: [
-          { value: '45%', label: 'Reduction in Service Cost' },
-          { value: '98%', label: 'Customer Satisfaction Score' },
-          { value: '2.5x', label: 'Faster SLA Compliance Resolution' }
+        title: 'Marketing runs on content.\nESS automates how it\'s made.',
+        description: 'Solutions for every marketer',
+        image: '/App-After Sales Service/ChatGPT Image Jun 17, 2026, 05_47_51 PM 1.png',
+        cards: [
+          { icon: '/App-After Sales Service/a4460102-b4a2-4158-bb5e-45e56678a570 1.png', title: 'Product Marketer', description: '' },
+          { icon: '/App-After Sales Service/a4460102-b4a2-4158-bb5e-45e56678a570 3.png', title: 'Content Marketer', description: '' },
+          { icon: '/App-After Sales Service/a4460102-b4a2-4158-bb5e-45e56678a570 6.png', title: 'Field Marketer', description: '' },
+          { icon: '/App-After Sales Service/a4460102-b4a2-4158-bb5e-45e56678a570 2.png', title: 'Brand Marketer', description: '' },
+          { icon: '/App-After Sales Service/a4460102-b4a2-4158-bb5e-45e56678a570 5.png', title: 'PR Marketer', description: '' },
+          { icon: '/App-After Sales Service/a4460102-b4a2-4158-bb5e-45e56678a570 4.png', title: 'Performance Marketer', description: '' }
         ]
       },
       order: 60
     },
     {
-      type: 'ass-process',
+      type: 'ass-stats',
       content: {
-        title: 'How the After Sales Service App Works',
-        steps: [
-          { image: '/App-After Sales Service/process-1.png', title: 'Raise Ticket', description: 'Customer raises a complaint through app, portal, or call center.' },
-          { image: '/App-After Sales Service/process-2.png', title: 'AI Allocation', description: 'Intelligent assignment based on location, skill, and schedule.' },
-          { image: '/App-After Sales Service/process-3.png', title: 'On-Site Fix', description: 'Field executive navigates to site, diagnoses, and completes job.' },
-          { image: '/App-After Sales Service/process-4.png', title: 'Part Request', description: 'Requisition spare parts directly from local warehouse on the go.' },
-          { image: '/App-After Sales Service/process-5.png', title: 'Verify & Close', description: 'Customer provides digital signature, ticket closes automatically.' }
+        stats: [
+          { value: '100%', label: 'increase in customer Satisfaction' },
+          { value: '80%', label: 'increase in field productivity' },
+          { value: '60%', label: 'Reduction in inventory carrying costs' }
         ]
       },
       order: 70
@@ -154,53 +154,174 @@ async function seed() {
     {
       type: 'ass-why-choose',
       content: {
-        title: 'Why Choose Our After-Sales Service Platform?',
-        description: 'Built for enterprises that demand reliability, scalability, and intelligent automation in their service operations.',
-        items: [
-          { icon: '/App-After Sales Service/Image-9.png', title: 'AI-Powered Routing', description: 'Intelligent complaint assignment based on location, skillset, and workload.' },
-          { icon: '/App-After Sales Service/Image-10.png', title: 'Multi-Channel Support', description: 'Accept complaints via app, web portal, email, or phone — all unified.' },
-          { icon: '/App-After Sales Service/Image-11.png', title: 'SLA Management', description: 'Define and enforce service-level agreements with automated escalations.' },
-          { icon: '/App-After Sales Service/Image-12.png', title: 'Offline Capability', description: 'Field executives can work offline and sync data when connectivity is restored.' },
-          { icon: '/App-After Sales Service/Image-13.png', title: 'Custom Workflows', description: 'Design custom service workflows tailored to your business processes.' },
-          { icon: '/App-After Sales Service/Image-14.png', title: 'Integration Ready', description: 'Seamlessly integrate with ERP, CRM, and inventory management systems.' }
-        ]
+        badgeText: 'Apps & integrations',
+        title: 'Simplify Scheduling.\nAccelerate Productivity.',
+        description: 'Integrate Calendly with your business tools to automate meeting management, reduce back-and-forth communication, and create a more efficient workflow.',
+        image: '/App-After Sales Service/Frame 295.png'
       },
       order: 80
     },
     {
       type: 'ass-features-grid',
       content: {
-        title: 'Deep Feature Set for Enterprise Operations',
-        features: [
-          { icon: '/App-After Sales Service/Image-1.png', title: 'Dispatcher Console', description: 'Interactive drag-and-drop calendar map for manual assignment overrides.' },
-          { icon: '/App-After Sales Service/Image-2.png', title: 'Mobile Exec App', description: 'Dedicated Android & iOS apps with native navigation, offline support, and push alerts.' },
-          { icon: '/App-After Sales Service/Image-3.png', title: 'Parts Inventory', description: 'Manage truck-stock, warehouse inventory, and automated parts replenishment cycles.' },
-          { icon: '/App-After Sales Service/Image-4.png', title: 'Contract Management', description: 'Configure warranties, preventive maintenance agreements, and service level contracts.' }
+        title: 'Simplify Scheduling. Accelerate Productivity.',
+        categories: [
+          {
+            name: 'Popular',
+            items: [
+              { image: '/App-After Sales Service/Image.png', title: 'Zoom', description: 'Lorem ipsum is placeholder dummy text used in graphic design, publishing', ctaText: 'Learn more', ctaUrl: '#' },
+              { image: '/App-After Sales Service/Image-1.png', title: 'Salesforce', description: 'Lorem ipsum is placeholder dummy text used in graphic design, publishing', ctaText: 'Learn more', ctaUrl: '#' },
+              { image: '/App-After Sales Service/Image-2.png', title: 'HubSpot', description: 'Lorem ipsum is placeholder dummy text used in graphic design, publishing', ctaText: 'Learn more', ctaUrl: '#' },
+              { image: '/App-After Sales Service/Image-3.png', title: 'Typeform', description: 'Lorem ipsum is placeholder dummy text used in graphic design, publishing', ctaText: 'Learn more', ctaUrl: '#' },
+              { image: '/App-After Sales Service/Image-4.png', title: 'Claude', description: 'Lorem ipsum is placeholder dummy text used in graphic design, publishing', ctaText: 'Learn more', ctaUrl: '#' },
+              { image: '/App-After Sales Service/Image-5.png', title: 'Google Analytics', description: 'Lorem ipsum is placeholder dummy text used in graphic design, publishing', ctaText: 'Learn more', ctaUrl: '#' },
+              { image: '/App-After Sales Service/Image-6.png', title: 'Slack', description: 'Lorem ipsum is placeholder dummy text used in graphic design, publishing', ctaText: 'Learn more', ctaUrl: '#' },
+              { image: '/App-After Sales Service/Image-7.png', title: 'Microsoft Teams Chat', description: 'Lorem ipsum is placeholder dummy text used in graphic design, publishing', ctaText: 'Learn more', ctaUrl: '#' },
+              { image: '/App-After Sales Service/Image-8.png', title: 'Stripe', description: 'Lorem ipsum is placeholder dummy text used in graphic design, publishing', ctaText: 'Learn more', ctaUrl: '#' },
+              { image: '/App-After Sales Service/Image-9.png', title: 'Yelp', description: 'Lorem ipsum is placeholder dummy text used in graphic design, publishing', ctaText: 'Learn more', ctaUrl: '#' },
+              { image: '/App-After Sales Service/Image-10.png', title: 'ActiveCampaign', description: 'Lorem ipsum is placeholder dummy text used in graphic design, publishing', ctaText: 'Learn more', ctaUrl: '#' },
+              { image: '/App-After Sales Service/Image-11.png', title: 'Greenhouse', description: 'Lorem ipsum is placeholder dummy text used in graphic design, publishing', ctaText: 'Learn more', ctaUrl: '#' },
+              { image: '/App-After Sales Service/Image-12.png', title: 'Gong', description: 'Lorem ipsum is placeholder dummy text used in graphic design, publishing', ctaText: 'Learn more', ctaUrl: '#' },
+              { image: '/App-After Sales Service/Image-13.png', title: 'Microsoft Teams', description: 'Lorem ipsum is placeholder dummy text used in graphic design, publishing', ctaText: 'Learn more', ctaUrl: '#' },
+              { image: '/App-After Sales Service/Image-14.png', title: 'Zapier', description: 'Lorem ipsum is placeholder dummy text used in graphic design, publishing', ctaText: 'Learn more', ctaUrl: '#' }
+            ]
+          },
+          {
+            name: 'Extensions & Apps',
+            items: [
+              { image: '/App-After Sales Service/Image.png', title: 'Zoom', description: 'Lorem ipsum is placeholder dummy text used in graphic design, publishing', ctaText: 'Learn more', ctaUrl: '#' },
+              { image: '/App-After Sales Service/Image-3.png', title: 'Typeform', description: 'Lorem ipsum is placeholder dummy text used in graphic design, publishing', ctaText: 'Learn more', ctaUrl: '#' },
+              { image: '/App-After Sales Service/Image-6.png', title: 'Slack', description: 'Lorem ipsum is placeholder dummy text used in graphic design, publishing', ctaText: 'Learn more', ctaUrl: '#' },
+              { image: '/App-After Sales Service/Image-14.png', title: 'Zapier', description: 'Lorem ipsum is placeholder dummy text used in graphic design, publishing', ctaText: 'Learn more', ctaUrl: '#' }
+            ]
+          },
+          {
+            name: 'Calendars',
+            items: [
+              { image: '/App-After Sales Service/Image.png', title: 'Zoom', description: 'Lorem ipsum is placeholder dummy text used in graphic design, publishing', ctaText: 'Learn more', ctaUrl: '#' },
+              { image: '/App-After Sales Service/Image-2.png', title: 'HubSpot', description: 'Lorem ipsum is placeholder dummy text used in graphic design, publishing', ctaText: 'Learn more', ctaUrl: '#' }
+            ]
+          },
+          {
+            name: 'Sales & CRM',
+            items: [
+              { image: '/App-After Sales Service/Image-1.png', title: 'Salesforce', description: 'Lorem ipsum is placeholder dummy text used in graphic design, publishing', ctaText: 'Learn more', ctaUrl: '#' },
+              { image: '/App-After Sales Service/Image-2.png', title: 'HubSpot', description: 'Lorem ipsum is placeholder dummy text used in graphic design, publishing', ctaText: 'Learn more', ctaUrl: '#' },
+              { image: '/App-After Sales Service/Image-10.png', title: 'ActiveCampaign', description: 'Lorem ipsum is placeholder dummy text used in graphic design, publishing', ctaText: 'Learn more', ctaUrl: '#' }
+            ]
+          },
+          {
+            name: 'Video Conferencing',
+            items: [
+              { image: '/App-After Sales Service/Image.png', title: 'Zoom', description: 'Lorem ipsum is placeholder dummy text used in graphic design, publishing', ctaText: 'Learn more', ctaUrl: '#' },
+              { image: '/App-After Sales Service/Image-7.png', title: 'Microsoft Teams Chat', description: 'Lorem ipsum is placeholder dummy text used in graphic design, publishing', ctaText: 'Learn more', ctaUrl: '#' },
+              { image: '/App-After Sales Service/Image-13.png', title: 'Microsoft Teams', description: 'Lorem ipsum is placeholder dummy text used in graphic design, publishing', ctaText: 'Learn more', ctaUrl: '#' }
+            ]
+          },
+          {
+            name: 'Marketing',
+            items: [
+              { image: '/App-After Sales Service/Image-2.png', title: 'HubSpot', description: 'Lorem ipsum is placeholder dummy text used in graphic design, publishing', ctaText: 'Learn more', ctaUrl: '#' },
+              { image: '/App-After Sales Service/Image-5.png', title: 'Google Analytics', description: 'Lorem ipsum is placeholder dummy text used in graphic design, publishing', ctaText: 'Learn more', ctaUrl: '#' },
+              { image: '/App-After Sales Service/Image-10.png', title: 'ActiveCampaign', description: 'Lorem ipsum is placeholder dummy text used in graphic design, publishing', ctaText: 'Learn more', ctaUrl: '#' },
+              { image: '/App-After Sales Service/Image-9.png', title: 'Yelp', description: 'Lorem ipsum is placeholder dummy text used in graphic design, publishing', ctaText: 'Learn more', ctaUrl: '#' }
+            ]
+          },
+          {
+            name: 'Recruiting & ATS',
+            items: [
+              { image: '/App-After Sales Service/Image-11.png', title: 'Greenhouse', description: 'Lorem ipsum is placeholder dummy text used in graphic design, publishing', ctaText: 'Learn more', ctaUrl: '#' }
+            ]
+          },
+          {
+            name: 'Payments',
+            items: [
+              { image: '/App-After Sales Service/Image-8.png', title: 'Stripe', description: 'Lorem ipsum is placeholder dummy text used in graphic design, publishing', ctaText: 'Learn more', ctaUrl: '#' }
+            ]
+          },
+          {
+            name: 'Analytics',
+            items: [
+              { image: '/App-After Sales Service/Image-5.png', title: 'Google Analytics', description: 'Lorem ipsum is placeholder dummy text used in graphic design, publishing', ctaText: 'Learn more', ctaUrl: '#' },
+              { image: '/App-After Sales Service/Image-12.png', title: 'Gong', description: 'Lorem ipsum is placeholder dummy text used in graphic design, publishing', ctaText: 'Learn more', ctaUrl: '#' }
+            ]
+          },
+          {
+            name: 'API & Connectors',
+            items: [
+              { image: '/App-After Sales Service/Image-14.png', title: 'Zapier', description: 'Lorem ipsum is placeholder dummy text used in graphic design, publishing', ctaText: 'Learn more', ctaUrl: '#' }
+            ]
+          },
+          {
+            name: 'AI Assistants',
+            items: [
+              { image: '/App-After Sales Service/Image-4.png', title: 'Claude', description: 'Lorem ipsum is placeholder dummy text used in graphic design, publishing', ctaText: 'Learn more', ctaUrl: '#' }
+            ]
+          },
+          {
+            name: 'Email Messaging',
+            items: [
+              { image: '/App-After Sales Service/Image-10.png', title: 'ActiveCampaign', description: 'Lorem ipsum is placeholder dummy text used in graphic design, publishing', ctaText: 'Learn more', ctaUrl: '#' },
+              { image: '/App-After Sales Service/Image-2.png', title: 'HubSpot', description: 'Lorem ipsum is placeholder dummy text used in graphic design, publishing', ctaText: 'Learn more', ctaUrl: '#' }
+            ]
+          },
+          {
+            name: 'Embed Calendly',
+            items: [
+              { image: '/App-After Sales Service/Image.png', title: 'Zoom', description: 'Lorem ipsum is placeholder dummy text used in graphic design, publishing', ctaText: 'Learn more', ctaUrl: '#' }
+            ]
+          },
+          {
+            name: 'Security & Compliance',
+            items: [
+              { image: '/App-After Sales Service/Image-6.png', title: 'Slack', description: 'Lorem ipsum is placeholder dummy text used in graphic design, publishing', ctaText: 'Learn more', ctaUrl: '#' },
+              { image: '/App-After Sales Service/Image-13.png', title: 'Microsoft Teams', description: 'Lorem ipsum is placeholder dummy text used in graphic design, publishing', ctaText: 'Learn more', ctaUrl: '#' }
+            ]
+          },
+          {
+            name: 'Google Suite',
+            items: [
+              { image: '/App-After Sales Service/Image-5.png', title: 'Google Analytics', description: 'Lorem ipsum is placeholder dummy text used in graphic design, publishing', ctaText: 'Learn more', ctaUrl: '#' }
+            ]
+          },
+          {
+            name: 'Microsoft Suite',
+            items: [
+              { image: '/App-After Sales Service/Image-7.png', title: 'Microsoft Teams Chat', description: 'Lorem ipsum is placeholder dummy text used in graphic design, publishing', ctaText: 'Learn more', ctaUrl: '#' },
+              { image: '/App-After Sales Service/Image-13.png', title: 'Microsoft Teams', description: 'Lorem ipsum is placeholder dummy text used in graphic design, publishing', ctaText: 'Learn more', ctaUrl: '#' }
+            ]
+          },
+          {
+            name: 'Other Integrations',
+            items: [
+              { image: '/App-After Sales Service/Image-9.png', title: 'Yelp', description: 'Lorem ipsum is placeholder dummy text used in graphic design, publishing', ctaText: 'Learn more', ctaUrl: '#' }
+            ]
+          }
         ]
       },
       order: 90
     },
     {
-      type: 'ass-cta',
+      type: 'ass-experience',
       content: {
-        title: 'Ready to Elevate Your Customer Experience?',
-        description: 'Schedule a personalized demo with our field service management experts to see how the ebizframe After-Sales Service App can transform your business.',
-        buttonText: 'Schedule a Demo Now',
-        buttonUrl: '/contact-us'
+        title: 'Improve Customer Experience and Loyalty with our After-Sales Service App',
+        mediaUrl: '/App-After Sales Service/Rectangle 193.png',
+        videoUrl: ''
       },
       order: 100
     },
     {
-      type: 'ass-clients',
+      type: 'ass-cta',
       content: {
-        title: 'Trusted by Global Enterprise Brands',
-        logos: [
-          '/App-After Sales Service/logo-1.png',
-          '/App-After Sales Service/logo-2.png',
-          '/App-After Sales Service/logo-3.png',
-          '/App-After Sales Service/logo-4.png',
-          '/App-After Sales Service/logo-5.png'
-        ]
+        bgColor: '#eff3f8',
+        title: 'Future-Ready Oracle Database Strategy',
+        titleColor: '#5b45b2',
+        description: 'Database upgrades often serve as a foundation for modernization initiatives, including migration to Oracle APEX or cloud infrastructure. We help define that roadmap strategically.',
+        descriptionColor: '#374151',
+        buttonText: 'Explore Your Upgrade Roadmap',
+        buttonUrl: '#',
+        buttonBgColor: '#fcc42c',
+        buttonTextColor: '#000000'
       },
       order: 110
     }

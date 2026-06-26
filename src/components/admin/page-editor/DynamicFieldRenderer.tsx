@@ -18,6 +18,7 @@ interface DynamicFieldRendererProps {
   value: JsonValue;
   onChange: (keyPath: string, value: JsonValue) => void;
   depth?: number;
+  sectionType?: string;
 }
 
 export function DynamicFieldRenderer({
@@ -26,8 +27,9 @@ export function DynamicFieldRenderer({
   value,
   onChange,
   depth = 0,
+  sectionType,
 }: DynamicFieldRendererProps) {
-  const fieldType = detectFieldType(fieldKey, value);
+  const fieldType = detectFieldType(fieldKey, value, sectionType);
 
   switch (fieldType) {
     case 'null':
@@ -156,6 +158,7 @@ export function DynamicFieldRenderer({
           value={value as JsonValue[]}
           onChange={onChange}
           depth={depth}
+          sectionType={sectionType}
         />
       );
 
@@ -167,6 +170,7 @@ export function DynamicFieldRenderer({
           value={value as Record<string, JsonValue>}
           onChange={onChange}
           depth={depth}
+          sectionType={sectionType}
         />
       );
 
@@ -315,12 +319,14 @@ function ObjectField({
   value,
   onChange,
   depth,
+  sectionType,
 }: {
   keyPath: string;
   fieldKey: string;
   value: Record<string, JsonValue>;
   onChange: (keyPath: string, value: JsonValue) => void;
   depth: number;
+  sectionType?: string;
 }) {
   const [collapsed, setCollapsed] = React.useState(depth > 2);
   const keys = Object.keys(value);
@@ -376,6 +382,7 @@ function ObjectField({
               value={value[k]}
               onChange={onChange}
               depth={depth + 1}
+              sectionType={sectionType}
             />
           ))}
         </div>
@@ -390,12 +397,14 @@ function ArrayField({
   value,
   onChange,
   depth,
+  sectionType,
 }: {
   keyPath: string;
   fieldKey: string;
   value: JsonValue[];
   onChange: (keyPath: string, value: JsonValue) => void;
   depth: number;
+  sectionType?: string;
 }) {
   const isPrimitive = value.length > 0 && typeof value[0] !== 'object';
   const isImageArray = isPrimitive && (
@@ -410,6 +419,7 @@ function ArrayField({
       value={value}
       onChange={(newArr) => onChange(keyPath, newArr)}
       keyPathPrefix={keyPath}
+      sectionType={sectionType}
       renderItem={(item, _idx, onItemChange, itemKeyPath) => {
         if (isPrimitive) {
           if (isImageArray) {
@@ -460,7 +470,16 @@ function ArrayField({
               return 0;
             });
           } else if (fieldKey === 'cards') {
-            const cardOrder = ['icon', 'title', 'description', 'contact'];
+            let cardOrder = ['badge', 'icon', 'image', 'title', 'description', 'contact', 'badgeBorderColor', 'badgeTextColor', 'badgeBgColor'];
+            if (sectionType && sectionType.startsWith('fmcg-')) {
+              if (sectionType === 'fmcg-action') {
+                cardOrder = ['badge', 'image', 'title', 'description', 'badgeBorderColor', 'badgeTextColor', 'badgeBgColor'];
+              } else if (sectionType === 'fmcg-impact' || sectionType === 'fmcg-integrations') {
+                cardOrder = ['image', 'title'];
+              } else if (sectionType === 'fmcg-challenges' || sectionType === 'fmcg-empower') {
+                cardOrder = ['icon', 'title', 'description'];
+              }
+            }
             sortedKeys = cardOrder.filter(k => k in objItem);
           } else if (fieldKey === 'faqs') {
             if (!('quotation' in objItem)) {
@@ -472,8 +491,8 @@ function ArrayField({
                 delete objItem.question;
               }
             }
-            const faqOrder = ['quotation', 'answer'];
-            sortedKeys = faqOrder;
+            const faqOrder = ['quotation', 'answer', 'arrowIcon'];
+            sortedKeys = faqOrder.filter(k => k in objItem);
           } else if (fieldKey === 'locations') {
             if (!('name' in objItem) && 'person' in objItem) {
               objItem.name = objItem.person;
@@ -485,17 +504,41 @@ function ArrayField({
             const sectionOrder = ['title', 'items'];
             sortedKeys = sectionOrder;
           } else if (fieldKey.toLowerCase().includes('items')) {
-            const itemOrder = ['icon', 'text', 'title', 'description'];
+            let itemOrder = ['icon', 'text', 'title', 'description', 'image', 'ctaText', 'ctaUrl'];
+            if (sectionType === 'oracle-apex-approach') {
+              itemOrder = ['image', 'title'];
+            }
             sortedKeys = itemOrder.filter(k => k in objItem);
           } else if (fieldKey === 'steps') {
-            const stepOrder = ['image', 'title', 'description'];
+            const stepOrder = ['icon', 'image', 'title', 'description'];
             sortedKeys = stepOrder.filter(k => k in objItem);
           } else if (fieldKey === 'features') {
             const featureOrder = ['icon', 'title', 'description'];
             sortedKeys = featureOrder.filter(k => k in objItem);
+          } else if (fieldKey === 'tabs') {
+            let tabOrder = ['tabName', 'heading', 'subheading', 'questions', 'image'];
+            if (sectionType === 'fmcg-use-cases') {
+              tabOrder = ['tabName', 'tag', 'heading', 'points', 'buttonText', 'buttonUrl', 'image'];
+            } else if (sectionType === 'aom-workspace') {
+              tabOrder = ['label', 'desc', 'icon', 'contentTitle', 'contentDescription', 'contentImage', 'benefits', 'ctaText', 'ctaUrl'];
+            } else if (sectionType === 'bi-industry-services') {
+              tabOrder = ['tabName', 'tabTitle', 'points', 'buttonText', 'buttonUrl', 'image'];
+            } else if (sectionType === 'oracle-apex-approach') {
+              tabOrder = ['tabName', 'items'];
+            }
+            sortedKeys = tabOrder.filter(k => k in objItem);
           } else if (fieldKey === 'stats') {
             const statOrder = ['value', 'label'];
             sortedKeys = statOrder.filter(k => k in objItem);
+          } else if (fieldKey === 'solutions') {
+            const solutionOrder = ['title', 'description'];
+            sortedKeys = solutionOrder.filter(k => k in objItem);
+          } else if (fieldKey === 'benefits') {
+            const benefitOrder = ['image', 'title'];
+            sortedKeys = benefitOrder.filter(k => k in objItem);
+          } else if (fieldKey === 'industries' && sectionType === 'rpa-industries') {
+            const industryOrder = ['icon', 'title', 'description'];
+            sortedKeys = industryOrder.filter(k => k in objItem);
           } else {
             // Heuristic to sort common fields logically
             const priorityKeys = ['subtitle', 'iconImage', 'icon', 'image', 'title', 'tags', 'name', 'heading', 'label', 'description', 'bgImage', 'ctaText', 'ctaUrl', 'items', 'points', 'cards'];
@@ -521,6 +564,7 @@ function ArrayField({
                     onItemChange(_idx, { ...objItem, [k]: newVal });
                   }}
                   depth={depth + 2}
+                  sectionType={sectionType}
                 />
               ))}
             </>

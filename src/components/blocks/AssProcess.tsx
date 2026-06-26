@@ -15,44 +15,81 @@ interface AssProcessContent {
 }
 
 export function AssProcess({ content }: { content?: AssProcessContent }) {
-  const title = content?.title || 'How It Works';
+  const title = content?.title || 'End-to-End After-Sales Service Journy';
   const steps = content?.steps || [
-    { image: '/App-After Sales Service/Process 1.png', title: 'Register Complaint', description: 'Customer raises a complaint through the app or portal' },
-    { image: '/App-After Sales Service/Process 2.png', title: 'Auto Assignment', description: 'Complaint is automatically assigned to the nearest service executive' },
-    { image: '/App-After Sales Service/Process 3.png', title: 'On-Site Service', description: 'Executive visits the customer location and resolves the issue' },
-    { image: '/App-After Sales Service/Process 4.png', title: 'Feedback Collection', description: 'Customer provides feedback on the service quality' },
-    { image: '/App-After Sales Service/Process 5.png', title: 'Report & Analyse', description: 'Generate reports to analyse trends and improve service' },
+    { image: '/App-After Sales Service/Process 1.png', title: 'Customer Complaint', description: 'Customer raises a complaint through the app, web, or support channel.' },
+    { image: '/App-After Sales Service/Process 2.png', title: 'Assignment', description: 'The system auto-assigns the complaint to the most suitable technician.' },
+    { image: '/App-After Sales Service/Process 3.png', title: 'Technician Visit', description: 'Technician is notified, visits the site, and inspects the reported issue.' },
+    { image: '/App-After Sales Service/Process 4.png', title: 'Resolution', description: 'Technician resolves the issue and updates the status in real-time.' },
+    { image: '/App-After Sales Service/Process 5.png', title: 'Feedback', description: 'Customer shares feedback and rates the service experience.' },
   ];
 
   return (
-    <section className="p-14 px-6 bg-white">
+    <section className="p-14 px-6 bg-[#ffffff]">
       <div className="container mx-auto max-w-7xl">
-        <h2 className="text-3xl md:text-4xl font-bold text-[#0f172a] text-center mb-14 leading-tight">
+        {/* Title */}
+        <h2 className="text-3xl md:text-4xl lg:text-[40px] font-bold text-[#0a1128] text-center mb-6 leading-tight">
           {title}
         </h2>
 
-        {/* Process Steps */}
+        {/* Process Flow */}
         <div className="relative">
-          {/* Connection Line (desktop) */}
-          <div className="hidden lg:block absolute top-16 left-[10%] right-[10%] h-0.5 bg-gradient-to-r from-[#3b82f6] via-[#8b5cf6] to-[#3b82f6] opacity-20" />
+          {/* Flow bar container (desktop only) */}
+          <div className="hidden lg:block relative w-full max-w-7xl mx-auto h-20 mb-6">
+            {/* Connecting Line */}
+            <div className="absolute top-1/2 left-[10%] right-[10%] h-[2px] bg-[#181263] -translate-y-1/2" />
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-8">
+            {/* Step numbers and intermediate connection dots */}
+            <div className="absolute inset-0 flex items-center justify-between px-[8%]">
+              {steps.map((_, idx) => (
+                <React.Fragment key={idx}>
+                  {/* Step number container */}
+                  <div className="relative z-10 flex items-center justify-center w-14 h-14">
+                    {/* Outer dashed circle */}
+                    <div className="absolute inset-0 rounded-full border border-dashed border-[#27256b]/40" />
+                    {/* Inner solid circle */}
+                    <div className="w-10 h-10 rounded-full bg-[#181263] text-white font-bold text-sm flex items-center justify-center shadow-sm">
+                      {String(idx + 1).padStart(2, '0')}
+                    </div>
+                  </div>
+
+                  {/* Intermediate connection dot */}
+                  {idx < steps.length - 1 && (
+                    <div className="w-3.5 h-3.5 rounded-full border-2 border-[#e28a1a] bg-white z-10 shadow-sm" />
+                  )}
+                </React.Fragment>
+              ))}
+            </div>
+          </div>
+
+          {/* Cards Grid */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6">
             {steps.map((step: ProcessStep, idx: number) => (
-              <div key={idx} className="flex flex-col items-center text-center group">
+              <div key={idx} className="flex flex-col items-center bg-white rounded-2xl border border-slate-200 pt-3 pb-6 shadow-[0_4px_25px_rgba(0,0,0,0.015)] transition-all hover:shadow-md hover:border-slate-200">
+                {/* Mobile/Tablet step number (hidden on desktop) */}
+                <div className="lg:hidden relative flex items-center justify-center w-14 h-14 mb-4">
+                  <div className="absolute inset-0 rounded-full border border-dashed border-[#27256b]/40" />
+                  <div className="w-10 h-10 rounded-full bg-[#0a1128] text-white font-bold text-sm flex items-center justify-center shadow-sm">
+                    {String(idx + 1).padStart(2, '0')}
+                  </div>
+                </div>
+
                 {/* Step Image */}
-                <div className="relative w-28 h-28 mb-5 rounded-2xl overflow-hidden bg-[#f8f9fb] group-hover:shadow-lg transition-shadow">
+                <div className="relative w-full aspect-square max-w-[150px] mb-6 flex items-center justify-center">
                   {step.image && (
-                    <Image src={step.image} alt={step.title || ''} fill className="object-contain p-3" />
+                    <Image src={step.image} alt={step.title || ''} fill className="object-contain" />
                   )}
                 </div>
 
-                {/* Step Number */}
-                <div className="w-8 h-8 rounded-full bg-[#3b82f6] text-white text-xs font-bold flex items-center justify-center mb-3">
-                  {idx + 1}
-                </div>
+                {/* Title */}
+                <h3 className="text-[17px] font-bold text-[#0a1128] text-center mb-2.5 leading-snug">
+                  {step.title}
+                </h3>
 
-                <h3 className="text-sm font-bold text-[#0f172a] mb-1.5">{step.title}</h3>
-                <p className="text-xs text-slate-500 leading-relaxed">{step.description}</p>
+                {/* Description */}
+                <p className="text-xs text-slate-500 text-center leading-relaxed font-normal">
+                  {step.description}
+                </p>
               </div>
             ))}
           </div>
