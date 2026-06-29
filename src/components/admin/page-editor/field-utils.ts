@@ -13,19 +13,81 @@ export type FieldType =
   | 'object'
   | 'array'
   | 'countryCode'
+  | 'topicSelect'
+  | 'industrySelect'
   | 'null';
 
 export function humanLabel(key: string): string {
+  if (key === 'overviewTitle') return 'Title';
+  if (key === 'overviewParagraphs') return 'Description';
+  if (key === 'overviewImages') return 'Image Uploads';
+  if (key === 'challengeTitle') return 'Title';
+  if (key === 'challengeDescription') return 'Description';
+  if (key === 'challengeImage') return 'Image Upload';
+  if (key === 'solutionsTitle') return 'Title';
+  if (key === 'solutionsDescription') return 'Description';
+  if (key === 'solutionModules') return 'Items';
+  if (key === 'icon') return 'Icon Upload';
+  if (key === 'name') return 'Item Name';
   if (key === 'subtitle') return 'Tag';
+  if (key === 'resultsTitle') return 'Title';
+  if (key === 'resultsSubtitle') return 'Subtitle';
+  if (key === 'resultsItems') return 'Points';
+  if (key === 'resultsCtaDescription') return 'CTA Description';
   if (key === 'bgImage') return 'Background Image';
   if (key === 'badgeBgColor') return 'Badge Background Color';
-  if (key === 'badgeColor') return 'Badge Text Color';
+  if (key === 'badgeColor' || key === 'badgeTextColor') return 'Badge Text Color';
+  if (key === 'badgeBorderColor') return 'Badge Border Color';
   if (key === 'titleColor') return 'Title Text Color';
   if (key === 'titleSecondaryColor') return 'Title Secondary Color (Highlights 4th, 5th, 7th words)';
   if (key === 'descriptionColor') return 'Description Text Color';
   if (key === 'button1Color') return 'Button 1 Text Color';
   if (key === 'button2Color') return 'Button 2 Text Color';
   if (key === 'bgColor') return 'Background Color';
+  if (key === 'dateColor') return 'Date Color';
+  if (key === 'contact') return 'Contact (Email/Phone No.)';
+  if (key === 'qutation' || key === 'quotation') return 'Question';
+  if (key === 'tag1BgColor') return 'Tag 1 Background Color';
+  if (key === 'tag1TextColor') return 'Tag 1 Text Color';
+  if (key === 'tag1Text') return 'Tag 1 Text';
+  if (key === 'tag2BgColor') return 'Tag 2 Background Color';
+  if (key === 'tag2TextColor') return 'Tag 2 Text Color';
+  if (key === 'tag2Text') return 'Tag 2 Text';
+  if (key === 'buttonArrowColor') return 'Button Arrow Color';
+  if (key === 'titleText') return 'Title Text';
+  if (key === 'titleTextColor') return 'Title Text Color';
+  if (key === 'badgeBgColor') return 'Badge Background Color';
+  if (key === 'badgeBorderColor') return 'Badge Border Color';
+  if (key === 'badgeTextColor') return 'Badge Text Color';
+  if (key === 'descriptionTextColor') return 'Description Text Color';
+  if (key === 'aboutTitle') return 'About Title';
+  if (key === 'aboutText') return 'About Text';
+  if (key === 'formHeader') return 'Form Header';
+  if (key === 'formSubheader') return 'Form Sub Header';
+  if (key === 'badgeIcon') return 'Badge Icon Upload';
+  if (key === 'button1BgColor') return 'Button 1 Background Color';
+  if (key === 'button1BorderColor') return 'Button 1 Border Color';
+  if (key === 'button1Text') return 'Button 1 Text';
+  if (key === 'button1TextColor') return 'Button 1 Text Color';
+  if (key === 'button1Url') return 'Button 1 URL';
+  if (key === 'button2BgColor') return 'Button 2 Background Color';
+  if (key === 'button2BorderColor') return 'Button 2 Border Color';
+  if (key === 'button2Text') return 'Button 2 Text';
+  if (key === 'button2TextColor') return 'Button 2 Text Color';
+  if (key === 'button2Url') return 'Button 2 URL';
+  if (key === 'mediaUrl') return 'Media Upload (Image or Video)';
+  if (key === 'buttonBgColor') return 'Button Background Color';
+  if (key === 'buttonTextColor') return 'Button Text Color';
+  if (key === 'tabs') return 'Category Tabs List';
+  if (key === 'label') return 'Tab Short Label (e.g. SFA)';
+  if (key === 'desc') return 'Tab Short Description';
+  if (key === 'contentTitle') return 'Detail Title';
+  if (key === 'contentDescription') return 'Detail Description';
+  if (key === 'contentImage') return 'Detail Mockup Image';
+  if (key === 'benefits') return 'Benefits Tags (Array)';
+  if (key === 'buttonText') return 'CTA Text';
+  if (key === 'buttonUrl') return 'CTA URL';
+  if (key === 'tabTitle') return 'Tab Detail Title';
   
   return key
     .replace(/([a-z])([A-Z])/g, '$1 $2')
@@ -33,14 +95,14 @@ export function humanLabel(key: string): string {
     .replace(/\b\w/g, (c) => c.toUpperCase());
 }
 
-const IMAGE_PATTERNS = ['image', 'thumbnail', 'avatar', 'logo', 'ogimage', 'photo', 'banner', 'icon_url', 'icon_image'];
+const IMAGE_PATTERNS = ['image', 'thumbnail', 'avatar', 'logo', 'ogimage', 'photo', 'banner', 'icon_url', 'icon_image', 'icon', 'media', 'video'];
 const URL_PATTERNS = ['url', 'href', 'link'];
 const RICHTEXT_PATTERNS = ['description', 'desc', 'body', 'content', 'html', 'paragraph', 'text', 'summary', 'excerpt', 'answer', 'quote'];
 const TEXTAREA_PATTERNS = ['subtitle', 'subheading', 'note', 'message'];
 const COLOR_PATTERN = /^#([0-9a-f]{3}){1,2}$/i;
 const ICON_PATTERNS = ['icon'];
 
-export function detectFieldType(key: string, value: JsonValue): FieldType {
+export function detectFieldType(key: string, value: JsonValue, sectionType?: string): FieldType {
   if (value === null || value === undefined) return 'null';
   if (typeof value === 'boolean') return 'boolean';
   if (typeof value === 'number') return 'number';
@@ -50,6 +112,9 @@ export function detectFieldType(key: string, value: JsonValue): FieldType {
   if (typeof value === 'string') {
     const lower = key.toLowerCase();
 
+    if (lower === 'topic') return 'topicSelect';
+    if (lower === 'industry') return 'industrySelect';
+    if (lower === 'icon' && (sectionType === 'bi-business-impact' || sectionType === 'rpa-overview' || sectionType === 'rpa-capabilities' || sectionType === 'rpa-industries' || value.startsWith('/') || value.includes('.') || value.includes('://'))) return 'image';
     if (IMAGE_PATTERNS.some((p) => lower.includes(p)) && !lower.endsWith('alt')) return 'image';
     if (lower === 'color' || lower.endsWith('color') || lower.startsWith('color') || lower.includes('accent')) {
       if (COLOR_PATTERN.test(value) || value.startsWith('rgb') || value.startsWith('hsl')) return 'color';

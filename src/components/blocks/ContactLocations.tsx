@@ -3,10 +3,11 @@ import { User, Phone, Mail } from 'lucide-react';
 export interface ContactLocation {
   city: string;
   address: string;
-  person: string;
+  name?: string;
+  person?: string;
   phone: string;
   email: string;
-  pinImageUrl: string;
+  pinImageUrl?: string;
 }
 
 export interface ContactLocationsContent {
@@ -107,7 +108,7 @@ export function ContactLocations({ content }: { content?: ContactLocationsConten
               <div className="space-y-3 pt-3 border-t border-gray-100">
                 <div className="flex items-start space-x-3 text-sm text-gray-600">
                   <User size={16} className="shrink-0 mt-0.5 text-blue-500" strokeWidth={1.5} />
-                  <span>{loc.person}</span>
+                  <span>{loc.name || loc.person}</span>
                 </div>
 
                 <div className="flex items-start space-x-3 text-sm text-gray-600">

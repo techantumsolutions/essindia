@@ -79,7 +79,7 @@ export default function ManufacturingModels({ content }: { content?: any }) {
                 <img
                   src={model.image || '/Modules-manufacturing/industries-1.png'}
                   alt={model.title}
-                  className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                  className="w-full max-w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                 />
               </div>
               <div className="p-5 flex-1 flex flex-col">

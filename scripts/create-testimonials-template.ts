@@ -26,9 +26,14 @@ async function main() {
       name: 'Testimonials Content Section',
       type: 'testimonials-block',
       contentJson: {
+        bgColor: '#0d0720',
+        badgeBgColor: '#ffffff',
+        badgeTextColor: '#0d0720',
         badgeText: 'Testimonials',
-        headingText: 'Trusted by Businesses Worldwide',
-        subheadingText: 'Empowering enterprises across industries with scalable digital solutions and intelligent automation. Trusted by growing businesses and enterprise teams across multiple countries for delivering innovation, efficiency, and measurable business outcomes.',
+        title: 'Trusted by Businesses Worldwide',
+        titleColor: '#ffffff',
+        description: 'Empowering enterprises across industries with scalable digital solutions and intelligent automation. Trusted by growing businesses and enterprise teams across multiple countries for delivering innovation, efficiency, and measurable business outcomes.',
+        descriptionColor: '#cbd5e1',
         bgImage: '',
         testimonials: [
           {
@@ -37,7 +42,6 @@ async function main() {
             authorTitle: 'Product Developer at Webflow',
             authorAvatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Sophie',
             companyName: 'Webflow',
-            logoUrl: '',
             topic: 'ERP Solutions',
             industry: 'FMCG'
           },
@@ -47,7 +51,6 @@ async function main() {
             authorTitle: 'Web Designer at Airtable',
             authorAvatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Adam',
             companyName: 'Airtable',
-            logoUrl: '',
             topic: 'IoT Solutions',
             industry: 'Pharma'
           },
@@ -57,7 +60,6 @@ async function main() {
             authorTitle: 'Product Manager at Zapier',
             authorAvatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Mike',
             companyName: 'Zapier',
-            logoUrl: '',
             topic: 'ERP Solutions',
             industry: 'Manufacturing'
           },
@@ -67,7 +69,6 @@ async function main() {
             authorTitle: 'Web Designer at Airtable',
             authorAvatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Adam2',
             companyName: 'Cisco',
-            logoUrl: '',
             topic: 'IoT Solutions',
             industry: 'FMCG'
           }

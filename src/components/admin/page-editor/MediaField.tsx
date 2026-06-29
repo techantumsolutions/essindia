@@ -9,9 +9,10 @@ interface MediaFieldProps {
   fieldKey: string;
   value: string;
   onChange: (value: string) => void;
+  hint?: string;
 }
 
-export function MediaField({ fieldKey, value, onChange }: MediaFieldProps) {
+export function MediaField({ fieldKey, value, onChange, hint }: MediaFieldProps) {
   const [showPreview, setShowPreview] = React.useState(true);
   const [isUploading, setIsUploading] = React.useState(false);
   const fileInputRef = React.useRef<HTMLInputElement>(null);
@@ -19,6 +20,16 @@ export function MediaField({ fieldKey, value, onChange }: MediaFieldProps) {
   const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
+
+    // Enforce 3MB file size limit
+    const MAX_SIZE_MB = 3;
+    const MAX_SIZE_BYTES = MAX_SIZE_MB * 1024 * 1024;
+    if (file.size > MAX_SIZE_BYTES) {
+      toast.error(`File size exceeds the ${MAX_SIZE_MB}MB limit.`);
+      if (fileInputRef.current) fileInputRef.current.value = '';
+      return;
+    }
+
     setIsUploading(true);
     try {
       const formData = new FormData();
@@ -30,12 +41,14 @@ export function MediaField({ fieldKey, value, onChange }: MediaFieldProps) {
       setShowPreview(true);
       toast.success('File uploaded successfully');
     } catch (err: any) {
-      toast.error(err.message || 'Failed to upload image');
+      toast.error(err.message || 'Failed to upload file');
     } finally {
       setIsUploading(false);
       if (fileInputRef.current) fileInputRef.current.value = '';
     }
   };
+
+  const isVideo = value && (value.toLowerCase().match(/\.(mp4|webm|ogg|mov)$/) || value.includes('video'));
 
   return (
     <div className="space-y-2">
@@ -43,12 +56,23 @@ export function MediaField({ fieldKey, value, onChange }: MediaFieldProps) {
       <div className="flex items-start gap-3">
         {value && showPreview ? (
           <div className="relative group shrink-0">
-            <img
-              src={value}
-              alt=""
-              className="w-20 h-20 rounded-xl object-cover border border-slate-200 bg-slate-50"
-              onError={() => setShowPreview(false)}
-            />
+            {isVideo ? (
+              <video
+                src={value}
+                className="w-20 h-20 rounded-xl object-cover border border-slate-200 bg-slate-50"
+                controls={false}
+                muted
+                playsInline
+                onError={() => setShowPreview(false)}
+              />
+            ) : (
+              <img
+                src={value}
+                alt=""
+                className="w-20 h-20 rounded-xl object-cover border border-slate-200 bg-slate-50"
+                onError={() => setShowPreview(false)}
+              />
+            )}
             <button
               type="button"
               onClick={() => onChange('')}
@@ -71,13 +95,13 @@ export function MediaField({ fieldKey, value, onChange }: MediaFieldProps) {
                 onChange(e.target.value);
                 setShowPreview(true);
               }}
-              placeholder="Enter image URL or path..."
+              placeholder="Enter file URL or path..."
               className="flex-1 bg-slate-50 rounded-xl px-4 py-2.5 text-sm font-medium outline-none focus:ring-2 focus:ring-[#4B2A63]/10 border border-transparent focus:border-[#4B2A63]/20"
             />
             <input
               ref={fileInputRef}
               type="file"
-              accept="image/*"
+              accept="image/*,video/*"
               className="hidden"
               onChange={handleUpload}
             />
@@ -91,7 +115,15 @@ export function MediaField({ fieldKey, value, onChange }: MediaFieldProps) {
             </button>
           </div>
           <p className="text-[10px] text-slate-400">
-            Paste image URL or click "Upload" to upload from your device.
+            Paste media URL or click "Upload" to upload from your device.
+            <span className="block mt-1 text-rose-500 font-medium">
+              * Disclaimer: Max upload size is 3MB. Supports images and videos.
+            </span>
+            {hint && (
+              <span className="block mt-1 text-[#4B2A63] font-medium">
+                {hint}
+              </span>
+            )}
           </p>
         </div>
       </div>

@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { motion } from 'framer-motion';
-import { ArrowLeft, CheckCircle2, ArrowRight } from 'lucide-react';
+import { ArrowLeft, ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { type CaseStudyPost, defaultCaseStudies } from '@/lib/case-studies-data';
 
@@ -21,7 +21,7 @@ export function CaseStudyDetailSection({ content }: CaseStudyDetailSectionProps)
   return (
     <article className="bg-[#fcfdfd] min-h-screen">
       {/* 1. Hero Section */}
-      <section className="relative px-6 pt-30 pb-14 overflow-hidden" style={{ background: 'linear-gradient(135deg, #1e2445 0%, #292048 100%)' }}>
+      <section className="relative px-6 pt-30 pb-14 overflow-hidden animate-fade-in" style={{ background: cs.bgColor || 'linear-gradient(135deg, #1e2445 0%, #292048 100%)' }}>
         <div className="relative max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
           {/* Left: Text Content */}
           <motion.div
@@ -30,22 +30,38 @@ export function CaseStudyDetailSection({ content }: CaseStudyDetailSectionProps)
             transition={{ duration: 0.6 }}
           >
             <div className="flex items-center gap-4 mb-6">
-              <div className="px-5 py-1.5 bg-white text-[#2B1B41] rounded-full text-sm font-semibold shadow-sm">
-                {cs.topic || cs.industry || 'Category Name'}
+              <div 
+                className="px-5 py-1.5 rounded-full text-sm font-semibold shadow-sm border transition-all duration-300"
+                style={{
+                  backgroundColor: cs.badgeBgColor || '#ffffff',
+                  borderColor: cs.badgeBorderColor || '#7c3aed',
+                  color: cs.badgeTextColor || '#7c3aed'
+                }}
+              >
+                {cs.badgeText || cs.topic || cs.industry || 'Caetrory Name'}
               </div>
               {cs.date && (
-                <div className="text-white text-lg font-medium">
+                <div 
+                  className="text-lg font-medium transition-colors duration-300"
+                  style={{ color: cs.dateColor || '#ffffff' }}
+                >
                   {cs.date}
                 </div>
               )}
             </div>
 
-            <h1 className="text-4xl md:text-5xl lg:text-[52px] font-bold text-white leading-tight mb-6">
+            <h1 
+              className="text-4xl md:text-5xl lg:text-[52px] font-bold leading-tight mb-6 transition-colors duration-300"
+              style={{ color: cs.titleColor || '#ffffff' }}
+            >
               {cs.title}
             </h1>
 
             {cs.description && (
-              <div className="text-slate-200 text-base leading-relaxed line-clamp-4 max-w-xl">
+              <div 
+                className="text-base leading-relaxed line-clamp-4 max-w-xl transition-colors duration-300"
+                style={{ color: cs.descriptionColor || '#e2e8f0' }}
+              >
                 {cs.description}
               </div>
             )}
@@ -59,27 +75,31 @@ export function CaseStudyDetailSection({ content }: CaseStudyDetailSectionProps)
             className="relative h-full flex flex-col justify-center items-end lg:items-center"
           >
             <img
-              src={cs.image || '/Case-studies details/image 104.png'}
+              src={cs.image || '/Case-studies details/right_card.png'}
               alt={cs.title}
-              className="object-contain max-w-full lg:max-w-[500px]"
+              className="object-contain max-w-full lg:max-w-[500px] rounded-2xl transition-transform duration-300 hover:scale-[1.02]"
             />
           </motion.div>
         </div>
       </section>
 
       {/* 2. Overview Section */}
-      <section className="py-14 px-6 bg-white border-b">
+      <section className="py-16 px-6 bg-white border-b">
         <div className="max-w-7xl mx-auto">
-          <h2 className="text-[40px] font-bold text-[#111827] mb-4">Overview</h2>
-          <div className="prose prose-lg prose-slate max-w-none mb-14 text-slate-500 leading-relaxed">
-            {cs.overviewHtml ? (
+          <h2 className="text-[40px] font-bold text-slate-900 mb-6">{cs.overviewTitle || 'Overview'}</h2>
+          <div className="text-[#4b5563] text-[17px] leading-[1.8] space-y-6 max-w-none mb-14 font-normal">
+            {cs.overviewParagraphs && cs.overviewParagraphs.length > 0 ? (
+              cs.overviewParagraphs.map((paragraph: string, idx: number) => (
+                <p key={idx}>{paragraph}</p>
+              ))
+            ) : cs.overviewHtml ? (
               <div dangerouslySetInnerHTML={{ __html: cs.overviewHtml }} />
             ) : (
               <>
-                <p className="mb-4">
+                <p>
                   The client is a well-established wholesaler and retailer of FMCG products with over 20 years of experience in the industry. What began as a small neighborhood shop has steadily evolved into a large and trusted trading business known for its strong customer relationships, reliable service, and consistent market presence. Through dedication, operational efficiency, and a deep understanding of customer needs, the company has built a solid reputation in the FMCG sector.
                 </p>
-                <p className="mb-4">
+                <p>
                   Over the years, the business has expanded significantly and now operates through three major branches located across Accra. This expansion reflects the company's continuous growth and increasing demand for its products within the market. By maintaining strong supplier networks and efficient distribution practices, the company has been able to serve a wide customer base ranging from retailers and supermarkets to local businesses and individual consumers.
                 </p>
                 <p>
@@ -90,37 +110,45 @@ export function CaseStudyDetailSection({ content }: CaseStudyDetailSectionProps)
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8">
-            {(cs.overviewImages && cs.overviewImages.length > 0) ? (
-              cs.overviewImages.map((img, idx) => (
-                <div key={idx} className="aspect-square bg-slate-100 overflow-hidden">
-                  <img src={img} alt={`Overview ${idx}`} className="w-full h-full object-cover" />
-                </div>
-              ))
-            ) : (
-              <>
-                <div className="aspect-square bg-slate-100 overflow-hidden">
-                  <img src="/Case-studies details/image 105.png" alt="Overview 1" className="w-full h-full object-cover" />
-                </div>
-                <div className="aspect-square bg-slate-100 overflow-hidden">
-                  <img src="/Case-studies details/image 106.png" alt="Overview 2" className="w-full h-full object-cover" />
-                </div>
-                <div className="aspect-square bg-slate-100 overflow-hidden">
-                  <img src="/Case-studies details/image 107.png" alt="Overview 3" className="w-full h-full object-cover" />
-                </div>
-              </>
-            )}
+            {(() => {
+              const validImages = (cs.overviewImages || []).filter(Boolean);
+              if (validImages.length > 0) {
+                return validImages.map((img: string, idx: number) => (
+                  <div key={idx} className="aspect-[3/4] bg-slate-100 overflow-hidden rounded-xl">
+                    <img src={img} alt={`Overview ${idx}`} className="w-full h-full object-cover hover:scale-[1.03] transition-transform duration-500" />
+                  </div>
+                ));
+              }
+              return (
+                <>
+                  <div className="aspect-[3/4] bg-slate-100 overflow-hidden rounded-xl">
+                    <img src="/Case-studies details/image 105.png" alt="Overview 1" className="w-full h-full object-cover hover:scale-[1.03] transition-transform duration-500" />
+                  </div>
+                  <div className="aspect-[3/4] bg-slate-100 overflow-hidden rounded-xl">
+                    <img src="/Case-studies details/image 106.png" alt="Overview 2" className="w-full h-full object-cover hover:scale-[1.03] transition-transform duration-500" />
+                  </div>
+                  <div className="aspect-[3/4] bg-slate-100 overflow-hidden rounded-xl">
+                    <img src="/Case-studies details/image 107.png" alt="Overview 3" className="w-full h-full object-cover hover:scale-[1.03] transition-transform duration-500" />
+                  </div>
+                </>
+              );
+            })()}
           </div>
         </div>
       </section>
 
       {/* 3. Challenge Section */}
-      <section className="py-14 px-6 bg-white border-b">
+      <section className="py-16 px-6 bg-white border-b">
         <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
           {/* Left Column: Challenge */}
           <div>
-            <h2 className="text-[40px] font-bold text-[#111827] mb-6">The Challenge</h2>
-            <div className="prose prose-lg prose-slate max-w-none text-slate-500 leading-relaxed">
-              {cs.challengeHtml ? (
+            <h2 className="text-[40px] font-bold text-slate-900 mb-6">
+              {cs.challengeTitle || "The Challenge"}
+            </h2>
+            <div className="text-[#4b5563] text-[17px] leading-[1.8] space-y-6 max-w-none font-normal">
+              {cs.challengeDescription ? (
+                <div dangerouslySetInnerHTML={{ __html: cs.challengeDescription }} />
+              ) : cs.challengeHtml ? (
                 <div dangerouslySetInnerHTML={{ __html: cs.challengeHtml }} />
               ) : (
                 <p>
@@ -131,11 +159,11 @@ export function CaseStudyDetailSection({ content }: CaseStudyDetailSectionProps)
           </div>
 
           {/* Right Column: Challenge Image */}
-          <div className="relative">
+          <div className="relative flex justify-center lg:justify-end">
             <img
               src={cs.challengeImage || "/Case-studies details/image 108.png"}
               alt="Challenge"
-              className="w-full h-auto object-contain drop-shadow-xl"
+              className="w-full h-auto max-w-[500px] object-contain drop-shadow-xl rounded-xl transition-transform duration-300 hover:scale-[1.02]"
             />
           </div>
         </div>
@@ -144,21 +172,25 @@ export function CaseStudyDetailSection({ content }: CaseStudyDetailSectionProps)
       {/* 3.5 ESS Solution Choice Section */}
       <section className="py-14 px-6 bg-white border-b">
         <div className="max-w-7xl mx-auto">
-          <h2 className="text-[32px] font-bold text-[#111827] mb-2">ESS Solution Choice</h2>
-          <p className="text-slate-500 text-lg mb-8">ebizframe ERP is to be implemented for the following functions</p>
+          <h2 className="text-[32px] font-bold text-[#111827] mb-2">
+            {cs.solutionsTitle || "ESS Solution Choice"}
+          </h2>
+          <p className="text-slate-500 text-lg mb-8">
+            {cs.solutionsDescription || "ebizframe ERP is to be implemented for the following functions"}
+          </p>
 
           <div className="flex flex-wrap gap-6">
             {(cs.solutionModules && cs.solutionModules.length > 0) ? (
               cs.solutionModules.map((mod, idx) => (
                 <div key={idx} className="flex-1 min-w-[200px] max-w-[280px] border border-slate-200 rounded-2xl p-6 flex flex-col items-center justify-center text-center gap-4 hover:shadow-lg transition-shadow bg-white">
-                  <img src={mod.icon} alt={mod.name} className="w-10 h-10 object-contain" />
+                  <img src={mod.icon || "/Case-studies details/finance-strategy_svgrepo.com.png"} alt={mod.name} className="w-10 h-10 object-contain" />
                   <span className="text-slate-700 font-medium">{mod.name}</span>
                 </div>
               ))
             ) : (
               <>
                 <div className="flex-1 min-w-[200px] max-w-[280px] border border-slate-200 rounded-2xl p-6 flex flex-col items-center justify-center text-center gap-4 hover:shadow-lg transition-shadow bg-white">
-                  <img src="/Case-studies details/Container/finance-strategy_svgrepo.com.png" alt="Finance" className="w-10 h-10 object-contain" />
+                  <img src="/Case-studies details/finance-strategy_svgrepo.com.png" alt="Finance" className="w-10 h-10 object-contain" />
                   <span className="text-slate-700 font-medium">Finance</span>
                 </div>
                 <div className="flex-1 min-w-[200px] max-w-[280px] border border-slate-200 rounded-2xl p-6 flex flex-col items-center justify-center text-center gap-4 hover:shadow-lg transition-shadow bg-white">
@@ -178,9 +210,13 @@ export function CaseStudyDetailSection({ content }: CaseStudyDetailSectionProps)
       {/* 4. Results Section */}
       <section className="py-14 px-6 bg-white border-b">
         <div className="max-w-7xl mx-auto">
-          <h2 className="text-[40px] font-bold text-[#111827] mb-2">The Results</h2>
-          <div className="prose prose-lg prose-slate max-w-none mb-10 text-slate-500 leading-relaxed">
-            {cs.resultsHtml ? (
+          <h2 className="text-[40px] font-bold text-[#111827] mb-2">
+            {cs.resultsTitle || "The Results"}
+          </h2>
+          <div className="prose prose-lg prose-slate max-w-none mb-10 text-slate-500 leading-relaxed font-normal">
+            {cs.resultsSubtitle ? (
+              <p>{cs.resultsSubtitle}</p>
+            ) : cs.resultsHtml ? (
               <div dangerouslySetInnerHTML={{ __html: cs.resultsHtml }} />
             ) : (
               <p>
@@ -191,7 +227,7 @@ export function CaseStudyDetailSection({ content }: CaseStudyDetailSectionProps)
 
           {(cs.resultsItems && cs.resultsItems.length > 0) ? (
             <div className="max-w-4xl">
-              <ul className="space-y-4">
+              <ul className="space-y-6">
                 {cs.resultsItems.map((item, idx) => (
                   <motion.li
                     key={idx}
@@ -201,9 +237,7 @@ export function CaseStudyDetailSection({ content }: CaseStudyDetailSectionProps)
                     transition={{ delay: idx * 0.1 }}
                     className="flex items-center gap-4"
                   >
-                    <div className="w-10 h-10 rounded-full bg-[#fffcf0] border border-yellow-100 flex items-center justify-center shrink-0">
-                      <CheckCircle2 className="w-5 h-5 text-[#f5a623]" />
-                    </div>
+                    <img src="/Case-studies details/Background.png" alt="Checkmark" className="w-10 h-10 object-contain shrink-0" />
                     <span className="text-slate-600 font-medium">{item}</span>
                   </motion.li>
                 ))}
@@ -220,9 +254,7 @@ export function CaseStudyDetailSection({ content }: CaseStudyDetailSectionProps)
                   "Better coordination between different departments and branches"
                 ].map((item, idx) => (
                   <li key={idx} className="flex items-center gap-4">
-                    <div className="w-10 h-10 rounded-full bg-[#fffcf0] border border-yellow-100 flex items-center justify-center shrink-0">
-                      <CheckCircle2 className="w-5 h-5 text-[#f5a623]" />
-                    </div>
+                    <img src="/Case-studies details/Background.png" alt="Checkmark" className="w-10 h-10 object-contain shrink-0" />
                     <span className="text-slate-600 font-medium">{item}</span>
                   </li>
                 ))}
@@ -230,11 +262,16 @@ export function CaseStudyDetailSection({ content }: CaseStudyDetailSectionProps)
             </div>
           )}
 
-          <div className="mt-14 max-w-7xl text-slate-600 leading-relaxed">
-            <p>
-              For more information on how ebizframe can help you transform your business, please leave your contact details in the contact form or mail us at <br className="hidden sm:block" />
-              <span className="font-bold text-[#111827]">marketing@essindia.com.</span>
-            </p>
+          {/* CTA Description at the bottom */}
+          <div className="mt-14 max-w-7xl text-slate-600 leading-relaxed font-normal prose prose-slate">
+            {cs.resultsCtaDescription ? (
+              <div dangerouslySetInnerHTML={{ __html: cs.resultsCtaDescription }} />
+            ) : (
+              <p>
+                For more information on how <a href="/contact-us" className="text-[#4B2A63] underline">ebizframe</a> can help you transform your business, please leave your contact details in the contact form or mail us at <br className="hidden sm:block" />
+                <span className="font-bold text-[#111827]">marketing@essindia.com.</span>
+              </p>
+            )}
           </div>
         </div>
       </section>

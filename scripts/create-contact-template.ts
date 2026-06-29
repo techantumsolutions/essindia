@@ -24,9 +24,14 @@ async function main() {
       name: 'Contact Hero Section', 
       type: 'contact-hero',
       contentJson: {
-        badgeTitle: "Contact Our Team",
-        heading: "How can we help you\nsucceed?",
+        bgColor: "#000000",
+        badgeBgColor: "#ffffff",
+        badgeText: "Contact Our Team",
+        badgeTextColor: "#5C2B6A",
+        title: "How can we help you\nsucceed?",
+        titleColor: "#ffffff",
         description: "Have questions about our platform or need a custom solution? Our experts are here to help your business scale with Finspring.",
+        descriptionColor: "#d1d5db",
         backgroundImageUrl: "/Contact us/banner.png"
       }
     },
@@ -38,30 +43,26 @@ async function main() {
           {
             title: 'Chat to Sales',
             description: 'Speak to our friendly team about plans and pricing.',
-            linkText: 'marketing@essindia.com',
-            iconName: 'MessageSquare',
-            badge: null
+            contact: 'marketing@essindia.com',
+            icon: '/Contact us/Frame 192.png'
           },
           {
             title: 'Phone Support',
             description: 'Mon - Fri from 8am to 6pm. We\'re here to help.',
-            linkText: '+91 120 4016020 - 39',
-            iconName: 'Phone',
-            badge: null
+            contact: '+91 120 4016020 - 39',
+            icon: '/Contact us/Frame 194.png'
           },
           {
             title: 'Email Us',
-            description: 'For general inquiries and tsupport requests.',
-            linkText: 'marketing@essindia.com',
-            iconName: 'Mail',
-            badge: null
+            description: 'For general inquiries and support requests.',
+            contact: 'marketing@essindia.com',
+            icon: '/Contact us/Frame 196.png'
           },
           {
             title: 'Visit Us',
             description: '3rd floor, Tower B, Lotus Business Sector - 127, Noida - 201313, U.P, India',
-            linkText: null,
-            iconName: 'MapPin',
-            badge: 'HEAD OFFICE'
+            contact: 'Noida, India',
+            icon: '/Contact us/Frame 217.png'
           }
         ]
       }
@@ -75,23 +76,23 @@ async function main() {
         faqTitle: "Common Questions",
         faqs: [
           {
-            question: "How fast do you respond?",
+            quotation: "How fast do you respond?",
             answer: "We aim to respond to all inquiries within 24 hours during business days. Priority support is available for Enterprise customers."
           },
           {
-            question: "Do you offer 24/7 support?",
+            quotation: "Do you offer 24/7 support?",
             answer: "Yes, our technical support team is available 24/7 for critical system issues for our Platinum and Enterprise plan members."
           },
           {
-            question: "How can I get started with ESS solutions?",
+            quotation: "How can I get started with ESS solutions?",
             answer: "Simply submit your inquiry through our Contact Us page, and our team will connect with you to understand your requirements."
           },
           {
-            question: "Can I request a product demo?",
+            quotation: "Can I request a product demo?",
             answer: "Yes, you can contact our team to schedule a free product demo and consultation."
           },
           {
-            question: "Do you provide post-implementation support?",
+            quotation: "Do you provide post-implementation support?",
             answer: "Yes, ESS offers ongoing technical support, maintenance, upgrades, and managed services after deployment."
           }
         ]
@@ -108,7 +109,7 @@ async function main() {
           {
             city: 'Mumbai',
             address: '6th & 7th Floor, The Corporate Park, Sector 15, Vashi, Navi Mumbai-400705',
-            person: 'Mr. Hariom Ram Patil',
+            name: 'Mr. Hariom Ram Patil',
             phone: '+91-9987817004',
             email: 'hariom.patil@essindia.com',
             pinImageUrl: '/Contact us/location-pin-alt-1_svgrepo.com.png'
@@ -116,7 +117,7 @@ async function main() {
           {
             city: 'Noida',
             address: '3rd floor, Tower B, Lotus Business Park, Sector 127, Noida - 201313, U.P, India',
-            person: 'Mr. Gaurav Gupta',
+            name: 'Mr. Gaurav Gupta',
             phone: '+91-9999059798',
             email: 'gaurav.gupta@essindia.com',
             pinImageUrl: '/Contact us/location-pin-alt-1_svgrepo.com.png'
@@ -124,7 +125,7 @@ async function main() {
           {
             city: 'Middle East',
             address: 'ESS FZE\nSaif Plus R5-20/B PO Box No. 121481 Sharjah, UAE',
-            person: 'Mr. Gaurav Gupta',
+            name: 'Mr. Gaurav Gupta',
             phone: '+91-9999059798',
             email: 'gaurav.gupta@essindia.com',
             pinImageUrl: '/Contact us/location-pin-alt-1_svgrepo.com.png'
@@ -132,7 +133,7 @@ async function main() {
           {
             city: 'Uganda',
             address: 'POB 7233 Millennium plaza, 2nd floor right wing 24 Pt, Spring Rd, Kampala, Uganda.',
-            person: 'Mr. Bharat Gupta',
+            name: 'Mr. Bharat Gupta',
             phone: '+256 701 556 788 / +91 852788882',
             email: 'bharat.gupta@rebsolafrica.com',
             pinImageUrl: '/Contact us/location-pin-alt-1_svgrepo.com.png'
@@ -140,7 +141,7 @@ async function main() {
           {
             city: 'USA',
             address: '100 Church Street Suite 800 New York, NY 10007',
-            person: 'Jacky',
+            name: 'Jacky',
             phone: '201-988-1222',
             email: 'jacky.hunter@essindia.com',
             pinImageUrl: '/Contact us/location-pin-alt-1_svgrepo.com.png'
@@ -148,7 +149,7 @@ async function main() {
           {
             city: 'Zambia',
             address: 'P.O. Box 50222 Ridgeway Lusaka, Zambia 10101 Unit 21, Mipeli Plaza, Plot 23203, Alick Nkhata Road',
-            person: 'Swapnil Singh Rathore',
+            name: 'Swapnil Singh Rathore',
             phone: '+260 97 2723047',
             email: 'swapnil.rathore@esszambia.com',
             pinImageUrl: '/Contact us/location-pin-alt-1_svgrepo.com.png'

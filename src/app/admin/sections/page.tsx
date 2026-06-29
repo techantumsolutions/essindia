@@ -1,13 +1,14 @@
 'use client';
 
 import React from 'react';
-import { motion } from 'framer-motion';
-import { Plus, Search, Copy, Trash2, Lock, Layers, Download, ImageIcon } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Plus, Search, Copy, Trash2, Lock, Layers, Download, ImageIcon, Eye, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
 import { SECTION_REGISTRY, getSectionDefinition } from '@/lib/cms/section-registry';
 import type { SectionLibraryItem } from '@/lib/cms/types';
+import { SectionRenderer } from '@/components/cms/SectionRenderer';
 
 export default function SectionsLibraryModule() {
   const [sections, setSections] = React.useState<SectionLibraryItem[]>([]);
@@ -42,6 +43,7 @@ export default function SectionsLibraryModule() {
   const [selectedSectionIds, setSelectedSectionIds] = React.useState<string[]>([]);
   const [isImporting, setIsImporting] = React.useState(false);
   const [newSection, setNewSection] = React.useState({ name: '', type: 'hero' });
+  const [previewSection, setPreviewSection] = React.useState<SectionLibraryItem | null>(null);
 
   const fetchSections = React.useCallback(async () => {
     try {
@@ -363,22 +365,12 @@ export default function SectionsLibraryModule() {
                 <h3 className="font-bold text-slate-900 mb-1">{section.name}</h3>
                 <p className="text-xs text-slate-400 font-mono mb-3">{section.type}</p>
                 <motion.div className="flex items-center gap-3 text-[10px] font-black uppercase tracking-widest text-slate-300">
-                  <span>v{section.version}</span>
                   <span>{section.usageCount} uses</span>
                   {section.isLocked && <Lock className="w-3 h-3" />}
                 </motion.div>
                 <div className="mt-4 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                  <Button variant="ghost" size="icon" onClick={() => handleClone(section.id)} className="rounded-xl">
-                    <Copy className="w-4 h-4" />
-                  </Button>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    onClick={() => handleDelete(section.id)}
-                    className="rounded-xl text-rose-400"
-                    disabled={section.isLocked}
-                  >
-                    <Trash2 className="w-4 h-4" />
+                  <Button variant="ghost" size="icon" onClick={() => setPreviewSection(section)} className="rounded-xl">
+                    <Eye className="w-4 h-4" />
                   </Button>
                 </div>
               </motion.div>
@@ -386,6 +378,61 @@ export default function SectionsLibraryModule() {
           })
         )}
       </div>
+
+      {/* ===== Section Preview Modal ===== */}
+      <AnimatePresence>
+        {previewSection && (
+          <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-md z-[100] flex items-center justify-center p-4">
+            <motion.div
+              initial={{ scale: 0.95, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.95, opacity: 0 }}
+              className="bg-white rounded-3xl w-full max-w-6xl max-h-[90vh] overflow-hidden shadow-2xl border border-slate-100 flex flex-col"
+            >
+              <div className="px-6 py-5 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
+                <div>
+                  <h3 className="font-bold text-slate-900 text-lg flex items-center gap-2">
+                    <Layers className="w-5 h-5 text-[#4B2A63]" />
+                    Section Preview: {SECTION_REGISTRY.find(s => s.type === previewSection.type)?.label || previewSection.type}
+                  </h3>
+                  <p className="text-xs text-slate-400 mt-0.5">
+                    This is a live preview showing how this block renders with default library content.
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setPreviewSection(null)}
+                  className="p-1.5 rounded-full hover:bg-slate-200 text-slate-400 hover:text-slate-600 transition-colors cursor-pointer"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+
+              <div className="flex-1 overflow-y-auto p-6 bg-slate-100/50">
+                <div className="border border-slate-200 rounded-2xl overflow-hidden shadow-inner bg-white min-h-[300px]">
+                  <SectionRenderer
+                    section={{
+                      id: 'preview-temp-id',
+                      type: previewSection.type,
+                      content: previewSection.contentJson || {},
+                    }}
+                  />
+                </div>
+              </div>
+
+              <div className="px-6 py-4 border-t border-slate-100 flex items-center justify-end gap-2 bg-slate-50/50">
+                <button
+                  type="button"
+                  onClick={() => setPreviewSection(null)}
+                  className="px-5 py-2.5 rounded-full border border-slate-200 hover:bg-slate-50 transition-colors text-slate-600 text-sm font-semibold cursor-pointer"
+                >
+                  Close
+                </button>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
     </motion.div>
   );
 }

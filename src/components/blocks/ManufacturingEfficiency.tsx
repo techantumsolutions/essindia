@@ -30,7 +30,7 @@ export default function ManufacturingEfficiency({ content }: { content?: any }) 
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
-            className="w-full lg:w-1/2 space-y-4"
+            className="w-full lg:w-[45%] space-y-4"
           >
             <div className="space-y-2">
               <div className="text-[14px] font-bold text-slate-900">
@@ -61,12 +61,12 @@ export default function ManufacturingEfficiency({ content }: { content?: any }) 
             whileInView={{ opacity: 1, scale: 1 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6, delay: 0.2 }}
-            className="w-full lg:w-1/2 relative flex justify-end h-[320px] items-center"
+            className="w-full lg:w-1/2 relative flex justify-center items-center"
           >
             <img
               src={image}
               alt="Dashboard Capabilities"
-              className="w-full h-full object-contain scale-[1.25] lg:scale-[1.4]  drop-shadow-2xl"
+              className="w-full h-auto max-w-full object-contain drop-shadow-2xl"
             />
           </motion.div>
         </div>

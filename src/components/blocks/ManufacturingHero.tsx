@@ -97,7 +97,7 @@ export default function ManufacturingHero({ content }: { content?: any }) {
             <img
               src={image}
               alt="Manufacturing ERP Automation"
-              className="w-full lg:w-[120%] max-w-full lg:max-w-none object-contain"
+              className="w-full max-w-full object-contain"
             />
           </motion.div>
         </div>

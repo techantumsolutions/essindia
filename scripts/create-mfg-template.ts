@@ -8,7 +8,51 @@ import { eq } from 'drizzle-orm';
 async function main() {
   const templateName = 'Intelligent ERP Automation Template';
 
+  // Extract nested section contents so we can use them inside mfg-icons
+  const demandContent = {
+    title: 'Lorem demand, Lorem,<br />ipsum, incididunt ,<br />commodo ,  adipiscing.',
+    paragraph1: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.',
+    paragraph2: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.'
+  };
+  
+  const processContent = {
+    sectionTitle: 'Process ipsum',
+    sectionSubtitle: 'Lorem ipsum dolor sit amet, consectetur.',
+    sectionDescription: 'Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea nisi ut aliquip',
+    processes: [
+      { image: '/Modules-manufacturing/Production flow-1.png', label: 'DEMAND', desc: 'Quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea nisi ut aliqu ipsum lorem.' },
+      { image: '/Modules-manufacturing/Production flow-2.png', label: 'PLAN', desc: 'Quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea nisi ut aliqu ipsum lorem.' },
+      { image: '/Modules-manufacturing/Production flow-3.png', label: 'EXECUTE', desc: 'Quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea nisi ut aliqu ipsum lorem.' },
+      { image: '/Modules-manufacturing/Production flow-4.png', label: 'IMPROVE', desc: 'Quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea nisi ut aliqu ipsum lorem.' }
+    ]
+  };
 
+  const efficiencyContent = {
+    sectionTitle: 'Lorem ipsum',
+    sectionSubtitle: 'Lorem Efficiency dolor sit amet,<br />Consectetur ipsum',
+    description: 'Lorem ipsum dolor sit amet, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.',
+    image: '/Modules-manufacturing/Eifficiency.png',
+    metrics: [
+      'Lorem ipsum', 'Lorem ipsum', 'Lorem ipsum', 'Lorem ipsum',
+      'Lorem ipsum', 'Lorem ipsum', 'Lorem ipsum', 'Lorem ipsum'
+    ]
+  };
+
+  const modelsContent = {
+    sectionTitle: 'Lorem ipsum',
+    sectionSubtitle: 'Lorem ipsum dolor sit amet, consectetur.<br />ipsum dolor sit models.',
+    sectionDescription: 'Lorem ipsum dolor sit amet, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.',
+    models: [
+      { title: 'Lorem ipsum', desc: 'Lorem ipsum dolor sit amet, labore et dolore magna aliqua. Ut enim ad minim veniam.', image: '/Modules-manufacturing/industries-1.png' },
+      { title: 'Lorem ipsum', desc: 'Lorem ipsum dolor sit amet, labore et dolore magna aliqua. Ut enim ad minim veniam.', image: '/Modules-manufacturing/industries-2.png' },
+      { title: 'Lorem ipsum', desc: 'Lorem ipsum dolor sit amet, labore et dolore magna aliqua. Ut enim ad minim veniam.', image: '/Modules-manufacturing/industries-3.png' },
+      { title: 'Lorem ipsum', desc: 'Lorem ipsum dolor sit amet, labore et dolore magna aliqua. Ut enim ad minim veniam.', image: '/Modules-manufacturing/industries-4.png' },
+      { title: 'Lorem ipsum', desc: 'Lorem ipsum dolor sit amet, labore et dolore magna aliqua. Ut enim ad minim veniam.', image: '/Modules-manufacturing/industries-5.png' },
+      { title: 'Lorem ipsum', desc: 'Lorem ipsum dolor sit amet, labore et dolore magna aliqua. Ut enim ad minim veniam.', image: '/Modules-manufacturing/industries-6.png' },
+      { title: 'Lorem ipsum', desc: 'Lorem ipsum dolor sit amet, labore et dolore magna aliqua. Ut enim ad minim veniam.', image: '/Modules-manufacturing/industries-7.png' },
+      { title: 'Lorem ipsum', desc: 'Lorem ipsum dolor sit amet, labore et dolore magna aliqua. Ut enim ad minim veniam.', image: '/Modules-manufacturing/industries-8.png' }
+    ]
+  };
 
   const sectionsData = [
     { 
@@ -38,77 +82,79 @@ async function main() {
       name: 'Manufacturing Icons Row', 
       type: 'mfg-icons',
       defaultContent: {
-        icons: [
-          { iconName: 'LineChart', iconImage: '', label: 'Lorem ipsum' },
-          { iconName: 'Factory', iconImage: '', label: 'Lorem ipsum' },
-          { iconName: 'Monitor', iconImage: '', label: 'Lorem ipsum' },
-          { iconName: 'LayoutDashboard', iconImage: '', label: 'Lorem ipsum' },
-          { iconName: 'Coins', iconImage: '', label: 'Lorem ipsum' },
-          { iconName: 'Layers', iconImage: '', label: 'Lorem ipsum' },
-          { iconName: 'Users', iconImage: '', label: 'Lorem ipsum' },
+        tabs: [
+          { 
+            iconName: 'LineChart', iconImage: '', 
+            label: 'SALES', 
+            sections: [
+              { type: 'mfg-demand', content: demandContent },
+              { type: 'mfg-process', content: processContent },
+              { type: 'mfg-efficiency', content: efficiencyContent },
+              { type: 'mfg-models', content: modelsContent }
+            ] 
+          },
+          { iconName: 'Factory', iconImage: '', label: 'MANUFACTURING', sections: [
+            { type: 'mfg-demand', content: demandContent },
+            { type: 'mfg-process', content: processContent },
+            { type: 'mfg-efficiency', content: efficiencyContent },
+            { type: 'mfg-models', content: modelsContent }
+          ] },
+          { iconName: 'Monitor', iconImage: '', label: 'FIXED ASSETS', sections: [
+            { type: 'mfg-demand', content: demandContent },
+            { type: 'mfg-process', content: processContent },
+            { type: 'mfg-efficiency', content: efficiencyContent },
+            { type: 'mfg-models', content: modelsContent }
+          ] },
+          { iconName: 'LayoutDashboard', iconImage: '', label: 'CORPORATE PORTAL', sections: [
+            { type: 'mfg-demand', content: demandContent },
+            { type: 'mfg-process', content: processContent },
+            { type: 'mfg-efficiency', content: efficiencyContent },
+            { type: 'mfg-models', content: modelsContent }
+          ] },
+          { iconName: 'Coins', iconImage: '', label: 'FINANCE', sections: [
+            { type: 'mfg-demand', content: demandContent },
+            { type: 'mfg-process', content: processContent },
+            { type: 'mfg-efficiency', content: efficiencyContent },
+            { type: 'mfg-models', content: modelsContent }
+          ] },
+          { iconName: 'Layers', iconImage: '', label: 'MATERIALS', sections: [
+            { type: 'mfg-demand', content: demandContent },
+            { type: 'mfg-process', content: processContent },
+            { type: 'mfg-efficiency', content: efficiencyContent },
+            { type: 'mfg-models', content: modelsContent }
+          ] },
+          { iconName: 'Users', iconImage: '', label: 'HUMAN CAPITAL', sections: [
+            { type: 'mfg-demand', content: demandContent },
+            { type: 'mfg-process', content: processContent },
+            { type: 'mfg-efficiency', content: efficiencyContent },
+            { type: 'mfg-models', content: modelsContent }
+          ] },
         ]
       }
     },
     { 
       name: 'Manufacturing Connect Demand', 
       type: 'mfg-demand',
-      defaultContent: {
-        title: 'Lorem demand, Lorem,<br />ipsum, incididunt ,<br />commodo ,  adipiscing.',
-        paragraph1: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.',
-        paragraph2: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.'
-      }
+      defaultContent: demandContent
     },
     { 
       name: 'Manufacturing Process Flow', 
       type: 'mfg-process',
-      defaultContent: {
-        sectionTitle: 'Process ipsum',
-        sectionSubtitle: 'Lorem ipsum dolor sit amet, consectetur.',
-        sectionDescription: 'Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea nisi ut aliquip',
-        processes: [
-          { image: '/Modules-manufacturing/Production flow-1.png', label: 'DEMAND', desc: 'Quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea nisi ut aliqu ipsum lorem.' },
-          { image: '/Modules-manufacturing/Production flow-2.png', label: 'PLAN', desc: 'Quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea nisi ut aliqu ipsum lorem.' },
-          { image: '/Modules-manufacturing/Production flow-3.png', label: 'EXECUTE', desc: 'Quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea nisi ut aliqu ipsum lorem.' },
-          { image: '/Modules-manufacturing/Production flow-4.png', label: 'IMPROVE', desc: 'Quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea nisi ut aliqu ipsum lorem.' }
-        ]
-      }
+      defaultContent: processContent
     },
     { 
       name: 'Manufacturing Efficiency Dash', 
       type: 'mfg-efficiency',
-      defaultContent: {
-        sectionTitle: 'Lorem ipsum',
-        sectionSubtitle: 'Lorem Efficiency dolor sit amet,<br />Consectetur ipsum',
-        description: 'Lorem ipsum dolor sit amet, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.',
-        image: '/Modules-manufacturing/Eifficiency.png',
-        metrics: [
-          'Lorem ipsum', 'Lorem ipsum', 'Lorem ipsum', 'Lorem ipsum',
-          'Lorem ipsum', 'Lorem ipsum', 'Lorem ipsum', 'Lorem ipsum'
-        ]
-      }
+      defaultContent: efficiencyContent
     },
     { 
       name: 'Manufacturing Operating Models', 
       type: 'mfg-models',
-      defaultContent: {
-        sectionTitle: 'Lorem ipsum',
-        sectionSubtitle: 'Lorem ipsum dolor sit amet, consectetur.<br />ipsum dolor sit models.',
-        sectionDescription: 'Lorem ipsum dolor sit amet, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.',
-        models: [
-          { title: 'Lorem ipsum', desc: 'Lorem ipsum dolor sit amet, labore et dolore magna aliqua. Ut enim ad minim veniam.', image: '/Modules-manufacturing/industries-1.png' },
-          { title: 'Lorem ipsum', desc: 'Lorem ipsum dolor sit amet, labore et dolore magna aliqua. Ut enim ad minim veniam.', image: '/Modules-manufacturing/industries-2.png' },
-          { title: 'Lorem ipsum', desc: 'Lorem ipsum dolor sit amet, labore et dolore magna aliqua. Ut enim ad minim veniam.', image: '/Modules-manufacturing/industries-3.png' },
-          { title: 'Lorem ipsum', desc: 'Lorem ipsum dolor sit amet, labore et dolore magna aliqua. Ut enim ad minim veniam.', image: '/Modules-manufacturing/industries-4.png' },
-          { title: 'Lorem ipsum', desc: 'Lorem ipsum dolor sit amet, labore et dolore magna aliqua. Ut enim ad minim veniam.', image: '/Modules-manufacturing/industries-5.png' },
-          { title: 'Lorem ipsum', desc: 'Lorem ipsum dolor sit amet, labore et dolore magna aliqua. Ut enim ad minim veniam.', image: '/Modules-manufacturing/industries-6.png' },
-          { title: 'Lorem ipsum', desc: 'Lorem ipsum dolor sit amet, labore et dolore magna aliqua. Ut enim ad minim veniam.', image: '/Modules-manufacturing/industries-7.png' },
-          { title: 'Lorem ipsum', desc: 'Lorem ipsum dolor sit amet, labore et dolore magna aliqua. Ut enim ad minim veniam.', image: '/Modules-manufacturing/industries-8.png' }
-        ]
-      }
+      defaultContent: modelsContent
     },
   ];
 
-  // Update or insert sections
+  // Update or insert sections in the global library
   const targetSections = [];
   for (const s of sectionsData) {
     const existingSection = await db.query.sections.findFirst({
@@ -160,13 +206,16 @@ async function main() {
     templateId = template.id;
   }
 
+  // ONLY add hero and icons to the template directly
+  const templateSectionsToInsert = targetSections.filter(s => s.type === 'mfg-hero' || s.type === 'mfg-icons');
+
   await db.insert(templateSections).values(
-    targetSections.map((s, i) => ({
+    templateSectionsToInsert.map((s, i) => ({
       templateId: templateId,
       sectionLibraryId: s.id,
       type: s.type,
       variant: s.variant || 'default',
-      contentJson: sectionsData[i].defaultContent,
+      contentJson: sectionsData.find(sd => sd.type === s.type)?.defaultContent || {},
       orderIndex: i,
     }))
   );

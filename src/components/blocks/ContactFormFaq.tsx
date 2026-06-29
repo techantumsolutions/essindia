@@ -19,7 +19,9 @@ const DIAL_CODES = (countryCodesList.customArray({
 );
 
 export interface ContactFaq {
-  question: string;
+  question?: string;
+  qutation?: string;
+  quotation?: string;
   answer: string;
 }
 
@@ -249,7 +251,7 @@ export function ContactFormFaq({ content }: { content?: ContactFormFaqContent })
               {displayFaqs.map((faq, index) => (
                 <div key={index} className="border-b border-gray-100 last:border-0 pb-6 last:pb-0">
                   <div className="w-full flex justify-between items-center text-left">
-                    <h3 className="text-lg font-bold text-gray-900 pr-8">{faq.question}</h3>
+                    <h3 className="text-lg font-bold text-gray-900 pr-8">{faq.quotation || faq.qutation || faq.question}</h3>
                   </div>
                   <div className="mt-1 text-sm text-gray-500 leading-relaxed">
                     {faq.answer}

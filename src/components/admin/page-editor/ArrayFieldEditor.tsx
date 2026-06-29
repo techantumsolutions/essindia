@@ -19,6 +19,7 @@ interface ArrayFieldEditorProps {
     keyPathPrefix: string
   ) => React.ReactNode;
   keyPathPrefix: string;
+  sectionType?: string;
 }
 
 export function ArrayFieldEditor({
@@ -27,6 +28,7 @@ export function ArrayFieldEditor({
   onChange,
   renderItem,
   keyPathPrefix,
+  sectionType,
 }: ArrayFieldEditorProps) {
   const [collapsed, setCollapsed] = React.useState(false);
   const [collapsedItems, setCollapsedItems] = React.useState<Set<number>>(new Set());
@@ -65,17 +67,62 @@ export function ArrayFieldEditor({
       const lowerKey = fieldKey.toLowerCase();
       
       if (lowerKey === 'features' || lowerKey === 'tabs') {
-        defaultObj = { image: '', title: '', desc: '', desc2: '' };
+        defaultObj = { 
+          label: '', 
+          desc: '', 
+          icon: '', 
+          contentTitle: '', 
+          contentDescription: '', 
+          contentImage: '', 
+          benefits: [], 
+          ctaText: 'Get started', 
+          ctaUrl: '#',
+          image: '', 
+          title: '', 
+          desc2: '',
+          tabName: '',
+          heading: '',
+          subheading: '',
+          questions: [],
+          tag: '',
+          points: [],
+          buttonText: 'Case Studies',
+          buttonUrl: '/case-studies'
+        };
       } else if (lowerKey === 'modules') {
         defaultObj = { image: '', title: '', description: '', ctaLabel: 'READ MORE', ctaUrl: '#' };
       } else if (lowerKey === 'values') {
         defaultObj = { image: '', title: '', description: '' };
       } else if (lowerKey === 'faqs') {
-        defaultObj = { question: '', answer: '' };
+        defaultObj = { quotation: '', question: '', answer: '', arrowIcon: '/BI-industy solution-FMGC/arrow-right-circle_svgrepo.com.png' };
+      } else if (lowerKey === 'locations') {
+        defaultObj = { city: '', address: '', name: '', phone: '', email: '' };
       } else if (lowerKey === 'processes') {
         defaultObj = { title: '', description: '' };
-      } else if (['items', 'cards', 'blocks', 'steps'].includes(lowerKey)) {
+      } else if (lowerKey === 'cards') {
+        if (sectionType === 'fmcg-action') {
+          defaultObj = { badge: '', image: '', title: '', description: '', badgeBorderColor: '', badgeTextColor: '', badgeBgColor: '' };
+        } else if (sectionType === 'fmcg-impact' || sectionType === 'fmcg-integrations') {
+          defaultObj = { image: '', title: '' };
+        } else if (sectionType === 'fmcg-challenges' || sectionType === 'fmcg-empower') {
+          defaultObj = { icon: '', title: '', description: '' };
+        } else {
+          defaultObj = { icon: '', title: '', description: '', contact: '' };
+        }
+      } else if (lowerKey === 'categories') {
+        defaultObj = { name: '', items: [], tabs: [] };
+      } else if (lowerKey === 'items') {
+        defaultObj = { image: '', title: '', description: '', ctaText: '', ctaUrl: '' };
+      } else if (lowerKey.includes('items')) {
+        defaultObj = { icon: '', image: '', title: '', description: '', text: '' };
+      } else if (lowerKey === 'sections') {
+        defaultObj = { title: '', items: [''] };
+      } else if (lowerKey === 'stats') {
+        defaultObj = { value: '', label: '' };
+      } else if (['blocks', 'steps'].includes(lowerKey)) {
         defaultObj = { image: '', title: '', description: '' };
+      } else if (lowerKey === 'points') {
+        defaultObj = '';
       }
       
       onChange([...value, defaultObj]);
@@ -101,6 +148,11 @@ export function ArrayFieldEditor({
 
   const isPrimitive = value.length > 0 && typeof value[0] !== 'object';
   const singularLabel = humanLabel(fieldKey).replace(/s$/i, '');
+  const isLocked = (sectionType === 'bi-highlight-strip') || 
+                   (sectionType === 'bi-business-impact') ||
+                   (sectionType === 'rpa-overview' && fieldKey === 'cards') ||
+                   (sectionType === 'rpa-benefits' && fieldKey === 'benefits') ||
+                   (sectionType === 'rpa-capabilities' && fieldKey === 'items');
 
   return (
     <div className="rounded-xl border border-slate-200 bg-slate-50/30 overflow-hidden">
@@ -195,23 +247,27 @@ export function ArrayFieldEditor({
                         >
                           <ChevronDown className="w-3.5 h-3.5" />
                         </Button>
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          className="h-7 w-7 text-slate-400"
-                          onClick={() => duplicateItem(idx)}
-                          title="Duplicate"
-                        >
-                          <Copy className="w-3.5 h-3.5" />
-                        </Button>
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          className="h-7 w-7 text-rose-400 hover:text-rose-600 hover:bg-rose-50"
-                          onClick={() => removeItem(idx)}
-                        >
-                          <Trash2 className="w-3.5 h-3.5" />
-                        </Button>
+                        {!isLocked && (
+                          <>
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              className="h-7 w-7 text-slate-400"
+                              onClick={() => duplicateItem(idx)}
+                              title="Duplicate"
+                            >
+                              <Copy className="w-3.5 h-3.5" />
+                            </Button>
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              className="h-7 w-7 text-rose-400 hover:text-rose-600 hover:bg-rose-50"
+                              onClick={() => removeItem(idx)}
+                            >
+                              <Trash2 className="w-3.5 h-3.5" />
+                            </Button>
+                          </>
+                        )}
                       </div>
                     </div>
                     <AnimatePresence>
@@ -231,15 +287,17 @@ export function ArrayFieldEditor({
                 );
               })}
 
-              <Button
-                variant="outline"
-                size="sm"
-                className="rounded-full gap-1.5 mt-2 border-dashed"
-                onClick={addItem}
-              >
-                <Plus className="w-3.5 h-3.5" />
-                Add {singularLabel}
-              </Button>
+              {!isLocked && (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="rounded-full gap-1.5 mt-2 border-dashed"
+                  onClick={addItem}
+                >
+                  <Plus className="w-3.5 h-3.5" />
+                  Add {singularLabel}
+                </Button>
+              )}
             </div>
           </motion.div>
         )}
@@ -252,7 +310,7 @@ function getItemPreviewTitle(item: JsonValue, index: number): string {
   if (typeof item === 'string') return item.slice(0, 40) || `Item ${index + 1}`;
   if (typeof item === 'object' && item !== null && !Array.isArray(item)) {
     const obj = item as Record<string, JsonValue>;
-    const titleField = obj.title || obj.name || obj.label || obj.heading || obj.question || obj.text;
+    const titleField = obj.title || obj.name || obj.label || obj.heading || obj.question || obj.text || obj.tabName;
     if (typeof titleField === 'string' && titleField.trim()) return titleField.slice(0, 50);
     for (const val of Object.values(obj)) {
       if (typeof val === 'string' && val.trim() && val.length > 2 && val.length < 60) {

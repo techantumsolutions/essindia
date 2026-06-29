@@ -1,0 +1,127 @@
+'use client';
+
+import React from 'react';
+import Image from 'next/image';
+import Link from 'next/link';
+
+interface FmcgHeroContent {
+  bgColor?: string;
+  badgeBgColor?: string;
+  badgeBorderColor?: string;
+  badgeText?: string;
+  badgeTextColor?: string;
+  title?: string;
+  titleColor?: string;
+  description?: string;
+  descriptionColor?: string;
+  buttonBgColor?: string;
+  buttonBorderColor?: string;
+  buttonText?: string;
+  buttonTextColor?: string;
+  buttonUrl?: string;
+  image?: string;
+}
+
+export function FmcgHero({ content }: { content?: FmcgHeroContent }) {
+  const bgColor = content?.bgColor || '#4b4685';
+  const badgeBgColor = content?.badgeBgColor || '#7142D7';
+  const badgeBorderColor = content?.badgeBorderColor || '#7167be';
+  const badgeText = content?.badgeText || 'FMCG';
+  const badgeTextColor = content?.badgeTextColor || '#ffffff';
+
+  const title = content?.title || 'optimize inventory\nmaximize sales';
+  const titleColor = content?.titleColor || '#ffffff';
+  const description = content?.description || 'Our AI-powered BI helps answer three critical questions: what is happening, why it is happening, and what to do next, so decisions are made on time.';
+  const descriptionColor = content?.descriptionColor || '#ffffff';
+
+  const buttonBgColor = content?.buttonBgColor || '#fcc42c';
+  const buttonBorderColor = content?.buttonBorderColor || '#fcc42c';
+  const buttonText = content?.buttonText || 'Book your Demo';
+  const buttonTextColor = content?.buttonTextColor || '#2b2a6c';
+  const buttonUrl = content?.buttonUrl || '#';
+
+  const rightImage = content?.image || '/BI-industy solution-FMGC/2b58cf43-2428-4667-ac1c-680abeb784a1 1.png';
+
+  const hasCustomBg = content?.bgColor && content.bgColor !== '#4b4685';
+  const bgStyles = hasCustomBg
+    ? { backgroundColor: bgColor }
+    : { backgroundImage: 'linear-gradient(135deg, #4b4685 0%, #3e3a75 100%)' };
+
+  return (
+    <section
+      className="pt-40 pb-14 px-6 relative overflow-hidden flex items-center min-h-[620px] text-white"
+      style={bgStyles}
+    >
+      {/* Soft decorative background circles */}
+      <div className="absolute top-1/4 left-10 w-80 h-80 bg-white/5 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute bottom-10 right-1/4 w-96 h-96 bg-white/5 rounded-full blur-3xl pointer-events-none" />
+
+      <div className="container mx-auto max-w-7xl relative z-10">
+        <div className="flex flex-col lg:flex-row items-center gap-12 lg:gap-16">
+
+          {/* Left Content Column */}
+          <div className="flex-1 text-left space-y-3 lg:max-w-2xl">
+            {badgeText && (
+              <span
+                className="inline-block px-5 py-2.5 rounded-full text-xs font-bold uppercase tracking-wider border"
+                style={{
+                  backgroundColor: badgeBgColor,
+                  borderColor: badgeBorderColor,
+                  color: badgeTextColor,
+                }}
+              >
+                {badgeText}
+              </span>
+            )}
+
+            <h1
+              className="text-4xl sm:text-5xl lg:text-[64px] font-light tracking-tight leading-[1.1] font-sans whitespace-pre-line"
+              style={{ color: titleColor }}
+            >
+              {title}
+            </h1>
+
+            <p
+              className="text-sm sm:text-base leading-relaxed max-w-lg opacity-90 font-light"
+              style={{ color: descriptionColor }}
+            >
+              {description}
+            </p>
+
+            <div className="flex flex-wrap gap-4 pt-4">
+              {buttonText && (
+                <Link
+                  href={buttonUrl}
+                  className="px-8 py-3.5 rounded-full text-sm font-bold shadow-lg transition-all duration-300 hover:scale-105 border active:scale-95"
+                  style={{
+                    backgroundColor: buttonBgColor,
+                    borderColor: buttonBorderColor,
+                    color: buttonTextColor,
+                  }}
+                >
+                  {buttonText}
+                </Link>
+              )}
+            </div>
+          </div>
+
+          {/* Right Image Column */}
+          {rightImage && (
+            <div className="flex-1 w-full max-w-lg lg:max-w-2xl relative aspect-[4/3] lg:h-[480px] shrink-0 flex justify-center items-center">
+              <div className="w-full h-full relative">
+                <Image
+                  src={rightImage}
+                  alt={title.replace('\n', ' ')}
+                  fill
+                  className="object-contain"
+                  priority
+                />
+              </div>
+            </div>
+          )}
+
+        </div>
+      </div>
+    </section>
+  );
+}

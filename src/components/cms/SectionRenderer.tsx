@@ -70,6 +70,72 @@ import { StaffingAugmentation } from '@/components/blocks/StaffingAugmentation';
 import { StaffingTechnologies } from '@/components/blocks/StaffingTechnologies';
 import { StaffingWhyEss } from '@/components/blocks/StaffingWhyEss';
 import { StaffingBenefits } from '@/components/blocks/StaffingBenefits';
+import { AssHero } from '@/components/blocks/AssHero';
+import { AssIntro } from '@/components/blocks/AssIntro';
+import { AssFunctionalities } from '@/components/blocks/AssFunctionalities';
+import { AssBenefits } from '@/components/blocks/AssBenefits';
+import { AssEnterprise } from '@/components/blocks/AssEnterprise';
+import { AssStats } from '@/components/blocks/AssStats';
+import { AssProcess } from '@/components/blocks/AssProcess';
+import { AssWhyChoose } from '@/components/blocks/AssWhyChoose';
+import { AssFeaturesGrid } from '@/components/blocks/AssFeaturesGrid';
+import { AssCta } from '@/components/blocks/AssCta';
+import { AssClients } from '@/components/blocks/AssClients';
+import { AssExperience } from '@/components/blocks/AssExperience';
+import { AomHero } from '@/components/blocks/AomHero';
+import { AomSolutions } from '@/components/blocks/AomSolutions';
+import { AomWorkspace } from '@/components/blocks/AomWorkspace';
+import { FmcgHero } from '@/components/blocks/FmcgHero';
+import { FmcgLogos } from '@/components/blocks/FmcgLogos';
+import { FmcgOverview } from '@/components/blocks/FmcgOverview';
+import { FmcgTabs } from '@/components/blocks/FmcgTabs';
+import { FmcgAction } from '@/components/blocks/FmcgAction';
+import { FmcgImpact } from '@/components/blocks/FmcgImpact';
+import { FmcgChallenges } from '@/components/blocks/FmcgChallenges';
+import { FmcgEmpower } from '@/components/blocks/FmcgEmpower';
+import { FmcgUseCases } from '@/components/blocks/FmcgUseCases';
+import { FmcgIntegrations } from '@/components/blocks/FmcgIntegrations';
+import { FmcgFaq } from '@/components/blocks/FmcgFaq';
+import { FmcgCta } from '@/components/blocks/FmcgCta';
+import { RoiHero } from '@/components/blocks/RoiHero';
+import { RoiExplanation } from '@/components/blocks/RoiExplanation';
+import { RoiFormula } from '@/components/blocks/RoiFormula';
+import { RoiUsage } from '@/components/blocks/RoiUsage';
+import { OracleHero } from '@/components/blocks/OracleHero';
+import { OraclePartner } from '@/components/blocks/OraclePartner';
+import { OracleWhyUpgrade } from '@/components/blocks/OracleWhyUpgrade';
+import { OracleMigrationFlow } from '@/components/blocks/OracleMigrationFlow';
+import { OracleFramework } from '@/components/blocks/OracleFramework';
+import { OracleCta } from '@/components/blocks/OracleCta';
+import { BiHero } from '@/components/blocks/BiHero';
+import { BiIntro } from '@/components/blocks/BiIntro';
+import { BiInsights } from '@/components/blocks/BiInsights';
+import { BiTabs } from '@/components/blocks/BiTabs';
+import { BiHighlightStrip } from '@/components/blocks/BiHighlightStrip';
+import { BiBusinessImpact } from '@/components/blocks/BiBusinessImpact';
+import { BiArchitecture } from '@/components/blocks/BiArchitecture';
+import { BiEmpowerment } from '@/components/blocks/BiEmpowerment';
+import { BiIndustries } from '@/components/blocks/BiIndustries';
+import { BiIndustryServices } from '@/components/blocks/BiIndustryServices';
+import { RpaHero } from '@/components/blocks/RpaHero';
+import { RpaOverview } from '@/components/blocks/RpaOverview';
+import { RpaIndustries } from '@/components/blocks/RpaIndustries';
+import { RpaSolutions } from '@/components/blocks/RpaSolutions';
+import { RpaBenefits } from '@/components/blocks/RpaBenefits';
+import { RpaCapabilities } from '@/components/blocks/RpaCapabilities';
+import { RpaFaq } from '@/components/blocks/RpaFaq';
+import { RpaCta } from '@/components/blocks/RpaCta';
+import { RpaFrameworks } from '@/components/blocks/RpaFrameworks';
+import { OracleApexHero } from '@/components/blocks/OracleApexHero';
+import { OracleApexIntro } from '@/components/blocks/OracleApexIntro';
+import { OracleApexWhyMigrate } from '@/components/blocks/OracleApexWhyMigrate';
+import { OracleApexDeliverables } from '@/components/blocks/OracleApexDeliverables';
+import { OracleApexApproach } from '@/components/blocks/OracleApexApproach';
+import { OracleApexCta } from '@/components/blocks/OracleApexCta';
+
+
+
+
 
 interface Section {
   id: string;
@@ -233,6 +299,131 @@ export function SectionRenderer({ section }: SectionRendererProps) {
       return <AboutUsWhyEss content={section.content} />;
     case 'about-us-cta':
       return <AboutUsCta content={section.content} />;
+    case 'ass-hero':
+      return <AssHero content={section.content} />;
+    case 'ass-intro':
+      return <AssIntro content={section.content} />;
+    case 'ass-functionalities':
+      return <AssFunctionalities content={section.content} />;
+    case 'ass-benefits':
+      return <AssBenefits content={section.content} />;
+    case 'ass-enterprise':
+      return <AssEnterprise content={section.content} />;
+    case 'ass-stats':
+      return <AssStats content={section.content} />;
+    case 'ass-process':
+      return <AssProcess content={section.content} />;
+    case 'ass-why-choose':
+      return <AssWhyChoose content={section.content} />;
+    case 'ass-features-grid':
+      return <AssFeaturesGrid content={section.content} />;
+    case 'ass-cta':
+      return <AssCta content={section.content} />;
+    case 'ass-clients':
+      return <AssClients content={section.content} />;
+    case 'ass-experience':
+      return <AssExperience content={section.content} />;
+    case 'aom-hero':
+      return <AomHero content={section.content} />;
+    case 'aom-solutions':
+      return <AomSolutions content={section.content} />;
+    case 'aom-workspace':
+      return <AomWorkspace content={section.content} />;
+    case 'fmcg-hero':
+      return <FmcgHero content={section.content} />;
+    case 'fmcg-logos':
+      return <FmcgLogos content={section.content} />;
+    case 'fmcg-overview':
+      return <FmcgOverview content={section.content} />;
+    case 'fmcg-tabs':
+      return <FmcgTabs content={section.content} />;
+    case 'fmcg-action':
+      return <FmcgAction content={section.content} />;
+    case 'fmcg-impact':
+      return <FmcgImpact content={section.content} />;
+    case 'fmcg-challenges':
+      return <FmcgChallenges content={section.content} />;
+    case 'fmcg-empower':
+      return <FmcgEmpower content={section.content} />;
+    case 'fmcg-use-cases':
+      return <FmcgUseCases content={section.content} />;
+    case 'fmcg-integrations':
+      return <FmcgIntegrations content={section.content} />;
+    case 'fmcg-faq':
+      return <FmcgFaq content={section.content} />;
+    case 'fmcg-cta':
+      return <FmcgCta content={section.content} />;
+    case 'roi-hero':
+      return <RoiHero content={section.content} />;
+    case 'roi-explanation':
+      return <RoiExplanation content={section.content} />;
+    case 'roi-formula':
+      return <RoiFormula content={section.content} />;
+    case 'roi-usage':
+      return <RoiUsage content={section.content} />;
+    case 'oracle-hero':
+      return <OracleHero content={section.content} />;
+    case 'oracle-partner':
+      return <OraclePartner content={section.content} />;
+    case 'oracle-why-upgrade':
+      return <OracleWhyUpgrade content={section.content} />;
+    case 'oracle-migration-flow':
+      return <OracleMigrationFlow content={section.content} />;
+    case 'oracle-framework':
+      return <OracleFramework content={section.content} />;
+    case 'oracle-cta':
+      return <OracleCta content={section.content} />;
+    case 'bi-hero':
+      return <BiHero content={section.content} />;
+    case 'bi-intro':
+      return <BiIntro content={section.content} />;
+    case 'bi-insights':
+      return <BiInsights content={section.content} />;
+    case 'bi-tabs':
+      return <BiTabs content={section.content} />;
+    case 'bi-highlight-strip':
+      return <BiHighlightStrip content={section.content} />;
+    case 'bi-business-impact':
+      return <BiBusinessImpact content={section.content} />;
+    case 'bi-architecture':
+      return <BiArchitecture content={section.content} />;
+    case 'bi-empowerment':
+      return <BiEmpowerment content={section.content} />;
+    case 'bi-industries':
+      return <BiIndustries content={section.content} />;
+    case 'bi-industry-services':
+      return <BiIndustryServices content={section.content} />;
+    case 'rpa-hero':
+      return <RpaHero content={section.content} />;
+    case 'rpa-overview':
+      return <RpaOverview content={section.content} />;
+    case 'rpa-industries':
+      return <RpaIndustries content={section.content} />;
+    case 'rpa-solutions':
+      return <RpaSolutions content={section.content} />;
+    case 'rpa-frameworks':
+      return <RpaFrameworks content={section.content} />;
+    case 'rpa-benefits':
+      return <RpaBenefits content={section.content} />;
+    case 'rpa-capabilities':
+      return <RpaCapabilities content={section.content} />;
+    case 'rpa-faq':
+      return <RpaFaq content={section.content} />;
+    case 'rpa-cta':
+      return <RpaCta content={section.content} />;
+    case 'oracle-apex-hero':
+      return <OracleApexHero content={section.content} />;
+    case 'oracle-apex-intro':
+      return <OracleApexIntro content={section.content} />;
+    case 'oracle-apex-why-migrate':
+      return <OracleApexWhyMigrate content={section.content} />;
+    case 'oracle-apex-deliverables':
+      return <OracleApexDeliverables content={section.content} />;
+    case 'oracle-apex-approach':
+      return <OracleApexApproach content={section.content} />;
+    case 'oracle-apex-cta':
+      return <OracleApexCta content={section.content} />;
+
     default:
       if (process.env.NODE_ENV === 'development') {
         return (
