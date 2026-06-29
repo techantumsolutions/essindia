@@ -45,6 +45,15 @@ export default function MediaLibraryPage() {
   const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
+
+    const MAX_SIZE_MB = 3;
+    const MAX_SIZE_BYTES = MAX_SIZE_MB * 1024 * 1024;
+    if (file.size > MAX_SIZE_BYTES) {
+      toast.error(`File size exceeds the ${MAX_SIZE_MB}MB limit.`);
+      if (fileRef.current) fileRef.current.value = '';
+      return;
+    }
+
     setIsUploading(true);
     try {
       const formData = new FormData();

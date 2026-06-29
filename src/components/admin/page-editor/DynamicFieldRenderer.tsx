@@ -11,6 +11,7 @@ import { MediaField } from './MediaField';
 import { RichTextField } from './RichTextField';
 import { ArrayFieldEditor } from './ArrayFieldEditor';
 import { ALL_COUNTRIES_LIST } from '@/lib/countries';
+import { SECTION_REGISTRY } from '@/lib/cms/section-registry';
 
 interface DynamicFieldRendererProps {
   keyPath: string;
@@ -20,6 +21,8 @@ interface DynamicFieldRendererProps {
   depth?: number;
   sectionType?: string;
 }
+
+import { getImageHint } from '@/lib/cms/image-dimensions';
 
 export function DynamicFieldRenderer({
   keyPath,
@@ -73,8 +76,9 @@ export function DynamicFieldRenderer({
       return (
         <MediaField
           fieldKey={fieldKey}
-          value={value as string}
+          value={String(value ?? '')}
           onChange={(v) => onChange(keyPath, v)}
+          hint={sectionType ? getImageHint(sectionType, fieldKey) : undefined}
         />
       );
 
@@ -429,6 +433,7 @@ function ArrayField({
                   fieldKey={`${fieldKey}-${_idx}`}
                   value={String(item ?? '')}
                   onChange={(v) => onItemChange(_idx, v)}
+                  hint={sectionType ? getImageHint(sectionType, fieldKey) : undefined}
                 />
               </div>
             );
@@ -456,6 +461,39 @@ function ArrayField({
 
         if (typeof item === 'object' && item !== null && !Array.isArray(item)) {
           const objItem = item as Record<string, JsonValue>;
+
+          // Detect nested CMS sections (objects with a type string and content/contentJson)
+          if (fieldKey === 'sections' && typeof objItem.type === 'string' && ('content' in objItem || 'contentJson' in objItem)) {
+            const sectionTypeStr = objItem.type as string;
+            const contentKey = 'content' in objItem ? 'content' : 'contentJson';
+            const contentObj = (objItem[contentKey] as Record<string, JsonValue>) || {};
+            const schema = SECTION_REGISTRY.find(s => s.type === sectionTypeStr);
+
+            if (schema) {
+              return (
+                <div className="space-y-4 p-4 border border-slate-200 rounded-xl bg-slate-50">
+                  <div className="text-sm font-bold text-slate-700 mb-2 border-b border-slate-200 pb-2 flex justify-between items-center">
+                    <span>{schema.label} Configuration</span>
+                    <span className="text-[10px] bg-[#4B2A63]/10 text-[#4B2A63] px-2 py-1 rounded uppercase">{sectionTypeStr}</span>
+                  </div>
+                  {(schema.fieldOrder || Object.keys(contentObj)).map(k => (
+                    <DynamicFieldRenderer
+                      key={k}
+                      keyPath={`${itemKeyPath}.${contentKey}.${k}`}
+                      fieldKey={k}
+                      value={contentObj[k] ?? ''}
+                      onChange={(_kp, newVal) => {
+                        const newContent = { ...contentObj, [k]: newVal };
+                        onItemChange(_idx, { ...objItem, [contentKey]: newContent });
+                      }}
+                      depth={depth + 2}
+                      sectionType={sectionTypeStr}
+                    />
+                  ))}
+                </div>
+              );
+            }
+          }
           
           let sortedKeys = Object.keys(objItem);
           if (fieldKey === 'testimonials') {
@@ -525,6 +563,8 @@ function ArrayField({
               tabOrder = ['tabName', 'tabTitle', 'points', 'buttonText', 'buttonUrl', 'image'];
             } else if (sectionType === 'oracle-apex-approach') {
               tabOrder = ['tabName', 'items'];
+            } else if (sectionType === 'mfg-icons') {
+              tabOrder = ['label', 'iconImage', 'sections'];
             }
             sortedKeys = tabOrder.filter(k => k in objItem);
           } else if (fieldKey === 'stats') {

@@ -311,7 +311,7 @@ export const SECTION_REGISTRY: SectionTypeDefinition[] = [
     color: 'bg-emerald-50 text-emerald-600',
     defaultVariant: 'default',
     supportsVariants: false,
-    fieldOrder: ['icons']
+    fieldOrder: ['tabs']
   },
   {
     type: 'mfg-demand',
@@ -321,6 +321,7 @@ export const SECTION_REGISTRY: SectionTypeDefinition[] = [
     color: 'bg-blue-50 text-blue-600',
     defaultVariant: 'default',
     supportsVariants: false,
+    fieldOrder: ['title', 'paragraph1', 'paragraph2'],
   },
   {
     type: 'mfg-process',

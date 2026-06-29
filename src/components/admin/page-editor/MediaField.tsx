@@ -9,9 +9,10 @@ interface MediaFieldProps {
   fieldKey: string;
   value: string;
   onChange: (value: string) => void;
+  hint?: string;
 }
 
-export function MediaField({ fieldKey, value, onChange }: MediaFieldProps) {
+export function MediaField({ fieldKey, value, onChange, hint }: MediaFieldProps) {
   const [showPreview, setShowPreview] = React.useState(true);
   const [isUploading, setIsUploading] = React.useState(false);
   const fileInputRef = React.useRef<HTMLInputElement>(null);
@@ -20,8 +21,8 @@ export function MediaField({ fieldKey, value, onChange }: MediaFieldProps) {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    // Enforce 10MB file size limit
-    const MAX_SIZE_MB = 10;
+    // Enforce 3MB file size limit
+    const MAX_SIZE_MB = 3;
     const MAX_SIZE_BYTES = MAX_SIZE_MB * 1024 * 1024;
     if (file.size > MAX_SIZE_BYTES) {
       toast.error(`File size exceeds the ${MAX_SIZE_MB}MB limit.`);
@@ -116,8 +117,13 @@ export function MediaField({ fieldKey, value, onChange }: MediaFieldProps) {
           <p className="text-[10px] text-slate-400">
             Paste media URL or click "Upload" to upload from your device.
             <span className="block mt-1 text-rose-500 font-medium">
-              * Disclaimer: Max upload size is 10MB. Supports images and videos.
+              * Disclaimer: Max upload size is 3MB. Supports images and videos.
             </span>
+            {hint && (
+              <span className="block mt-1 text-[#4B2A63] font-medium">
+                {hint}
+              </span>
+            )}
           </p>
         </div>
       </div>

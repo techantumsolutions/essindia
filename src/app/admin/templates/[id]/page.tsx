@@ -191,7 +191,12 @@ export default function TemplateEditPage() {
                   }}
                   className="flex-1 bg-white rounded-xl px-4 py-2 font-bold text-sm outline-none"
                 >
-                  {SECTION_REGISTRY.map((s) => (
+                  {SECTION_REGISTRY.filter((s) => {
+                    if (s.type === 'mfg-icons') {
+                      return template?.name === 'Intelligent ERP Automation Template';
+                    }
+                    return true;
+                  }).map((s) => (
                     <option key={s.type} value={s.type}>
                       {s.label}
                     </option>

@@ -42,7 +42,7 @@ export default function ManufacturingProcess({ content }: { content?: any }) {
               className="flex flex-col items-center text-center relative group"
             >
               <div className="relative mb-2 z-10 transition-transform group-hover:scale-105">
-                <img src={step.image || '/Modules-manufacturing/Production flow-1.png'} alt={step.label} className="w-[160px] h-[160px] object-contain mx-auto" />
+                <img src={step.image || '/Modules-manufacturing/Production flow-1.png'} alt={step.label} className="w-[160px] max-w-full h-[160px] object-contain mx-auto" />
               </div>
 
               <h3 className="text-[16px] font-extrabold text-[#27256b] uppercase mb-2">{step.label}</h3>

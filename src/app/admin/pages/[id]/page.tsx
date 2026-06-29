@@ -1904,9 +1904,13 @@ export default function PageEditor() {
                 exit={{ opacity: 0, height: 0 }}
                 className="bg-white rounded-2xl border-2 border-dashed border-[#4B2A63]/20 p-6 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4"
               >
-                {SECTION_REGISTRY.filter(
-                  (s) => !s.label.includes('Legacy')
-                ).map((s) => (
+                {SECTION_REGISTRY.filter((s) => {
+                  if (s.label.includes('Legacy')) return false;
+                  if (s.type === 'mfg-icons') {
+                    return page.template?.name === 'Intelligent ERP Automation Template';
+                  }
+                  return true;
+                }).map((s) => (
                   <div
                     key={s.type}
                     className="p-4 rounded-xl bg-slate-50 border border-slate-100 flex flex-col justify-between gap-3 group hover:border-[#4B2A63]/20 transition-all hover:shadow-sm"
