@@ -485,8 +485,11 @@ export class NavigationTreeRepository {
         }))
         .filter((cat) => mode === 'admin' || cat.subCategories.length > 0 || cat.pageId);
 
+      const navPages = pagesByNavItem.get(item.id) ?? [];
+      const unassignedNavPages = navPages.filter(p => !pageIds.has(p.id));
+
       const pageCategories = pagesToNavigationTreeCategories(
-        pagesByNavItem.get(item.id) ?? [],
+        unassignedNavPages,
         navSlug,
         mode
       );

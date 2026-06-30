@@ -33,21 +33,19 @@ type PageMegaMenuIds = {
 
 /** Keep linked mega menu labels in sync when page title/slug changes. */
 export async function updateMegaMenuFromPage(page: PageMegaMenuIds): Promise<void> {
-  const touch = { name: page.title, slug: page.slug, pageId: page.id, updatedAt: new Date() };
+  const touch = { pageId: page.id, updatedAt: new Date() };
 
   if (page.megaMenuSubSubCategoryId) {
     await db
       .update(megaMenuSubSubCategories)
       .set(touch)
       .where(eq(megaMenuSubSubCategories.id, page.megaMenuSubSubCategoryId));
-  }
-  if (page.megaMenuSubCategoryId) {
+  } else if (page.megaMenuSubCategoryId) {
     await db
       .update(megaMenuSubCategories)
       .set(touch)
       .where(eq(megaMenuSubCategories.id, page.megaMenuSubCategoryId));
-  }
-  if (page.megaMenuCategoryId) {
+  } else if (page.megaMenuCategoryId) {
     await db
       .update(megaMenuCategories)
       .set(touch)
@@ -117,34 +115,21 @@ export async function syncPageToMegaMenu(page: SyncPageInput): Promise<void> {
       ),
     });
 
-    if (!sub) {
-      const [created] = await db
-        .insert(megaMenuSubCategories)
-        .values({
-          categoryId: parent.megaMenuCategoryId,
-          name: page.title,
-          slug: page.slug,
-          pageId: page.id,
-          orderIndex: page.sortOrder ?? 999,
-          status: 'active',
-        })
-        .returning();
-      sub = created;
-    } else {
+    if (sub) {
       await db
         .update(megaMenuSubCategories)
-        .set({ pageId: page.id, name: page.title, updatedAt: new Date() })
+        .set({ pageId: page.id, updatedAt: new Date() })
         .where(eq(megaMenuSubCategories.id, sub.id));
-    }
 
-    await db
-      .update(pages)
-      .set({
-        megaMenuCategoryId: parent.megaMenuCategoryId,
-        megaMenuSubCategoryId: sub.id,
-        updatedAt: new Date(),
-      })
-      .where(eq(pages.id, page.id));
+      await db
+        .update(pages)
+        .set({
+          megaMenuCategoryId: parent.megaMenuCategoryId,
+          megaMenuSubCategoryId: sub.id,
+          updatedAt: new Date(),
+        })
+        .where(eq(pages.id, page.id));
+    }
     return;
   }
 
@@ -156,35 +141,22 @@ export async function syncPageToMegaMenu(page: SyncPageInput): Promise<void> {
       ),
     });
 
-    if (!leaf) {
-      const [created] = await db
-        .insert(megaMenuSubSubCategories)
-        .values({
-          subCategoryId: parent.megaMenuSubCategoryId,
-          name: page.title,
-          slug: page.slug,
-          pageId: page.id,
-          orderIndex: page.sortOrder ?? 999,
-          status: 'active',
-        })
-        .returning();
-      leaf = created;
-    } else {
+    if (leaf) {
       await db
         .update(megaMenuSubSubCategories)
-        .set({ pageId: page.id, name: page.title, updatedAt: new Date() })
+        .set({ pageId: page.id, updatedAt: new Date() })
         .where(eq(megaMenuSubSubCategories.id, leaf.id));
-    }
 
-    await db
-      .update(pages)
-      .set({
-        megaMenuCategoryId: parent.megaMenuCategoryId,
-        megaMenuSubCategoryId: parent.megaMenuSubCategoryId,
-        megaMenuSubSubCategoryId: leaf.id,
-        updatedAt: new Date(),
-      })
-      .where(eq(pages.id, page.id));
+      await db
+        .update(pages)
+        .set({
+          megaMenuCategoryId: parent.megaMenuCategoryId,
+          megaMenuSubCategoryId: parent.megaMenuSubCategoryId,
+          megaMenuSubSubCategoryId: leaf.id,
+          updatedAt: new Date(),
+        })
+        .where(eq(pages.id, page.id));
+    }
   }
 }
 
@@ -196,61 +168,37 @@ async function syncRootPageToMegaMenu(page: SyncPageInput): Promise<void> {
     ),
   });
 
-  if (!category) {
-    const [created] = await db
-      .insert(megaMenuCategories)
-      .values({
-        navigationItemId: page.navigationItemId,
-        name: page.title,
-        slug: page.slug,
-        pageId: page.id,
-        orderIndex: page.sortOrder ?? 999,
-        status: 'active',
-      })
-      .returning();
-    category = created;
-  } else {
+  if (category) {
     await db
       .update(megaMenuCategories)
-      .set({ pageId: page.id, name: page.title, updatedAt: new Date() })
+      .set({ pageId: page.id, updatedAt: new Date() })
       .where(eq(megaMenuCategories.id, category.id));
   }
 
-  let sub = await db.query.megaMenuSubCategories.findFirst({
+  let sub = category ? await db.query.megaMenuSubCategories.findFirst({
     where: and(
       eq(megaMenuSubCategories.categoryId, category.id),
       eq(megaMenuSubCategories.slug, page.slug)
     ),
-  });
+  }) : null;
 
-  if (!sub) {
-    const [created] = await db
-      .insert(megaMenuSubCategories)
-      .values({
-        categoryId: category.id,
-        name: page.title,
-        slug: page.slug,
-        pageId: page.id,
-        orderIndex: 0,
-        status: 'active',
-      })
-      .returning();
-    sub = created;
-  } else {
+  if (sub) {
     await db
       .update(megaMenuSubCategories)
-      .set({ pageId: page.id, name: page.title, updatedAt: new Date() })
+      .set({ pageId: page.id, updatedAt: new Date() })
       .where(eq(megaMenuSubCategories.id, sub.id));
   }
 
-  await db
-    .update(pages)
-    .set({
-      megaMenuCategoryId: category.id,
-      megaMenuSubCategoryId: sub.id,
-      updatedAt: new Date(),
-    })
-    .where(eq(pages.id, page.id));
+  if (category && sub) {
+    await db
+      .update(pages)
+      .set({
+        megaMenuCategoryId: category.id,
+        megaMenuSubCategoryId: sub.id,
+        updatedAt: new Date(),
+      })
+      .where(eq(pages.id, page.id));
+  }
 }
 
 /** Ensure every CMS page linked to a nav item has a mega menu entry (website + admin parity). */

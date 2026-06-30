@@ -502,3 +502,15 @@ export const applicationsRelations = relations(applications, ({ one }) => ({
 
 // Trigger HMR cache reload
 
+export const formSubmissions = pgTable('form_submissions', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  name: varchar('name', { length: 255 }).notNull(),
+  email: varchar('email', { length: 255 }).notNull(),
+  phone: varchar('phone', { length: 100 }),
+  company: varchar('company', { length: 255 }),
+  country: varchar('country', { length: 100 }),
+  message: text('message'),
+  status: varchar('status', { length: 50 }).default('new').notNull(),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+  updatedAt: timestamp('updated_at').defaultNow().notNull(),
+});

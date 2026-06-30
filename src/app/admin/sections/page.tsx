@@ -195,14 +195,7 @@ export default function SectionsLibraryModule() {
           <p className="text-slate-500 font-medium">Reusable sections for templates and pages.</p>
         </div>
         <div className="flex gap-3">
-          <Button
-            variant="outline"
-            onClick={openImport}
-            className="rounded-full px-6 h-12 font-bold"
-          >
-            <Download className="w-5 h-5 mr-2" />
-            Import From Existing Pages
-          </Button>
+
           <Button
             onClick={() => setIsAdding(true)}
             className="bg-[#4B2A63] hover:bg-[#3B198F] text-white rounded-full px-8 h-12 font-bold"

@@ -21,6 +21,25 @@ function PagesModuleContent() {
   >([]);
   const [isLoading, setIsLoading] = React.useState(true);
   const [isModalOpen, setIsModalOpen] = React.useState(false);
+  const [searchQuery, setSearchQuery] = React.useState('');
+  const [currentPage, setCurrentPage] = React.useState(1);
+  const itemsPerPage = 10;
+
+  const filteredPages = React.useMemo(() => {
+    return pages.filter(p => 
+      !!p.pageId && (
+        p.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
+        p.routePath.toLowerCase().includes(searchQuery.toLowerCase())
+      )
+    );
+  }, [pages, searchQuery]);
+
+  const totalPages = Math.ceil(filteredPages.length / itemsPerPage);
+  const paginatedPages = filteredPages.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
+
+  React.useEffect(() => {
+    setCurrentPage(1);
+  }, [searchQuery]);
 
   React.useEffect(() => {
     if (searchParams.get('createPage') === 'true') {
@@ -148,7 +167,7 @@ function PagesModuleContent() {
             variant="outline"
             onClick={handleSyncRegistry}
             disabled={isSyncing}
-            className="rounded-full px-6 h-12 font-bold"
+            className="hidden rounded-full px-6 h-12 font-bold"
           >
             {isSyncing ? 'Syncing…' : 'Sync Registry'}
           </Button>
@@ -168,6 +187,8 @@ function PagesModuleContent() {
           <input
             type="text"
             placeholder="Filter pages..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
             className="w-full bg-slate-50 rounded-xl pl-12 pr-4 py-2.5 text-sm font-medium outline-none focus:ring-4 focus:ring-[#4B2A63]/5"
           />
         </div>
@@ -179,9 +200,8 @@ function PagesModuleContent() {
         className="bg-white rounded-[32px] border border-slate-100 shadow-[0_20px_50px_-15px_rgba(0,0,0,0.03)] overflow-hidden"
       >
         <div className="bg-slate-50/50 px-6 py-4 grid grid-cols-12 gap-2 text-[10px] font-black text-slate-400 uppercase tracking-[0.15em] border-b border-slate-100">
-          <div className="col-span-3">Page</div>
+          <div className="col-span-4">Page</div>
           <div className="col-span-2">Route</div>
-          <div className="col-span-1 text-center">Type</div>
           <div className="col-span-1 text-center">Status</div>
           <div className="col-span-1 text-center">SEO</div>
           <div className="col-span-1 text-center">Sections</div>
@@ -194,14 +214,42 @@ function PagesModuleContent() {
           ) : pages.length === 0 ? (
             <div className="p-16 text-center text-slate-400">No pages yet. Create your first page.</div>
           ) : (
-            pages.map((page) => (
-              <RegistryPageRow
-                key={page.id}
-                page={page}
-                onDelete={handleDelete}
-                onAction={handlePageAction}
-              />
-            ))
+            <>
+              {paginatedPages.map((page) => (
+                <RegistryPageRow
+                  key={page.id}
+                  page={page}
+                  onDelete={handleDelete}
+                  onAction={handlePageAction}
+                />
+              ))}
+              
+              <div className="flex items-center justify-between px-6 py-4 border-t border-slate-100 mt-2">
+                <div className="text-xs text-slate-500 font-medium">
+                  Showing <span className="font-bold text-slate-900">{filteredPages.length > 0 ? currentPage : 0}</span> of <span className="font-bold text-slate-900">{totalPages || 1}</span>
+                </div>
+                <div className="flex gap-2">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="h-8 text-xs font-bold rounded-lg"
+                    disabled={currentPage === 1}
+                    onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                  >
+                    Previous
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="h-8 text-xs font-bold rounded-lg"
+                    disabled={currentPage === totalPages || totalPages === 0}
+                    onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+                  >
+                    Next
+                  </Button>
+                </div>
+              </div>
+            </>
           )}
         </div>
       </motion.div>
@@ -229,7 +277,7 @@ function RegistryPageRow({
 
   return (
     <motion.div className="group grid grid-cols-12 gap-2 items-center py-3 px-6 rounded-2xl hover:bg-slate-50/80 transition-all my-1">
-      <motion.div className="col-span-3 flex items-center gap-3">
+      <motion.div className="col-span-4 flex items-center gap-3">
         <motion.div className="w-10 h-10 rounded-xl bg-slate-50 flex items-center justify-center">
           <FileText className="w-5 h-5 text-slate-400" />
         </motion.div>
@@ -241,7 +289,6 @@ function RegistryPageRow({
         </motion.div>
       </motion.div>
       <motion.div className="col-span-2 font-mono text-xs text-slate-500 truncate">{page.routePath}</motion.div>
-      <motion.div className="col-span-1 text-center text-xs font-bold">{page.pageType}</motion.div>
       <motion.div className="col-span-1 flex justify-center">
         <span className={cn('text-[10px] font-black px-2 py-1 rounded-full uppercase', page.status === 'published' ? 'bg-emerald-50 text-emerald-600' : 'bg-amber-50 text-amber-600')}>
           {page.status}

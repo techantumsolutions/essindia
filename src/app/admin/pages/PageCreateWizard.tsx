@@ -278,12 +278,16 @@ export function PageCreateWizard({ open, onClose, templates, onSubmit }: Props) 
                           <FieldLabel>Category (Tab)</FieldLabel>
                           <NativeSelect
                             value={form.megaMenuCategoryId}
-                            onChange={(val) => setForm({ 
-                              ...form, 
-                              megaMenuCategoryId: val,
-                              megaMenuSubCategoryId: '',
-                              megaMenuSubSubCategoryId: ''
-                            })}
+                            onChange={(val) => {
+                              const c = megaMenu.categories.find(x => x.id === val);
+                              setForm({ 
+                                ...form, 
+                                megaMenuCategoryId: val,
+                                megaMenuSubCategoryId: '',
+                                megaMenuSubSubCategoryId: '',
+                                title: c ? c.name : form.title
+                              });
+                            }}
                           >
                             <option value="">None — do not link in Mega Menu</option>
                             {megaMenu.categories.map((c) => (
@@ -297,11 +301,15 @@ export function PageCreateWizard({ open, onClose, templates, onSubmit }: Props) 
                             <FieldLabel>Sub Category (Panel)</FieldLabel>
                             <NativeSelect
                               value={form.megaMenuSubCategoryId}
-                              onChange={(val) => setForm({ 
-                                ...form, 
-                                megaMenuSubCategoryId: val,
-                                megaMenuSubSubCategoryId: ''
-                              })}
+                              onChange={(val) => {
+                                const s = activeCategory?.subCategories.find(x => x.id === val);
+                                setForm({ 
+                                  ...form, 
+                                  megaMenuSubCategoryId: val,
+                                  megaMenuSubSubCategoryId: '',
+                                  title: s ? s.name : form.title
+                                });
+                              }}
                             >
                               <option value="">None — create as a Sub Category Panel instead</option>
                               {activeCategory.subCategories.map((s) => (
@@ -316,10 +324,14 @@ export function PageCreateWizard({ open, onClose, templates, onSubmit }: Props) 
                             <FieldLabel>Leaf Link (Grid Link)</FieldLabel>
                             <NativeSelect
                               value={form.megaMenuSubSubCategoryId}
-                              onChange={(val) => setForm({ 
-                                ...form, 
-                                megaMenuSubSubCategoryId: val
-                              })}
+                              onChange={(val) => {
+                                const l = activeSubCategory?.subSubCategories.find(x => x.id === val);
+                                setForm({ 
+                                  ...form, 
+                                  megaMenuSubSubCategoryId: val,
+                                  title: l ? l.name : form.title
+                                });
+                              }}
                             >
                               <option value="">None — create as a Leaf Link instead</option>
                               {activeSubCategory.subSubCategories.map((l) => (
@@ -342,8 +354,9 @@ export function PageCreateWizard({ open, onClose, templates, onSubmit }: Props) 
                         placeholder="Page title"
                         value={form.title}
                         onChange={(e) => setForm({ ...form, title: e.target.value })}
+                        disabled={!!form.megaMenuCategoryId}
                         onMouseDown={(e) => e.stopPropagation()}
-                        className="w-full bg-slate-50 rounded-2xl px-6 py-4 font-bold outline-none focus:ring-4 focus:ring-[#4B2A63]/10"
+                        className="w-full bg-slate-50 rounded-2xl px-6 py-4 font-bold outline-none focus:ring-4 focus:ring-[#4B2A63]/10 disabled:opacity-50 disabled:cursor-not-allowed"
                       />
                     </div>
                     <div>

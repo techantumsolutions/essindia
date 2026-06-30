@@ -61,12 +61,12 @@ export function ContactInfoCards({ content }: { content?: ContactInfoCardsConten
 
             return (
               <div key={i} className="bg-white rounded-2xl p-8 border border-[#04247D] flex flex-col h-full relative group hover:border-[#5C2B6A] transition-colors duration-300">
-                <div className="w-12 h-12 bg-[#f4f7ff] rounded-lg flex items-center justify-center mb-6 text-[#2A2B6E] group-hover:bg-[#2A2B6E] group-hover:text-white transition-colors duration-300 p-2.5 overflow-hidden">
+                <div className="w-12 h-12 bg-[#f4f7ff] rounded-lg flex items-center justify-center mb-6 text-[#2A2B6E] transition-colors duration-300 p-2.5 overflow-hidden group-hover:bg-[#2A2B6E]/5">
                   {iconUrl ? (
                     <img 
                       src={iconUrl} 
                       alt={card.title} 
-                      className="w-full h-full object-contain filter group-hover:brightness-0 group-hover:invert transition-all duration-300"
+                      className="w-full h-full object-contain transition-transform duration-300 group-hover:scale-110"
                     />
                   ) : (
                     <IconComponent size={24} strokeWidth={1.5} />
