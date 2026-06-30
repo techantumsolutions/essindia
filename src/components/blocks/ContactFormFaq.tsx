@@ -64,15 +64,61 @@ export function ContactFormFaq({ content }: { content?: ContactFormFaqContent })
   const [selectedDialCode, setSelectedDialCode] = useState<string>('in');
   const [searchDialQuery, setSearchDialQuery] = useState<string>('');
   const [acceptedPrivacy, setAcceptedPrivacy] = useState<boolean>(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const [formData, setFormData] = useState({
+    firstName: '',
+    lastName: '',
+    email: '',
+    phone: '',
+    company: '',
+    message: ''
+  });
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    setFormData(prev => ({ ...prev, [e.target.name]: e.target.value }));
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!acceptedPrivacy) {
       toast.error('Please accept the privacy policy to continue.');
       return;
     }
-    // Perform submission logic here
-    toast.success('Submitted successfully!');
+    
+    setIsSubmitting(true);
+    try {
+      const dialInfo = DIAL_CODES.find((c) => c.code === selectedDialCode);
+      const fullPhone = dialInfo && formData.phone ? `${dialInfo.dialCode} ${formData.phone}` : formData.phone;
+      const countryInfo = ALL_COUNTRIES_LIST.find((c) => c.code === selectedCountry);
+
+      const res = await fetch('/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: `${formData.firstName} ${formData.lastName}`.trim(),
+          email: formData.email,
+          phone: fullPhone,
+          company: formData.company,
+          country: countryInfo ? countryInfo.name : selectedCountry,
+          message: formData.message,
+        })
+      });
+
+      if (!res.ok) {
+        const data = await res.json();
+        throw new Error(data.error || 'Submission failed');
+      }
+
+      toast.success('Submitted successfully!');
+      setFormData({ firstName: '', lastName: '', email: '', phone: '', company: '', message: '' });
+      setSelectedCountry('');
+      setAcceptedPrivacy(false);
+    } catch (err: any) {
+      toast.error(err.message || 'Something went wrong');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const filteredCountries = ALL_COUNTRIES_LIST.filter((country) =>
@@ -100,18 +146,18 @@ export function ContactFormFaq({ content }: { content?: ContactFormFaqContent })
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="space-y-2">
                   <label className="text-sm font-medium text-gray-700">First Name</label>
-                  <input type="text" placeholder="Enter your first name" className="w-full px-4 py-2 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#5C2B6A] focus:border-transparent transition-all text-sm" />
+                  <input required name="firstName" value={formData.firstName} onChange={handleInputChange} type="text" placeholder="Enter your first name" className="w-full px-4 py-2 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#5C2B6A] focus:border-transparent transition-all text-sm" />
                 </div>
                 <div className="space-y-2">
                   <label className="text-sm font-medium text-gray-700">Last Name</label>
-                  <input type="text" placeholder="Enter your last name" className="w-full px-4  py-2 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#5C2B6A] focus:border-transparent transition-all text-sm" />
+                  <input required name="lastName" value={formData.lastName} onChange={handleInputChange} type="text" placeholder="Enter your last name" className="w-full px-4  py-2 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#5C2B6A] focus:border-transparent transition-all text-sm" />
                 </div>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="space-y-2">
                   <label className="text-sm font-medium text-gray-700">Email</label>
-                  <input type="email" placeholder="Enter your e-mail" className="w-full px-4  py-2 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#5C2B6A] focus:border-transparent transition-all text-sm" />
+                  <input required name="email" value={formData.email} onChange={handleInputChange} type="email" placeholder="Enter your e-mail" className="w-full px-4  py-2 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#5C2B6A] focus:border-transparent transition-all text-sm" />
                 </div>
                 <div className="space-y-2">
                   <label className="text-sm font-medium text-gray-700">Phone number</label>
@@ -158,14 +204,14 @@ export function ContactFormFaq({ content }: { content?: ContactFormFaqContent })
                         </div>
                       </SelectContent>
                     </Select>
-                    <input type="tel" placeholder="Enter phone number" className="w-full px-4 !h-[38px] rounded-r-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#5C2B6A] focus:border-transparent transition-all text-sm relative z-0" />
+                    <input name="phone" value={formData.phone} onChange={handleInputChange} type="tel" placeholder="Enter phone number" className="w-full px-4 !h-[38px] rounded-r-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#5C2B6A] focus:border-transparent transition-all text-sm relative z-0" />
                   </div>
                 </div>
               </div>
 
               <div className="space-y-2">
                 <label className="text-sm font-medium text-gray-700">Company Name</label>
-                <input type="text" placeholder="Enter company name" className="w-full px-4 py-2 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#5C2B6A] focus:border-transparent transition-all text-sm" />
+                <input name="company" value={formData.company} onChange={handleInputChange} type="text" placeholder="Enter company name" className="w-full px-4 py-2 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#5C2B6A] focus:border-transparent transition-all text-sm" />
               </div>
 
               <div className="space-y-2">
@@ -219,24 +265,24 @@ export function ContactFormFaq({ content }: { content?: ContactFormFaqContent })
 
               <div className="space-y-2">
                 <label className="text-sm font-medium text-gray-700">Message</label>
-                <textarea rows={4} placeholder="Leave us a message..." className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#5C2B6A] focus:border-transparent transition-all text-sm resize-none"></textarea>
+                <textarea required name="message" value={formData.message} onChange={handleInputChange} rows={4} placeholder="Leave us a message..." className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#5C2B6A] focus:border-transparent transition-all text-sm resize-none"></textarea>
               </div>
 
               <div className="flex items-center space-x-3 pt-2">
                 <input
                   type="checkbox"
                   id="privacy"
-                  className="w-4 h-4 rounded border-gray-300 text-[#5C2B6A] focus:ring-[#5C2B6A]"
+                  className="w-4 h-4 rounded border-gray-300 text-[#5C2B6A] focus:ring-[#5C2B6A] cursor-pointer"
                   checked={acceptedPrivacy}
                   onChange={(e) => setAcceptedPrivacy(e.target.checked)}
                 />
-                <label htmlFor="privacy" className="text-sm text-gray-600 font-medium">
+                <label htmlFor="privacy" className="text-sm text-gray-600 font-medium cursor-pointer">
                   You agree to our friendly privacy policy.
                 </label>
               </div>
 
-              <button type="submit" className="w-full bg-[#2A2B6E] hover:bg-[#1a1b4e] text-white font-medium py-4 rounded-xl transition-colors duration-300 mt-4">
-                Send Message
+              <button disabled={isSubmitting} type="submit" className="w-full bg-[#2A2B6E] hover:bg-[#1a1b4e] text-white font-medium py-4 rounded-xl transition-colors duration-300 mt-4 disabled:opacity-50 cursor-pointer disabled:cursor-not-allowed">
+                {isSubmitting ? 'Sending...' : 'Send Message'}
               </button>
             </form>
           </div>

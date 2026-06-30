@@ -3,13 +3,13 @@
 import React from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
-import { 
-  LayoutDashboard, 
-  FileText, 
-  Navigation, 
-  Settings, 
-  LogOut, 
-  Menu, 
+import {
+  LayoutDashboard,
+  FileText,
+  Navigation,
+  Settings,
+  LogOut,
+  Menu,
   X,
   ChevronRight,
   Search,
@@ -44,9 +44,9 @@ const navGroups = [
     items: [
       { icon: ImageIcon, label: 'Media Library', href: '/admin/media' },
       { icon: Briefcase, label: 'Careers', href: '/admin/careers' },
-      { icon: Briefcase, label: 'Solutions', href: '/admin/solutions' },
-      { icon: Globe, label: 'Industries', href: '/admin/industries' },
-      { icon: FileText, label: 'Resources', href: '/admin/resources' },
+      // { icon: Briefcase, label: 'Solutions', href: '/admin/solutions' },
+      // { icon: Globe, label: 'Industries', href: '/admin/industries' },
+      // { icon: FileText, label: 'Resources', href: '/admin/resources' },
     ]
   },
   {
@@ -54,16 +54,16 @@ const navGroups = [
     items: [
       { icon: Shield, label: 'SEO Settings', href: '/admin/seo' },
       { icon: MessageSquare, label: 'Forms & Leads', href: '/admin/forms' },
-      { icon: BarChart3, label: 'Analytics', href: '/admin/analytics' },
+      // { icon: BarChart3, label: 'Analytics', href: '/admin/analytics' },
     ]
   },
-  {
-    label: 'System',
-    items: [
-      { icon: User, label: 'Users & Roles', href: '/admin/users' },
-      { icon: Settings, label: 'Settings', href: '/admin/settings' },
-    ]
-  }
+  // {
+  //   label: 'System',
+  //   items: [
+  //     { icon: User, label: 'Users & Roles', href: '/admin/users' },
+  //     { icon: Settings, label: 'Settings', href: '/admin/settings' },
+  //   ]
+  // }
 ];
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
@@ -78,7 +78,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   return (
     <div className="min-h-screen bg-[#F8F9FA] flex overflow-hidden font-sans">
       {/* Sidebar */}
-      <motion.aside 
+      <motion.aside
         initial={false}
         animate={{ width: isSidebarOpen ? 280 : 80 }}
         className="fixed inset-y-0 left-0 bg-[#1A1A2E] text-white z-50 flex flex-col border-r border-white/5"
@@ -126,8 +126,8 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                       onClick={() => router.push(item.href)}
                       className={cn(
                         "flex items-center w-full px-4 py-3 rounded-xl transition-all duration-300 group relative",
-                        isActive 
-                          ? "bg-white/10 text-white shadow-xl shadow-black/10" 
+                        isActive
+                          ? "bg-white/10 text-white shadow-xl shadow-black/10"
                           : "text-white/50 hover:text-white hover:bg-white/5"
                       )}
                     >
@@ -158,7 +158,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       </motion.aside>
 
       {/* Main Content */}
-      <main 
+      <main
         className={cn(
           "flex-1 transition-all duration-300 min-h-screen flex flex-col",
           isSidebarOpen ? "ml-[280px]" : "ml-[80px]"
@@ -167,7 +167,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         {/* Top Header */}
         <header className="h-20 bg-white border-b border-slate-200 flex items-center justify-between px-8 sticky top-0 z-40 backdrop-blur-md bg-white/80">
           <div className="flex items-center gap-6 flex-1">
-            <button 
+            <button
               onClick={() => setIsSidebarOpen(!isSidebarOpen)}
               className="w-10 h-10 flex items-center justify-center rounded-xl bg-slate-50 hover:bg-slate-100 transition-colors"
             >
@@ -175,9 +175,9 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             </button>
             <div className="max-w-md w-full relative hidden md:block">
               <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
-              <input 
-                type="text" 
-                placeholder="Global search (⌘+K)" 
+              <input
+                type="text"
+                placeholder="Global search (⌘+K)"
                 className="w-full bg-slate-50 border border-slate-100 rounded-xl pl-12 pr-4 py-2.5 text-sm focus:bg-white focus:ring-4 focus:ring-purple-500/5 transition-all outline-none"
               />
             </div>
@@ -198,7 +198,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                 <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Admin" alt="Avatar" />
               </div>
             </div>
-            <button 
+            <button
               onClick={() => {
                 document.cookie = "mock-admin-session=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
                 window.location.href = '/admin/login';

@@ -174,6 +174,13 @@ export class SectionLibraryRepository {
       .where(eq(sections.id, id));
   }
 
+  async decrementUsage(id: string) {
+    await db
+      .update(sections)
+      .set({ usageCount: sql`GREATEST(${sections.usageCount} - 1, 0)` })
+      .where(eq(sections.id, id));
+  }
+
   async delete(id: string) {
     const current = await this.findById(id);
     if (!current) return;

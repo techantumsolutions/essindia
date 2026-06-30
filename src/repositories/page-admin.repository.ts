@@ -93,6 +93,23 @@ export class PageAdminRepository {
     megaMenuSubCategoryId?: string | null;
     megaMenuSubSubCategoryId?: string | null;
   }) {
+    if (data.megaMenuSubSubCategoryId) {
+      const child = await db.query.megaMenuSubSubCategories.findFirst({
+        where: eq(megaMenuSubSubCategories.id, data.megaMenuSubSubCategoryId)
+      });
+      if (child) data.title = child.name;
+    } else if (data.megaMenuSubCategoryId) {
+      const sub = await db.query.megaMenuSubCategories.findFirst({
+        where: eq(megaMenuSubCategories.id, data.megaMenuSubCategoryId)
+      });
+      if (sub) data.title = sub.name;
+    } else if (data.megaMenuCategoryId) {
+      const cat = await db.query.megaMenuCategories.findFirst({
+        where: eq(megaMenuCategories.id, data.megaMenuCategoryId)
+      });
+      if (cat) data.title = cat.name;
+    }
+
     const pageSlug = resolvePageSlug(data.title, data.slug);
     const placement = await this.resolveNavigationPlacement(data);
     let fullPath: string;
@@ -199,25 +216,15 @@ export class PageAdminRepository {
         .set({ pageId: page.id, updatedAt: new Date() })
         .where(eq(megaMenuSubSubCategories.id, data.megaMenuSubSubCategoryId));
     } else if (data.megaMenuSubCategoryId) {
-      // Append as a new leaf link under the selected sub-category
-      await db.insert(megaMenuSubSubCategories).values({
-        subCategoryId: data.megaMenuSubCategoryId,
-        name: data.title,
-        slug: pageSlug,
-        pageId: page.id,
-        orderIndex: 999,
-        status: 'active',
-      });
+      await db
+        .update(megaMenuSubCategories)
+        .set({ pageId: page.id, updatedAt: new Date() })
+        .where(eq(megaMenuSubCategories.id, data.megaMenuSubCategoryId));
     } else if (data.megaMenuCategoryId) {
-      // Append as a new sub-category (panel) under the selected category tab
-      await db.insert(megaMenuSubCategories).values({
-        categoryId: data.megaMenuCategoryId,
-        name: data.title,
-        slug: pageSlug,
-        pageId: page.id,
-        orderIndex: 999,
-        status: 'active',
-      });
+      await db
+        .update(megaMenuCategories)
+        .set({ pageId: page.id, updatedAt: new Date() })
+        .where(eq(megaMenuCategories.id, data.megaMenuCategoryId));
     } else if (placement.navigationItemId) {
       await syncPageToMegaMenu({
         id: page.id,
@@ -248,6 +255,14 @@ export class PageAdminRepository {
           }))
         );
         await templateRepository.incrementUsage(data.templateId);
+        
+        const libraryIds = template.templateSections
+          .map(ts => ts.sectionLibraryId)
+          .filter(Boolean) as string[];
+          
+        for (const sid of libraryIds) {
+          await sectionLibraryRepository.incrementUsage(sid);
+        }
       }
     }
 
@@ -480,6 +495,10 @@ export class PageAdminRepository {
 
     await db.delete(pageSections).where(eq(pageSections.id, sectionId));
 
+    if (section.sectionLibraryId) {
+      await sectionLibraryRepository.decrementUsage(section.sectionLibraryId);
+    }
+
     if (section.page) {
       await this.saveRevision(section.pageId);
       await this.invalidateCache(section.page.fullPath);
@@ -562,7 +581,18 @@ export class PageAdminRepository {
       // page_registry may not exist
     }
 
+    const pageSectionsData = await db
+      .select({ sectionLibraryId: pageSections.sectionLibraryId })
+      .from(pageSections)
+      .where(eq(pageSections.pageId, id));
+
     await db.delete(pages).where(eq(pages.id, id));
+
+    for (const ps of pageSectionsData) {
+      if (ps.sectionLibraryId) {
+        await sectionLibraryRepository.decrementUsage(ps.sectionLibraryId);
+      }
+    }
 
     if (page.seoId) {
       try {

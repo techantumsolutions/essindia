@@ -1,9 +1,10 @@
 'use client';
 
 import React from 'react';
-import { ImageIcon, X } from 'lucide-react';
+import { ImageIcon, X, FolderOpen, Upload } from 'lucide-react';
 import { humanLabel } from './field-utils';
 import { toast } from 'sonner';
+import { MediaPickerModal } from './MediaPickerModal';
 
 interface MediaFieldProps {
   fieldKey: string;
@@ -15,6 +16,7 @@ interface MediaFieldProps {
 export function MediaField({ fieldKey, value, onChange, hint }: MediaFieldProps) {
   const [showPreview, setShowPreview] = React.useState(true);
   const [isUploading, setIsUploading] = React.useState(false);
+  const [isPickerOpen, setIsPickerOpen] = React.useState(false);
   const fileInputRef = React.useRef<HTMLInputElement>(null);
 
   const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -98,21 +100,32 @@ export function MediaField({ fieldKey, value, onChange, hint }: MediaFieldProps)
               placeholder="Enter file URL or path..."
               className="flex-1 bg-slate-50 rounded-xl px-4 py-2.5 text-sm font-medium outline-none focus:ring-2 focus:ring-[#4B2A63]/10 border border-transparent focus:border-[#4B2A63]/20"
             />
+          </div>
+          <div className="flex gap-2 text-xs">
+            <button
+              type="button"
+              disabled={isUploading}
+              onClick={() => fileInputRef.current?.click()}
+              className="flex items-center gap-1.5 px-3 py-1.5 font-medium text-slate-600 bg-slate-100 hover:bg-slate-200 rounded-lg transition-colors disabled:opacity-50"
+            >
+              {isUploading ? <Upload className="w-3.5 h-3.5 animate-bounce" /> : <Upload className="w-3.5 h-3.5" />}
+              {isUploading ? 'Uploading...' : 'Upload File'}
+            </button>
+            <button
+              type="button"
+              onClick={() => setIsPickerOpen(true)}
+              className="flex items-center gap-1.5 px-3 py-1.5 font-medium text-[#4B2A63] bg-[#4B2A63]/10 hover:bg-[#4B2A63]/20 rounded-lg transition-colors"
+            >
+              <FolderOpen className="w-3.5 h-3.5" />
+              Browse Library
+            </button>
             <input
               ref={fileInputRef}
               type="file"
-              accept="image/*,video/*"
               className="hidden"
+              accept="image/*,video/*"
               onChange={handleUpload}
             />
-            <button
-              type="button"
-              onClick={() => fileInputRef.current?.click()}
-              disabled={isUploading}
-              className="px-4 py-2.5 bg-[#4B2A63] hover:bg-[#3B198F] text-white rounded-xl text-xs font-bold transition-all disabled:opacity-50 cursor-pointer shrink-0"
-            >
-              {isUploading ? 'Uploading...' : 'Upload'}
-            </button>
           </div>
           <p className="text-[10px] text-slate-400">
             Paste media URL or click "Upload" to upload from your device.
@@ -127,7 +140,16 @@ export function MediaField({ fieldKey, value, onChange, hint }: MediaFieldProps)
           </p>
         </div>
       </div>
+
+      <MediaPickerModal
+        isOpen={isPickerOpen}
+        onClose={() => setIsPickerOpen(false)}
+        onSelect={(url) => {
+          onChange(url);
+          setShowPreview(true);
+          setIsPickerOpen(false);
+        }}
+      />
     </div>
   );
 }
-

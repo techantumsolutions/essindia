@@ -1805,56 +1805,7 @@ export default function PageEditor() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* ===== Main content ===== */}
         <div className="lg:col-span-2 space-y-5">
-          {/* Page Settings */}
-          <div className="bg-white rounded-2xl border border-slate-100 p-6 space-y-4 shadow-sm">
-            <h2 className="font-bold text-slate-900 flex items-center gap-2">
-              Page Settings
-              {page.template && (
-                <span className="text-[10px] font-bold text-[#4B2A63] bg-[#4B2A63]/5 px-2 py-0.5 rounded-md">
-                  Template: {page.template.name}
-                </span>
-              )}
-            </h2>
-            <div className="space-y-1.5">
-              <label className="text-xs font-semibold text-slate-500">
-                Page Title
-              </label>
-              <input
-                value={page.title}
-                onChange={(e) => setPage({ ...page, title: e.target.value })}
-                className="w-full bg-slate-50 rounded-xl px-4 py-3 text-base font-bold outline-none focus:ring-2 focus:ring-[#4B2A63]/10 border border-transparent focus:border-[#4B2A63]/20"
-                placeholder="Page title"
-              />
-            </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div className="space-y-1.5">
-                <label className="text-xs font-semibold text-slate-500">
-                  URL Slug
-                </label>
-                <input
-                  value={page.slug}
-                  onChange={(e) => setPage({ ...page, slug: e.target.value })}
-                  className="w-full bg-slate-50 rounded-xl px-4 py-3 font-mono text-sm outline-none focus:ring-2 focus:ring-[#4B2A63]/10 border border-transparent focus:border-[#4B2A63]/20"
-                  placeholder="slug"
-                />
-              </div>
-              <div className="space-y-1.5">
-                <label className="text-xs font-semibold text-slate-500">
-                  Status
-                </label>
-                <div
-                  className={cn(
-                    'rounded-xl px-4 py-3 text-sm font-bold',
-                    page.status === 'published'
-                      ? 'bg-emerald-50 text-emerald-700'
-                      : 'bg-amber-50 text-amber-700'
-                  )}
-                >
-                  {page.status.charAt(0).toUpperCase() + page.status.slice(1)}
-                </div>
-              </div>
-            </div>
-          </div>
+
 
           {isBlogsListingPage && (
             <BlogManager pageId={pageId} onRefresh={fetchPage} />
@@ -2044,26 +1995,13 @@ export default function PageEditor() {
             </div>
             <div className="space-y-1.5">
               <label className="text-xs font-semibold text-slate-500">
-                OG Image URL
+                OG Image
               </label>
-              <input
-                placeholder="OG Image URL"
+              <MediaField
+                fieldKey="seo-og-image"
                 value={seoForm.ogImage}
-                onChange={(e) =>
-                  setSeoForm({ ...seoForm, ogImage: e.target.value })
-                }
-                className="w-full bg-slate-50 rounded-xl px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-[#4B2A63]/10 border border-transparent focus:border-[#4B2A63]/20"
+                onChange={(val) => setSeoForm({ ...seoForm, ogImage: val })}
               />
-              {seoForm.ogImage && (
-                <img
-                  src={seoForm.ogImage}
-                  alt="OG preview"
-                  className="w-full h-24 object-cover rounded-xl border border-slate-100 mt-1"
-                  onError={(e) => {
-                    (e.target as HTMLImageElement).style.display = 'none';
-                  }}
-                />
-              )}
             </div>
             <div className="space-y-1.5">
               <label className="text-xs font-semibold text-slate-500">
