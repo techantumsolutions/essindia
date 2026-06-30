@@ -71,7 +71,7 @@ export default function AdminDashboard() {
       {/* Welcome Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
         <div>
-          <h1 className="text-3xl font-bold text-slate-900 tracking-tight mb-2">Welcome back, Alvio</h1>
+          <h1 className="text-3xl font-bold text-slate-900 tracking-tight mb-2">Welcome back</h1>
           <p className="text-slate-500 font-medium">Here's what's happening with your platform today.</p>
         </div>
         <div className="flex items-center gap-3">
