@@ -104,8 +104,10 @@ export default function CareerDetailClient({ job }: CareerDetailClientProps) {
   };
 
   // Format meta list for JobDetailHero
+  const locations = job.location ? job.location.split(',').map(l => l.trim()).filter(Boolean) : [];
+  
   const metaList = [
-    { icon: 'MapPin', text: job.location },
+    ...locations.map(loc => ({ icon: 'MapPin', text: loc })),
     { icon: 'Clock', text: job.experience },
     { icon: 'Briefcase', text: job.type },
     { icon: 'Building', text: job.department }

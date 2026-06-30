@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence, Reorder } from 'framer-motion';
 import {
   Plus,
   ChevronRight,
@@ -11,6 +11,7 @@ import {
   Trash2,
   Edit2,
   FileText,
+  GripVertical,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
@@ -182,6 +183,26 @@ export default function CategoriesModule() {
     fetchRegistryPages();
   }, [fetchCategories, fetchRegistryPages]);
 
+  const handleReorder = async (newTree: CategoryTreeNode[]) => {
+    setTree(newTree); // Optimistic UI update
+    try {
+      const items = newTree.map((cat, index) => ({
+        id: cat.id,
+        orderIndex: index + 1,
+      }));
+      const res = await fetch('/api/admin/mega-menu/reorder', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ level: 'category', items, navigationItemId: selectedNavId })
+      });
+      if (!res.ok) throw new Error('Failed to save order');
+      toast.success('Categories reordered');
+    } catch (e) {
+      toast.error('Failed to save order');
+      handleRefresh(); // Revert on failure
+    }
+  };
+
   React.useEffect(() => {
     fetchNavItems();
     fetchRegistryPages();
@@ -194,7 +215,24 @@ export default function CategoriesModule() {
   const openCreate = (parentId?: string) => {
     setEditingId(null);
     setNewSubParentId(parentId || null);
-    setForm({ ...emptyForm, parentId: parentId || '', pageId: '' });
+
+    // Auto-calculate the next sort order based on siblings
+    let maxOrder = 0;
+    if (parentId) {
+      // For sub-categories, find siblings with the same parent
+      const siblings = flat.filter(c => c.parentId === parentId || c.categoryId === parentId || c.subCategoryId === parentId);
+      if (siblings.length > 0) {
+        maxOrder = Math.max(...siblings.map(c => c.orderIndex ?? 1));
+      }
+    } else {
+      // For main categories (no parent), just look at the top level tree
+      if (tree.length > 0) {
+        maxOrder = Math.max(...tree.map(c => c.orderIndex ?? 1));
+      }
+    }
+    const nextOrder = maxOrder + 1;
+
+    setForm({ ...emptyForm, parentId: parentId || '', pageId: '', orderIndex: nextOrder });
     setIsModalOpen(true);
   };
 
@@ -337,18 +375,20 @@ export default function CategoriesModule() {
           </div>
         ) : (
           <div className="p-4">
-            {tree.map((cat) => (
-              <CategoryRow
-                key={cat.id}
-                category={cat}
-                depth={0}
-                allCategories={flat}
-                registryPages={registryPages}
-                onRefresh={handleRefresh}
-                onEdit={openEdit}
-                onAddSubCategory={(parentId) => openCreate(parentId)}
-              />
-            ))}
+            <Reorder.Group axis="y" values={tree} onReorder={handleReorder} className="w-full">
+              {tree.map((cat) => (
+                <CategoryRow
+                  key={cat.id}
+                  category={cat}
+                  depth={0}
+                  allCategories={flat}
+                  registryPages={registryPages}
+                  onRefresh={handleRefresh}
+                  onEdit={openEdit}
+                  onAddSubCategory={(parentId) => openCreate(parentId)}
+                />
+              ))}
+            </Reorder.Group>
           </div>
         )}
       </div>
@@ -375,43 +415,22 @@ export default function CategoriesModule() {
                 {editingId ? 'Edit Category' : newSubParentId ? `Add Sub-category` : 'New Category'}
               </h2>
 
-              <input
-                placeholder="Category name"
-                value={form.name}
-                onChange={(e) => setForm({ ...form, name: e.target.value })}
-                className="w-full bg-slate-50 rounded-2xl px-6 py-4 font-bold outline-none focus:ring-4 focus:ring-[#4B2A63]/10"
-              />
-              <input
-                placeholder="Slug (optional)"
-                value={form.slug}
-                onChange={(e) => setForm({ ...form, slug: e.target.value })}
-                className="w-full bg-slate-50 rounded-2xl px-6 py-4 font-bold outline-none focus:ring-4 focus:ring-[#4B2A63]/10"
-              />
+              <div className="space-y-1">
+                <label className="text-[11px] font-black text-slate-400 uppercase tracking-widest block mb-2">Category Name</label>
+                <input
+                  placeholder="Category name"
+                  value={form.name}
+                  onChange={(e) => setForm({ ...form, name: e.target.value })}
+                  className="w-full bg-slate-50 rounded-2xl px-6 py-4 font-bold outline-none focus:ring-4 focus:ring-[#4B2A63]/10"
+                />
+              </div>
               {newSubParentId && (
                 <p className="text-sm text-slate-500 bg-slate-50 rounded-2xl px-6 py-4">
                   Parent: <strong>{flat.find((c) => c.id === newSubParentId)?.name}</strong>
                 </p>
               )}
-              <textarea
-                placeholder="Description"
-                value={form.description}
-                onChange={(e) => setForm({ ...form, description: e.target.value })}
-                className="w-full bg-slate-50 rounded-2xl px-6 py-4 font-medium outline-none min-h-[80px] focus:ring-4 focus:ring-[#4B2A63]/10"
-              />
-              <div className="grid grid-cols-2 gap-4">
-                <input
-                  type="number"
-                  placeholder="Sort order"
-                  value={form.orderIndex}
-                  onChange={(e) => {
-                    const val = Number(e.target.value);
-                    setForm({
-                      ...form,
-                      orderIndex: e.target.value === '' ? 1 : (val < 1 ? (editingId ? val : 1) : val)
-                    });
-                  }}
-                  className="w-full bg-slate-50 rounded-2xl px-6 py-4 font-bold outline-none"
-                />
+              <div className="space-y-1">
+                <label className="text-[11px] font-black text-slate-400 uppercase tracking-widest block mb-2">Status</label>
                 <select
                   value={form.status}
                   onChange={(e) => setForm({ ...form, status: e.target.value as 'active' | 'inactive' })}
@@ -425,7 +444,7 @@ export default function CategoriesModule() {
               {/* Link to CMS Page select input */}
               <div className="space-y-1">
                 <label className="text-[11px] font-black text-slate-400 uppercase tracking-widest block mb-2">
-                  Link to CMS Page (Optional)
+                  Link to CMS Page
                 </label>
                 <Select
                   value={form.pageId}
@@ -548,8 +567,11 @@ function CategoryRow({
     ? registryPages.find((p) => p.id === category.pageId)
     : null;
 
+  const Wrapper = depth === 0 ? Reorder.Item : motion.div;
+  const wrapperProps = depth === 0 ? { value: category, id: category.id, className: "relative bg-white" } : { className: "relative", layout: true };
+
   return (
-    <div>
+    <Wrapper {...wrapperProps}>
       {/* Main row */}
       <motion.div
         layout
@@ -558,6 +580,9 @@ function CategoryRow({
           depth > 0 && 'ml-6 border-l-2 border-slate-100'
         )}
       >
+        {depth === 0 && (
+          <GripVertical className="w-4 h-4 text-slate-300 cursor-grab active:cursor-grabbing hover:text-slate-600 transition-colors shrink-0" />
+        )}
         {/* Expand tree */}
         <button
           type="button"
@@ -630,6 +655,6 @@ function CategoryRow({
           </motion.div>
         )}
       </AnimatePresence>
-    </div>
+    </Wrapper>
   );
 }

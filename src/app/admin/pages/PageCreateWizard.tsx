@@ -360,7 +360,7 @@ export function PageCreateWizard({ open, onClose, templates, onSubmit }: Props) 
                       />
                     </div>
                     <div>
-                      <FieldLabel>URL slug (optional)</FieldLabel>
+                      <FieldLabel>URL slug</FieldLabel>
                       <input
                         placeholder="auto-generated from title"
                         value={form.slug}

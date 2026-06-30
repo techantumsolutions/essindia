@@ -33,6 +33,7 @@ type JobOpening = {
   type: string;
   experience: string;
   location: string;
+  locations?: string[];
   aboutText: string;
   requirements: string[];
   responsibilities: string[];
@@ -75,6 +76,7 @@ const defaultJobForm = {
   type: 'Full-Time',
   experience: '',
   location: '',
+  locations: [] as string[],
   aboutText: '',
   requirements: [] as string[],
   responsibilities: [] as string[],
@@ -96,6 +98,7 @@ export default function AdminCareersPortal() {
   const [jobForm, setJobForm] = React.useState(defaultJobForm);
 
   // List field entry states
+  const [locInput, setLocInput] = React.useState('');
   const [reqInput, setReqInput] = React.useState('');
   const [respInput, setRespInput] = React.useState('');
   const [niceInput, setNiceInput] = React.useState('');
@@ -162,6 +165,7 @@ export default function AdminCareersPortal() {
   const handleOpenCreateJob = () => {
     setEditingJobId(null);
     setJobForm(defaultJobForm);
+    setLocInput('');
     setReqInput('');
     setRespInput('');
     setNiceInput('');
@@ -178,6 +182,7 @@ export default function AdminCareersPortal() {
       type: job.type,
       experience: job.experience,
       location: job.location,
+      locations: job.location ? job.location.split(',').map(l => l.trim()).filter(Boolean) : [],
       aboutText: job.aboutText,
       requirements: job.requirements || [],
       responsibilities: job.responsibilities || [],
@@ -185,6 +190,7 @@ export default function AdminCareersPortal() {
       whatWeOffer: job.whatWeOffer || [],
       status: job.status
     });
+    setLocInput('');
     setReqInput('');
     setRespInput('');
     setNiceInput('');
@@ -194,9 +200,14 @@ export default function AdminCareersPortal() {
 
   const handleSaveJob = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!jobForm.title || !jobForm.department || !jobForm.description || !jobForm.experience || !jobForm.location || !jobForm.aboutText) {
+    if (!jobForm.title || !jobForm.department || !jobForm.description || !jobForm.experience || (!jobForm.location && jobForm.locations?.length === 0) || !jobForm.aboutText) {
       toast.error('Please fill in all basic job fields');
       return;
+    }
+
+    const payload = { ...jobForm };
+    if (payload.locations && payload.locations.length > 0) {
+      payload.location = payload.locations.join(', ');
     }
 
     const isEditing = !!editingJobId;
@@ -207,7 +218,7 @@ export default function AdminCareersPortal() {
       const res = await fetch(url, {
         method,
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(jobForm),
+        body: JSON.stringify(payload),
       });
 
       if (!res.ok) {
@@ -261,7 +272,7 @@ export default function AdminCareersPortal() {
   };
 
   // List Items management
-  const addListItem = (field: 'requirements' | 'responsibilities' | 'niceToHave' | 'whatWeOffer', text: string, setter: (val: string) => void) => {
+  const addListItem = (field: 'locations' | 'requirements' | 'responsibilities' | 'niceToHave' | 'whatWeOffer', text: string, setter: (val: string) => void) => {
     if (!text.trim()) return;
     setJobForm(prev => ({
       ...prev,
@@ -270,7 +281,7 @@ export default function AdminCareersPortal() {
     setter('');
   };
 
-  const removeListItem = (field: 'requirements' | 'responsibilities' | 'niceToHave' | 'whatWeOffer', index: number) => {
+  const removeListItem = (field: 'locations' | 'requirements' | 'responsibilities' | 'niceToHave' | 'whatWeOffer', index: number) => {
     setJobForm(prev => ({
       ...prev,
       [field]: prev[field].filter((_, idx) => idx !== index)
@@ -647,19 +658,57 @@ export default function AdminCareersPortal() {
                           </div>
                         </div>
 
-                        {/* Location, Type, Experience */}
-                        <div className="grid grid-cols-3 gap-4">
-                          <div className="space-y-1.5">
-                            <label className="text-[11px] font-bold text-slate-700 uppercase tracking-wider">Location *</label>
+                        {/* Location Tag Input */}
+                        <div className="space-y-3 p-4 bg-slate-50/50 rounded-2xl border border-slate-100">
+                          <label className="text-[11px] font-bold text-slate-800 uppercase tracking-wider">Locations *</label>
+                          
+                          {jobForm.locations && jobForm.locations.length > 0 && (
+                            <div className="flex flex-wrap gap-2 mb-3">
+                              {jobForm.locations.map((loc, idx) => (
+                                <div key={idx} className="flex items-center gap-1 bg-white border border-slate-200 px-2 py-1 rounded-lg text-xs font-semibold text-slate-700 shadow-sm">
+                                  <span>{loc}</span>
+                                  <button
+                                    type="button"
+                                    onClick={() => {
+                                      const newLocations = [...(jobForm.locations || [])];
+                                      newLocations.splice(idx, 1);
+                                      setJobForm({ ...jobForm, locations: newLocations });
+                                    }}
+                                    className="text-slate-400 hover:text-rose-500 transition-colors"
+                                  >
+                                    <X className="w-3.5 h-3.5" />
+                                  </button>
+                                </div>
+                              ))}
+                            </div>
+                          )}
+
+                          <div className="flex gap-2">
                             <input
                               type="text"
-                              required
-                              placeholder="e.g. Noida, Remote"
-                              value={jobForm.location}
-                              onChange={(e) => setJobForm({ ...jobForm, location: e.target.value })}
-                              className="w-full bg-slate-50 rounded-xl px-4 py-2.5 text-sm font-semibold border border-transparent outline-none focus:border-[#4B2A63] focus:bg-white transition-all"
+                              placeholder="e.g. Noida, Pune, Remote"
+                              value={locInput}
+                              onChange={(e) => setLocInput(e.target.value)}
+                              onKeyDown={(e) => {
+                                if (e.key === 'Enter') {
+                                  e.preventDefault();
+                                  addListItem('locations', locInput, setLocInput);
+                                }
+                              }}
+                              className="w-full bg-white rounded-lg px-3 py-2 text-xs font-medium border border-slate-200 outline-none focus:border-[#4B2A63] transition-colors"
                             />
+                            <button
+                              type="button"
+                              onClick={() => addListItem('locations', locInput, setLocInput)}
+                              className="px-3 h-[32px] bg-[#4B2A63] text-white text-xs font-bold rounded-lg hover:bg-[#3B198F] transition-colors flex items-center justify-center cursor-pointer"
+                            >
+                              Add
+                            </button>
                           </div>
+                        </div>
+
+                        {/* Type & Experience */}
+                        <div className="grid grid-cols-2 gap-4">
                           <div className="space-y-1.5">
                             <label className="text-[11px] font-bold text-slate-700 uppercase tracking-wider">Job Type</label>
                             <select

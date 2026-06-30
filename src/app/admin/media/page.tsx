@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Upload, Search, Trash2, Image as ImageIcon, Copy } from 'lucide-react';
+import { Upload, Search, Trash2, Image as ImageIcon, Copy, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 
@@ -22,6 +22,7 @@ export default function MediaLibraryPage() {
   const [search, setSearch] = React.useState('');
   const [isLoading, setIsLoading] = React.useState(true);
   const [isUploading, setIsUploading] = React.useState(false);
+  const [selectedImage, setSelectedImage] = React.useState<MediaItem | null>(null);
   const fileRef = React.useRef<HTMLInputElement>(null);
 
   const fetchMedia = React.useCallback(async () => {
@@ -125,33 +126,34 @@ export default function MediaLibraryPage() {
           <p className="text-slate-400 font-medium">No media yet. Upload your first file.</p>
         </div>
       ) : (
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
           {items.map((item, i) => (
             <motion.div
               key={item.id}
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ delay: i * 0.03 }}
-              className="bg-white rounded-[24px] border border-slate-100 overflow-hidden group"
+              className="bg-white rounded-[20px] border border-slate-100 overflow-hidden group cursor-pointer hover:shadow-xl hover:shadow-slate-200/50 transition-all"
+              onClick={() => setSelectedImage(item)}
             >
               <div className="aspect-square bg-slate-50 flex items-center justify-center overflow-hidden">
                 {item.mimeType.startsWith('image/') ? (
-                  <img src={item.url} alt={item.altText || item.filename} className="w-full h-full object-cover" />
+                  <img src={item.url} alt={item.altText || item.filename} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
                 ) : (
-                  <ImageIcon className="w-12 h-12 text-slate-300" />
+                  <ImageIcon className="w-10 h-10 text-slate-300" />
                 )}
               </div>
               <div className="p-4 space-y-2">
                 <p className="font-bold text-sm text-slate-900 truncate">{item.filename}</p>
                 <p className="text-[10px] text-slate-400 font-mono truncate">{item.url}</p>
                 <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                  <Button variant="ghost" size="icon" onClick={() => copyUrl(item.url)} className="rounded-xl">
-                    <Copy className="w-4 h-4" />
-                  </Button>
                   <Button
                     variant="ghost"
                     size="icon"
-                    onClick={() => handleDelete(item.id)}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleDelete(item.id);
+                    }}
                     className="rounded-xl text-rose-400"
                   >
                     <Trash2 className="w-4 h-4" />
@@ -160,6 +162,39 @@ export default function MediaLibraryPage() {
               </div>
             </motion.div>
           ))}
+        </div>
+      )}
+
+      {selectedImage && (
+        <div 
+          className="fixed inset-0 bg-slate-900/90 z-[100] flex items-center justify-center p-4 md:p-10 backdrop-blur-sm"
+          onClick={() => setSelectedImage(null)}
+        >
+          <div 
+            className="relative max-w-6xl w-full flex items-center justify-center"
+            onClick={e => e.stopPropagation()}
+          >
+            <Button 
+              variant="ghost" 
+              size="icon" 
+              onClick={() => setSelectedImage(null)}
+              className="absolute -top-14 right-0 text-white hover:bg-white/20 rounded-full w-10 h-10"
+            >
+              <X className="w-6 h-6" />
+            </Button>
+            {selectedImage.mimeType.startsWith('image/') ? (
+              <img 
+                src={selectedImage.url} 
+                alt={selectedImage.altText || selectedImage.filename} 
+                className="max-w-full max-h-[85vh] object-contain rounded-2xl shadow-2xl" 
+              />
+            ) : (
+               <div className="bg-white p-20 rounded-[32px] shadow-2xl flex flex-col items-center gap-4">
+                 <ImageIcon className="w-24 h-24 text-slate-300" />
+                 <p className="font-bold text-slate-500">{selectedImage.filename}</p>
+               </div>
+            )}
+          </div>
         </div>
       )}
     </motion.div>
