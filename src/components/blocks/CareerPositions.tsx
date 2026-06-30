@@ -89,10 +89,12 @@ export default function CareerPositions({ content }: { content?: any }) {
                   {pos.description}
                 </p>
                 <div className="flex flex-wrap items-center gap-4 text-xs text-slate-500 font-semibold">
-                  <div className="flex items-center gap-1.5">
-                    <MapPin className="w-4 h-4 text-slate-400" />
-                    {pos.location}
-                  </div>
+                  {pos.location ? pos.location.split(',').map((loc: string, idx: number) => (
+                    <div key={idx} className="flex items-center gap-1.5 bg-slate-50 px-2.5 py-1 rounded-md">
+                      <MapPin className="w-3.5 h-3.5 text-slate-400" />
+                      {loc.trim()}
+                    </div>
+                  )) : null}
                   <div className="flex items-center gap-1.5">
                     <Clock className="w-4 h-4 text-slate-400" />
                     {pos.experience}

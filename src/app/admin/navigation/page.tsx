@@ -3,11 +3,11 @@
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
-import { 
-  Plus, 
-  GripVertical, 
-  ExternalLink, 
-  Layout, 
+import {
+  Plus,
+  GripVertical,
+  ExternalLink,
+  Layout,
   Settings2,
   Trash2,
   Link as LinkIcon,
@@ -40,7 +40,7 @@ export default function NavigationModule() {
           fetch('/api/admin/navigation', { credentials: 'same-origin', cache: 'no-store' }),
           fetch('/api/admin/pages?registry=true', { credentials: 'same-origin', cache: 'no-store' }),
         ]);
-        
+
         if (menusRes.ok) {
           const menusData = await menusRes.json();
           if (Array.isArray(menusData)) {
@@ -50,7 +50,7 @@ export default function NavigationModule() {
             }
           }
         }
-        
+
         if (pagesRes.ok) {
           const pagesData = await pagesRes.json();
           if (Array.isArray(pagesData)) {
@@ -122,7 +122,7 @@ export default function NavigationModule() {
     ));
 
   const handleUpdateItemField = (field: string, value: any) => {
-    setItems(prev => prev.map(item => 
+    setItems(prev => prev.map(item =>
       item.id === selectedItemId ? { ...item, [field]: value } : item
     ));
   };
@@ -217,7 +217,7 @@ export default function NavigationModule() {
   const handleDragOver = (e: React.DragEvent, index: number) => {
     e.preventDefault();
     if (draggedIndex === null || draggedIndex === index) return;
-    
+
     const newItems = [...items];
     const draggedItem = newItems[draggedIndex];
     newItems.splice(draggedIndex, 1);
@@ -233,7 +233,7 @@ export default function NavigationModule() {
       orderIndex: idx,
     }));
     setItems(updatedItems);
-    
+
     try {
       const res = await fetch('/api/admin/navigation/reorder', {
         method: 'POST',
@@ -271,18 +271,18 @@ export default function NavigationModule() {
         <div>
           <h1 className="text-3xl font-bold text-slate-900 tracking-tight mb-2">Navigation Manager</h1>
           <div className="flex items-center gap-4">
-            <select 
+            {/* <select 
               value={activeMenuLocation}
               onChange={(e) => setActiveMenuLocation(e.target.value)}
               className="bg-slate-50 border-none text-slate-900 font-bold text-sm rounded-lg px-3 py-1 outline-none"
             >
               {menus.map(m => <option key={m.id} value={m.location}>{m.name}</option>)}
-            </select>
+            </select> */}
             <p className="text-slate-500 font-medium">Design your site navigation structure with drag-and-drop ease.</p>
           </div>
         </div>
         <div className="flex gap-3">
-          <Button 
+          <Button
             onClick={handleSave}
             disabled={isSaving}
             className="bg-[#4B2A63] hover:bg-[#3B198F] text-white rounded-full px-10 h-12 font-bold shadow-lg shadow-[#4B2A63]/20 active:scale-95 cursor-pointer gap-2"
@@ -293,7 +293,7 @@ export default function NavigationModule() {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
-        
+
         {/* Left Column: Menu Structure (1/3) */}
         <div className="lg:col-span-4 space-y-6">
           <div className="bg-white rounded-[32px] p-8 border border-slate-100 shadow-[0_20px_50px_-15px_rgba(0,0,0,0.03)]">
@@ -315,8 +315,8 @@ export default function NavigationModule() {
                   onClick={() => setSelectedItemId(item.id)}
                   className={cn(
                     "flex items-center gap-4 p-4 rounded-2xl border transition-all cursor-grab active:cursor-grabbing group",
-                    selectedItemId === item.id 
-                      ? "bg-[#4B2A63] border-[#4B2A63] text-white shadow-xl shadow-[#4B2A63]/20" 
+                    selectedItemId === item.id
+                      ? "bg-[#4B2A63] border-[#4B2A63] text-white shadow-xl shadow-[#4B2A63]/20"
                       : "bg-white border-slate-50 text-slate-600 hover:border-[#4B2A63]/20 hover:bg-slate-50",
                     draggedIndex === index && "opacity-40 border-dashed border-2 border-[#4B2A63]"
                   )}
@@ -336,33 +336,18 @@ export default function NavigationModule() {
               ))}
             </div>
 
-            <Button 
+            <Button
               onClick={handleAddItem}
               variant="outline" className="w-full mt-6 rounded-2xl border-dashed border-2 py-8 text-slate-400 font-bold gap-2">
               <Plus className="w-4 h-4" />
               Add Menu Item
             </Button>
-
-            {selectedItemId && (
-              <div className="mt-8 pt-6 border-t border-slate-100">
-                <h4 className="text-[11px] font-black text-slate-400 uppercase tracking-widest mb-3">
-                  Linked CMS Pages
-                </h4>
-                {selectedLinkedPages.length > 0 ? (
-                  <div className="space-y-1">{renderLinkedPages(selectedLinkedPages)}</div>
-                ) : (
-                  <p className="text-xs text-slate-400 font-medium">
-                    No pages linked to this menu item yet. Create a page under this nav item in CMS → Pages.
-                  </p>
-                )}
-              </div>
-            )}
           </div>
         </div>
 
         {/* Right Column: Configuration & Preview (2/3) */}
         <div className="lg:col-span-8 space-y-8">
-          
+
           {/* Item Configuration */}
           <div className="bg-white rounded-[32px] p-10 border border-slate-100 shadow-[0_20px_50px_-15px_rgba(0,0,0,0.03)]">
             <div className="flex items-center justify-between mb-10 pb-6 border-b border-slate-50">
@@ -376,7 +361,7 @@ export default function NavigationModule() {
                 </div>
               </div>
               <div className="flex gap-2">
-                <Button 
+                <Button
                   onClick={handleDeleteItem}
                   variant="ghost" size="icon" className="rounded-xl text-slate-400 hover:text-rose-500">
                   <Trash2 className="w-5 h-5" />
@@ -389,14 +374,14 @@ export default function NavigationModule() {
                 <div className="space-y-6">
                   <div className="space-y-2">
                     <label className="text-[11px] font-black text-slate-400 uppercase tracking-widest ml-1">Label</label>
-                    <input 
-                      type="text" 
-                      value={selectedItem?.label || ''} 
+                    <input
+                      type="text"
+                      value={selectedItem?.label || ''}
                       onChange={(e) => handleUpdateItemField('label', e.target.value)}
-                      className="w-full bg-slate-50 border-2 border-transparent focus:border-[#4B2A63]/10 focus:bg-white focus:ring-4 focus:ring-[#4B2A63]/5 rounded-2xl px-6 py-4 text-[15px] font-bold outline-none transition-all" 
+                      className="w-full bg-slate-50 border-2 border-transparent focus:border-[#4B2A63]/10 focus:bg-white focus:ring-4 focus:ring-[#4B2A63]/5 rounded-2xl px-6 py-4 text-[15px] font-bold outline-none transition-all"
                     />
                   </div>
-                  
+
                   <div className="space-y-4">
                     <div className="space-y-2">
                       <label className="text-[11px] font-black text-slate-400 uppercase tracking-widest ml-1">Link URL / Page</label>
@@ -430,11 +415,11 @@ export default function NavigationModule() {
                         <label className="text-[11px] font-black text-slate-400 uppercase tracking-widest ml-1">Custom Link URL</label>
                         <div className="relative">
                           <LinkIcon className="absolute left-6 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
-                          <input 
-                            type="text" 
-                            value={selectedItem?.url || ''} 
+                          <input
+                            type="text"
+                            value={selectedItem?.url || ''}
                             onChange={(e) => handleUpdateItemField('url', e.target.value)}
-                            className="w-full bg-slate-50 border-2 border-transparent focus:border-[#4B2A63]/10 focus:bg-white focus:ring-4 focus:ring-[#4B2A63]/5 rounded-2xl pl-14 pr-6 py-4 text-[15px] font-bold outline-none transition-all" 
+                            className="w-full bg-slate-50 border-2 border-transparent focus:border-[#4B2A63]/10 focus:bg-white focus:ring-4 focus:ring-[#4B2A63]/5 rounded-2xl pl-14 pr-6 py-4 text-[15px] font-bold outline-none transition-all"
                             placeholder="e.g. /custom-path"
                           />
                         </div>
@@ -447,7 +432,7 @@ export default function NavigationModule() {
                   <div className="space-y-4">
                     <label className="text-[11px] font-black text-slate-400 uppercase tracking-widest ml-1">Behavior</label>
                     <div className="grid grid-cols-2 gap-4">
-                      <div 
+                      <div
                         onClick={() => handleUpdateItemField('megaMenuEnabled', true)}
                         className={cn(
                           "p-4 rounded-2xl border-2 flex flex-col items-center gap-2 cursor-pointer transition-all",
@@ -457,7 +442,7 @@ export default function NavigationModule() {
                         <Layout className={cn("w-6 h-6", selectedItem?.megaMenuEnabled ? "text-[#4B2A63]" : "text-slate-400")} />
                         <span className={cn("text-[12px] font-bold", selectedItem?.megaMenuEnabled ? "text-[#4B2A63]" : "text-slate-500")}>Mega Menu</span>
                       </div>
-                      <div 
+                      <div
                         onClick={() => handleUpdateItemField('megaMenuEnabled', false)}
                         className={cn(
                           "p-4 rounded-2xl border-2 flex flex-col items-center gap-2 cursor-pointer transition-all",
@@ -488,7 +473,7 @@ export default function NavigationModule() {
           </div>
 
           {/* Mega Menu Visual Builder Preview (Mock) */}
-          <div className="bg-[#1A1A2E] rounded-[32px] p-10 text-white shadow-2xl relative overflow-hidden">
+          {/* <div className="bg-[#1A1A2E] rounded-[32px] p-10 text-white shadow-2xl relative overflow-hidden">
             <div className="absolute top-0 left-0 w-full h-full opacity-5 pointer-events-none" style={{ backgroundImage: 'radial-gradient(white 1px, transparent 1px)', backgroundSize: '30px 30px' }} />
             
             <div className="flex items-center justify-between mb-10 relative z-10">
@@ -522,7 +507,7 @@ export default function NavigationModule() {
                 ))}
               </div>
             </div>
-          </div>
+          </div> */}
         </div>
 
       </div>
