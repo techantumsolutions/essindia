@@ -36,7 +36,7 @@ export async function GET() {
     // Recent Pages
     const recentPages = await db.query.pages.findMany({
       orderBy: (pages, { desc }) => [desc(pages.updatedAt)],
-      limit: 5,
+      limit: 7,
     });
 
     return NextResponse.json({

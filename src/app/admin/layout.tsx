@@ -184,7 +184,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                 document.cookie = "mock-admin-session=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
                 window.location.href = '/admin/login';
               }}
-              className="px-4 h-10 flex items-center justify-center rounded-xl bg-rose-50 hover:bg-rose-100 transition-colors text-sm font-semibold text-rose-600"
+              className="px-4 h-10 flex items-center justify-center rounded-xl bg-rose-50 hover:bg-rose-100 transition-colors text-sm font-semibold text-rose-600 cursor-pointer"
             >
               Logout
             </button>

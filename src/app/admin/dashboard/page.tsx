@@ -145,7 +145,7 @@ export default function AdminDashboard() {
             <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-50/50 rounded-bl-full -mr-8 -mt-8 transition-transform group-hover:scale-110 duration-500" />
             <div className="flex justify-between items-start relative z-10">
               <div>
-                <p className="text-sm font-semibold text-slate-500 uppercase tracking-wider mb-1">Components</p>
+                <p className="text-sm font-semibold text-slate-500 uppercase tracking-wider mb-1">Sections</p>
                 <h3 className="text-4xl font-bold text-slate-900 tracking-tight mb-4">{data.sections.total}</h3>
               </div>
               <div className="w-12 h-12 rounded-2xl bg-emerald-100 flex items-center justify-center text-emerald-600">
