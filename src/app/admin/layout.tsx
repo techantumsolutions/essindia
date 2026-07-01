@@ -46,6 +46,7 @@ const navGroups = [
     items: [
       { icon: ImageIcon, label: 'Media Library', href: '/admin/media' },
       { icon: Briefcase, label: 'Careers', href: '/admin/careers' },
+      { icon: Settings, label: 'Footer Settings', href: '/admin/footer' },
       // { icon: Briefcase, label: 'Solutions', href: '/admin/solutions' },
       // { icon: Globe, label: 'Industries', href: '/admin/industries' },
       // { icon: FileText, label: 'Resources', href: '/admin/resources' },

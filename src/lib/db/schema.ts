@@ -514,3 +514,18 @@ export const formSubmissions = pgTable('form_submissions', {
   createdAt: timestamp('created_at').defaultNow().notNull(),
   updatedAt: timestamp('updated_at').defaultNow().notNull(),
 });
+
+export const footerSettings = pgTable('footer_settings', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  logoUrl: text('logo_url'),
+  description: text('description'),
+  twitterUrl: text('twitter_url'),
+  linkedinUrl: text('linkedin_url'),
+  facebookUrl: text('facebook_url'),
+  youtubeUrl: text('youtube_url'),
+  countries: jsonb('countries').default('[]').notNull(), // string[] (up to 4 countries)
+  links: jsonb('links').default('{}').notNull(), // { company: Link[], products: Link[], industries: Link[], services: Link[] }
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+  updatedAt: timestamp('updated_at').defaultNow().notNull(),
+});
+

@@ -30,7 +30,7 @@ export interface PageSection {
 }
 
 const BLOG_DETAIL_TABS: Record<string, string[]> = {
-  basic: ['title', 'category', 'authorName', 'authorAvatar', 'date', 'image', 'description', 'contentHtml'],
+  basic: ['title', 'category', 'industries', 'authorName', 'authorAvatar', 'date', 'image', 'description', 'contentHtml'],
   hero: ['badgeText', 'headingText', 'subheadingText', 'bgImage'],
   highlights: ['highlights', 'conclusionHtml']
 };
@@ -132,6 +132,29 @@ const DEFAULT_BLOG_CONTENT: Record<string, any> = {
   bgImage: '',
   highlights: [{ title: '', content: '', icon: '' }],
   conclusionHtml: ''
+};
+
+const DEFAULT_BLOG_LIST_CONTENT: Record<string, any> = {
+  badgeText: 'Latest Blogs',
+  headingText: 'Press & Media Resources',
+  subheadingText: 'Everything journalists, analysts, and partners need to cover ESS — from brand assets to company facts.',
+  bgImage: '',
+  topics: [
+    'Business Intelligence',
+    'ERP Solutions',
+    'IoT Solutions',
+    'Mobile App Solutions',
+    'CRM Solutions',
+    'Sales Force Automation',
+    'After-Sales Service App'
+  ],
+  industries: [
+    'FMCG',
+    'Pharma',
+    'Manufacturing',
+    'Retail',
+    'Electronics'
+  ]
 };
 
 const DEFAULT_TESTIMONIALS_CONTENT: Record<string, any> = {
@@ -1565,6 +1588,8 @@ export function SectionEditorCard({
         baseSchema = DEFAULT_CASE_STUDY_CONTENT as Record<string, JsonValue>;
       } else if (section.type === 'blog-detail-block') {
         baseSchema = DEFAULT_BLOG_CONTENT as Record<string, JsonValue>;
+      } else if (section.type === 'blog-list-block') {
+        baseSchema = DEFAULT_BLOG_LIST_CONTENT as Record<string, JsonValue>;
       } else if (section.type === 'testimonials-block') {
         baseSchema = DEFAULT_TESTIMONIALS_CONTENT as Record<string, JsonValue>;
       } else if (section.type === 'contact-hero') {
@@ -1692,7 +1717,7 @@ export function SectionEditorCard({
       meta.fieldOrder.forEach((key) => {
         if (!(key in finalMerged)) {
           // Default arrays for known list fields
-          if (['items', 'processes', 'features', 'faqs', 'cards', 'values', 'modules', 'paragraphs', 'leftItems', 'rightItems', 'steps', 'logos', 'stats', 'categories', 'tabs', 'benefits', 'industries', 'solutions', 'points'].includes(key)) {
+          if (['items', 'processes', 'features', 'faqs', 'cards', 'values', 'modules', 'paragraphs', 'leftItems', 'rightItems', 'steps', 'logos', 'stats', 'categories', 'tabs', 'benefits', 'industries', 'solutions', 'points', 'topics'].includes(key)) {
             finalMerged[key] = [];
           } else {
             finalMerged[key] = '';
@@ -1706,7 +1731,7 @@ export function SectionEditorCard({
 
   const contentKeys = React.useMemo(() => {
     const keys = Object.keys(mergedContent);
-    if ((section.type === 'contact-hero' || section.type === 'job-detail-hero' || section.type === 'job-detail-content' || section.type === 'bi-highlight-strip' || section.type === 'bi-industries' || (section.type.startsWith('rpa-') && section.type !== 'rpa-hero') || section.type.startsWith('ass-') || section.type.startsWith('aom-') || section.type.startsWith('fmcg-') || section.type.startsWith('roi-')) && meta?.fieldOrder) {
+    if ((section.type === 'contact-hero' || section.type === 'job-detail-hero' || section.type === 'job-detail-content' || section.type === 'bi-highlight-strip' || section.type === 'bi-industries' || section.type === 'career-positions' || (section.type.startsWith('rpa-') && section.type !== 'rpa-hero') || section.type.startsWith('ass-') || section.type.startsWith('aom-') || section.type.startsWith('fmcg-') || section.type.startsWith('roi-')) && meta?.fieldOrder) {
       return meta.fieldOrder;
     }
     if (meta?.fieldOrder) {

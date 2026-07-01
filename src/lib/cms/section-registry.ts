@@ -455,6 +455,7 @@ export const SECTION_REGISTRY: SectionTypeDefinition[] = [
     color: 'bg-purple-50 text-purple-600',
     defaultVariant: 'default',
     supportsVariants: false,
+    fieldOrder: ['title', 'subtitle'],
   },
   {
     type: 'career-cta',
@@ -474,6 +475,7 @@ export const SECTION_REGISTRY: SectionTypeDefinition[] = [
     color: 'bg-cyan-50 text-cyan-600',
     defaultVariant: 'default',
     supportsVariants: false,
+    fieldOrder: ['badgeText', 'headingText', 'subheadingText', 'bgImage', 'topics', 'industries'],
   },
   {
     type: 'blog-detail-block',
