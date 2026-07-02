@@ -1,18 +1,21 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
+import { CtaLeadModal } from '@/components/ui/CtaLeadModal';
 import Link from 'next/link';
 
 interface FmcgCtaContent {
   title?: string;
   buttonText?: string;
-  buttonUrl?: string;
+  pdfUrl?: string;
 }
 
 export function FmcgCta({ content }: { content?: FmcgCtaContent }) {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
   const title = content?.title || 'Enable Digital Transformation of Your Business with Our Wide Range of IT Services';
   const buttonText = content?.buttonText || 'TALK TO OUR EXPERTS';
-  const buttonUrl = content?.buttonUrl || '/contact';
+  const pdfUrl = content?.pdfUrl;
 
   return (
     <section className="py-14 px-6 bg-[#eff3f8] border-b border-slate-100">
@@ -25,15 +28,14 @@ export function FmcgCta({ content }: { content?: FmcgCtaContent }) {
 
         {/* Action Button */}
         <div>
-          <Link
-            href={buttonUrl}
-            className="inline-block bg-[#fcc42c] hover:bg-[#ebae21] text-[#131e3d] font-bold text-xs sm:text-sm px-8 py-4 rounded-full shadow-md hover:shadow-lg transition-all duration-300 transform hover:-translate-y-[2px]"
-          >
+          <button onClick={() => setIsModalOpen(true)} className="bg-[#4B2A63] text-white hover:bg-[#3A1F4D] px-8 py-3 rounded-full font-medium transition-colors inline-flex items-center gap-2">
             {buttonText}
-          </Link>
+          </button>
         </div>
 
       </div>
+    
+      <CtaLeadModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} pdfUrl={pdfUrl} />
     </section>
   );
 }

@@ -220,7 +220,7 @@ export default function CategoriesModule() {
     let maxOrder = 0;
     if (parentId) {
       // For sub-categories, find siblings with the same parent
-      const siblings = flat.filter(c => c.parentId === parentId || c.categoryId === parentId || c.subCategoryId === parentId);
+      const siblings = flat.filter(c => c.parentId === parentId);
       if (siblings.length > 0) {
         maxOrder = Math.max(...siblings.map(c => c.orderIndex ?? 1));
       }
@@ -570,8 +570,8 @@ function CategoryRow({
     ? registryPages.find((p) => p.id === category.pageId)
     : null;
 
-  const Wrapper = depth === 0 ? Reorder.Item : motion.div;
-  const wrapperProps = depth === 0 ? { value: category, id: category.id, className: "relative bg-white" } : { className: "relative", layout: true };
+  const Wrapper: any = depth === 0 ? Reorder.Item : motion.div;
+  const wrapperProps: any = depth === 0 ? { value: category, id: category.id, className: "relative bg-white" } : { className: "relative", layout: true };
 
   return (
     <Wrapper {...wrapperProps}>

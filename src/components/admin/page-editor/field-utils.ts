@@ -87,6 +87,7 @@ export function humanLabel(key: string): string {
   if (key === 'benefits') return 'Benefits Tags (Array)';
   if (key === 'buttonText') return 'CTA Text';
   if (key === 'buttonUrl') return 'CTA URL';
+  if (key === 'pdfUrl' || key === 'ctaPdfUrl' || key === 'ctaPdf') return 'CTA PDF Upload';
   if (key === 'tabTitle') return 'Tab Detail Title';
   
   return key
@@ -95,7 +96,7 @@ export function humanLabel(key: string): string {
     .replace(/\b\w/g, (c) => c.toUpperCase());
 }
 
-const IMAGE_PATTERNS = ['image', 'thumbnail', 'avatar', 'logo', 'ogimage', 'photo', 'banner', 'icon_url', 'icon_image', 'icon', 'media', 'video'];
+const IMAGE_PATTERNS = ['image', 'thumbnail', 'avatar', 'logo', 'ogimage', 'photo', 'banner', 'icon_url', 'icon_image', 'icon', 'media', 'video', 'pdf'];
 const URL_PATTERNS = ['url', 'href', 'link'];
 const RICHTEXT_PATTERNS = ['description', 'desc', 'body', 'content', 'html', 'paragraph', 'text', 'summary', 'excerpt', 'answer', 'quote'];
 const TEXTAREA_PATTERNS = ['subtitle', 'subheading', 'note', 'message'];

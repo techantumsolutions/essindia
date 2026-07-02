@@ -10,6 +10,9 @@ const contactSchema = z.object({
   company: z.string().optional(),
   country: z.string().optional(),
   message: z.string().optional(),
+  formType: z.string().optional(),
+  pageName: z.string().optional(),
+  pdfUrl: z.string().optional(),
 });
 
 export async function POST(req: NextRequest) {
@@ -21,7 +24,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: parsed.error.issues?.[0]?.message || 'Validation error' }, { status: 400 });
     }
 
-    const { name, email, phone, company, country, message } = parsed.data;
+    const { name, email, phone, company, country, message, formType, pageName, pdfUrl } = parsed.data;
 
     await db.insert(formSubmissions).values({
       name,
@@ -30,6 +33,9 @@ export async function POST(req: NextRequest) {
       company,
       country,
       message,
+      formType: formType || 'contact',
+      pageName,
+      pdfUrl,
     });
 
     return NextResponse.json({ success: true });

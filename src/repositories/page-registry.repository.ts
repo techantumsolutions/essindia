@@ -151,6 +151,7 @@ export class PageRegistryRepository {
         status: page.status,
         source: 'cms' as const,
         seoStatus: page.seo?.title && page.seo?.description ? 'complete' : 'incomplete',
+        seoDescription: page.seo?.description || '',
         sectionCount: countMap.get(page.id) ?? 0,
         templateId: page.templateId,
         previewThumbnail: page.previewThumbnail,

@@ -28,56 +28,7 @@ interface ServicesSectionProps {
   content?: ServicesContent;
 }
 
-const defaultServices = [
-  {
-    iconImage: '',
-    title: 'Robotic Process Automation Solutions',
-    description: 'Most trusted outcome -driven automation implementation partner of India',
-    bgImage: '/service-rpa.png', 
-    ctaText: 'View more',
-    ctaUrl: '/solutions/rpa'
-  },
-  {
-    iconImage: '',
-    title: 'ORACLE',
-    description: 'Trusted Oracle solutions partner for enterprise-scale transformation.',
-    bgImage: '/service-oracle.png', 
-    ctaText: 'View more',
-    ctaUrl: '/solutions/oracle'
-  },
-  {
-    iconImage: '',
-    title: 'Business Intelligence',
-    description: 'BI Dashboards with integrated AI to transform data into actionable decisions and insights.',
-    bgImage: '/service-bi.png',
-    ctaText: 'View more',
-    ctaUrl: '/solutions/business-intelligence'
-  },
-  {
-    iconImage: '',
-    title: 'Enterprise Resource Planning (ERP)',
-    description: 'Unify your business operations with AI-powered insights and automation for faster, smarter....',
-    bgImage: '/service-erp.png',
-    ctaText: 'View more',
-    ctaUrl: '/solutions/erp'
-  },
-  {
-    iconImage: '',
-    title: 'Enterprise Mobility Solutions (EMS)',
-    description: 'Smarter mobility for a secure and connected workforce.',
-    bgImage: '/service-ems.png',
-    ctaText: 'View more',
-    ctaUrl: '/solutions/ems'
-  },
-  {
-    iconImage: '',
-    title: 'Other solutions',
-    description: 'Explore more solutions built to support business growth.',
-    bgImage: '/service-bi.png',
-    ctaText: 'View more',
-    ctaUrl: '/solutions'
-  },
-];
+const defaultServices: Service[] = [];
 
 export function ServicesSection({ content }: ServicesSectionProps) {
   const heading = content?.heading || "Services we offer";
@@ -125,7 +76,7 @@ export function ServicesSection({ content }: ServicesSectionProps) {
                   <h3 className="text-xl font-bold text-slate-900 leading-tight mb-4 pr-4">
                     {service.title}
                   </h3>
-                  <p className="text-[14px] text-slate-500 leading-relaxed mb-auto line-clamp-3">
+                  <p className="text-[14px] text-slate-500 leading-relaxed mb-auto line-clamp-2">
                     {service.description}
                   </p>
                   <div className="mt-8">
@@ -168,7 +119,7 @@ export function ServicesSection({ content }: ServicesSectionProps) {
                   <h3 className="text-xl font-bold text-white leading-tight mb-4">
                     {service.title}
                   </h3>
-                  <p className="text-[14px] text-slate-200 leading-relaxed mb-auto line-clamp-3">
+                  <p className="text-[14px] text-slate-200 leading-relaxed mb-auto line-clamp-2">
                     {service.description}
                   </p>
                   <div className="mt-8">

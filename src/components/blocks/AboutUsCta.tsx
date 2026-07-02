@@ -1,12 +1,14 @@
 'use client';
 
 import { Button } from '@/components/ui/button';
+import React, { useState } from 'react';
+import { CtaLeadModal } from '@/components/ui/CtaLeadModal';
 
 interface AboutUsCtaContent {
   title?: string;
   description?: string;
   buttonText?: string;
-  buttonLink?: string;
+  pdfUrl?: string;
 }
 
 interface AboutUsCtaProps {
@@ -14,6 +16,8 @@ interface AboutUsCtaProps {
 }
 
 export function AboutUsCta({ content }: AboutUsCtaProps) {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
   const title =
     content?.title || 'Schedule Your Free Demo';
 
@@ -24,8 +28,7 @@ export function AboutUsCta({ content }: AboutUsCtaProps) {
   const buttonText =
     content?.buttonText || 'Book a Free Demo';
 
-  const buttonLink =
-    content?.buttonLink || '/demo';
+  const pdfUrl = content?.pdfUrl;
 
   return (
     <section className="py-8 md:py-16">
@@ -42,7 +45,7 @@ export function AboutUsCta({ content }: AboutUsCtaProps) {
 
         {/* CTA */}
         <Button
-          onClick={() => (window.location.href = buttonLink)}
+          onClick={() => setIsModalOpen(true)}
           className="
             bg-[#0D2C84]
             hover:bg-[#0B2570]
@@ -59,6 +62,8 @@ export function AboutUsCta({ content }: AboutUsCtaProps) {
           {buttonText}
         </Button>
       </div>
+    
+      <CtaLeadModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} pdfUrl={pdfUrl} />
     </section>
   );
 }

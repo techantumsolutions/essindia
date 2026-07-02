@@ -1,6 +1,7 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
+import { CtaLeadModal } from '@/components/ui/CtaLeadModal';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
 
@@ -13,10 +14,12 @@ interface OracleApexCtaContent {
   buttonText?: string;
   buttonBgColor?: string;
   buttonTextColor?: string;
-  buttonUrl?: string;
+  pdfUrl?: string;
 }
 
 export function OracleApexCta({ content }: { content?: OracleApexCtaContent }) {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
   const bgColor = content?.bgColor || '#f0f2f7';
   const title = content?.title || 'Begin Your Modernization Assessment';
   const titleColor = content?.titleColor || '#5c3ea3';
@@ -25,7 +28,7 @@ export function OracleApexCta({ content }: { content?: OracleApexCtaContent }) {
   const buttonText = content?.buttonText || 'Get start Now';
   const buttonBgColor = content?.buttonBgColor || '#ffca28';
   const buttonTextColor = content?.buttonTextColor || '#000000';
-  const buttonUrl = content?.buttonUrl || '/contact';
+  const pdfUrl = content?.pdfUrl;
 
   return (
     <section className="py-14" style={{ backgroundColor: bgColor }}>
@@ -70,18 +73,16 @@ export function OracleApexCta({ content }: { content?: OracleApexCtaContent }) {
               whileTap={{ scale: 0.98 }}
               className="inline-block"
             >
-              <Link
-                href={buttonUrl}
-                className="inline-block px-8 py-3.5 rounded-full text-sm font-bold shadow-md transition-all duration-300 text-center hover:shadow-lg border border-transparent"
-                style={{ backgroundColor: buttonBgColor, color: buttonTextColor }}
-              >
+              <button onClick={() => setIsModalOpen(true)} className="bg-[#4B2A63] text-white hover:bg-[#3A1F4D] px-8 py-3 rounded-full font-medium transition-colors inline-flex items-center gap-2">
                 {buttonText}
-              </Link>
+              </button>
             </motion.div>
           </motion.div>
         )}
 
       </div>
+    
+      <CtaLeadModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} pdfUrl={pdfUrl} />
     </section>
   );
 }
