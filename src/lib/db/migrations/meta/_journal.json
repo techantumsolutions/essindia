@@ -15,6 +15,13 @@
       "when": 1781086919722,
       "tag": "0001_long_zzzax",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1782992972831,
+      "tag": "0002_orange_risque",
+      "breakpoints": true
     }
   ]
 }

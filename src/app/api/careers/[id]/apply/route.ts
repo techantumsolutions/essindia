@@ -1,12 +1,13 @@
 import { NextResponse } from 'next/server';
 import { db } from '@/lib/db';
-import { careers, applications } from '@/lib/db/schema';
+import { careers, applications, careersSettings } from '@/lib/db/schema';
 import { eq } from 'drizzle-orm';
 import { notFound, serverError, badRequest } from '@/lib/cms/api-response';
 import { StorageService } from '@/lib/storage/r2';
 import { writeFile, mkdir } from 'fs/promises';
 import { join } from 'path';
 import { randomUUID } from 'crypto';
+import { sendApplicationEmails } from '@/lib/email';
 
 export async function POST(
   request: Request,
@@ -17,7 +18,7 @@ export async function POST(
     const job = await db.query.careers.findFirst({
       where: eq(careers.id, careerId),
     });
-    if (!job) return notFound('Position not found');
+    if (!job || job.status !== 'active') return notFound('Position not found');
 
     const formData = await request.formData();
     const fullName = formData.get('fullName') as string | null;
@@ -74,6 +75,40 @@ export async function POST(
         status: 'applied',
       })
       .returning();
+
+    // Fetch configured HR email (default to hr@example.com if not configured)
+    let hrEmail = 'hr@example.com';
+    try {
+      const configs = await db.select().from(careersSettings).limit(1);
+      const config = configs[0];
+      if (config?.hrEmail) {
+        hrEmail = config.hrEmail;
+      }
+    } catch (dbErr) {
+      console.error('Failed to fetch HR settings from database:', dbErr);
+    }
+
+    // Send application emails asynchronously
+    try {
+      await sendApplicationEmails({
+        candidateEmail: email,
+        candidateName: fullName,
+        jobTitle: job.title,
+        hrEmail,
+        applicantDetails: {
+          phone,
+          experience,
+          currentCompany: currentCompany || null,
+          noticePeriod,
+          linkedInProfile: linkedInProfile || null,
+          portfolioUrl: portfolioUrl || null,
+          coverLetter: coverLetter || null,
+          resumeUrl,
+        },
+      });
+    } catch (emailErr) {
+      console.error('Failed to send application confirmation/notification emails:', emailErr);
+    }
 
     return NextResponse.json(app, { status: 201 });
   } catch (error) {

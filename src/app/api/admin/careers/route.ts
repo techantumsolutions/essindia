@@ -27,6 +27,7 @@ export async function GET() {
         niceToHave: careers.niceToHave,
         whatWeOffer: careers.whatWeOffer,
         status: careers.status,
+        jdUrl: careers.jdUrl,
         createdAt: careers.createdAt,
         updatedAt: careers.updatedAt,
         applicantCount: sql<number>`count(${applications.id})::int`,
@@ -60,6 +61,7 @@ export async function POST(request: Request) {
       niceToHave,
       whatWeOffer,
       status,
+      jdUrl,
     } = body;
 
     if (!title || !department || !description || !experience || !location || !aboutText) {
@@ -90,6 +92,7 @@ export async function POST(request: Request) {
         niceToHave: niceToHave || [],
         whatWeOffer: whatWeOffer || [],
         status: status || 'active',
+        jdUrl: jdUrl || null,
       })
       .returning();
 

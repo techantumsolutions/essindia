@@ -22,7 +22,7 @@ export async function generateMetadata({ params }: Props) {
     // Ignore database fetch errors in metadata generator
   }
 
-  if (job) {
+  if (job && job.status === 'active') {
     return {
       title: `${job.title} | Careers at ESS India`,
       description: job.description || `Apply for the ${job.title} position in the ${job.department} department at ESS India.`,
@@ -46,7 +46,7 @@ export default async function CareerDetailPage({ params }: Props) {
     console.error('Error fetching career opening:', e);
   }
 
-  if (!job) {
+  if (!job || job.status !== 'active') {
     return notFound();
   }
 
@@ -66,6 +66,7 @@ export default async function CareerDetailPage({ params }: Props) {
     niceToHave: Array.isArray(job.niceToHave) ? (job.niceToHave as string[]) : [],
     whatWeOffer: Array.isArray(job.whatWeOffer) ? (job.whatWeOffer as string[]) : [],
     status: job.status,
+    jdUrl: job.jdUrl || null,
   };
 
   return (
