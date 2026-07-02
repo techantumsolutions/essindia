@@ -4,6 +4,7 @@ import * as React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronDown, ChevronUp, Search, Calendar, User, SlidersHorizontal, ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { usePathname } from 'next/navigation';
 
 import { defaultBlogs, type BlogPost } from '@/lib/blogs-data';
 
@@ -12,6 +13,8 @@ interface BlogListContent {
   headingText?: string;
   subheadingText?: string;
   bgImage?: string;
+  topics?: string[];
+  industries?: string[];
 }
 
 interface BlogListSectionProps {
@@ -42,6 +45,12 @@ export function BlogListSection({ content }: BlogListSectionProps) {
   const heading = content?.headingText || 'Press & Media Resources';
   const subheading = content?.subheadingText || 'Everything journalists, analysts, and partners need to cover ESS — from brand assets to company facts. Everything journalists, analysts, and partners need to cover ESS— from brand assets to company facts.';
   const bgImage = content?.bgImage;
+  const topicsList = content?.topics && content.topics.length > 0 ? content.topics : TOPICS;
+  const industriesList = content?.industries && content.industries.length > 0 ? content.industries : INDUSTRIES;
+
+  const pathname = usePathname();
+  const isPreviewMode = pathname.startsWith('/admin') || pathname.includes('/preview');
+  const isDefaultBlogPage = (pathname === '/blog' && content === undefined) || isPreviewMode;
 
   // State
   const [blogs, setBlogs] = React.useState<BlogPost[]>([]);
@@ -66,20 +75,20 @@ export function BlogListSection({ content }: BlogListSectionProps) {
             // Sort by date (descending) or keep database order
             setBlogs(data);
           } else {
-            setBlogs(defaultBlogs);
+            setBlogs(isDefaultBlogPage ? defaultBlogs : []);
           }
         } else {
-          setBlogs(defaultBlogs);
+          setBlogs(isDefaultBlogPage ? defaultBlogs : []);
         }
       } catch (err) {
-        console.error('Failed to load dynamic blogs, using fallback', err);
-        setBlogs(defaultBlogs);
+        console.error('Failed to load dynamic blogs', err);
+        setBlogs(isDefaultBlogPage ? defaultBlogs : []);
       } finally {
         setLoading(false);
       }
     }
     fetchBlogs();
-  }, []);
+  }, [isDefaultBlogPage]);
 
   // Filter handlers
   const toggleTopic = (topic: string) => {
@@ -210,7 +219,7 @@ export function BlogListSection({ content }: BlogListSectionProps) {
                       exit={{ opacity: 0, height: 0 }}
                       className="overflow-hidden pl-1 space-y-2.5 pt-1"
                     >
-                      {TOPICS.map(topic => {
+                      {topicsList.map(topic => {
                         const isChecked = selectedTopics.includes(topic);
                         return (
                           <label key={topic} className="flex items-center gap-3 text-xs text-slate-600 font-medium cursor-pointer select-none group">
@@ -249,7 +258,7 @@ export function BlogListSection({ content }: BlogListSectionProps) {
                       exit={{ opacity: 0, height: 0 }}
                       className="overflow-hidden pl-1 space-y-2.5 pt-1"
                     >
-                      {INDUSTRIES.map(industry => {
+                      {industriesList.map(industry => {
                         const isChecked = selectedIndustries.includes(industry);
                         return (
                           <label key={industry} className="flex items-center gap-3 text-xs text-slate-600 font-medium cursor-pointer select-none group">
@@ -328,9 +337,18 @@ export function BlogListSection({ content }: BlogListSectionProps) {
                                 (e.target as HTMLImageElement).src = '/blog-1.png';
                               }}
                             />
-                            {/* Topic Floating Tag */}
-                            <div className="absolute bottom-4 left-4 bg-white/90 backdrop-blur px-3 py-0.3 rounded-full shadow-sm">
-                              <span className="text-xs text-[#859bfc] font-normal  tracking-wider">{blog.topic}</span>
+                            {/* Topic & Industries Floating Tags */}
+                            <div className="absolute bottom-4 left-4 flex flex-wrap gap-2 items-center">
+                              <div className="bg-white/95 backdrop-blur px-3 py-1.5 rounded-xl shadow-sm text-left flex flex-col justify-center">
+                                <span className="text-[9px] text-[#859bfc] font-bold uppercase tracking-wider block leading-none mb-1">Topic</span>
+                                <span className="text-xs text-slate-800 font-semibold leading-none">{blog.topic}</span>
+                              </div>
+                              {blog.industries && blog.industries.filter((ind: string) => ind !== 'Industries').map((ind: string) => (
+                                <div key={ind} className="bg-[#103D38]/95 backdrop-blur px-3 py-1.5 rounded-xl shadow-sm text-left flex flex-col justify-center">
+                                  <span className="text-[9px] text-emerald-300 font-bold uppercase tracking-wider block leading-none mb-1">Industry</span>
+                                  <span className="text-xs text-white font-semibold leading-none">{ind}</span>
+                                </div>
+                              ))}
                             </div>
                           </div>
 

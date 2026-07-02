@@ -23,6 +23,8 @@ import {
   SlidersHorizontal,
   LayoutGrid,
   BarChart3,
+  ChevronDown,
+  Check,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
@@ -267,7 +269,7 @@ function CaseStudyManager({ pageId, onRefresh }: { pageId: string; onRefresh: ()
 
       // 4. Update section with all form data
       const defaultContent = detailSection.content || detailTemplate.templateSections?.find((ts: any) => ts.type === 'case-study-detail')?.contentJson || {};
-      
+
       const filteredChallengePoints = challengePoints.filter(p => p.title.trim() || p.description.trim());
       const filteredSolutions = solutionModules.filter(m => m.name.trim() || m.description.trim() || m.icon.trim());
       const filteredResults = resultsItems.filter(r => r.trim());
@@ -324,12 +326,12 @@ function CaseStudyManager({ pageId, onRefresh }: { pageId: string; onRefresh: ()
 
       toast.success('Case Study created successfully');
       setShowCreateModal(false);
-      
+
       // Reset
       setTitle(''); setSlug(''); setTopic(''); setIndustry(''); setDate(''); setImage('');
       setOverview(''); setOverviewImage1(''); setOverviewImage2('');
-      setChallengeTitle(''); setChallengeDescription(''); setChallengePoints([{title:'', description:''}]);
-      setSolutionsTitle(''); setSolutionsDescription(''); setSolutionModules([{name:'', description:'', icon:''}]);
+      setChallengeTitle(''); setChallengeDescription(''); setChallengePoints([{ title: '', description: '' }]);
+      setSolutionsTitle(''); setSolutionsDescription(''); setSolutionModules([{ name: '', description: '', icon: '' }]);
       setResultsTitle(''); setResultsItems(['']);
       setActiveTab('basic');
 
@@ -513,7 +515,7 @@ function CaseStudyManager({ pageId, onRefresh }: { pageId: string; onRefresh: ()
                             <button type="button" onClick={() => setChallengePoints(challengePoints.filter((_, i) => i !== idx))} className="p-2 text-rose-500 hover:bg-rose-50 rounded-lg"><Trash2 className="w-4 h-4" /></button>
                           </div>
                         ))}
-                        <Button type="button" variant="outline" onClick={() => setChallengePoints([...challengePoints, {title:'', description:''}])} className="w-full rounded-xl border-dashed">Add Point</Button>
+                        <Button type="button" variant="outline" onClick={() => setChallengePoints([...challengePoints, { title: '', description: '' }])} className="w-full rounded-xl border-dashed">Add Point</Button>
                       </div>
                     </div>
                   )}
@@ -542,7 +544,7 @@ function CaseStudyManager({ pageId, onRefresh }: { pageId: string; onRefresh: ()
                             <button type="button" onClick={() => setSolutionModules(solutionModules.filter((_, i) => i !== idx))} className="p-2 text-rose-500 hover:bg-rose-50 rounded-lg shrink-0 mt-1"><Trash2 className="w-4 h-4" /></button>
                           </div>
                         ))}
-                        <Button type="button" variant="outline" onClick={() => setSolutionModules([...solutionModules, {name:'', description:'', icon:''}])} className="w-full rounded-xl border-dashed">Add Module</Button>
+                        <Button type="button" variant="outline" onClick={() => setSolutionModules([...solutionModules, { name: '', description: '', icon: '' }])} className="w-full rounded-xl border-dashed">Add Module</Button>
                       </div>
                     </div>
                   )}
@@ -586,6 +588,75 @@ function CaseStudyManager({ pageId, onRefresh }: { pageId: string; onRefresh: ()
 
 // ---------------------------------------------------------------------------
 
+interface CustomDropdownProps {
+  value: string;
+  onChange: (val: string) => void;
+  options: { value: string; label: string }[];
+  placeholder: string;
+}
+
+function CustomDropdown({ value, onChange, options, placeholder }: CustomDropdownProps) {
+  const [isOpen, setIsOpen] = React.useState(false);
+  const containerRef = React.useRef<HTMLDivElement>(null);
+
+  React.useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (containerRef.current && !containerRef.current.contains(event.target as Node)) {
+        setIsOpen(false);
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  const selectedOption = options.find(opt => opt.value === value);
+
+  return (
+    <div ref={containerRef} className="relative w-full">
+      <button
+        type="button"
+        onClick={() => setIsOpen(!isOpen)}
+        className="w-full bg-slate-50 hover:bg-slate-100/80 active:bg-slate-200/50 rounded-xl px-4 py-2.5 text-sm outline-none border border-transparent focus:border-[#4B2A63]/20 focus:ring-2 focus:ring-[#4B2A63]/10 font-medium text-left flex items-center justify-between transition-all cursor-pointer"
+      >
+        <span className={value ? 'text-slate-800 font-medium' : 'text-slate-400 font-medium'}>
+          {selectedOption ? selectedOption.label : placeholder}
+        </span>
+        <ChevronDown className={cn('w-4 h-4 text-slate-400 transition-transform duration-200', isOpen && 'transform rotate-180')} />
+      </button>
+
+      <AnimatePresence>
+        {isOpen && (
+          <motion.div
+            initial={{ opacity: 0, y: 4, scale: 0.98 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: 4, scale: 0.98 }}
+            transition={{ duration: 0.15 }}
+            className="absolute z-50 left-0 right-0 mt-1.5 max-h-60 overflow-y-auto rounded-xl bg-white border border-slate-100 shadow-xl py-1 outline-none"
+          >
+            {options.map((opt) => (
+              <button
+                key={opt.value}
+                type="button"
+                onClick={() => {
+                  onChange(opt.value);
+                  setIsOpen(false);
+                }}
+                className={cn(
+                  'w-full px-4 py-2 text-sm text-left font-medium transition-colors hover:bg-[#4B2A63]/5 hover:text-[#4B2A63] flex items-center justify-between cursor-pointer',
+                  opt.value === value ? 'bg-[#4B2A63]/5 text-[#4B2A63]' : 'text-slate-700'
+                )}
+              >
+                <span>{opt.label}</span>
+                {opt.value === value && <Check className="w-4.5 h-4.5 text-[#4B2A63]" />}
+              </button>
+            ))}
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  );
+}
+
 
 interface BlogManagerProps {
   pageId: string;
@@ -604,6 +675,7 @@ function BlogManager({ pageId, onRefresh }: BlogManagerProps) {
   const [slug, setSlug] = React.useState('');
   const [slugTouched, setSlugTouched] = React.useState(false);
   const [category, setCategory] = React.useState('');
+  const [industry, setIndustry] = React.useState('');
   const [date, setDate] = React.useState('');
   const [authorName, setAuthorName] = React.useState('');
   const [authorAvatar, setAuthorAvatar] = React.useState('');
@@ -641,7 +713,7 @@ function BlogManager({ pageId, onRefresh }: BlogManagerProps) {
       const res = await fetch('/api/admin/pages');
       if (res.ok) {
         const tree = await res.json();
-        
+
         // Find current page in tree
         const findNode = (nodes: any[]): any => {
           for (const node of nodes) {
@@ -733,7 +805,7 @@ function BlogManager({ pageId, onRefresh }: BlogManagerProps) {
       const blogDetailTemplate = templates.find((t: any) =>
         t.templateSections?.some((ts: any) => ts.type === 'blog-detail-block')
       );
-      
+
       const templateId = blogDetailTemplate?.id || null;
       if (!templateId) {
         throw new Error(
@@ -780,6 +852,7 @@ function BlogManager({ pageId, onRefresh }: BlogManagerProps) {
         ...defaultContent,
         title: title,
         category: category || undefined,
+        industries: industry ? [industry] : [],
         authorName: authorName || undefined,
         authorAvatar: authorAvatar || (authorName
           ? `https://api.dicebear.com/7.x/avataaars/svg?seed=${authorName}`
@@ -836,12 +909,13 @@ function BlogManager({ pageId, onRefresh }: BlogManagerProps) {
 
       toast.success('Blog post created successfully');
       setShowCreateModal(false);
-      
+
       // Reset form
       setTitle('');
       setSlug('');
       setSlugTouched(false);
       setCategory('');
+      setIndustry('');
       setDate('');
       setAuthorName('');
       setAuthorAvatar('');
@@ -1081,25 +1155,42 @@ function BlogManager({ pageId, onRefresh }: BlogManagerProps) {
                       </div>
                     </div>
 
-                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
                       <div className="space-y-1">
                         <label className="text-xs font-semibold text-slate-500">
                           Category / Topic
                         </label>
-                        <select
+                        <CustomDropdown
                           value={category}
-                          onChange={(e) => setCategory(e.target.value)}
-                          className="w-full bg-slate-50 rounded-xl px-4 py-2.5 text-sm outline-none border border-transparent focus:border-[#4B2A63]/20 focus:ring-2 focus:ring-[#4B2A63]/10 font-medium"
-                        >
-                          <option value="">Select Category / Topic</option>
-                          <option value="Business Intelligence">Business Intelligence</option>
-                          <option value="ERP Solutions">ERP Solutions</option>
-                          <option value="IoT Solutions">IoT Solutions</option>
-                          <option value="Mobile App Solutions">Mobile App Solutions</option>
-                          <option value="CRM Solutions">CRM Solutions</option>
-                          <option value="Sales Force Automation">Sales Force Automation</option>
-                          <option value="After-Sales Service App">After-Sales Service App</option>
-                        </select>
+                          onChange={setCategory}
+                          placeholder="Select Category"
+                          options={[
+                            { value: 'Business Intelligence', label: 'Business Intelligence' },
+                            { value: 'ERP Solutions', label: 'ERP Solutions' },
+                            { value: 'IoT Solutions', label: 'IoT Solutions' },
+                            { value: 'Mobile App Solutions', label: 'Mobile App Solutions' },
+                            { value: 'CRM Solutions', label: 'CRM Solutions' },
+                            { value: 'Sales Force Automation', label: 'Sales Force Automation' },
+                            { value: 'After-Sales Service App', label: 'After-Sales Service App' },
+                          ]}
+                        />
+                      </div>
+                      <div className="space-y-1">
+                        <label className="text-xs font-semibold text-slate-500">
+                          Industry
+                        </label>
+                        <CustomDropdown
+                          value={industry}
+                          onChange={setIndustry}
+                          placeholder="Select Industry"
+                          options={[
+                            { value: 'FMCG', label: 'FMCG' },
+                            { value: 'Pharma', label: 'Pharma' },
+                            { value: 'Manufacturing', label: 'Manufacturing' },
+                            { value: 'Retail', label: 'Retail' },
+                            { value: 'Electronics', label: 'Electronics' },
+                          ]}
+                        />
                       </div>
                       <div className="space-y-1">
                         <label className="text-xs font-semibold text-slate-500">
@@ -1214,7 +1305,7 @@ function BlogManager({ pageId, onRefresh }: BlogManagerProps) {
                 {activeTab === 'highlights' && (
                   <div className="space-y-5">
                     <h4 className="text-xs font-bold text-slate-700 uppercase tracking-wider">Key Highlights / Solutions</h4>
-                    
+
                     {highlights.length === 0 ? (
                       <div className="bg-slate-50/50 rounded-2xl p-6 text-center border border-dashed border-slate-200">
                         <p className="text-xs text-slate-400 font-medium">No highlights added yet.</p>
