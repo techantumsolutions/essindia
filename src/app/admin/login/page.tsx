@@ -8,7 +8,9 @@ import {
   User, 
   ArrowRight,
   ShieldCheck,
-  RotateCcw
+  RotateCcw,
+  Eye,
+  EyeOff
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
@@ -18,6 +20,7 @@ export default function AdminLogin() {
   const router = useRouter();
   const [isLoading, setIsLoading] = React.useState(false);
   const [error, setError] = React.useState('');
+  const [showPassword, setShowPassword] = React.useState(false);
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
@@ -100,11 +103,22 @@ export default function AdminLogin() {
                 <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 group-focus-within:text-[#4B2A63] transition-colors" />
                 <input 
                   name="password"
-                  type="password" 
+                  type={showPassword ? "text" : "password"} 
                   placeholder="••••••••"
                   required
-                  className="w-full bg-slate-50 border-2 border-transparent focus:border-[#4B2A63]/10 focus:bg-white focus:ring-4 focus:ring-[#4B2A63]/5 rounded-2xl pl-12 pr-4 py-4 text-sm font-bold text-slate-900 transition-all outline-none"
+                  className="w-full bg-slate-50 border-2 border-transparent focus:border-[#4B2A63]/10 focus:bg-white focus:ring-4 focus:ring-[#4B2A63]/5 rounded-2xl pl-12 pr-12 py-4 text-sm font-bold text-slate-900 transition-all outline-none"
                 />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-[#4B2A63] transition-colors focus:outline-none"
+                >
+                  {showPassword ? (
+                    <EyeOff className="w-4 h-4" />
+                  ) : (
+                    <Eye className="w-4 h-4" />
+                  )}
+                </button>
               </div>
             </div>
 

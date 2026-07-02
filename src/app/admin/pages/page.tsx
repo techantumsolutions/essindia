@@ -288,7 +288,7 @@ function RegistryPageRow({
           </p>
         </motion.div>
       </motion.div>
-      <motion.div className="col-span-2 font-mono text-xs text-slate-500 truncate">{page.routePath}</motion.div>
+      <motion.div className="col-span-2 font-mono text-xs text-slate-500 truncate" title={page.routePath}>{page.routePath}</motion.div>
       <motion.div className="col-span-1 flex justify-center">
         <span className={cn('text-[10px] font-black px-2 py-1 rounded-full uppercase', page.status === 'published' ? 'bg-emerald-50 text-emerald-600' : 'bg-amber-50 text-amber-600')}>
           {page.status}
@@ -300,7 +300,19 @@ function RegistryPageRow({
       <div className="col-span-2 flex justify-end gap-1">
         <Link href={page.routePath} target="_blank"><Button variant="ghost" size="icon"><Eye className="w-4 h-4" /></Button></Link>
         <Link href={`/admin/pages/${page.pageId}`}><Button className="bg-[#4B2A63] text-white rounded-xl h-9 px-3 text-xs font-bold">Edit</Button></Link>
-        <Button variant="ghost" size="icon" className="text-rose-400" onClick={() => onDelete(page.pageId!)}><Trash2 className="w-4 h-4" /></Button>
+        <Button 
+          variant="outline" 
+          size="sm"
+          className={cn(
+            "h-9 px-3 text-xs font-bold rounded-xl transition-colors",
+            page.status === 'published' 
+              ? "text-amber-600 border-amber-200 hover:bg-amber-50" 
+              : "text-emerald-600 border-emerald-200 hover:bg-emerald-50"
+          )}
+          onClick={() => onAction(page.pageId!, page.status === 'published' ? 'unpublish' : 'publish')}
+        >
+          {page.status === 'published' ? 'Disable' : 'Enable'}
+        </Button>
       </div>
     </motion.div>
   );
