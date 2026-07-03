@@ -402,7 +402,7 @@ export default function NavigationModule() {
                         className="w-full bg-slate-50 border-2 border-transparent focus:border-[#4B2A63]/10 focus:bg-white focus:ring-4 focus:ring-[#4B2A63]/5 rounded-2xl px-6 py-4 text-[15px] font-bold outline-none transition-all"
                       >
                         <option value="custom">Custom URL...</option>
-                        {registryPages.map((page) => (
+                        {registryPages.filter(p => p.status === 'published').map((page) => (
                           <option key={page.id} value={page.id}>
                             {page.title} ({page.routePath})
                           </option>
@@ -455,6 +455,7 @@ export default function NavigationModule() {
                     </div>
                   </div>
                   <div className="space-y-2">
+                    {/* 
                     {selectedItem?.megaMenuEnabled && selectedItemId ? (
                       <Link
                         href={`/admin/navigation/mega-menu/${selectedItemId}`}
@@ -464,6 +465,7 @@ export default function NavigationModule() {
                         Manage Mega Menu Structure
                       </Link>
                     ) : null}
+                    */}
                   </div>
                 </div>
               </div>

@@ -455,8 +455,9 @@ export default function CategoriesModule() {
                       (() => {
                         const selectedPage = registryPages.find((p) => p.id === form.pageId);
                         return selectedPage ? (
-                          <span className="text-slate-700">
-                            {selectedPage.title} <span className="text-slate-400 text-xs font-mono">({selectedPage.routePath})</span>
+                          <span className="text-slate-700 truncate flex items-center gap-2 min-w-0">
+                            <span className="truncate">{selectedPage.title}</span>
+                            <span className="text-slate-400 text-xs font-mono truncate shrink">({selectedPage.routePath})</span>
                           </span>
                         ) : (
                           <SelectValue placeholder="No Page (Direct Category Only)" />
@@ -466,9 +467,9 @@ export default function CategoriesModule() {
                       <SelectValue placeholder="No Page (Direct Category Only)" />
                     )}
                   </SelectTrigger>
-                  <SelectContent className="bg-white border border-slate-100 rounded-2xl shadow-xl p-2 z-[999] max-h-60 overflow-y-auto">
+                  <SelectContent className="bg-white border border-slate-100 rounded-2xl shadow-xl p-2 z-[999] max-h-60 overflow-y-auto w-[var(--radix-select-trigger-width)]">
                     <SelectItem value="">No Page (Direct Category Only)</SelectItem>
-                    {registryPages.map((page) => {
+                    {registryPages.filter(p => p.status === 'published').map((page) => {
                       const isAssigned = !!(
                         page.navigationLabel ||
                         page.categoryLabel ||
@@ -478,9 +479,11 @@ export default function CategoriesModule() {
                       const pageVal = page.id || '';
                       return (
                         <SelectItem key={pageVal} value={pageVal}>
-                          <div className="flex items-center justify-between w-full max-w-[400px] overflow-x-auto gap-4 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-                            <span className="font-bold text-slate-800">{page.title}</span>
-                            <span className="text-slate-400 text-xs font-mono">({page.routePath})</span>
+                          <div className="flex items-center justify-between w-full gap-4">
+                            <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2 min-w-0 overflow-hidden flex-1">
+                              <span className="font-bold text-slate-800 truncate">{page.title}</span>
+                              <span className="text-slate-400 text-xs font-mono truncate">({page.routePath})</span>
+                            </div>
                             <span
                               className={cn(
                                 'ml-auto px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider shrink-0',
