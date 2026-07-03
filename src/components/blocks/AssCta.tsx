@@ -1,6 +1,7 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
+import { CtaLeadModal } from '@/components/ui/CtaLeadModal';
 import Link from 'next/link';
 
 interface AssCtaContent {
@@ -10,19 +11,21 @@ interface AssCtaContent {
   description?: string;
   descriptionColor?: string;
   buttonText?: string;
-  buttonUrl?: string;
+  pdfUrl?: string;
   buttonBgColor?: string;
   buttonTextColor?: string;
 }
 
 export function AssCta({ content }: { content?: AssCtaContent }) {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
   const bgColor = content?.bgColor || '#eff3f8';
   const title = content?.title || 'Future-Ready Oracle Database Strategy';
   const titleColor = content?.titleColor || '#5b45b2';
   const description = content?.description || 'Database upgrades often serve as a foundation for modernization initiatives, including migration to Oracle APEX or cloud infrastructure. We help define that roadmap strategically.';
   const descriptionColor = content?.descriptionColor || '#374151';
   const buttonText = content?.buttonText || 'Explore Your Upgrade Roadmap';
-  const buttonUrl = content?.buttonUrl || '#';
+  const pdfUrl = content?.pdfUrl;
   const buttonBgColor = content?.buttonBgColor || '#fcc42c';
   const buttonTextColor = content?.buttonTextColor || '#000000';
 
@@ -54,17 +57,12 @@ export function AssCta({ content }: { content?: AssCtaContent }) {
           </p>
         )}
 
-        <Link
-          href={buttonUrl}
-          className="inline-block font-bold px-8 py-3.5 rounded-full hover:scale-105 hover:shadow-lg transition-all duration-300 text-sm shadow-md"
-          style={{
-            backgroundColor: buttonBgColor,
-            color: buttonTextColor
-          }}
-        >
+        <button onClick={() => setIsModalOpen(true)} className="bg-[#4B2A63] text-white hover:bg-[#3A1F4D] px-8 py-3 rounded-full font-medium transition-colors inline-flex items-center gap-2">
           {buttonText}
-        </Link>
+        </button>
       </div>
+    
+      <CtaLeadModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} pdfUrl={pdfUrl} />
     </section>
   );
 }

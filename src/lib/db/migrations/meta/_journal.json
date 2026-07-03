@@ -15,6 +15,20 @@
       "when": 1781086919722,
       "tag": "0001_long_zzzax",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1782994780035,
+      "tag": "0002_quiet_cerebro",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1782998749124,
+      "tag": "0003_youthful_sprite",
+      "breakpoints": true
     }
   ]
 }

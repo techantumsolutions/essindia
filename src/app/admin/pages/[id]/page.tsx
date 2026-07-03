@@ -23,8 +23,7 @@ import {
   SlidersHorizontal,
   LayoutGrid,
   BarChart3,
-  ChevronDown,
-  Check,
+  Search,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
@@ -1508,6 +1507,7 @@ export default function PageEditor() {
   const [isPublishing, setIsPublishing] = React.useState(false);
   const [expandedSections, setExpandedSections] = React.useState<Set<string>>(new Set());
   const [showAddSection, setShowAddSection] = React.useState(false);
+  const [sectionSearchQuery, setSectionSearchQuery] = React.useState('');
   const [librarySections, setLibrarySections] = React.useState<any[]>([]);
   const [previewSectionType, setPreviewSectionType] = React.useState<string | null>(null);
   const [seoForm, setSeoForm] = React.useState({
@@ -1944,48 +1944,70 @@ export default function PageEditor() {
                 initial={{ opacity: 0, height: 0 }}
                 animate={{ opacity: 1, height: 'auto' }}
                 exit={{ opacity: 0, height: 0 }}
-                className="bg-white rounded-2xl border-2 border-dashed border-[#4B2A63]/20 p-6 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4"
+                className="bg-white rounded-2xl border-2 border-dashed border-[#4B2A63]/20 p-6 flex flex-col gap-4 overflow-hidden"
               >
-                {SECTION_REGISTRY.filter((s) => {
-                  if (s.label.includes('Legacy')) return false;
-                  if (s.type === 'mfg-icons') {
-                    return page.template?.name === 'Intelligent ERP Automation Template';
-                  }
-                  return true;
-                }).map((s) => (
-                  <div
-                    key={s.type}
-                    className="p-4 rounded-xl bg-slate-50 border border-slate-100 flex flex-col justify-between gap-3 group hover:border-[#4B2A63]/20 transition-all hover:shadow-sm"
-                  >
-                    <div>
-                      <p className="text-sm font-bold text-slate-800">
-                        {s.label}
-                      </p>
-                      <p className="text-[10px] text-slate-400 mt-1 line-clamp-2">
-                        {s.description}
-                      </p>
-                    </div>
-                    <div className="flex gap-2 mt-auto">
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        type="button"
-                        onClick={() => setPreviewSectionType(s.type)}
-                        className="flex-1 text-xs py-1 h-8 rounded-lg border-[#4B2A63]/20 text-[#4B2A63] hover:bg-[#4B2A63]/5 font-semibold"
-                      >
-                        Preview
-                      </Button>
-                      <Button
-                        size="sm"
-                        type="button"
-                        onClick={() => addSection(s.type)}
-                        className="flex-1 text-xs py-1 h-8 rounded-lg bg-[#4B2A63] text-white hover:bg-[#3B198F] font-semibold"
-                      >
-                        Add
-                      </Button>
-                    </div>
+                {/* Search Bar */}
+                <div className="relative w-full max-w-md">
+                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <Search className="w-4 h-4 text-slate-400" />
                   </div>
-                ))}
+                  <input
+                    type="text"
+                    placeholder="Search sections..."
+                    value={sectionSearchQuery}
+                    onChange={(e) => setSectionSearchQuery(e.target.value)}
+                    className="w-full bg-slate-50 border border-slate-200 rounded-xl py-2 pl-10 pr-4 text-sm focus:outline-none focus:ring-2 focus:ring-[#4B2A63]/20 focus:border-[#4B2A63]/30 transition-all"
+                  />
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                  {SECTION_REGISTRY.filter((s) => {
+                    if (s.label.includes('Legacy')) return false;
+                    if (s.type === 'mfg-icons') {
+                      return page.template?.name === 'Intelligent ERP Automation Template';
+                    }
+                    if (sectionSearchQuery.trim()) {
+                      const query = sectionSearchQuery.toLowerCase();
+                      if (!s.label.toLowerCase().includes(query) && !s.description.toLowerCase().includes(query)) {
+                        return false;
+                      }
+                    }
+                    return true;
+                  }).map((s) => (
+                    <div
+                      key={s.type}
+                      className="p-4 rounded-xl bg-slate-50 border border-slate-100 flex flex-col justify-between gap-3 group hover:border-[#4B2A63]/20 transition-all hover:shadow-sm"
+                    >
+                      <div>
+                        <p className="text-sm font-bold text-slate-800">
+                          {s.label}
+                        </p>
+                        <p className="text-[10px] text-slate-400 mt-1 line-clamp-2">
+                          {s.description}
+                        </p>
+                      </div>
+                      <div className="flex gap-2 mt-auto">
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          type="button"
+                          onClick={() => setPreviewSectionType(s.type)}
+                          className="flex-1 text-xs py-1 h-8 rounded-lg border-[#4B2A63]/20 text-[#4B2A63] hover:bg-[#4B2A63]/5 font-semibold"
+                        >
+                          Preview
+                        </Button>
+                        <Button
+                          size="sm"
+                          type="button"
+                          onClick={() => { addSection(s.type); setSectionSearchQuery(''); }}
+                          className="flex-1 text-xs py-1 h-8 rounded-lg bg-[#4B2A63] text-white hover:bg-[#3B198F] font-semibold"
+                        >
+                          Add
+                        </Button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
               </motion.div>
             )}
           </AnimatePresence>

@@ -75,7 +75,7 @@ export function Header({ navData = [] }: { navData?: NavItem[] }) {
         {/* Right Actions */}
         <div className="hidden lg:flex items-center space-x-4">
           <button className="text-slate-600 hover:text-slate-900 transition-colors p-2 hover:bg-slate-50 rounded-full cursor-pointer">
-            <Search className="w-5 h-5" />
+            {/* <Search className="w-5 h-5" /> */}
           </button>
           <Button className="bg-[#111] hover:bg-black text-white rounded-full px-6 transition-all duration-300 hover:shadow-lg hover:-translate-y-0.5 active:scale-95 cursor-pointer">
             Get started
@@ -161,14 +161,14 @@ function DesktopNav({ items = [] }: { items: NavItem[] }) {
           <NavigationMenuItem key={item.id}>
             {hasRenderableMegaMenu(item.megaMenu) ? (
               <>
-                <NavigationMenuTrigger className="bg-transparent hover:bg-slate-50 text-[13px] text-slate-700 font-medium">
+                <NavigationMenuTrigger className="bg-transparent hover:bg-slate-50 text-[13px] text-slate-700 font-medium cursor-pointer">
                   {item.label}
                 </NavigationMenuTrigger>
                 <MegaMenuContent data={item.megaMenu!} />
               </>
             ) : item.children && item.children.length > 0 ? (
               <>
-                <NavigationMenuTrigger className="bg-transparent hover:bg-slate-50 text-[13px] text-slate-700 font-medium">
+                <NavigationMenuTrigger className="bg-transparent hover:bg-slate-50 text-[13px] text-slate-700 font-medium cursor-pointer">
                   {item.label}
                 </NavigationMenuTrigger>
                 <NavigationMenuContent>
@@ -184,7 +184,7 @@ function DesktopNav({ items = [] }: { items: NavItem[] }) {
                 </NavigationMenuContent>
               </>
             ) : (
-              <NavigationMenuLink render={<Link href={item.url || '#'} />} className={cn(navigationMenuTriggerStyle(), "bg-transparent hover:bg-slate-50 text-[13px] text-slate-700 font-medium")}>
+              <NavigationMenuLink render={<Link href={item.url || '#'} />} className={cn(navigationMenuTriggerStyle(), "bg-transparent hover:bg-slate-50 text-[13px] text-slate-700 font-medium cursor-pointer")}>
                 {item.label}
               </NavigationMenuLink>
             )}
