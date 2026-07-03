@@ -50,7 +50,7 @@ export function WhyEssSection({ content }: WhyEssSectionProps) {
   const points = content?.points || defaultPoints;
 
   return (
-    <section className="py-24 bg-[#F8F9FA] overflow-hidden relative">
+    <section className="py-14 bg-[#F8F9FA] overflow-hidden relative">
       <div className="container mx-auto px-4 md:px-8 max-w-7xl">
         
         {/* Header */}
@@ -89,9 +89,15 @@ export function WhyEssSection({ content }: WhyEssSectionProps) {
                 transition={{ duration: 1, delay: 0.5, ease: [0.22, 1, 0.36, 1] }}
                 animate={{ y: [0, -15, 0] }}
                 viewport={{ once: true }}
-                className="absolute -left-10 md:-left-16 -bottom-12 md:-bottom-20 w-[200px] md:w-[240px] rounded-2xl overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.1)] z-10 bg-white"
+                className="absolute -left-2 md:-left-6 bottom-4 md:bottom-8 w-[200px] md:w-[240px] rounded-2xl overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.1)] z-10 bg-white"
               >
-                <img src={image2} alt="Revenue Chart" className="w-full h-auto" />
+                <motion.img 
+                  whileHover={{ scale: 1.02 }}
+                  transition={{ duration: 0.4 }}
+                  src={image2} 
+                  alt="Revenue Chart" 
+                  className="w-full h-auto" 
+                />
               </motion.div>
 
               {/* Floating Statistics Card */}
@@ -101,9 +107,15 @@ export function WhyEssSection({ content }: WhyEssSectionProps) {
                 transition={{ duration: 1, delay: 0.7, ease: [0.22, 1, 0.36, 1] }}
                 animate={{ y: [0, 15, 0] }}
                 viewport={{ once: true }}
-                className="absolute -right-8 md:-right-12 -bottom-8 md:-bottom-12 w-[180px] md:w-[220px] rounded-2xl overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.1)] z-10 bg-white"
+                className="absolute -right-2 md:-right-6 bottom-4 md:bottom-8 w-[200px] md:w-[240px] rounded-2xl overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.1)] z-10 bg-white"
               >
-                <img src={image3} alt="Statistics Chart" className="w-full h-auto" />
+                <motion.img 
+                  whileHover={{ scale: 1.02 }}
+                  transition={{ duration: 0.4 }}
+                  src={image3} 
+                  alt="Statistics Chart" 
+                  className="w-full h-auto" 
+                />
               </motion.div>
             </MotionSection>
           </div>

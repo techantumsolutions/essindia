@@ -40,6 +40,8 @@ export interface PageRegistryRow {
   status: string;
   source: 'cms' | 'filesystem';
   seoStatus: 'complete' | 'incomplete' | 'n/a';
+  seoDescription?: string;
+  heroDescription?: string;
   sectionCount: number;
   templateId: string | null;
   previewThumbnail: string | null;

@@ -287,7 +287,7 @@ export function ArrayFieldEditor({
                 );
               })}
 
-              {!isLocked && (
+              {!isLocked && !(sectionType === 'portfolio' && fieldKey === 'projects') && (
                 <Button
                   variant="outline"
                   size="sm"

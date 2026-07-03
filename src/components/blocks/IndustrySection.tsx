@@ -54,7 +54,7 @@ export function IndustrySection({ content }: IndustrySectionProps) {
   const viewAllCta = content?.viewAllCta || { label: "View all INDUSTRIES", url: "/industries" };
 
   return (
-    <section className="py-24 bg-[#462885] relative z-10 overflow-hidden">
+    <section className="py-14 bg-[#462885] relative z-10 overflow-hidden">
       {/* Background Pattern */}
       <div className="absolute inset-0 opacity-5 pointer-events-none" style={{ backgroundImage: 'radial-gradient(white 1px, transparent 1px)', backgroundSize: '30px 30px' }} />
       

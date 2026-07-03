@@ -11,6 +11,7 @@ interface ServiceItem {
 }
 
 interface AboutUsServicesOverviewContent {
+  heading?: string;
   items?: ServiceItem[];
 }
 
@@ -39,11 +40,26 @@ const defaultServices: ServiceItem[] = [
 export function AboutUsServicesOverview({
   content,
 }: AboutUsServicesOverviewProps) {
+  const heading = content?.heading || "Driving Enterprise Excellence Across Technologies";
   const services = content?.items || defaultServices;
 
   return (
-    <section className="py-8 md:py-24 border border-b border-gray-300 md:border-b-white">
+    <section className="py-8 md:py-24 border-b border-slate-200">
       <div className="max-w-7xl mx-auto px-6">
+        
+        {/* Dynamic Heading */}
+        <div className="text-center mb-16 max-w-4xl mx-auto">
+          <motion.h2
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+            className="text-4xl md:text-[48px] font-bold text-slate-900 tracking-tight leading-tight"
+          >
+            {heading}
+          </motion.h2>
+        </div>
+
         <StaggerContainer className="grid grid-cols-1 lg:grid-cols-3 gap-16 lg:gap-10">
           {services.map((service, index) => (
             <motion.div
@@ -63,8 +79,8 @@ export function AboutUsServicesOverview({
                 <Image
                   src={service.image || '/about-us/smartDecision.png'}
                   alt={service.title || ''}
-                  width={320}
-                  height={260}
+                  width={420}
+                  height={340}
                   className="object-contain"
                   priority={index === 0}
                 />

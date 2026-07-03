@@ -72,7 +72,7 @@ export const pageSectionSchema = z.object({
   type: z.string().min(1).max(100),
   variant: z.string().max(50).optional(),
   name: z.string().max(255).optional(),
-  content: z.record(z.string(), z.unknown()).optional(),
+  content: z.record(z.string(), z.unknown()).nullable().optional(),
   sectionLibraryId: z.string().uuid().nullable().optional(),
   isActive: z.boolean().optional(),
   orderIndex: z.number().int().optional(),

@@ -49,6 +49,11 @@ export const SECTION_REGISTRY: SectionTypeDefinition[] = [
     color: 'bg-purple-50 text-purple-600',
     defaultVariant: 'default',
     supportsVariants: false,
+    fieldOrder: [
+      'heading',
+      'subheading',
+      'cta'
+    ],
   },
   {
     type: 'services',
@@ -98,7 +103,7 @@ export const SECTION_REGISTRY: SectionTypeDefinition[] = [
     color: 'bg-cyan-50 text-cyan-600',
     defaultVariant: 'default',
     supportsVariants: false,
-    fieldOrder: ['heading', 'subheading', 'blogs', 'viewAllCta'],
+    fieldOrder: ['heading', 'subheading', 'viewAllCta'],
   },
   {
     type: 'rich_text',
@@ -465,7 +470,7 @@ export const SECTION_REGISTRY: SectionTypeDefinition[] = [
     color: 'bg-slate-50 text-slate-600',
     defaultVariant: 'default',
     supportsVariants: false,
-    fieldOrder: ['title', 'subtitle', 'ctaText', 'ctaUrl'],
+    fieldOrder: ['title', 'subtitle', 'ctaText'],
   },
   {
     type: 'blog-list-block',
@@ -568,7 +573,7 @@ export const SECTION_REGISTRY: SectionTypeDefinition[] = [
     color: 'bg-blue-50 text-blue-600',
     defaultVariant: 'default',
     supportsVariants: false,
-    fieldOrder: ['heading', 'description', 'features', 'image1'],
+    fieldOrder: ['heading', 'description', 'features', 'image1', 'image2', 'image3'],
   },
   {
     type: 'hospital-regulatory',
@@ -578,7 +583,7 @@ export const SECTION_REGISTRY: SectionTypeDefinition[] = [
     color: 'bg-emerald-50 text-emerald-600',
     defaultVariant: 'default',
     supportsVariants: false,
-    fieldOrder: ['heading', 'description', 'points', 'image1'],
+    fieldOrder: ['heading', 'description', 'points', 'image1', 'image2', 'image3'],
   },
   {
     type: 'hospital-tech-specs',
@@ -588,7 +593,7 @@ export const SECTION_REGISTRY: SectionTypeDefinition[] = [
     color: 'bg-rose-50 text-rose-600',
     defaultVariant: 'default',
     supportsVariants: false,
-    fieldOrder: ['heading', 'description', 'specs', 'image1'],
+    fieldOrder: ['heading', 'description', 'specs', 'image1', 'image2', 'image3'],
   },
   {
     type: 'staffing-hero',
@@ -692,6 +697,7 @@ export const SECTION_REGISTRY: SectionTypeDefinition[] = [
     color: 'bg-emerald-50 text-emerald-600',
     defaultVariant: 'default',
     supportsVariants: false,
+    fieldOrder: ['heading', 'items'],
   },
   {
     type: 'about-us-transformation-section',
@@ -721,6 +727,7 @@ export const SECTION_REGISTRY: SectionTypeDefinition[] = [
     color: 'bg-emerald-50 text-emerald-600',
     defaultVariant: 'default',
     supportsVariants: false,
+    fieldOrder: ['title', 'description', 'buttonText'],
   },
   {
     type: 'contact-hero',
@@ -752,6 +759,7 @@ export const SECTION_REGISTRY: SectionTypeDefinition[] = [
     fieldOrder: [
       'formTitle',
       'formDescription',
+      'disclaimerText',
       'faqTitle',
       'faqs'
     ],
@@ -768,6 +776,7 @@ export const SECTION_REGISTRY: SectionTypeDefinition[] = [
       'backgroundImageUrl',
       'title',
       'description',
+      'image',
       'locations'
     ],
   },
@@ -974,7 +983,6 @@ export const SECTION_REGISTRY: SectionTypeDefinition[] = [
       'description',
       'descriptionColor',
       'buttonText',
-      'buttonUrl',
       'buttonBgColor',
       'buttonTextColor'
     ],
@@ -1009,6 +1017,9 @@ export const SECTION_REGISTRY: SectionTypeDefinition[] = [
     supportsVariants: false,
     fieldOrder: [
       'bgColor',
+      'gradientColor1',
+      'gradientColor2',
+      'gradientColor3',
       'badgeBgColor',
       'badgeBorderColor',
       'badgeText',
@@ -1184,7 +1195,7 @@ export const SECTION_REGISTRY: SectionTypeDefinition[] = [
     color: 'bg-indigo-50 text-indigo-600',
     defaultVariant: 'default',
     supportsVariants: false,
-    fieldOrder: ['title', 'buttonText', 'buttonUrl'],
+    fieldOrder: ['title', 'buttonText'],
   },
   {
     type: 'roi-hero',
@@ -1342,7 +1353,7 @@ export const SECTION_REGISTRY: SectionTypeDefinition[] = [
     color: 'bg-indigo-50 text-indigo-600',
     defaultVariant: 'default',
     supportsVariants: false,
-    fieldOrder: ['title', 'description', 'buttonText', 'buttonUrl'],
+    fieldOrder: ['title', 'description', 'buttonText'],
   },
   {
     type: 'bi-hero',
@@ -1572,7 +1583,7 @@ export const SECTION_REGISTRY: SectionTypeDefinition[] = [
     color: 'bg-blue-50 text-blue-600',
     defaultVariant: 'default',
     supportsVariants: false,
-    fieldOrder: ['title', 'buttonText', 'buttonUrl']
+    fieldOrder: ['title', 'buttonText']
   },
   {
     type: 'oracle-apex-hero',
@@ -1653,7 +1664,7 @@ export const SECTION_REGISTRY: SectionTypeDefinition[] = [
     color: 'bg-purple-50 text-purple-600',
     defaultVariant: 'default',
     supportsVariants: false,
-    fieldOrder: ['bgColor', 'title', 'titleColor', 'description', 'descriptionColor', 'buttonText', 'buttonBgColor', 'buttonTextColor', 'buttonUrl']
+    fieldOrder: ['bgColor', 'title', 'titleColor', 'description', 'descriptionColor', 'buttonText', 'buttonBgColor', 'buttonTextColor']
   }
 ];
 

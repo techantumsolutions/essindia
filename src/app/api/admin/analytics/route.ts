@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { pages, templates, sections, formSubmissions } from '@/lib/db/schema';
 import { sql } from 'drizzle-orm';
+import { SECTION_REGISTRY } from '@/lib/cms/section-registry';
 
 export async function GET() {
   try {
@@ -19,9 +20,8 @@ export async function GET() {
     const templatesResult = await db.select({ count: sql<number>`count(*)` }).from(templates);
     const totalTemplates = Number(templatesResult[0]?.count || 0);
 
-    // Sections count
-    const sectionsResult = await db.select({ count: sql<number>`count(*)` }).from(sections);
-    const totalSections = Number(sectionsResult[0]?.count || 0);
+    // Sections count (templates available)
+    const totalSections = SECTION_REGISTRY.length;
 
     // Leads count
     const leadsResult = await db.select({ count: sql<number>`count(*)` }).from(formSubmissions);
