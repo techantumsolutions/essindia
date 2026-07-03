@@ -113,6 +113,7 @@ export function detectFieldType(key: string, value: JsonValue, sectionType?: str
   if (typeof value === 'string') {
     const lower = key.toLowerCase();
 
+    if (lower === 'tabdesc') return 'text';
     if (lower === 'topic') return 'topicSelect';
     if (lower === 'industry') return 'industrySelect';
     if (lower === 'icon' && (sectionType === 'bi-business-impact' || sectionType === 'rpa-overview' || sectionType === 'rpa-capabilities' || sectionType === 'rpa-industries' || value.startsWith('/') || value.includes('.') || value.includes('://'))) return 'image';

@@ -6,6 +6,8 @@ import { eq } from 'drizzle-orm';
 import { careers } from '@/lib/db/schema';
 import CareerDetailClient from './CareerDetailClient';
 
+export const dynamic = 'force-dynamic';
+
 interface Props {
   params: Promise<{ slug: string }>;
 }
@@ -67,6 +69,7 @@ export default async function CareerDetailPage({ params }: Props) {
     whatWeOffer: Array.isArray(job.whatWeOffer) ? (job.whatWeOffer as string[]) : [],
     status: job.status,
     jdUrl: job.jdUrl || null,
+    budgetRange: job.budgetRange || null,
   };
 
   return (

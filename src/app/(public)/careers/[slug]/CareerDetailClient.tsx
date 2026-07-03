@@ -23,6 +23,7 @@ interface CareerDetailClientProps {
     whatWeOffer: string[];
     status: string;
     jdUrl?: string | null;
+    budgetRange?: string | null;
   };
 }
 
@@ -111,7 +112,8 @@ export default function CareerDetailClient({ job }: CareerDetailClientProps) {
     ...locations.map(loc => ({ icon: 'MapPin', text: loc })),
     { icon: 'Clock', text: job.experience },
     { icon: 'Briefcase', text: job.type },
-    { icon: 'Building', text: job.department }
+    { icon: 'Building', text: job.department },
+    ...(job.budgetRange ? [{ icon: 'Coins', text: `Budget: ${job.budgetRange}` }] : [])
   ];
 
   // Map requirements, responsibilities, whatWeOffer lists

@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { motion } from 'framer-motion';
-import { ArrowLeft, MapPin, Clock, Briefcase, Building } from 'lucide-react';
+import { ArrowLeft, MapPin, Clock, Briefcase, Building, Coins } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 
 export interface JobDetailHeroContent {
@@ -44,6 +44,7 @@ export default function JobDetailHero({ content }: { content?: JobDetailHeroCont
     titleTextColor = '#0f172a',
     items = (content as any)?.meta?.map((m: any) => ({
       icon: m.icon === 'MapPin' ? '/Contact us/location-pin-alt-1_svgrepo.com.png' : null,
+      lucideIcon: m.icon !== 'MapPin' ? m.icon : null,
       text: m.text
     })) || [
       { icon: '/Contact us/location-pin-alt-1_svgrepo.com.png', text: 'India' },
@@ -53,6 +54,23 @@ export default function JobDetailHero({ content }: { content?: JobDetailHeroCont
     ],
     backLinkUrl = '/careers',
   } = content || {};
+
+  const getIcon = (iconName: string) => {
+    switch (iconName) {
+      case 'MapPin':
+        return <MapPin className="w-4 h-4 mr-1.5 text-slate-500" />;
+      case 'Clock':
+        return <Clock className="w-4 h-4 mr-1.5 text-slate-500" />;
+      case 'Briefcase':
+        return <Briefcase className="w-4 h-4 mr-1.5 text-slate-500" />;
+      case 'Building':
+        return <Building className="w-4 h-4 mr-1.5 text-slate-500" />;
+      case 'Coins':
+        return <Coins className="w-4 h-4 mr-1.5 text-slate-500" />;
+      default:
+        return null;
+    }
+  };
 
   const handleBack = () => {
     if (window.history.length > 1) {
@@ -113,14 +131,18 @@ export default function JobDetailHero({ content }: { content?: JobDetailHeroCont
 
           {/* Meta Information */}
           <div className="flex flex-wrap items-center gap-6 text-[15px] text-slate-600 font-medium">
-            {items.map((item: any, index: number) => (
-              <div key={index} className="flex items-center">
-                {item.icon && (
-                  <img src={item.icon} alt="" className="w-4 h-4 mr-1.5 object-contain" />
-                )}
-                {item.text}
-              </div>
-            ))}
+            {items.map((item: any, index: number) => {
+              const LucideIcon = item.lucideIcon ? getIcon(item.lucideIcon) : null;
+              return (
+                <div key={index} className="flex items-center">
+                  {LucideIcon}
+                  {!LucideIcon && item.icon && (
+                    <img src={item.icon} alt="" className="w-4 h-4 mr-1.5 object-contain" />
+                  )}
+                  {item.text}
+                </div>
+              );
+            })}
           </div>
         </motion.div>
       </div>

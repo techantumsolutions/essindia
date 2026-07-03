@@ -13,6 +13,7 @@ export function BiArchitecture({ content }: { content?: BiArchitectureContent })
   const title = content?.title || 'Business Intelligence Architecture';
   const description = content?.description || 'Data from different sources is brought together into a central Data Warehouse, where it is organized and aligned to create reliable KPIs. This trusted data powers dashboards and insights and also enables AI-driven capabilities.';
   const image = content?.image || '/Business intilligence/1cda2c6dff9b61013b46587de886637aad3247ff.png';
+  const isGif = typeof image === 'string' && image.toLowerCase().endsWith('.gif');
 
   return (
     <section className="py-14 bg-white font-sans border-b">
@@ -38,6 +39,7 @@ export function BiArchitecture({ content }: { content?: BiArchitectureContent })
                 fill
                 className="object-contain"
                 priority
+                unoptimized={isGif}
               />
             </div>
           </div>
