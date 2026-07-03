@@ -19,7 +19,9 @@ import {
   ChevronDown,
   Building,
   CheckCircle,
-  AlertCircle
+  AlertCircle,
+  Upload,
+  Loader2
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
@@ -43,6 +45,7 @@ type JobOpening = {
   createdAt: string;
   updatedAt: string;
   applicantCount?: number;
+  jdUrl?: string | null;
 };
 
 type Application = {
@@ -82,7 +85,8 @@ const defaultJobForm = {
   responsibilities: [] as string[],
   niceToHave: [] as string[],
   whatWeOffer: [] as string[],
-  status: 'active' as 'active' | 'draft' | 'closed'
+  status: 'active' as 'active' | 'draft' | 'closed',
+  jdUrl: ''
 };
 
 export default function AdminCareersPortal() {
@@ -96,6 +100,10 @@ export default function AdminCareersPortal() {
   const [isJobModalOpen, setIsJobModalOpen] = React.useState(false);
   const [editingJobId, setEditingJobId] = React.useState<string | null>(null);
   const [jobForm, setJobForm] = React.useState(defaultJobForm);
+  const [isParsing, setIsParsing] = React.useState(false);
+  const [parsedFileName, setParsedFileName] = React.useState<string | null>(null);
+  const [hrEmail, setHrEmail] = React.useState('hr@example.com');
+  const [isSavingHrEmail, setIsSavingHrEmail] = React.useState(false);
 
   // List field entry states
   const [locInput, setLocInput] = React.useState('');
@@ -156,10 +164,51 @@ export default function AdminCareersPortal() {
     }
   }, []);
 
+  const fetchHrEmail = React.useCallback(async () => {
+    try {
+      const res = await fetch('/api/admin/careers/settings');
+      if (!res.ok) throw new Error('Failed to fetch HR email');
+      const data = await res.json();
+      if (data?.hrEmail) {
+        setHrEmail(data.hrEmail);
+      }
+    } catch (err: any) {
+      console.error('Failed to load HR email setting:', err);
+    }
+  }, []);
+
   React.useEffect(() => {
     fetchJobs();
     fetchApplications();
-  }, [fetchJobs, fetchApplications]);
+    fetchHrEmail();
+  }, [fetchJobs, fetchApplications, fetchHrEmail]);
+
+  const handleSaveHrEmail = async () => {
+    if (!hrEmail || !hrEmail.includes('@')) {
+      toast.error('Please enter a valid email address');
+      return;
+    }
+
+    setIsSavingHrEmail(true);
+    try {
+      const res = await fetch('/api/admin/careers/settings', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ hrEmail }),
+      });
+
+      if (!res.ok) {
+        const errData = await res.json();
+        throw new Error(errData.error || 'Failed to save HR email settings');
+      }
+
+      toast.success('HR department email updated successfully!');
+    } catch (err: any) {
+      toast.error(err.message || 'An error occurred while saving email settings');
+    } finally {
+      setIsSavingHrEmail(false);
+    }
+  };
 
   // Action Handlers
   const handleOpenCreateJob = () => {
@@ -170,6 +219,7 @@ export default function AdminCareersPortal() {
     setRespInput('');
     setNiceInput('');
     setOfferInput('');
+    setParsedFileName(null);
     setIsJobModalOpen(true);
   };
 
@@ -188,14 +238,68 @@ export default function AdminCareersPortal() {
       responsibilities: job.responsibilities || [],
       niceToHave: job.niceToHave || [],
       whatWeOffer: job.whatWeOffer || [],
-      status: job.status
+      status: job.status,
+      jdUrl: job.jdUrl || ''
     });
     setLocInput('');
     setReqInput('');
     setRespInput('');
     setNiceInput('');
     setOfferInput('');
+    setParsedFileName(null);
     setIsJobModalOpen(true);
+  };
+
+  const handleJDUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setIsParsing(true);
+    const formData = new FormData();
+    formData.append('file', file);
+
+    const parseToastId = toast.loading('Reading and parsing JD. Please wait...');
+
+    try {
+      const res = await fetch('/api/admin/careers/parse-jd', {
+        method: 'POST',
+        body: formData,
+      });
+
+      if (!res.ok) {
+        const errData = await res.json();
+        throw new Error(errData.error || 'Failed to parse JD');
+      }
+
+      const parsedData = await res.json();
+      
+      setJobForm({
+        title: parsedData.title || '',
+        department: parsedData.department || '',
+        description: parsedData.description || '',
+        type: parsedData.type || 'Full-Time',
+        experience: parsedData.experience || '',
+        location: (parsedData.locations || []).join(', '),
+        locations: parsedData.locations || [],
+        aboutText: parsedData.aboutText || '',
+        requirements: parsedData.requirements || [],
+        responsibilities: parsedData.responsibilities || [],
+        niceToHave: parsedData.niceToHave || [],
+        whatWeOffer: parsedData.whatWeOffer || [],
+        status: 'active',
+        jdUrl: parsedData.jdUrl || ''
+      });
+
+      setParsedFileName(file.name);
+      toast.success('JD successfully parsed! Form has been autofilled.', { id: parseToastId });
+    } catch (err: any) {
+      setParsedFileName(null);
+      toast.error(err.message || 'An error occurred while parsing the JD', { id: parseToastId });
+    } finally {
+      setIsParsing(false);
+      // Reset input value to allow the same file to be selected again
+      e.target.value = '';
+    }
   };
 
   const handleSaveJob = async (e: React.FormEvent) => {
@@ -247,6 +351,33 @@ export default function AdminCareersPortal() {
       fetchApplications(); // refresh applications list since some might be cascaded deleted
     } catch (err: any) {
       toast.error(err.message || 'Failed to delete job opening');
+    }
+  };
+
+  const handleToggleStatus = async (id: string, currentStatus: 'active' | 'draft' | 'closed') => {
+    const newStatus: 'active' | 'closed' = currentStatus === 'active' ? 'closed' : 'active';
+    
+    // Optimistic UI update
+    setJobs(prev => prev.map(job => job.id === id ? { ...job, status: newStatus } : job));
+
+    try {
+      const res = await fetch(`/api/admin/careers/${id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status: newStatus }),
+      });
+
+      if (!res.ok) {
+        const errData = await res.json();
+        throw new Error(errData.error || 'Failed to update status');
+      }
+
+      toast.success(newStatus === 'active' ? 'Job opening activated!' : 'Job opening deactivated!');
+      fetchJobs();
+    } catch (err: any) {
+      // Revert optimistic update
+      setJobs(prev => prev.map(job => job.id === id ? { ...job, status: currentStatus } : job));
+      toast.error(err.message || 'Failed to toggle status');
     }
   };
 
@@ -317,7 +448,24 @@ export default function AdminCareersPortal() {
             Manage job postings and review submitted applications.
           </p>
         </div>
-        <div className="flex items-center gap-3">
+        <div className="flex flex-wrap items-center gap-4">
+          <div className="flex items-center gap-2 bg-slate-50 border border-slate-200 rounded-full px-4 h-11 shadow-sm">
+            <span className="text-xs font-bold text-slate-500 uppercase tracking-wider whitespace-nowrap">HR Email:</span>
+            <input
+              type="email"
+              value={hrEmail}
+              onChange={(e) => setHrEmail(e.target.value)}
+              placeholder="hr@example.com"
+              className="bg-transparent text-sm font-medium text-slate-700 focus:outline-none w-48 border-none p-0"
+            />
+            <Button
+              onClick={handleSaveHrEmail}
+              disabled={isSavingHrEmail}
+              className="bg-slate-200 hover:bg-slate-300 text-slate-700 rounded-full h-8 px-3.5 text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer"
+            >
+              {isSavingHrEmail ? <Loader2 className="w-3 h-3 animate-spin" /> : 'Save'}
+            </Button>
+          </div>
           <Button
             onClick={handleOpenCreateJob}
             className="bg-[#4B2A63] hover:bg-[#3B198F] text-white rounded-full px-6 h-11 font-bold shadow-lg shadow-[#4B2A63]/20 transition-all duration-300"
@@ -419,7 +567,22 @@ export default function AdminCareersPortal() {
                         </span>
                       </td>
                       <td className="py-4 px-6 text-right">
-                        <div className="flex justify-end gap-1.5">
+                        <div className="flex justify-end items-center gap-3">
+                          <button
+                            type="button"
+                            onClick={() => handleToggleStatus(job.id, job.status)}
+                            className={`relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-[#4B2A63] focus:ring-offset-2 ${
+                              job.status === 'active' ? 'bg-emerald-500' : 'bg-slate-200'
+                            }`}
+                            title={job.status === 'active' ? 'Deactivate job posting' : 'Activate job posting'}
+                          >
+                            <span
+                              aria-hidden="true"
+                              className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${
+                                job.status === 'active' ? 'translate-x-5' : 'translate-x-0'
+                              }`}
+                            />
+                          </button>
                           <Button
                             variant="ghost"
                             size="icon"
@@ -428,15 +591,6 @@ export default function AdminCareersPortal() {
                             onClick={() => handleOpenEditJob(job)}
                           >
                             <Edit2 className="w-4 h-4" />
-                          </Button>
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            title="Delete"
-                            className="h-9 w-9 rounded-xl hover:bg-rose-50 text-rose-500"
-                            onClick={() => handleDeleteJob(job.id, job.title)}
-                          >
-                            <Trash2 className="w-4 h-4" />
                           </Button>
                         </div>
                       </td>
@@ -632,6 +786,86 @@ export default function AdminCareersPortal() {
 
                       {/* Form Body */}
                       <div className="space-y-6 mt-8">
+                        {/* Attached JD File (Visible when jdUrl is present) */}
+                        {jobForm.jdUrl && (
+                          <div className="bg-emerald-50/30 border border-emerald-100/70 rounded-2xl p-4 flex items-center justify-between shadow-sm">
+                            <div className="flex items-center gap-3">
+                              <div className="p-2 bg-emerald-50 text-emerald-600 rounded-xl">
+                                <FileText className="w-5 h-5" />
+                              </div>
+                              <div className="text-left">
+                                <p className="text-sm font-bold text-slate-800">Job Description Attached</p>
+                                <p className="text-xs text-slate-500 mt-0.5">Original specifications document is active</p>
+                              </div>
+                            </div>
+                            <a
+                              href={jobForm.jdUrl}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="inline-flex items-center gap-1.5 bg-[#4B2A63] hover:bg-[#3B198F] text-white text-xs font-bold px-4 py-2 rounded-full shadow-sm shadow-[#4B2A63]/10 transition-all cursor-pointer"
+                            >
+                              <span>View File</span>
+                              <ExternalLink className="w-3.5 h-3.5" />
+                            </a>
+                          </div>
+                        )}
+
+                        {/* JD Upload Section (Only visible when creating a new job) */}
+                        {!editingJobId && (
+                          <div className="bg-[#4B2A63]/5 border-2 border-dashed border-[#4B2A63]/20 rounded-2xl p-5 text-center transition-all hover:bg-[#4B2A63]/10 hover:border-[#4B2A63]/40">
+                            <div className="flex flex-col items-center justify-center space-y-2">
+                              {isParsing ? (
+                                <div className="flex flex-col items-center space-y-2">
+                                  <Loader2 className="w-8 h-8 text-[#4B2A63] animate-spin" />
+                                  <p className="text-sm font-bold text-[#4B2A63]">Analyzing Job Description...</p>
+                                  <p className="text-xs text-slate-500">Extracting details and structuring fields</p>
+                                </div>
+                              ) : parsedFileName ? (
+                                <>
+                                  <div className="mx-auto p-3 bg-emerald-50 rounded-xl shadow-sm text-emerald-600 w-fit">
+                                    <CheckCircle className="w-5 h-5 animate-pulse" />
+                                  </div>
+                                  <div>
+                                    <p className="text-sm font-bold text-slate-900">JD Loaded & Autofilled</p>
+                                    <p className="text-xs text-emerald-600 font-semibold mt-1 flex items-center justify-center gap-1.5 bg-emerald-50 px-3 py-1 rounded-full border border-emerald-100 max-w-xs mx-auto truncate">
+                                      <FileText className="w-3.5 h-3.5 flex-shrink-0 text-emerald-500" />
+                                      <span className="truncate">{parsedFileName}</span>
+                                    </p>
+                                  </div>
+                                  <label className="inline-flex items-center px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold rounded-full transition-colors cursor-pointer shadow-sm mt-1">
+                                    <span>Use Different File</span>
+                                    <input
+                                      type="file"
+                                      accept=".pdf,.docx,.txt"
+                                      onChange={handleJDUpload}
+                                      className="hidden"
+                                    />
+                                  </label>
+                                </>
+                              ) : (
+                                <>
+                                  <div className="mx-auto p-3 bg-white rounded-xl shadow-sm text-[#4B2A63] w-fit">
+                                    <Upload className="w-5 h-5" />
+                                  </div>
+                                  <div>
+                                    <p className="text-sm font-bold text-slate-900">Auto-fill via Job Description</p>
+                                    <p className="text-xs text-slate-500 mt-0.5">Upload a PDF, DOCX, or TXT file to populate fields automatically</p>
+                                  </div>
+                                  <label className="inline-flex items-center px-4 py-2 bg-[#4B2A63] hover:bg-[#3B198F] text-white text-xs font-bold rounded-full transition-colors cursor-pointer shadow-sm mt-1">
+                                    <span>Upload JD File</span>
+                                    <input
+                                      type="file"
+                                      accept=".pdf,.docx,.txt"
+                                      onChange={handleJDUpload}
+                                      className="hidden"
+                                    />
+                                  </label>
+                                </>
+                              )}
+                            </div>
+                          </div>
+                        )}
+
                         {/* Title & Department */}
                         <div className="grid grid-cols-2 gap-4">
                           <div className="space-y-1.5">
@@ -968,9 +1202,19 @@ export default function AdminCareersPortal() {
                       </Button>
                       <Button
                         type="submit"
-                        className="bg-[#4B2A63] text-white hover:bg-[#3B198F] rounded-full px-6 font-bold shadow-md shadow-[#4B2A63]/10"
+                        disabled={isParsing}
+                        className="bg-[#4B2A63] text-white hover:bg-[#3B198F] rounded-full px-6 font-bold shadow-md shadow-[#4B2A63]/10 disabled:opacity-50 disabled:cursor-not-allowed"
                       >
-                        {editingJobId ? 'Save Changes' : 'Create Job Posting'}
+                        {isParsing ? (
+                          <span className="flex items-center gap-1.5 justify-center">
+                            <Loader2 className="w-4 h-4 animate-spin" />
+                            Parsing...
+                          </span>
+                        ) : editingJobId ? (
+                          'Save Changes'
+                        ) : (
+                          'Create Job Posting'
+                        )}
                       </Button>
                     </div>
                   </form>

@@ -108,7 +108,7 @@ export default function CareerPositions({ content }: { content?: any }) {
               <div className="flex-shrink-0 pt-4 md:pt-0 md:border-l border-slate-100 md:pl-8 flex items-center">
                 <button
                   onClick={() => router.push(`/careers/${pos.slug || pos.id}`)}
-                  className="bg-[#422295] text-white hover:bg-[#321575] px-6 py-2.5 rounded-full text-xs font-bold transition-all duration-300 inline-flex items-center gap-2 shadow-sm hover:shadow-md"
+                  className="bg-[#422295] text-white cursor-pointer hover:bg-[#321575] px-6 py-2.5 rounded-full text-xs font-bold transition-all duration-300 inline-flex items-center gap-2 shadow-sm hover:shadow-md"
                 >
                   View & Apply
                   <ArrowRight className="w-4 h-4" />

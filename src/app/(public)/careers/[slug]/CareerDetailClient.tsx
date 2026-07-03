@@ -22,6 +22,7 @@ interface CareerDetailClientProps {
     niceToHave: string[];
     whatWeOffer: string[];
     status: string;
+    jdUrl?: string | null;
   };
 }
 
@@ -173,6 +174,33 @@ export default function CareerDetailClient({ job }: CareerDetailClientProps) {
             {/* Right Column: Sticky Application Form */}
             <div className="lg:col-span-4">
               <div className="sticky top-28">
+                {job.jdUrl && (
+                  <motion.div
+                    initial={{ opacity: 0, x: 20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ duration: 0.5, delay: 0.15 }}
+                    className="mb-6 bg-slate-50 border border-slate-100 rounded-[14px] p-6 flex flex-col items-start gap-4"
+                  >
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center">
+                        <UploadCloud className="w-5 h-5 rotate-180" />
+                      </div>
+                      <div className="text-left">
+                        <h4 className="text-sm font-bold text-slate-800 font-semibold">Job Specification</h4>
+                        <p className="text-[11px] text-slate-400 mt-0.5">Download full PDF/Word details</p>
+                      </div>
+                    </div>
+                    <a
+                      href={job.jdUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="w-full h-10 bg-emerald-600 hover:bg-emerald-700 text-white text-[13px] font-bold rounded-lg transition-colors flex items-center justify-center gap-2 cursor-pointer shadow-sm shadow-emerald-600/10 text-center"
+                    >
+                      <span>Download Job Specification</span>
+                    </a>
+                  </motion.div>
+                )}
+
                 <motion.div
                   initial={{ opacity: 0, x: 20 }}
                   animate={{ opacity: 1, x: 0 }}

@@ -13,7 +13,7 @@ export async function GET(
     const item = await db.query.careers.findFirst({
       where: eq(careers.slug, slug),
     });
-    if (!item) return notFound('Position not found');
+    if (!item || item.status !== 'active') return notFound('Position not found');
     return NextResponse.json(item);
   } catch (error) {
     return serverError(error);

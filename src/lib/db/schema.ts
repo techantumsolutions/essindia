@@ -470,6 +470,7 @@ export const careers = pgTable('careers', {
   niceToHave: jsonb('nice_to_have').default('[]').notNull(),
   whatWeOffer: jsonb('what_we_offer').default('[]').notNull(),
   status: varchar('status', { length: 50 }).notNull().default('active'),
+  jdUrl: text('jd_url'),
   createdAt: timestamp('created_at').defaultNow().notNull(),
   updatedAt: timestamp('updated_at').defaultNow().notNull(),
 });
@@ -531,4 +532,12 @@ export const footerSettings = pgTable('footer_settings', {
   createdAt: timestamp('created_at').defaultNow().notNull(),
   updatedAt: timestamp('updated_at').defaultNow().notNull(),
 });
+
+export const careersSettings = pgTable('careers_settings', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  hrEmail: varchar('hr_email', { length: 255 }).notNull().default('hr@example.com'),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+  updatedAt: timestamp('updated_at').defaultNow().notNull(),
+});
+
 
