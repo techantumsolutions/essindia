@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { ChevronDown, ChevronUp } from 'lucide-react';
+import { ChevronDown, ChevronUp, Trash2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { detectFieldType, humanLabel } from './field-utils';
 import type { JsonValue, FieldType } from './field-utils';
@@ -155,6 +155,17 @@ export function DynamicFieldRenderer({
       );
 
     case 'array':
+      if (sectionType === 'services' && fieldKey === 'services') {
+        return (
+          <SelectedPagesField
+            keyPath={keyPath}
+            fieldKey={fieldKey}
+            value={value as JsonValue[]}
+            onChange={onChange}
+            depth={depth}
+          />
+        );
+      }
       return (
         <ArrayField
           keyPath={keyPath}
@@ -723,6 +734,168 @@ function IndustrySelectField({
           </option>
         ))}
       </select>
+    </div>
+  );
+}
+
+function SelectedPagesField({
+  keyPath,
+  fieldKey,
+  value,
+  onChange,
+  depth,
+}: {
+  keyPath: string;
+  fieldKey: string;
+  value: JsonValue[];
+  onChange: (keyPath: string, value: JsonValue) => void;
+  depth: number;
+}) {
+  const [pages, setPages] = React.useState<any[]>([]);
+  const [loading, setLoading] = React.useState(true);
+  const [search, setSearch] = React.useState('');
+
+  React.useEffect(() => {
+    fetch('/api/admin/pages?registry=true')
+      .then(r => r.json())
+      .then(data => {
+        setPages(data);
+        setLoading(false);
+      })
+      .catch(e => {
+        console.error(e);
+        setLoading(false);
+      });
+  }, []);
+
+  const selectedItems = (Array.isArray(value) ? value : []) as any[];
+
+  const handleSelect = (page: any) => {
+    if (selectedItems.length >= 6) return;
+    const newItem = {
+      title: page.title || '',
+      description: page.seoDescription || '',
+      ctaUrl: page.routePath || '',
+      ctaText: 'View more',
+      bgImage: '',
+      iconImage: ''
+    };
+    onChange(keyPath, [...selectedItems, newItem]);
+    setSearch('');
+  };
+
+  const handleRemove = (index: number) => {
+    const newArr = [...selectedItems];
+    newArr.splice(index, 1);
+    onChange(keyPath, newArr);
+  };
+  
+  const updateItemField = (index: number, field: string, val: string) => {
+    const newArr = [...selectedItems];
+    newArr[index] = { ...newArr[index], [field]: val };
+    onChange(keyPath, newArr);
+  };
+
+  const filteredPages = pages.filter(p => p.title?.toLowerCase().includes(search.toLowerCase()) || p.routePath?.toLowerCase().includes(search.toLowerCase()));
+
+  return (
+    <div className="space-y-4 border border-slate-200 rounded-xl p-4 bg-slate-50">
+      <div className="flex items-center justify-between border-b border-slate-200 pb-2">
+        <label className="text-sm font-bold text-slate-700">Selected Pages ({selectedItems.length}/6)</label>
+      </div>
+
+      <div className="space-y-4">
+        {selectedItems.map((item, idx) => (
+          <div key={idx} className="p-4 bg-white rounded-xl border border-slate-200 relative group">
+            <button
+              onClick={() => handleRemove(idx)}
+              className="absolute top-2 right-2 text-red-500 opacity-50 hover:opacity-100 transition-opacity p-1"
+            >
+              <Trash2 className="w-4 h-4" />
+            </button>
+            <div className="grid grid-cols-2 gap-4 mt-2">
+              <div className="col-span-2">
+                <label className="text-xs font-semibold text-slate-500 mb-1 block">Title (fetched from page)</label>
+                <input
+                  type="text"
+                  value={item.title || ''}
+                  onChange={(e) => updateItemField(idx, 'title', e.target.value)}
+                  className="w-full bg-slate-50 rounded-lg px-3 py-2 text-sm border border-slate-200 focus:outline-none focus:ring-2 focus:ring-[#4B2A63]/20"
+                />
+              </div>
+              <div className="col-span-2">
+                <label className="text-xs font-semibold text-slate-500 mb-1 block">Description (fetched from SEO)</label>
+                <textarea
+                  value={item.description || ''}
+                  onChange={(e) => updateItemField(idx, 'description', e.target.value)}
+                  rows={2}
+                  className="w-full bg-slate-50 rounded-lg px-3 py-2 text-sm border border-slate-200 focus:outline-none focus:ring-2 focus:ring-[#4B2A63]/20 resize-y"
+                />
+              </div>
+              <div className="col-span-2">
+                <label className="text-xs font-semibold text-slate-500 mb-1 block">Route URL</label>
+                <input
+                  type="text"
+                  value={item.ctaUrl || ''}
+                  readOnly
+                  className="w-full bg-slate-100 rounded-lg px-3 py-2 text-sm border border-slate-200 text-slate-500 cursor-not-allowed"
+                />
+              </div>
+              <div className="col-span-2">
+                <label className="text-xs font-semibold text-slate-500 mb-1 block">Background Image (Editable)</label>
+                <MediaField
+                  fieldKey={'bgImage-' + idx}
+                  value={item.bgImage || ''}
+                  onChange={(v) => updateItemField(idx, 'bgImage', v)}
+                />
+              </div>
+              <div className="col-span-2">
+                <label className="text-xs font-semibold text-slate-500 mb-1 block">Icon Image (Editable)</label>
+                <MediaField
+                  fieldKey={'iconImage-' + idx}
+                  value={item.iconImage || ''}
+                  onChange={(v) => updateItemField(idx, 'iconImage', v)}
+                />
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {selectedItems.length < 6 && (
+        <div className="mt-4">
+          <label className="text-xs font-semibold text-slate-500 block mb-2">Add Page</label>
+          <div className="relative mb-2">
+            <input
+              type="text"
+              placeholder="Search pages by title or route..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              className="w-full bg-white rounded-lg pl-3 pr-10 py-2 border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-[#4B2A63]/20"
+            />
+          </div>
+          {search && (
+            <div className="max-h-48 overflow-y-auto bg-white border border-slate-200 rounded-lg shadow-sm">
+              {loading ? (
+                <div className="p-3 text-sm text-slate-500 text-center">Loading pages...</div>
+              ) : filteredPages.length === 0 ? (
+                <div className="p-3 text-sm text-slate-500 text-center">No pages found</div>
+              ) : (
+                filteredPages.slice(0, 10).map((p) => (
+                  <div
+                    key={p.id}
+                    onClick={() => handleSelect(p)}
+                    className="p-3 border-b border-slate-100 hover:bg-slate-50 cursor-pointer transition-colors"
+                  >
+                    <div className="font-semibold text-sm text-slate-800">{p.title}</div>
+                    <div className="text-xs text-slate-500">{p.routePath}</div>
+                  </div>
+                ))
+              )}
+            </div>
+          )}
+        </div>
+      )}
     </div>
   );
 }

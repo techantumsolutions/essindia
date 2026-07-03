@@ -5,9 +5,7 @@ import { desc } from 'drizzle-orm';
 
 export async function GET() {
   try {
-    const submissions = await db.query.formSubmissions.findMany({
-      orderBy: [desc(formSubmissions.createdAt)],
-    });
+    const submissions = await db.select().from(formSubmissions).orderBy(desc(formSubmissions.createdAt));
 
     return NextResponse.json(submissions);
   } catch (error) {

@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { ImageIcon, X, FolderOpen, Upload } from 'lucide-react';
+import { ImageIcon, X, FolderOpen, Upload, FileText } from 'lucide-react';
 import { humanLabel } from './field-utils';
 import { toast } from 'sonner';
 import { MediaPickerModal } from './MediaPickerModal';
@@ -51,6 +51,8 @@ export function MediaField({ fieldKey, value, onChange, hint }: MediaFieldProps)
   };
 
   const isVideo = value && (value.toLowerCase().match(/\.(mp4|webm|ogg|mov)$/) || value.includes('video'));
+  const isPdfField = fieldKey.toLowerCase().includes('pdf');
+  const isPdfFile = value && value.toLowerCase().endsWith('.pdf');
 
   return (
     <div className="space-y-2">
@@ -67,6 +69,11 @@ export function MediaField({ fieldKey, value, onChange, hint }: MediaFieldProps)
                 playsInline
                 onError={() => setShowPreview(false)}
               />
+            ) : isPdfFile ? (
+              <div className="w-20 h-20 rounded-xl border border-slate-200 bg-slate-50 flex flex-col items-center justify-center text-slate-500">
+                <FileText className="w-8 h-8 mb-1" />
+                <span className="text-[9px] uppercase font-bold text-slate-400">PDF</span>
+              </div>
             ) : (
               <img
                 src={value}
@@ -85,7 +92,7 @@ export function MediaField({ fieldKey, value, onChange, hint }: MediaFieldProps)
           </div>
         ) : (
           <div className="w-20 h-20 rounded-xl border-2 border-dashed border-slate-200 flex items-center justify-center bg-slate-50 shrink-0">
-            <ImageIcon className="w-6 h-6 text-slate-300" />
+            {isPdfField ? <FileText className="w-6 h-6 text-slate-300" /> : <ImageIcon className="w-6 h-6 text-slate-300" />}
           </div>
         )}
         <div className="flex-1 space-y-2">
@@ -123,14 +130,14 @@ export function MediaField({ fieldKey, value, onChange, hint }: MediaFieldProps)
               ref={fileInputRef}
               type="file"
               className="hidden"
-              accept="image/*,video/*"
+              accept={isPdfField ? "application/pdf" : "image/*,video/*"}
               onChange={handleUpload}
             />
           </div>
           <p className="text-[10px] text-slate-400">
             Paste media URL or click "Upload" to upload from your device.
             <span className="block mt-1 text-rose-500 font-medium">
-              * Disclaimer: Max upload size is 3MB. Supports images and videos.
+              * Disclaimer: Max upload size is 3MB. Supports {isPdfField ? 'PDF files' : 'images and videos'}.
             </span>
             {hint && (
               <span className="block mt-1 text-[#4B2A63] font-medium">
