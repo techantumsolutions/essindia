@@ -36,7 +36,7 @@ export function MegaMenuContent({ data }: Props) {
   const activeSub = activeCategory?.subCategories.find((s) => s.id === activeSubId);
   const leaves = activeSub?.subSubCategories ?? [];
   const showRightPanel = leaves.length > 0;
-  
+
   const hasSubSubCategories = React.useMemo(() => {
     return activeCategory?.subCategories.some(
       (sub) => sub.subSubCategories && sub.subSubCategories.length > 0
@@ -115,7 +115,7 @@ export function MegaMenuContent({ data }: Props) {
           </motion.div>
         )}
 
-        <div className="flex min-h-[350px]">
+        <div className="flex">
           <motion.div
             className={cn(
               'border-r border-slate-50 p-6',
@@ -133,7 +133,7 @@ export function MegaMenuContent({ data }: Props) {
                       href={sub.href}
                       onMouseEnter={() => setActiveSubId(sub.id)}
                       className={cn(
-                        'text-left p-4 rounded-xl transition-all cursor-pointer block',
+                        'text-left p-4 rounded-xl  transition-all cursor-pointer block max-w-[250px]',
                         activeSubId === sub.id
                           ? 'bg-[#F3EFFF] translate-x-1'
                           : 'hover:bg-slate-50 hover:translate-x-1'
