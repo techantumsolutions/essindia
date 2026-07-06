@@ -6,6 +6,9 @@ import { navigationRepository } from '@/repositories/navigation.repository';
 import { navigationTreeRepository } from '@/repositories/navigation-tree.repository';
 import { isAdminRequest } from '@/lib/cms/auth';
 import { unauthorized } from '@/lib/cms/api-response';
+import { revalidatePath } from 'next/cache';
+
+export const dynamic = 'force-dynamic';
 
 export async function POST(request: Request) {
   if (!(await isAdminRequest())) return unauthorized();
@@ -30,6 +33,9 @@ export async function POST(request: Request) {
     // Invalidate caches
     await navigationRepository.clearCache('header-main');
     await navigationTreeRepository.clearCache('header-main');
+
+    // Force revalidation of all layouts and pages
+    revalidatePath('/', 'layout');
 
     return NextResponse.json({ success: true });
   } catch (error) {

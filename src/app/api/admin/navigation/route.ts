@@ -5,6 +5,11 @@ import { eq } from 'drizzle-orm';
 import { navigationTreeRepository } from '@/repositories/navigation-tree.repository';
 import { isAdminRequest } from '@/lib/cms/auth';
 import { unauthorized } from '@/lib/cms/api-response';
+import { revalidatePath } from 'next/cache';
+
+import { navigationRepository } from '@/repositories/navigation.repository';
+
+export const dynamic = 'force-dynamic';
 
 export async function GET(request: Request) {
   if (!(await isAdminRequest())) return unauthorized();
@@ -87,6 +92,45 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: 'Invalid type' }, { status: 400 });
   } catch (error) {
     console.error('[API Navigation POST]', error);
+    return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
+  }
+}
+
+export async function PUT(request: Request) {
+  if (!(await isAdminRequest())) return unauthorized();
+
+  try {
+    const body = await request.json();
+    const { location, logoUrl, getStartedText, getStartedLink } = body;
+
+    if (!location) {
+      return NextResponse.json({ error: 'location is required' }, { status: 400 });
+    }
+
+    const updated = await db
+      .update(navigationMenus)
+      .set({
+        logoUrl: logoUrl !== undefined ? logoUrl : undefined,
+        getStartedText: getStartedText !== undefined ? getStartedText : undefined,
+        getStartedLink: getStartedLink !== undefined ? getStartedLink : undefined,
+        updatedAt: new Date(),
+      })
+      .where(eq(navigationMenus.location, location))
+      .returning();
+
+    if (!updated.length) {
+      return NextResponse.json({ error: 'Menu not found' }, { status: 404 });
+    }
+
+    await navigationRepository.clearCache('header-main');
+    await navigationTreeRepository.clearCache('header-main');
+
+    // Force revalidation of all layouts and pages (which includes the header components)
+    revalidatePath('/', 'layout');
+
+    return NextResponse.json(updated[0]);
+  } catch (error) {
+    console.error('[API Navigation PUT]', error);
     return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
   }
 }
