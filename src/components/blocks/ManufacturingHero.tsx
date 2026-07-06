@@ -43,15 +43,15 @@ export default function ManufacturingHero({ content }: { content?: any }) {
               </div>
             )}
 
-            {title.includes('<p>') ? (
+             {title.includes('<p>') ? (
               <div 
-                className="text-[3rem] md:text-[4rem] leading-[1.1] font-light tracking-wide mb-6 prose prose-invert max-w-none" 
+                className="text-4xl sm:text-5xl lg:text-6xl leading-[1.1] font-light tracking-tight mb-6 prose prose-invert max-w-none" 
                 style={{ color: titleColor }}
                 dangerouslySetInnerHTML={{ __html: title }} 
               />
             ) : (
               <h1 
-                className="text-[3rem] md:text-[4rem] leading-[1.1] font-light tracking-wide mb-6" 
+                className="text-4xl sm:text-5xl lg:text-6xl leading-[1.1] font-light tracking-tight mb-6" 
                 style={{ color: titleColor }}
                 dangerouslySetInnerHTML={{ __html: title }} 
               />
@@ -59,12 +59,12 @@ export default function ManufacturingHero({ content }: { content?: any }) {
 
             {description.includes('<p>') ? (
               <div 
-                className="text-[15px] max-w-[480px] leading-relaxed mb-10 prose prose-invert max-w-none prose-p:my-2"
+                className="text-base sm:text-lg max-w-xl leading-relaxed mb-8 prose prose-invert max-w-none prose-p:my-2"
                 style={{ color: descriptionColor }}
                 dangerouslySetInnerHTML={{ __html: description }}
               />
             ) : (
-              <p className="text-[15px] max-w-[480px] leading-relaxed mb-10" style={{ color: descriptionColor }}>
+              <p className="text-base sm:text-lg max-w-xl leading-relaxed mb-8" style={{ color: descriptionColor }}>
                 {description}
               </p>
             )}
@@ -72,14 +72,14 @@ export default function ManufacturingHero({ content }: { content?: any }) {
             <div className="flex flex-wrap items-center gap-4">
               <Link 
                 href={primaryButtonUrl} 
-                className="px-8 py-3.5 cursor-pointer rounded-full text-sm font-bold transition-all shadow-lg inline-block text-center hover:brightness-95"
+                className="px-6 py-3 cursor-pointer rounded-full text-sm font-bold transition-all shadow-md inline-block text-center hover:brightness-95 min-w-[140px]"
                 style={{ backgroundColor: primaryButtonBgColor, color: primaryButtonTextColor }}
               >
                 {primaryButtonText}
               </Link>
               <Link 
                 href={secondaryButtonUrl} 
-                className="px-8 py-3.5 cursor-pointer rounded-full text-sm font-bold transition-all inline-block text-center hover:brightness-95"
+                className="px-6 py-3 cursor-pointer rounded-full text-sm font-bold transition-all inline-block text-center hover:brightness-95 min-w-[140px]"
                 style={{ backgroundColor: secondaryButtonBgColor, color: secondaryButtonTextColor }}
               >
                 {secondaryButtonText}
@@ -92,13 +92,15 @@ export default function ManufacturingHero({ content }: { content?: any }) {
             initial={{ opacity: 0, x: 30 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.8, delay: 0.2 }}
-            className="relative w-full flex items-center justify-center lg:justify-end mt-12 lg:mt-0"
+            className="relative w-full flex items-center justify-center lg:justify-end mt-12 lg:mt-0 w-full"
           >
-            <img
-              src={image}
-              alt="Manufacturing ERP Automation"
-              className="w-full max-w-full object-contain"
-            />
+            <div className="relative w-full aspect-[4/3] max-w-[500px] rounded-2xl overflow-hidden shadow-2xl">
+              <img
+                src={image}
+                alt="Manufacturing ERP Automation"
+                className="w-full h-full object-contain"
+              />
+            </div>
           </motion.div>
         </div>
       </div>

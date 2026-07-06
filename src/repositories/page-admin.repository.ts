@@ -171,7 +171,7 @@ export class PageAdminRepository {
           categorySlug,
           subSlug,
           subSubSlug,
-          pageSlug: !subSubSlug ? pageSlug : undefined,
+          pageSlug,
         });
       }
 

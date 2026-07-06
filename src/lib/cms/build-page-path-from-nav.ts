@@ -11,7 +11,13 @@ export function buildPagePathFromNavHierarchy(input: {
   if (input.categorySlug) parts.push(input.categorySlug);
   if (input.subSlug) parts.push(input.subSlug);
   if (input.subSubSlug) parts.push(input.subSubSlug);
-  else if (input.pageSlug) parts.push(input.pageSlug);
+  
+  if (input.pageSlug) {
+    const lastPart = parts[parts.length - 1];
+    if (input.pageSlug !== lastPart && input.pageSlug !== input.navSlug.replace(/^\//, '')) {
+      parts.push(input.pageSlug);
+    }
+  }
   return `/${parts.join('/')}`;
 }
 
@@ -22,7 +28,12 @@ export function buildPagePathFromNavAndCategorySlugs(
   pageSlug?: string
 ): string {
   const parts = [navSlug.replace(/^\//, ''), ...categorySlugs].filter(Boolean);
-  if (pageSlug) parts.push(pageSlug);
+  if (pageSlug) {
+    const lastPart = parts[parts.length - 1];
+    if (pageSlug !== lastPart && pageSlug !== navSlug.replace(/^\//, '')) {
+      parts.push(pageSlug);
+    }
+  }
   return `/${parts.join('/')}`;
 }
 
