@@ -65,15 +65,15 @@ export function AssHero({ content }: { content?: AssHeroContent }) {
               </span>
             )}
 
-            {title.includes('<p>') ? (
+             {title.includes('<p>') ? (
               <div
-                className="text-4xl md:text-5xl lg:text-[62px] font-extralight mb-6 leading-[1.12] tracking-tight whitespace-pre-line prose prose-invert max-w-none"
+                className="text-4xl sm:text-5xl lg:text-6xl font-light mb-6 leading-[1.1] tracking-tight whitespace-pre-line prose prose-invert max-w-none"
                 style={{ color: titleColor }}
                 dangerouslySetInnerHTML={{ __html: title }}
               />
             ) : (
               <h1
-                className="text-4xl md:text-5xl lg:text-[62px] font-light mb-6 leading-[1.12] tracking-tight whitespace-pre-line"
+                className="text-4xl sm:text-5xl lg:text-6xl font-light mb-6 leading-[1.1] tracking-tight whitespace-pre-line"
                 style={{ color: titleColor }}
               >
                 {title}
@@ -82,12 +82,12 @@ export function AssHero({ content }: { content?: AssHeroContent }) {
 
             {description.includes('<p>') ? (
               <div
-                className="text-base md:text-lg leading-relaxed mb-10 max-w-xl font-light prose prose-invert max-w-none prose-p:my-2"
+                className="text-base sm:text-lg leading-relaxed mb-8 max-w-xl font-light prose prose-invert max-w-none prose-p:my-2"
                 style={{ color: descriptionColor }}
                 dangerouslySetInnerHTML={{ __html: description }}
               />
             ) : (
-              <p className="text-base md:text-lg leading-relaxed mb-10 max-w-xl font-light" style={{ color: descriptionColor }}>
+              <p className="text-base sm:text-lg leading-relaxed mb-8 max-w-xl font-light" style={{ color: descriptionColor }}>
                 {description}
               </p>
             )}
@@ -95,14 +95,14 @@ export function AssHero({ content }: { content?: AssHeroContent }) {
             <div className="flex flex-wrap gap-4">
               <Link
                 href={button1Url}
-                className="inline-block font-bold px-7 py-3 rounded-full border-2 hover:brightness-110 transition-all text-sm"
+                className="inline-block font-bold px-6 py-3 rounded-full border-2 hover:brightness-110 transition-all text-sm text-center min-w-[140px]"
                 style={{ backgroundColor: button1BgColor, color: button1TextColor, borderColor: button1BorderColor }}
               >
                 {button1Text}
               </Link>
               <Link
                 href={button2Url}
-                className="inline-block font-bold px-7 py-3 rounded-full border-2 hover:brightness-110 transition-all text-sm"
+                className="inline-block font-bold px-6 py-3 rounded-full border-2 hover:brightness-110 transition-all text-sm text-center min-w-[140px]"
                 style={{ backgroundColor: button2BgColor, color: button2TextColor, borderColor: button2BorderColor }}
               >
                 {button2Text}
@@ -112,7 +112,7 @@ export function AssHero({ content }: { content?: AssHeroContent }) {
 
           {/* Right Image */}
           <div className="lg:w-1/2 w-full flex justify-center lg:justify-end">
-            <div className="relative w-full max-w-[620px] aspect-[4/3]">
+            <div className="relative w-full aspect-[4/3] max-w-[500px]">
               <Image
                 src={image}
                 alt="After Sales Service Dashboard"

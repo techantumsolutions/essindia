@@ -326,7 +326,7 @@ export function BlogDetailSection({ content }: BlogDetailSectionProps) {
           <div className="flex items-center justify-between">
             <h3 className="text-xl font-black text-slate-800 uppercase tracking-wider">Latest Blog</h3>
             <button
-              onClick={() => window.location.href = '/blog'}
+              onClick={() => window.location.href = '/blogs'}
               className="text-[#103D38] hover:text-[#0A2E2A] text-xs font-black uppercase tracking-wider flex items-center gap-1.5 cursor-pointer group hover:underline"
             >
               View Portfolio

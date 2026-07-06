@@ -184,7 +184,7 @@ export function PageCreateWizard({ open, onClose, templates, onSubmit }: Props) 
         categorySlug: cat?.slug,
         subSlug: sub?.slug,
         subSubSlug: subSub?.slug,
-        pageSlug: !subSub ? pageSlug : undefined, // If placed at leaf, leaf slug is used. Wait!
+        pageSlug,
       });
     }
 

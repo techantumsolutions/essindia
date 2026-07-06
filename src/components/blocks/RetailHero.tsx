@@ -49,8 +49,8 @@ export function RetailHero({ content }: { content: RetailHeroContent }) {
             className="flex flex-col items-start space-y-0"
           >
             {badgeText && (
-              <span 
-                className="inline-block py-2 px-8 rounded-full text-sm font-normal tracking-wide shadow-sm"
+              <span
+                className="inline-block py-2 px-8 rounded-full mb-6 text-sm font-normal tracking-wide shadow-sm"
                 style={{ backgroundColor: badgeBgColor, color: badgeTextColor }}
               >
                 {badgeText}
@@ -58,32 +58,32 @@ export function RetailHero({ content }: { content: RetailHeroContent }) {
             )}
 
             {title.includes('<p>') ? (
-              <div 
-                className="text-4xl lg:text-5xl font-extralight leading-tight prose max-w-none"
+              <div
+                className="text-4xl sm:text-5xl lg:text-6xl font-light leading-[1.1] mb-6 prose max-w-none"
                 style={{ color: titleColor }}
                 dangerouslySetInnerHTML={{ __html: title }}
               />
             ) : (
-              <h1 className="text-4xl lg:text-5xl font-extralight leading-tight" style={{ color: titleColor }}>
+              <h1 className="text-4xl sm:text-5xl lg:text-6xl font-light leading-[1.1] mb-6" style={{ color: titleColor }}>
                 {title}
               </h1>
             )}
 
             {description.includes('<p>') ? (
-              <div 
-                className="text-sm leading-relaxed max-w-xl prose max-w-none prose-p:my-2"
+              <div
+                className="text-base sm:text-lg leading-relaxed max-w-xl mb-8 prose max-w-none prose-p:my-2"
                 style={{ color: descriptionColor }}
                 dangerouslySetInnerHTML={{ __html: description }}
               />
             ) : (
-              <p className="text-sm leading-relaxed max-w-xl" style={{ color: descriptionColor }}>
+              <p className="text-base sm:text-lg leading-relaxed max-w-xl mb-8" style={{ color: descriptionColor }}>
                 {description}
               </p>
             )}
 
             <Link
               href={buttonUrl}
-              className="group text-sm inline-flex items-center justify-center space-x-2 font-bold py-2 px-8 rounded-full transition-all duration-300 shadow-md hover:shadow-lg transform hover:-translate-y-1 mt-4"
+              className="group text-sm inline-flex items-center justify-center space-x-2 font-bold py-3 px-6 rounded-full transition-all duration-300 shadow-md hover:shadow-lg transform hover:-translate-y-1 min-w-[140px]"
               style={{ backgroundColor: buttonBgColor, color: buttonTextColor }}
             >
               <span>{buttonText}</span>
@@ -95,13 +95,15 @@ export function RetailHero({ content }: { content: RetailHeroContent }) {
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.6, delay: 0.2 }}
-            className="relative lg:h-[600px] flex justify-center items-center"
+            className="relative flex justify-center items-center w-full"
           >
-            <img
-              src={image}
-              alt="Retail ERP Dashboard"
-              className="w-full h-[400px] object-contain drop-shadow-2xl"
-            />
+            <div className="relative w-full aspect-[4/3] max-w-[500px] rounded-2xl overflow-hidden shadow-2xl">
+              <img
+                src={image}
+                alt="Retail ERP Dashboard"
+                className="w-full h-full object-contain"
+              />
+            </div>
           </motion.div>
 
         </div>

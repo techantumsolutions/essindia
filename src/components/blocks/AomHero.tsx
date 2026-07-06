@@ -94,24 +94,24 @@ export function AomHero({ content }: { content?: AomHeroContent }) {
             )}
 
             <h1
-              className="text-4xl sm:text-5xl font-light tracking-tight leading-tight"
+              className="text-4xl sm:text-5xl lg:text-6xl font-light tracking-tight leading-[1.1] mb-6 whitespace-pre-line"
               style={{ color: titleColor }}
             >
               {title}
             </h1>
 
             <p
-              className="text-base sm:text-lg leading-relaxed max-w-xl"
+              className="text-base sm:text-lg leading-relaxed font-light mb-8 max-w-xl"
               style={{ color: descriptionColor }}
             >
               {description}
             </p>
 
-            <div className="flex flex-wrap gap-4 pt-2">
+            <div className="flex flex-wrap gap-4">
               {button1Text && (
                 <Link
                   href={button1Url}
-                  className="px-8 py-3.5 rounded-full text-sm font-bold shadow-lg transition-transform duration-300 hover:-translate-y-0.5 border "
+                  className="px-6 py-3 rounded-full text-sm font-bold shadow-md hover:shadow-lg transition-transform duration-300 hover:-translate-y-0.5 border text-center min-w-[140px]"
                   style={{
                     backgroundColor: button1BgColor,
                     borderColor: button1BorderColor,
@@ -125,7 +125,7 @@ export function AomHero({ content }: { content?: AomHeroContent }) {
               {button2Text && (
                 <Link
                   href={button2Url}
-                  className="px-8 py-3.5 rounded-full text-sm font-bold shadow-lg transition-transform duration-300 hover:-translate-y-0.5 border"
+                  className="px-6 py-3 rounded-full text-sm font-bold border shadow-sm hover:shadow-md transition-transform duration-300 hover:-translate-y-0.5 text-center min-w-[140px]"
                   style={{
                     backgroundColor: button2BgColor,
                     borderColor: button2BorderColor,
@@ -140,8 +140,8 @@ export function AomHero({ content }: { content?: AomHeroContent }) {
 
           {/* Right Image Column */}
           {rightImage && (
-            <div className="flex-1 w-full max-w-md lg:max-w-xl relative aspect-square lg:aspect-auto lg:h-[500px] shrink-0">
-              <div className="w-full h-full relative animate-[float_6s_ease-in-out_infinite]">
+            <div className="flex-1 w-full flex justify-center">
+              <div className="relative w-full aspect-[4/3] max-w-[500px] rounded-2xl overflow-hidden animate-[float_6s_ease-in-out_infinite]">
                 <Image
                   src={rightImage}
                   alt={title}
