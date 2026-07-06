@@ -257,6 +257,13 @@ export default function AdminCareersPortal() {
     const file = e.target.files?.[0];
     if (!file) return;
 
+    if (!file.name.toLowerCase().endsWith('.pdf')) {
+      alert('Only PDF files are supported for Job Description parsing.');
+      toast.error('Only PDF files are supported for Job Description parsing.');
+      e.target.value = '';
+      return;
+    }
+
     setIsParsing(true);
     const formData = new FormData();
     formData.append('file', file);
@@ -275,6 +282,17 @@ export default function AdminCareersPortal() {
       }
 
       const parsedData = await res.json();
+
+      if (parsedData.parsed === false) {
+        setJobForm((prev) => ({
+          ...prev,
+          jdUrl: parsedData.jdUrl || '',
+        }));
+        setParsedFileName(file.name);
+        toast.error('Due to some issue, unable to extract content. Please enter details manually.', { id: parseToastId });
+        alert('Due to some issue, unable to extract content. Please enter details manually.');
+        return;
+      }
       
       setJobForm({
         title: parsedData.title || '',
@@ -840,7 +858,7 @@ export default function AdminCareersPortal() {
                                     <span>Use Different File</span>
                                     <input
                                       type="file"
-                                      accept=".pdf,.docx,.txt"
+                                      accept=".pdf"
                                       onChange={handleJDUpload}
                                       className="hidden"
                                     />
@@ -853,13 +871,13 @@ export default function AdminCareersPortal() {
                                   </div>
                                   <div>
                                     <p className="text-sm font-bold text-slate-900">Auto-fill via Job Description</p>
-                                    <p className="text-xs text-slate-500 mt-0.5">Upload a PDF, DOCX, or TXT file to populate fields automatically</p>
+                                    <p className="text-xs text-slate-500 mt-0.5">Upload a PDF file to populate fields automatically</p>
                                   </div>
                                   <label className="inline-flex items-center px-4 py-2 bg-[#4B2A63] hover:bg-[#3B198F] text-white text-xs font-bold rounded-full transition-colors cursor-pointer shadow-sm mt-1">
                                     <span>Upload JD File</span>
                                     <input
                                       type="file"
-                                      accept=".pdf,.docx,.txt"
+                                      accept=".pdf"
                                       onChange={handleJDUpload}
                                       className="hidden"
                                     />
