@@ -23,9 +23,9 @@ export default function ManufacturingHero({ content }: { content?: any }) {
   const image = content?.image || '/Modules-manufacturing/Banner-image.png';
 
   return (
-    <section className="relative px-6 overflow-hidden py-14" style={{ backgroundColor: bgColor }}>
+    <section className="relative min-h-[80vh] flex items-center pt-40 pb-16 px-6 overflow-hidden" style={{ backgroundColor: bgColor }}>
       <div className="container mx-auto max-w-7xl relative z-10">
-        <div className="grid lg:grid-cols-2 gap-12 lg:gap-8 pt-20 items-center">
+        <div className="grid lg:grid-cols-2 gap-12 lg:gap-8 items-center">
 
           {/* Left Content */}
           <motion.div

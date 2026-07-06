@@ -70,7 +70,7 @@ export function PortfolioSection({ content }: PortfolioSectionProps) {
   };
 
   return (
-    <section className="py-24 bg-[#F2F6F9] overflow-hidden relative">
+    <section className="py-14 bg-[#F2F6F9] overflow-hidden relative">
       <div className="container mx-auto px-4 md:px-8 max-w-7xl">
         
         {/* Header */}

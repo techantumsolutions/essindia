@@ -46,7 +46,7 @@ export function HospitalHero({ content }: HospitalHeroProps) {
   const image = content?.image || '/Hospital Management/Rectangle 197.png';
 
   return (
-    <section className="pt-40 pb-14 px-6 relative overflow-hidden" style={{ backgroundColor: bgColor }}>
+    <section className="relative min-h-[80vh] flex items-center pt-40 pb-16 px-6 overflow-hidden" style={{ backgroundColor: bgColor }}>
       <div className="container mx-auto max-w-7xl relative z-10">
         <div className="flex flex-col lg:flex-row items-center justify-between gap-12">
           {/* Content */}

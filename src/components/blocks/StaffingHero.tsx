@@ -40,7 +40,7 @@ export function StaffingHero({ content }: StaffingHeroProps) {
   const image = content?.image || '/Staffing Services/image 54.png';
 
   return (
-    <section className="pt-40 pb-14 px-6" style={{ backgroundColor: bgColor }}>
+    <section className="relative min-h-[80vh] flex items-center pt-40 pb-16 px-6" style={{ backgroundColor: bgColor }}>
       <div className="container mx-auto max-w-7xl">
         <div className="flex flex-col lg:flex-row items-center gap-12 lg:gap-20">
 

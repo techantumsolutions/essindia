@@ -10,6 +10,8 @@ interface HospitalRegulatoryContent {
   description?: string;
   points?: RegulatoryPoint[];
   image1?: string;
+  image2?: string;
+  image3?: string;
 }
 
 interface HospitalRegulatoryProps {
@@ -30,17 +32,35 @@ export function HospitalRegulatory({ content }: HospitalRegulatoryProps) {
   ];
 
   const points = content?.points || defaultPoints;
-  const image1 = content?.image1 || "/Hospital Management/Frame 270.png";
+  let image1 = content?.image1 || "/Hospital Management/image 71.png";
+  if (image1 === "/Hospital Management/Frame 270.png") {
+    image1 = "/Hospital Management/image 71.png";
+  }
+  const image2 = content?.image2 || "/Hospital Management/image 72.png";
+  const image3 = content?.image3 || "/Hospital Management/image 73.png";
 
   return (
     <section className="py-14 px-6 bg-white border-b">
       <div className="container mx-auto max-w-7xl">
-        <div className="flex flex-col-reverse lg:flex-row items-center gap-12 lg:gap-20">
+        <div className="flex flex-col-reverse lg:flex-row items-stretch gap-12 lg:gap-20">
 
           {/* Left Image Composition */}
           <div className="lg:w-1/2 w-full">
-            <div className="relative w-full aspect-[4/3] lg:aspect-auto lg:h-[500px]">
-              <Image src={image1} alt="Regulatory compliance highlight" fill className="object-contain" />
+            <div className="flex flex-col gap-4 w-full h-full">
+              {/* Top Image */}
+              <div className="relative w-full flex-1 min-h-[250px] rounded-3xl overflow-hidden shadow-lg border border-gray-100">
+                <Image src={image1} alt="Regulatory highlight 1" fill className="object-cover" />
+              </div>
+              
+              {/* Bottom Row */}
+              <div className="flex gap-4 w-full h-48 lg:h-64">
+                <div className="relative w-1/2 h-full rounded-3xl overflow-hidden shadow-lg border border-gray-100">
+                  <Image src={image2} alt="Regulatory highlight 2" fill className="object-cover" />
+                </div>
+                <div className="relative w-1/2 h-full rounded-3xl overflow-hidden shadow-lg border border-gray-100">
+                  <Image src={image3} alt="Regulatory highlight 3" fill className="object-cover" />
+                </div>
+              </div>
             </div>
           </div>
 

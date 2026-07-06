@@ -14,7 +14,10 @@ export async function PATCH(
     const { sectionId } = await params;
     const body = await request.json();
     const parsed = pageSectionSchema.partial().safeParse(body);
-    if (!parsed.success) return badRequest(parsed.error.message);
+    if (!parsed.success) {
+      console.error('Section save validation failed:', parsed.error.format());
+      return badRequest(parsed.error.message);
+    }
 
     const section = await pageAdminRepository.updateSection(sectionId, parsed.data);
     if (!section) return notFound('Section not found');

@@ -27,7 +27,7 @@ export function ContactHero({ content }: { content?: ContactHeroContent }) {
     <div className="w-full flex flex-col">
       {/* Dark Banner */}
       <div 
-        className="relative w-full min-h-[50vh] flex flex-col items-center justify-center pt-40 pb-14"
+        className="relative w-full min-h-[80vh] flex flex-col items-center justify-center pt-40 pb-16"
         style={{ backgroundColor: bgColor }}
       >
         {/* Background Image Overlay */}

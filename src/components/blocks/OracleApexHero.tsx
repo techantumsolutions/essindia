@@ -56,7 +56,7 @@ export function OracleApexHero({ content }: { content?: OracleApexHeroContent })
 
   return (
     <section
-      className="relative min-h-[500px] flex items-center pt-40 pb-14 overflow-hidden font-sans"
+      className="relative min-h-[80vh] flex items-center pt-40 pb-16 overflow-hidden font-sans"
       style={isGradient ? { backgroundImage: bgColor } : { backgroundColor: bgColor }}
     >
       {/* Background Subtle Pattern */}

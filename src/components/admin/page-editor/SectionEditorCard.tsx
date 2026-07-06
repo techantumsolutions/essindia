@@ -256,7 +256,8 @@ const DEFAULT_ASS_CTA_CONTENT: Record<string, any> = {
   buttonText: 'Explore Your Upgrade Roadmap',
   buttonUrl: '#',
   buttonBgColor: '#fcc42c',
-  buttonTextColor: '#000000'
+  buttonTextColor: '#000000',
+  pdfUrl: ''
 };
 
 const DEFAULT_AOM_HERO_CONTENT: Record<string, any> = {
@@ -363,6 +364,7 @@ const DEFAULT_FMCG_HERO_CONTENT: Record<string, any> = {
 };
 
 const DEFAULT_FMCG_LOGOS_CONTENT: Record<string, any> = {
+  autoScroll: true,
   logos: [
     { image: '/BI-industy solution-FMGC/1704524770_microsoft erp-min 1.png', alt: 'Microsoft Dynamics' },
     { image: '/BI-industy solution-FMGC/1704524759_oracle erp-min 1.png', alt: 'Oracle E-Business Suite' },
@@ -731,7 +733,8 @@ const DEFAULT_FMCG_FAQ_CONTENT: Record<string, any> = {
 const DEFAULT_FMCG_CTA_CONTENT: Record<string, any> = {
   title: 'Enable Digital Transformation of Your Business with Our Wide Range of IT Services',
   buttonText: 'TALK TO OUR EXPERTS',
-  buttonUrl: '/contact'
+  buttonUrl: '/contact',
+  pdfUrl: ''
 };
 
 const DEFAULT_ROI_HERO_CONTENT: Record<string, any> = {
@@ -925,7 +928,8 @@ const DEFAULT_ORACLE_CTA_CONTENT: Record<string, any> = {
   title: 'Future-Ready Oracle Database Strategy',
   description: 'Database upgrades often serve as a foundation for modernization initiatives, including migration to Oracle APEX or cloud infrastructure. We help define that roadmap strategically.',
   buttonText: 'Explore Your Upgrade Roadmap',
-  buttonUrl: '/contact'
+  buttonUrl: '/contact',
+  pdfUrl: ''
 };
 
 const DEFAULT_BI_HERO_CONTENT: Record<string, any> = {
@@ -1260,6 +1264,7 @@ const DEFAULT_RPA_OVERVIEW_CONTENT: Record<string, any> = {
   title: 'Robotic Process Automation Solutions',
   description: 'At ESS, we help businesses streamline operations through intelligent RPA solutions tailored to their unique workflows and existing systems. From identifying automation opportunities to implementing scalable processes, we focus on improving efficiency, accuracy, visibility, and operational consistency. Whether organizations are beginning their automation journey or expanding across departments, our expert team ensures every solution integrates smoothly, delivers measurable business impact, and supports long-term digital transformation with confidence.',
   subtitle: 'A successful RPA Journey Starts with Selecting the Right Implementation Partner',
+  autoScroll: true,
   cards: [
     {
       icon: '/RPA-Robotic Process Automation (RPA)/problem-process-solution_svgrepo.com.png',
@@ -1372,6 +1377,7 @@ const DEFAULT_RPA_SOLUTIONS_CONTENT: Record<string, any> = {
 
 const DEFAULT_RPA_FRAMEWORKS_CONTENT: Record<string, any> = {
   title: 'ESS brings expertise on frameworks',
+  autoScroll: true,
   logos: [
     { image: '/RPA-Robotic Process Automation (RPA)/image 64.png' },
     { image: '/RPA-Robotic Process Automation (RPA)/image 65.png' },
@@ -1419,7 +1425,8 @@ const DEFAULT_RPA_FAQ_CONTENT: Record<string, any> = {
 const DEFAULT_RPA_CTA_CONTENT: Record<string, any> = {
   title: 'Download Our eBook - 50+ Industry Specific RPA Use Cases',
   buttonText: 'Download Now',
-  buttonUrl: '#'
+  buttonUrl: '#',
+  pdfUrl: ''
 };
 
 const DEFAULT_ORACLE_APEX_HERO_CONTENT: Record<string, any> = {
@@ -1542,7 +1549,8 @@ const DEFAULT_ORACLE_APEX_CTA_CONTENT: Record<string, any> = {
   buttonText: 'Get start Now',
   buttonBgColor: '#ffca28',
   buttonTextColor: '#000000',
-  buttonUrl: '/contact'
+  buttonUrl: '/contact',
+  pdfUrl: ''
 };
 
 const EUROPE_COMMON_DEFAULTS = {
@@ -1753,7 +1761,7 @@ export function SectionEditorCard({
 
   const mergedContent = React.useMemo(() => {
     let baseSchema = schema as Record<string, JsonValue> | undefined;
-    
+
     // Inject defaults if schema is missing or empty
     if (!baseSchema || Object.keys(baseSchema).length === 0) {
       if (section.type === 'case-study-detail') {
@@ -1904,9 +1912,11 @@ export function SectionEditorCard({
     if (meta?.fieldOrder) {
       meta.fieldOrder.forEach((key) => {
         if (!(key in finalMerged)) {
-          // Default arrays for known list fields
+          // Default arrays/booleans for known list fields
           if (['items', 'processes', 'features', 'faqs', 'cards', 'values', 'modules', 'paragraphs', 'leftItems', 'rightItems', 'steps', 'logos', 'stats', 'statistics', 'slides', 'categories', 'tabs', 'benefits', 'industries', 'solutions', 'points', 'topics'].includes(key)) {
             finalMerged[key] = [];
+          } else if (['autoScroll', 'isActive', 'supportsVariants'].includes(key)) {
+            finalMerged[key] = true;
           } else {
             finalMerged[key] = '';
           }
@@ -1919,11 +1929,11 @@ export function SectionEditorCard({
 
   const contentKeys = React.useMemo(() => {
     const keys = Object.keys(mergedContent);
-    if ((section.type === 'contact-hero' || section.type === 'job-detail-hero' || section.type === 'job-detail-content' || section.type === 'bi-highlight-strip' || section.type === 'bi-industries' || section.type === 'career-positions' || (section.type.startsWith('rpa-') && section.type !== 'rpa-hero') || section.type.startsWith('ass-') || section.type.startsWith('aom-') || section.type.startsWith('fmcg-') || section.type.startsWith('roi-')) && meta?.fieldOrder) {
-      return meta.fieldOrder;
-    }
-    if (meta?.fieldOrder) {
-      return keys.sort((a, b) => {
+    let finalKeys = keys;
+    if ((section.type.startsWith('contact-') || section.type === 'job-detail-hero' || section.type === 'job-detail-content' || section.type === 'bi-highlight-strip' || section.type === 'bi-industries' || section.type === 'career-positions' || section.type === 'about-us-cta' || section.type === 'career-cta' || section.type === 'blog' || section.type === 'about-us-services-overview' || section.type.startsWith('oracle-') || (section.type.startsWith('rpa-') && section.type !== 'rpa-hero') || section.type.startsWith('ass-') || section.type.startsWith('aom-') || section.type.startsWith('fmcg-') || section.type.startsWith('roi-') || section.type.startsWith('retail-')) && meta?.fieldOrder) {
+      finalKeys = meta.fieldOrder;
+    } else if (meta?.fieldOrder) {
+      finalKeys = keys.sort((a, b) => {
         const indexA = meta.fieldOrder!.indexOf(a);
         const indexB = meta.fieldOrder!.indexOf(b);
         if (indexA !== -1 && indexB !== -1) return indexA - indexB;
@@ -1932,7 +1942,15 @@ export function SectionEditorCard({
         return 0;
       });
     }
-    return keys;
+
+    // Force pdfUrl to be present for CTA sections
+    if (section.type.endsWith('cta') || section.type === 'about-us-cta' || section.type === 'career-cta') {
+      if (!finalKeys.includes('pdfUrl')) {
+        finalKeys = [...finalKeys, 'pdfUrl'];
+      }
+    }
+
+    return finalKeys;
   }, [mergedContent, meta, section.type]);
 
   const handleSave = async () => {
@@ -2050,35 +2068,35 @@ export function SectionEditorCard({
                   {/* Tabs Navigation */}
                   <div className="flex border-b border-slate-100 bg-slate-50/50 rounded-t-xl shrink-0 -mx-5 -mt-5 px-3">
                     {(() => {
-                      const tabs = section.type === 'testimonials-block' 
+                      const tabs = section.type === 'testimonials-block'
                         ? [
-                            { id: 'hero', label: 'Hero Banner' },
-                            { id: 'testimonials', label: 'Testimonials' },
-                          ]
+                          { id: 'hero', label: 'Hero Banner' },
+                          { id: 'testimonials', label: 'Testimonials' },
+                        ]
                         : section.type === 'case-study-detail'
-                        ? [
+                          ? [
                             { id: 'hero', label: 'Hero Section' },
                             { id: 'overview', label: 'Overview' },
                             { id: 'challenge', label: 'Challenge' },
                             { id: 'ess', label: 'ESS' },
                             { id: 'results', label: 'Results' },
                           ]
-                        : [
+                          : [
                             { id: 'basic', label: 'Basic Info' },
                             { id: 'hero', label: 'Hero Banner' },
                             { id: 'highlights', label: 'Highlights & Conclusion' },
                           ];
                       // Fallback tab if currently activeTab is not valid for the switch
-                      const tabsMap = section.type === 'testimonials-block' 
-                        ? TESTIMONIALS_TABS 
+                      const tabsMap = section.type === 'testimonials-block'
+                        ? TESTIMONIALS_TABS
                         : section.type === 'case-study-detail'
-                        ? CASE_STUDY_DETAIL_TABS
-                        : BLOG_DETAIL_TABS;
-                      
-                      const validTab = tabsMap[activeTab] 
-                        ? activeTab 
+                          ? CASE_STUDY_DETAIL_TABS
+                          : BLOG_DETAIL_TABS;
+
+                      const validTab = tabsMap[activeTab]
+                        ? activeTab
                         : (section.type === 'testimonials-block' || section.type === 'case-study-detail' ? 'hero' : 'basic');
-                      
+
                       return tabs.map((tab) => (
                         <button
                           key={tab.id}
@@ -2100,12 +2118,12 @@ export function SectionEditorCard({
                   {/* Tab Content Fields */}
                   <div className="space-y-4 pt-2">
                     {(() => {
-                      const tabsMap = section.type === 'testimonials-block' 
-                        ? TESTIMONIALS_TABS 
+                      const tabsMap = section.type === 'testimonials-block'
+                        ? TESTIMONIALS_TABS
                         : section.type === 'case-study-detail'
-                        ? CASE_STUDY_DETAIL_TABS
-                        : BLOG_DETAIL_TABS;
-                      
+                          ? CASE_STUDY_DETAIL_TABS
+                          : BLOG_DETAIL_TABS;
+
                       const activeKeys = tabsMap[activeTab] || (section.type === 'testimonials-block' || section.type === 'case-study-detail' ? tabsMap.hero : tabsMap.basic);
                       return activeKeys.map((key) => {
                         if (!contentKeys.includes(key)) return null;

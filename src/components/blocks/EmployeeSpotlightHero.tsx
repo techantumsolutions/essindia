@@ -10,7 +10,7 @@ export function EmployeeSpotlightHero({ content }: { content?: any }) {
   const image = content?.image || '/About-employee spot light/banner.png';
 
   return (
-    <section className="relative min-h-[400px] flex items-center justify-center overflow-hidden px-6 pb-14 pt-30">
+    <section className="relative min-h-[80vh] flex items-center justify-center overflow-hidden px-6 pb-16 pt-40">
       {/* Background Image */}
       <div
         className="absolute inset-0 z-0 bg-cover bg-center bg-no-repeat"

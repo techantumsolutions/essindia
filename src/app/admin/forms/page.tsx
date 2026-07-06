@@ -147,13 +147,13 @@ export default function FormsAdminPage() {
       <div className="flex gap-4 border-b border-slate-200 mb-6">
         <button 
           onClick={() => setActiveTab('contact')} 
-          className={`pb-3 px-2 font-semibold text-sm transition-colors border-b-2 ${activeTab === 'contact' ? 'border-[#4B2A63] text-[#4B2A63]' : 'border-transparent text-slate-500 hover:text-slate-800'}`}
+          className={`cursor-pointer pb-3 px-2 font-semibold text-sm transition-colors border-b-2 ${activeTab === 'contact' ? 'border-[#4B2A63] text-[#4B2A63]' : 'border-transparent text-slate-500 hover:text-slate-800'}`}
         >
           Contact Leads
         </button>
         <button 
           onClick={() => setActiveTab('cta')} 
-          className={`pb-3 px-2 font-semibold text-sm transition-colors border-b-2 ${activeTab === 'cta' ? 'border-[#4B2A63] text-[#4B2A63]' : 'border-transparent text-slate-500 hover:text-slate-800'}`}
+          className={`cursor-pointer pb-3 px-2 font-semibold text-sm transition-colors border-b-2 ${activeTab === 'cta' ? 'border-[#4B2A63] text-[#4B2A63]' : 'border-transparent text-slate-500 hover:text-slate-800'}`}
         >
           Page Leads
         </button>

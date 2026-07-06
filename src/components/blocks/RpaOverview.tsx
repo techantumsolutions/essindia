@@ -21,12 +21,14 @@ interface RpaOverviewContent {
   subtitle?: string;
   cards?: StatCard[];
   logos?: PartnerLogo[];
+  autoScroll?: boolean;
 }
 
 export function RpaOverview({ content }: { content?: RpaOverviewContent }) {
   const title = content?.title || 'Robotic Process Automation Solutions';
   const description = content?.description || 'At ESS, we help businesses streamline operations through intelligent RPA solutions tailored to their unique workflows and existing systems. From identifying automation opportunities to implementing scalable processes, we focus on improving efficiency, accuracy, visibility, and operational consistency. Whether organizations are beginning their automation journey or expanding across departments, our expert team ensures every solution integrates smoothly, delivers measurable business impact, and supports long-term digital transformation with confidence.';
   const subtitle = content?.subtitle || 'A successful RPA Journey Starts with Selecting the Right Implementation Partner';
+  const autoScroll = content?.autoScroll !== false;
 
   const defaultCards: StatCard[] = [
     {
@@ -57,6 +59,7 @@ export function RpaOverview({ content }: { content?: RpaOverviewContent }) {
 
   const cards = content?.cards && content.cards.length > 0 ? content.cards : defaultCards;
   const logos = content?.logos && content.logos.length > 0 ? content.logos : defaultLogos;
+  const duplicatedLogos = [...logos, ...logos, ...logos];
 
   return (
     <section className="py-14 bg-[#eff6ff] font-sans border-b">
@@ -140,28 +143,61 @@ export function RpaOverview({ content }: { content?: RpaOverviewContent }) {
 
         {/* Partner Logos Grid */}
         {logos.length > 0 && (
-          <div className="border-t border-blue-100/50 pt-10">
-            <div className="flex flex-wrap items-center justify-center gap-8 md:gap-14 opacity-75">
-              {logos.map((logo, idx) => (
-                <motion.div
-                  key={idx}
-                  initial={{ opacity: 0, scale: 0.95 }}
-                  whileInView={{ opacity: 1, scale: 1 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.35, delay: idx * 0.04 }}
-                  className="relative w-24 h-10 md:w-28 md:h-12 hover:scale-110 transition-all duration-300 select-none"
+          <div className="border-t border-blue-100/50 pt-10 overflow-hidden relative">
+            {autoScroll ? (
+              <div className="relative w-full overflow-hidden before:absolute before:left-0 before:top-0 before:z-10 before:h-full before:w-[100px] before:bg-gradient-to-r before:from-[#eff6ff] before:to-transparent after:absolute after:right-0 after:top-0 after:z-10 after:h-full after:w-[100px] after:bg-gradient-to-l after:from-[#eff6ff] after:to-transparent">
+                <div 
+                  className="flex w-max items-center gap-10 md:gap-16 lg:gap-24"
+                  style={{ animation: 'rpa-logos-marquee 15s linear infinite' }}
+                  onMouseEnter={(e) => e.currentTarget.style.animationPlayState = 'paused'}
+                  onMouseLeave={(e) => e.currentTarget.style.animationPlayState = 'running'}
                 >
-                  {logo.image && (
-                    <Image
-                      src={logo.image}
-                      alt={logo.name || 'Partner Logo'}
-                      fill
-                      className="object-contain"
-                    />
-                  )}
-                </motion.div>
-              ))}
-            </div>
+                  {duplicatedLogos.map((logo, idx) => (
+                    <div
+                      key={idx}
+                      className="relative w-24 h-10 md:w-28 md:h-12 shrink-0 select-none"
+                    >
+                      {logo.image && (
+                        <Image
+                          src={logo.image}
+                          alt={logo.name || 'Partner Logo'}
+                          fill
+                          className="object-contain opacity-75 hover:opacity-100 transition-opacity duration-300"
+                        />
+                      )}
+                    </div>
+                  ))}
+                </div>
+                <style dangerouslySetInnerHTML={{__html: `
+                  @keyframes rpa-logos-marquee {
+                    0% { transform: translateX(0%); }
+                    100% { transform: translateX(-33.333333%); }
+                  }
+                `}} />
+              </div>
+            ) : (
+              <div className="flex flex-wrap items-center justify-center gap-8 md:gap-14 opacity-75">
+                {logos.map((logo, idx) => (
+                  <motion.div
+                    key={idx}
+                    initial={{ opacity: 0, scale: 0.95 }}
+                    whileInView={{ opacity: 1, scale: 1 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.35, delay: idx * 0.04 }}
+                    className="relative w-24 h-10 md:w-28 md:h-12 hover:scale-110 transition-all duration-300 select-none"
+                  >
+                    {logo.image && (
+                      <Image
+                        src={logo.image}
+                        alt={logo.name || 'Partner Logo'}
+                        fill
+                        className="object-contain"
+                      />
+                    )}
+                  </motion.div>
+                ))}
+              </div>
+            )}
           </div>
         )}
 

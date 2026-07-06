@@ -66,12 +66,12 @@ export function ErpHero({ content }: ErpHeroProps) {
   };
 
   return (
-    <section className="relative w-full py-16 overflow-hidden" style={{ backgroundColor: bgColor }}>
+    <section className="relative w-full min-h-[80vh] flex items-center pt-40 pb-16 overflow-hidden" style={{ backgroundColor: bgColor }}>
       {/* Background Grid Pattern */}
       {/* <div className="absolute inset-0 bg-[linear-gradient(to_right,#e2e8f0_1px,transparent_1px),linear-gradient(to_bottom,#e2e8f0_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)] opacity-60 -z-10" /> */}
 
       <div className="container mx-auto px-4 md:px-8 max-w-7xl">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 pt-14 lg:gap-8 items-center">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8 items-center">
 
           {/* Left Column - Content */}
           <div className="lg:col-span-6 space-y-2 text-left">

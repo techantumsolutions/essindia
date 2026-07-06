@@ -13,6 +13,7 @@ export interface ContactLocation {
 export interface ContactLocationsContent {
   title?: string;
   description?: string;
+  image?: string;
   backgroundImageUrl?: string;
   locations?: ContactLocation[];
 }
@@ -20,6 +21,7 @@ export interface ContactLocationsContent {
 export function ContactLocations({ content }: { content?: ContactLocationsContent }) {
   const title = content?.title || "Our Global Footprint";
   const description = content?.description || "Headquartered in India with a strategic presence across Africa, the Middle East, USA, and Europe to support our global client base.";
+  const image = content?.image;
   const backgroundImageUrl = content?.backgroundImageUrl || "/Contact us/world-map.png";
 
   const locations = content?.locations || [
@@ -82,11 +84,16 @@ export function ContactLocations({ content }: { content?: ContactLocationsConten
       ></div>
 
       <div className="relative z-10 max-w-7xl mx-auto">
-        <div className="text-center max-w-3xl mx-auto mb-16">
+        <div className="text-center max-w-4xl mx-auto mb-16">
           <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">{title}</h2>
           <p className="text-gray-500 text-sm md:text-base leading-relaxed">
             {description}
           </p>
+          {image && (
+            <div className="mt-8 flex justify-center">
+              <img src={image} alt="Global Locations" className="max-w-full h-auto rounded-xl shadow-lg border border-gray-100" />
+            </div>
+          )}
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

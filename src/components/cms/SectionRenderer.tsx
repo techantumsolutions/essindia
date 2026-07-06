@@ -47,7 +47,6 @@ import { ContactHero } from '@/components/blocks/ContactHero';
 import { ContactInfoCards } from '@/components/blocks/ContactInfoCards';
 import { ContactFormFaq } from '@/components/blocks/ContactFormFaq';
 import { ContactLocations } from '@/components/blocks/ContactLocations';
-import { ContactMap } from '@/components/blocks/ContactMap';
 import { EmployeeSpotlightHero } from '@/components/blocks/EmployeeSpotlightHero';
 import { EmployeeSpotlightCards } from '@/components/blocks/EmployeeSpotlightCards';
 import { AboutUsHero } from '@/components/blocks/AboutUsHero';
@@ -287,8 +286,6 @@ export function SectionRenderer({ section }: SectionRendererProps) {
       return <ContactFormFaq content={section.content} />;
     case 'contact-locations':
       return <ContactLocations content={section.content} />;
-    case 'contact-map':
-      return <ContactMap content={section.content} />;
     case 'employee-spotlight-hero':
       return <EmployeeSpotlightHero content={section.content} />;
     case 'employee-spotlight-cards':

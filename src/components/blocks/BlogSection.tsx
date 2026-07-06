@@ -1,5 +1,6 @@
 'use client';
 
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { TextReveal } from '@/components/animations/TextReveal';
@@ -51,11 +52,34 @@ const defaultBlogs = [
 export function BlogSection({ content }: BlogSectionProps) {
   const heading = content?.heading || "News, Launches & Product Thinking";
   const subheading = content?.subheading || "Stay updated on what we're building, learning, and launching.";
-  const blogs = content?.blogs || defaultBlogs;
   const viewAllCta = content?.viewAllCta || { label: "Explore More", url: "/blog" };
 
+  const [blogs, setBlogs] = useState<Blog[]>(content?.blogs || defaultBlogs);
+
+  useEffect(() => {
+    async function fetchBlogs() {
+      try {
+        const res = await fetch('/api/blogs');
+        const data = await res.json();
+        if (Array.isArray(data) && data.length > 0) {
+          const formatted = data.slice(0, 3).map((b: any) => ({
+            title: b.title,
+            description: b.description || 'Read more about this topic in our blog.',
+            image: b.image || '/blog-1.png',
+            ctaText: 'Read More',
+            ctaUrl: b.fullPath || `/blog/${b.slug}`
+          }));
+          setBlogs(formatted);
+        }
+      } catch (err) {
+        console.error('[BlogSection]', err);
+      }
+    }
+    fetchBlogs();
+  }, []);
+
   return (
-    <section className="py-24 bg-[#F8F9FA] overflow-hidden">
+    <section className="py-14 bg-[#F8F9FA] overflow-hidden">
       <div className="container mx-auto px-4 md:px-8 max-w-7xl">
         
         {/* Header */}

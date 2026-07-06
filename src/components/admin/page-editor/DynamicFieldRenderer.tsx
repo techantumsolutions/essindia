@@ -32,7 +32,10 @@ export function DynamicFieldRenderer({
   depth = 0,
   sectionType,
 }: DynamicFieldRendererProps) {
-  const fieldType = detectFieldType(fieldKey, value, sectionType);
+  let fieldType = detectFieldType(fieldKey, value, sectionType);
+  if (fieldKey.toLowerCase().includes('pdf')) {
+    fieldType = 'image';
+  }
 
   switch (fieldType) {
     case 'null':
@@ -807,7 +810,7 @@ function SelectedPagesField({
     if (selectedItems.length >= 6) return;
     const newItem = {
       title: page.title || '',
-      description: page.seoDescription || '',
+      description: page.heroDescription || page.seoDescription || '',
       ctaUrl: page.routePath || '',
       ctaText: 'View more',
       bgImage: '',
@@ -822,14 +825,25 @@ function SelectedPagesField({
     newArr.splice(index, 1);
     onChange(keyPath, newArr);
   };
-  
-  const updateItemField = (index: number, field: string, val: string) => {
-    const newArr = [...selectedItems];
-    newArr[index] = { ...newArr[index], [field]: val };
-    onChange(keyPath, newArr);
-  };
+    const replaceItem = (index: number, page: any) => {
+      const newArr = [...selectedItems];
+      newArr[index] = {
+        ...newArr[index],
+        title: page.title || '',
+        description: page.heroDescription || page.seoDescription || '',
+        ctaUrl: page.routePath || ''
+      };
+      onChange(keyPath, newArr);
+    };
 
-  const filteredPages = pages.filter(p => p.title?.toLowerCase().includes(search.toLowerCase()) || p.routePath?.toLowerCase().includes(search.toLowerCase()));
+    const updateItemField = (index: number, field: string, val: string) => {
+      const newArr = [...selectedItems];
+      newArr[index] = { ...newArr[index], [field]: val };
+      onChange(keyPath, newArr);
+    };
+
+    const megaMenuPages = pages.filter(p => p.categoryLabel || p.subCategoryLabel || p.subSubCategoryLabel);
+    const availablePages = megaMenuPages.filter(p => !selectedItems.some(si => si.ctaUrl === p.routePath));
 
   return (
     <div className="space-y-4 border border-slate-200 rounded-xl p-4 bg-slate-50">
@@ -846,89 +860,53 @@ function SelectedPagesField({
             >
               <Trash2 className="w-4 h-4" />
             </button>
-            <div className="grid grid-cols-2 gap-4 mt-2">
-              <div className="col-span-2">
-                <label className="text-xs font-semibold text-slate-500 mb-1 block">Title (fetched from page)</label>
-                <input
-                  type="text"
-                  value={item.title || ''}
-                  onChange={(e) => updateItemField(idx, 'title', e.target.value)}
-                  className="w-full bg-slate-50 rounded-lg px-3 py-2 text-sm border border-slate-200 focus:outline-none focus:ring-2 focus:ring-[#4B2A63]/20"
-                />
-              </div>
-              <div className="col-span-2">
-                <label className="text-xs font-semibold text-slate-500 mb-1 block">Description (fetched from SEO)</label>
-                <textarea
-                  value={item.description || ''}
-                  onChange={(e) => updateItemField(idx, 'description', e.target.value)}
-                  rows={2}
-                  className="w-full bg-slate-50 rounded-lg px-3 py-2 text-sm border border-slate-200 focus:outline-none focus:ring-2 focus:ring-[#4B2A63]/20 resize-y"
-                />
-              </div>
-              <div className="col-span-2">
-                <label className="text-xs font-semibold text-slate-500 mb-1 block">Route URL</label>
-                <input
-                  type="text"
-                  value={item.ctaUrl || ''}
-                  readOnly
-                  className="w-full bg-slate-100 rounded-lg px-3 py-2 text-sm border border-slate-200 text-slate-500 cursor-not-allowed"
-                />
-              </div>
-              <div className="col-span-2">
-                <label className="text-xs font-semibold text-slate-500 mb-1 block">Background Image (Editable)</label>
-                <MediaField
-                  fieldKey={'bgImage-' + idx}
-                  value={item.bgImage || ''}
-                  onChange={(v) => updateItemField(idx, 'bgImage', v)}
-                />
-              </div>
-              <div className="col-span-2">
-                <label className="text-xs font-semibold text-slate-500 mb-1 block">Icon Image (Editable)</label>
-                <MediaField
-                  fieldKey={'iconImage-' + idx}
-                  value={item.iconImage || ''}
-                  onChange={(v) => updateItemField(idx, 'iconImage', v)}
-                />
-              </div>
-            </div>
+              <div className="grid grid-cols-2 gap-4 mt-4">
+                  <div className="col-span-2">
+                    <label className="text-xs font-semibold text-slate-500 mb-1 block">Change Page</label>
+                    <select
+                      value={item.ctaUrl || ''}
+                      onChange={(e) => {
+                        const selectedPath = e.target.value;
+                        const selectedPage = megaMenuPages.find(p => p.routePath === selectedPath);
+                        if (selectedPage) replaceItem(idx, selectedPage);
+                      }}
+                      className="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#4B2A63]/20"
+                    >
+                      <option value="" disabled>-- Select a Page --</option>
+                      {megaMenuPages.filter(p => p.routePath === item.ctaUrl || !selectedItems.some(si => si.ctaUrl === p.routePath)).map(p => (
+                        <option key={p.id} value={p.routePath}>{p.title} ({p.routePath})</option>
+                      ))}
+                    </select>
+                  </div>
+                  <div className="col-span-2 bg-slate-50 p-3 rounded-lg border border-slate-100">
+                    <div className="font-semibold text-slate-800">{item.title}</div>
+                    <div className="text-xs text-slate-500 mt-1">{item.ctaUrl}</div>
+                    {item.description && <div className="text-sm text-slate-600 mt-2 line-clamp-2">{item.description}</div>}
+                  </div>
+                </div>
           </div>
         ))}
       </div>
 
-      {selectedItems.length < 6 && (
-        <div className="mt-4">
-          <label className="text-xs font-semibold text-slate-500 block mb-2">Add Page</label>
-          <div className="relative mb-2">
-            <input
-              type="text"
-              placeholder="Search pages by title or route..."
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              className="w-full bg-white rounded-lg pl-3 pr-10 py-2 border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-[#4B2A63]/20"
-            />
+        {selectedItems.length < 6 && (
+          <div className="mt-4">
+            <label className="text-xs font-semibold text-slate-500 block mb-2">Add New Page</label>
+            <select
+              value=""
+              onChange={(e) => {
+                const selectedPath = e.target.value;
+                const selectedPage = megaMenuPages.find(p => p.routePath === selectedPath);
+                if (selectedPage) handleSelect(selectedPage);
+              }}
+              className="w-full bg-white border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#4B2A63]/20"
+            >
+              <option value="" disabled>-- Select a Page to Add --</option>
+              {availablePages.map(p => (
+                <option key={p.id} value={p.routePath}>{p.title} ({p.routePath})</option>
+              ))}
+            </select>
           </div>
-          {search && (
-            <div className="max-h-48 overflow-y-auto bg-white border border-slate-200 rounded-lg shadow-sm">
-              {loading ? (
-                <div className="p-3 text-sm text-slate-500 text-center">Loading pages...</div>
-              ) : filteredPages.length === 0 ? (
-                <div className="p-3 text-sm text-slate-500 text-center">No pages found</div>
-              ) : (
-                filteredPages.slice(0, 10).map((p) => (
-                  <div
-                    key={p.id}
-                    onClick={() => handleSelect(p)}
-                    className="p-3 border-b border-slate-100 hover:bg-slate-50 cursor-pointer transition-colors"
-                  >
-                    <div className="font-semibold text-sm text-slate-800">{p.title}</div>
-                    <div className="text-xs text-slate-500">{p.routePath}</div>
-                  </div>
-                ))
-              )}
-            </div>
-          )}
-        </div>
-      )}
+        )}
     </div>
   );
 }

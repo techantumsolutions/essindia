@@ -28,6 +28,7 @@ export interface ContactFaq {
 export interface ContactFormFaqContent {
   formTitle?: string;
   formDescription?: string;
+  disclaimerText?: string;
   faqTitle?: string;
   faqs?: ContactFaq[];
 }
@@ -35,6 +36,7 @@ export interface ContactFormFaqContent {
 export function ContactFormFaq({ content }: { content?: ContactFormFaqContent }) {
   const formTitle = content?.formTitle || "Send us a Message";
   const formDescription = content?.formDescription || "Fill out the form below and our team will get back to you within 24 hours. For urgent security matters, please use our emergency support line.";
+  const disclaimerText = content?.disclaimerText || "Disclaimer: This information will not be shared with anybody, it will be used for internal purposes only.";
   const faqTitle = content?.faqTitle || "Common Questions";
   
   const displayFaqs = content?.faqs || [
@@ -280,6 +282,7 @@ export function ContactFormFaq({ content }: { content?: ContactFormFaqContent })
                   You agree to our friendly privacy policy.
                 </label>
               </div>
+              <p className="text-xs text-gray-500 pl-7">{disclaimerText}</p>
 
               <button disabled={isSubmitting} type="submit" className="w-full bg-[#2A2B6E] hover:bg-[#1a1b4e] text-white font-medium py-4 rounded-xl transition-colors duration-300 mt-4 disabled:opacity-50 cursor-pointer disabled:cursor-not-allowed">
                 {isSubmitting ? 'Sending...' : 'Send Message'}

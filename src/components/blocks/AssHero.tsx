@@ -50,7 +50,7 @@ export function AssHero({ content }: { content?: AssHeroContent }) {
   const image = content?.image || '/App-After Sales Service/002b2026-6c0c-4820-958f-344b26611bc6 1.png';
 
   return (
-    <section className="pt-40 pb-14 px-6" style={{ backgroundColor: bgColor }}>
+    <section className="relative min-h-[80vh] flex items-center pt-40 pb-16 px-6" style={{ backgroundColor: bgColor }}>
       <div className="container mx-auto max-w-7xl">
         <div className="flex flex-col lg:flex-row items-center gap-12 lg:gap-16">
 
