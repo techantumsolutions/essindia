@@ -37,7 +37,7 @@ export function RetailHero({ content }: { content: RetailHeroContent }) {
   const image = content?.image || '/industry-solution-Retail/banner-image.png';
 
   return (
-    <section className="relative w-full py-14 overflow-hidden" style={{ backgroundColor: bgColor }}>
+    <section className="relative w-full min-h-[80vh] flex items-center pt-40 pb-16 overflow-hidden" style={{ backgroundColor: bgColor }}>
       <div className="container mx-auto px-4 md:px-8 max-w-7xl">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
 
@@ -46,7 +46,7 @@ export function RetailHero({ content }: { content: RetailHeroContent }) {
             initial={{ opacity: 0, x: -30 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.6 }}
-            className="flex flex-col items-start space-y-0 mt-18 md:mt-4"
+            className="flex flex-col items-start space-y-0"
           >
             {badgeText && (
               <span 

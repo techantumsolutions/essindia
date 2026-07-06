@@ -24,6 +24,8 @@ import {
   LayoutGrid,
   BarChart3,
   Search,
+  ChevronDown,
+  Check,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';

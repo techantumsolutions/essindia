@@ -137,6 +137,21 @@ export class PageRegistryRepository {
 
     const countMap = new Map(sectionCounts.map((r) => [r.pageId, Number(r.sectionCount)]));
 
+    const heroOrIntroSections = await db.query.pageSections.findMany({
+      where: inArray(pageSections.type, ['hero', 'intro']),
+    });
+    
+    const heroDescriptionMap = new Map();
+    for (const s of heroOrIntroSections) {
+      const content = s.content as { description?: string; subtitle?: string; subheading?: string };
+      const text = content?.subtitle || content?.subheading || content?.description || '';
+      
+      // If we haven't set a text yet for this page, or if the current section is 'hero' (giving it priority), set it.
+      if (text && (!heroDescriptionMap.has(s.pageId) || s.type === 'hero')) {
+        heroDescriptionMap.set(s.pageId, text);
+      }
+    }
+
     const navLabels = await this.resolveNavLabels(allPages);
 
     return allPages.map((page) => {
@@ -152,6 +167,7 @@ export class PageRegistryRepository {
         source: 'cms' as const,
         seoStatus: page.seo?.title && page.seo?.description ? 'complete' : 'incomplete',
         seoDescription: page.seo?.description || '',
+        heroDescription: heroDescriptionMap.get(page.id) || '',
         sectionCount: countMap.get(page.id) ?? 0,
         templateId: page.templateId,
         previewThumbnail: page.previewThumbnail,

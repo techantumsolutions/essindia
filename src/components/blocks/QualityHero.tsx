@@ -22,7 +22,7 @@ export function QualityHero({ content }: QualityHeroProps) {
 
   return (
     <section 
-      className="relative w-full min-h-[60vh] flex flex-col items-center justify-center pt-44 pb-32 overflow-hidden text-center"
+      className="relative w-full min-h-[80vh] flex flex-col items-center justify-center pt-40 pb-16 overflow-hidden text-center"
       style={{
         background: `url('${bgImage}') no-repeat center center / cover`
       }}

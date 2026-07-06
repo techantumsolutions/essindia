@@ -38,7 +38,7 @@ export function JudicialHero({ content }: JudicialHeroProps) {
   const image = content?.image || '/Judicial Automation/Rectangle 196.png';
 
   return (
-    <section className="pt-40 pb-14 px-6" style={{ backgroundColor: bgColor }}>
+    <section className="relative min-h-[80vh] flex items-center pt-40 pb-16 px-6" style={{ backgroundColor: bgColor }}>
       <div className="container mx-auto max-w-7xl">
         <div className="flex flex-col lg:flex-row items-center justify-between gap-12">
           <div className="lg:w-1/2 space-y-6 text-white">

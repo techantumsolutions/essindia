@@ -1,11 +1,10 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { MotionSection, StaggerContainer } from '@/components/animations/MotionSection';
+import { MotionSection } from '@/components/animations/MotionSection';
 
 interface Brand {
-  name: string;
-  logo?: string;
+  image?: string;
 }
 
 interface TrustedBrandsContent {
@@ -18,17 +17,20 @@ interface TrustedBrandsProps {
 }
 
 const defaultBrands: Brand[] = [
-  { name: 'Spotify' },
-  { name: 'Nike' },
-  { name: 'AMD' },
-  { name: 'apper' },
-  { name: 'logitech' },
-  { name: 'LEVI\'S' },
+  { image: '' },
+  { image: '' },
+  { image: '' },
+  { image: '' },
+  { image: '' },
+  { image: '' },
 ];
 
 export function TrustedBrands({ content }: TrustedBrandsProps) {
   const title = content?.title || "Trusted by 1,500+ Businesses Across India & Overseas";
   const brands = content?.brands || defaultBrands;
+  
+  // Duplicate array 3 times for a seamless infinite scroll loop
+  const duplicatedBrands = [...brands, ...brands, ...brands];
 
   return (
     <section className="py-12 bg-white mt-4 mb-8 relative z-10 overflow-hidden">
@@ -39,26 +41,30 @@ export function TrustedBrands({ content }: TrustedBrandsProps) {
           </h3>
         </MotionSection>
         
-        <StaggerContainer className="flex flex-wrap justify-center items-center gap-10 md:gap-16 lg:gap-24 opacity-40 grayscale hover:grayscale-0 transition-all duration-700">
-          {brands.map((brand, i) => (
-            <motion.div
-              key={brand.name + i}
-              variants={{
-                initial: { opacity: 0, y: 20 },
-                animate: { opacity: 1, y: 0, transition: { duration: 0.6 } }
-              }}
-              className="text-xl md:text-2xl font-bold text-slate-500 hover:text-[#4B2A63] transition-colors cursor-pointer"
-            >
-              <div className="flex items-center gap-2">
-                {brand.logo ? (
-                  <img src={brand.logo} alt={brand.name} className="h-8 w-auto object-contain" />
+        <div className="relative w-full overflow-hidden before:absolute before:left-0 before:top-0 before:z-10 before:h-full before:w-[100px] before:bg-gradient-to-r before:from-white before:to-transparent after:absolute after:right-0 after:top-0 after:z-10 after:h-full after:w-[100px] after:bg-gradient-to-l after:from-white after:to-transparent">
+          <div 
+            className="flex w-max items-center gap-10 md:gap-16 lg:gap-24"
+            style={{ animation: 'trusted-brands-marquee 15s linear infinite' }}
+            onMouseEnter={(e) => e.currentTarget.style.animationPlayState = 'paused'}
+            onMouseLeave={(e) => e.currentTarget.style.animationPlayState = 'running'}
+          >
+            {duplicatedBrands.map((brand, i) => (
+              <div key={i} className="flex-shrink-0 flex items-center justify-center w-32 h-16">
+                {brand.image ? (
+                  <img src={brand.image} alt="Brand" className="max-w-full max-h-full object-contain" />
                 ) : (
-                  <span>{brand.name}</span>
+                  <span className="text-xl md:text-2xl font-bold text-slate-500">Brand</span>
                 )}
               </div>
-            </motion.div>
-          ))}
-        </StaggerContainer>
+            ))}
+          </div>
+          <style dangerouslySetInnerHTML={{__html: `
+            @keyframes trusted-brands-marquee {
+              0% { transform: translateX(0%); }
+              100% { transform: translateX(-33.333333%); }
+            }
+          `}} />
+        </div>
       </div>
     </section>
   );

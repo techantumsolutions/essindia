@@ -49,6 +49,11 @@ export const SECTION_REGISTRY: SectionTypeDefinition[] = [
     color: 'bg-purple-50 text-purple-600',
     defaultVariant: 'default',
     supportsVariants: false,
+    fieldOrder: [
+      'heading',
+      'subheading',
+      'cta'
+    ],
   },
   {
     type: 'services',
@@ -98,7 +103,7 @@ export const SECTION_REGISTRY: SectionTypeDefinition[] = [
     color: 'bg-cyan-50 text-cyan-600',
     defaultVariant: 'default',
     supportsVariants: false,
-    fieldOrder: ['heading', 'subheading', 'blogs', 'viewAllCta'],
+    fieldOrder: ['heading', 'subheading', 'viewAllCta'],
   },
   {
     type: 'rich_text',
@@ -264,7 +269,7 @@ export const SECTION_REGISTRY: SectionTypeDefinition[] = [
     color: 'bg-amber-50 text-amber-600',
     defaultVariant: 'default',
     supportsVariants: false,
-    fieldOrder: ['title', 'logos'],
+    fieldOrder: ['title', 'autoScroll', 'logos'],
   },
   {
     type: 'retail-why-erp',
@@ -465,7 +470,7 @@ export const SECTION_REGISTRY: SectionTypeDefinition[] = [
     color: 'bg-slate-50 text-slate-600',
     defaultVariant: 'default',
     supportsVariants: false,
-    fieldOrder: ['title', 'subtitle', 'ctaText', 'ctaUrl'],
+    fieldOrder: ['title', 'subtitle', 'ctaText', 'pdfUrl'],
   },
   {
     type: 'blog-list-block',
@@ -568,7 +573,7 @@ export const SECTION_REGISTRY: SectionTypeDefinition[] = [
     color: 'bg-blue-50 text-blue-600',
     defaultVariant: 'default',
     supportsVariants: false,
-    fieldOrder: ['heading', 'description', 'features', 'image1'],
+    fieldOrder: ['heading', 'description', 'features', 'image1', 'image2', 'image3'],
   },
   {
     type: 'hospital-regulatory',
@@ -578,7 +583,7 @@ export const SECTION_REGISTRY: SectionTypeDefinition[] = [
     color: 'bg-emerald-50 text-emerald-600',
     defaultVariant: 'default',
     supportsVariants: false,
-    fieldOrder: ['heading', 'description', 'points', 'image1'],
+    fieldOrder: ['heading', 'description', 'points', 'image1', 'image2', 'image3'],
   },
   {
     type: 'hospital-tech-specs',
@@ -588,7 +593,7 @@ export const SECTION_REGISTRY: SectionTypeDefinition[] = [
     color: 'bg-rose-50 text-rose-600',
     defaultVariant: 'default',
     supportsVariants: false,
-    fieldOrder: ['heading', 'description', 'specs', 'image1'],
+    fieldOrder: ['heading', 'description', 'specs', 'image1', 'image2', 'image3'],
   },
   {
     type: 'staffing-hero',
@@ -692,6 +697,7 @@ export const SECTION_REGISTRY: SectionTypeDefinition[] = [
     color: 'bg-emerald-50 text-emerald-600',
     defaultVariant: 'default',
     supportsVariants: false,
+    fieldOrder: ['heading', 'items'],
   },
   {
     type: 'about-us-transformation-section',
@@ -721,6 +727,7 @@ export const SECTION_REGISTRY: SectionTypeDefinition[] = [
     color: 'bg-emerald-50 text-emerald-600',
     defaultVariant: 'default',
     supportsVariants: false,
+    fieldOrder: ['title', 'description', 'buttonText', 'pdfUrl'],
   },
   {
     type: 'contact-hero',
@@ -752,6 +759,7 @@ export const SECTION_REGISTRY: SectionTypeDefinition[] = [
     fieldOrder: [
       'formTitle',
       'formDescription',
+      'disclaimerText',
       'faqTitle',
       'faqs'
     ],
@@ -768,6 +776,7 @@ export const SECTION_REGISTRY: SectionTypeDefinition[] = [
       'backgroundImageUrl',
       'title',
       'description',
+      'image',
       'locations'
     ],
   },
@@ -974,9 +983,9 @@ export const SECTION_REGISTRY: SectionTypeDefinition[] = [
       'description',
       'descriptionColor',
       'buttonText',
-      'buttonUrl',
       'buttonBgColor',
-      'buttonTextColor'
+      'buttonTextColor',
+      'pdfUrl'
     ],
   },
   {
@@ -1009,6 +1018,9 @@ export const SECTION_REGISTRY: SectionTypeDefinition[] = [
     supportsVariants: false,
     fieldOrder: [
       'bgColor',
+      'gradientColor1',
+      'gradientColor2',
+      'gradientColor3',
       'badgeBgColor',
       'badgeBorderColor',
       'badgeText',
@@ -1084,7 +1096,7 @@ export const SECTION_REGISTRY: SectionTypeDefinition[] = [
     color: 'bg-amber-50 text-amber-600',
     defaultVariant: 'default',
     supportsVariants: false,
-    fieldOrder: ['logos'],
+    fieldOrder: ['autoScroll', 'logos'],
   },
   {
     type: 'fmcg-overview',
@@ -1184,7 +1196,7 @@ export const SECTION_REGISTRY: SectionTypeDefinition[] = [
     color: 'bg-indigo-50 text-indigo-600',
     defaultVariant: 'default',
     supportsVariants: false,
-    fieldOrder: ['title', 'buttonText', 'buttonUrl'],
+    fieldOrder: ['title', 'buttonText', 'pdfUrl'],
   },
   {
     type: 'roi-hero',
@@ -1342,7 +1354,7 @@ export const SECTION_REGISTRY: SectionTypeDefinition[] = [
     color: 'bg-indigo-50 text-indigo-600',
     defaultVariant: 'default',
     supportsVariants: false,
-    fieldOrder: ['title', 'description', 'buttonText', 'buttonUrl'],
+    fieldOrder: ['title', 'description', 'buttonText', 'pdfUrl'],
   },
   {
     type: 'bi-hero',
@@ -1502,7 +1514,7 @@ export const SECTION_REGISTRY: SectionTypeDefinition[] = [
     color: 'bg-blue-50 text-blue-600',
     defaultVariant: 'default',
     supportsVariants: false,
-    fieldOrder: ['title', 'description', 'subtitle', 'cards', 'logos']
+    fieldOrder: ['title', 'description', 'subtitle', 'autoScroll', 'cards', 'logos']
   },
   {
     type: 'rpa-industries',
@@ -1532,7 +1544,7 @@ export const SECTION_REGISTRY: SectionTypeDefinition[] = [
     color: 'bg-blue-50 text-blue-600',
     defaultVariant: 'default',
     supportsVariants: false,
-    fieldOrder: ['title', 'logos']
+    fieldOrder: ['title', 'autoScroll', 'logos']
   },
   {
     type: 'rpa-benefits',
@@ -1572,7 +1584,7 @@ export const SECTION_REGISTRY: SectionTypeDefinition[] = [
     color: 'bg-blue-50 text-blue-600',
     defaultVariant: 'default',
     supportsVariants: false,
-    fieldOrder: ['title', 'buttonText', 'buttonUrl']
+    fieldOrder: ['title', 'buttonText', 'pdfUrl'],
   },
   {
     type: 'oracle-apex-hero',
@@ -1653,7 +1665,124 @@ export const SECTION_REGISTRY: SectionTypeDefinition[] = [
     color: 'bg-purple-50 text-purple-600',
     defaultVariant: 'default',
     supportsVariants: false,
-    fieldOrder: ['bgColor', 'title', 'titleColor', 'description', 'descriptionColor', 'buttonText', 'buttonBgColor', 'buttonTextColor', 'buttonUrl']
+    fieldOrder: ['bgColor', 'title', 'titleColor', 'description', 'descriptionColor', 'buttonText', 'buttonBgColor', 'buttonTextColor', 'pdfUrl']
+  },
+  {
+    type: 'europe-hero',
+    label: 'Europe Hero',
+    description: 'Centered hero with badge, dual CTAs, gradient background, and optional illustration for ebizframe ERP Europe landing page',
+    icon: Layout,
+    color: 'bg-violet-50 text-violet-600',
+    defaultVariant: 'default',
+    supportsVariants: false,
+    fieldOrder: [
+      'badgeBgColor', 'badgeBorderColor', 'badgeText', 'badgeTextColor',
+      'title', 'titleColor', 'subtitle', 'subtitleColor', 'description', 'descriptionColor',
+      'primaryButtonText', 'primaryButtonTextColor', 'primaryButtonBgColor', 'primaryButtonBorderColor', 'primaryButtonUrl',
+      'secondaryButtonText', 'secondaryButtonTextColor', 'secondaryButtonBgColor', 'secondaryButtonBorderColor', 'secondaryButtonUrl',
+      'backgroundGradient', 'heroIllustration', 'enableIllustration', 'enableAnimation',
+      'hideSection', 'internalName', 'anchorId', 'backgroundColor', 'backgroundImage', 'containerWidth',
+      'sectionPaddingTop', 'sectionPaddingBottom', 'theme', 'textAlignment', 'customClasses',
+    ],
+  },
+  {
+    type: 'europe-feature-cards',
+    label: 'Europe Feature Cards',
+    description: 'Grid of service/feature cards with image, title, description, and learn more link (max 12)',
+    icon: Grid,
+    color: 'bg-violet-50 text-violet-600',
+    defaultVariant: 'default',
+    supportsVariants: false,
+    fieldOrder: ['cards', 'hideSection', 'internalName', 'anchorId', 'backgroundColor', 'backgroundImage', 'containerWidth', 'sectionPaddingTop', 'sectionPaddingBottom', 'theme', 'textAlignment', 'customClasses'],
+  },
+  {
+    type: 'europe-dark-showcase',
+    label: 'Europe Dark Showcase',
+    description: 'Dark full-width showcase with badge, CTAs, and dashboard image carousel',
+    icon: Layers,
+    color: 'bg-violet-50 text-violet-600',
+    defaultVariant: 'default',
+    supportsVariants: false,
+    fieldOrder: [
+      'badgeText', 'badgeBgColor', 'badgeTextColor', 'title', 'titleColor', 'description', 'descriptionColor',
+      'primaryButtonText', 'primaryButtonTextColor', 'primaryButtonBgColor', 'primaryButtonBorderColor', 'primaryButtonUrl',
+      'secondaryButtonText', 'secondaryButtonTextColor', 'secondaryButtonBgColor', 'secondaryButtonBorderColor', 'secondaryButtonUrl',
+      'dashboardImage', 'slides', 'enableSlider', 'autoplay', 'autoplayInterval', 'theme',
+      'hideSection', 'internalName', 'anchorId', 'backgroundColor', 'backgroundImage', 'containerWidth',
+      'sectionPaddingTop', 'sectionPaddingBottom', 'textAlignment', 'customClasses',
+    ],
+  },
+  {
+    type: 'europe-global-presence',
+    label: 'Europe Global Presence',
+    description: 'Split layout with world map image and statistics grid on dark background',
+    icon: Users,
+    color: 'bg-violet-50 text-violet-600',
+    defaultVariant: 'default',
+    supportsVariants: false,
+    fieldOrder: [
+      'image', 'subtitle', 'subtitleColor', 'title', 'titleColor', 'description', 'descriptionColor', 'statistics',
+      'hideSection', 'internalName', 'anchorId', 'backgroundColor', 'backgroundImage', 'containerWidth',
+      'sectionPaddingTop', 'sectionPaddingBottom', 'theme', 'textAlignment', 'customClasses',
+    ],
+  },
+  {
+    type: 'europe-case-study-slider',
+    label: 'Europe Case Study Slider',
+    description: 'Horizontal case study carousel with thumbnails, metrics, and navigation controls',
+    icon: Briefcase,
+    color: 'bg-violet-50 text-violet-600',
+    defaultVariant: 'default',
+    supportsVariants: false,
+    fieldOrder: [
+      'slides', 'autoplay', 'loop', 'showNavigation', 'showPagination', 'autoplayInterval',
+      'hideSection', 'internalName', 'anchorId', 'backgroundColor', 'backgroundImage', 'containerWidth',
+      'sectionPaddingTop', 'sectionPaddingBottom', 'theme', 'textAlignment', 'customClasses',
+    ],
+  },
+  {
+    type: 'europe-promo-cta',
+    label: 'Europe Promotional CTA',
+    description: 'Simple promotional call-to-action block with title, description, and button',
+    icon: MousePointer,
+    color: 'bg-violet-50 text-violet-600',
+    defaultVariant: 'default',
+    supportsVariants: false,
+    fieldOrder: [
+      'smallTitle', 'smallTitleColor', 'title', 'titleColor', 'description', 'descriptionColor',
+      'buttonText', 'buttonTextColor', 'buttonBgColor', 'buttonBorderColor', 'buttonUrl',
+      'hideSection', 'internalName', 'anchorId', 'backgroundColor', 'backgroundImage', 'containerWidth',
+      'sectionPaddingTop', 'sectionPaddingBottom', 'theme', 'textAlignment', 'customClasses',
+    ],
+  },
+  {
+    type: 'europe-product-showcase',
+    label: 'Europe Product Showcase',
+    description: 'Split layout with device mockup and feature list for mobile/product showcase',
+    icon: ImageIcon,
+    color: 'bg-violet-50 text-violet-600',
+    defaultVariant: 'default',
+    supportsVariants: false,
+    fieldOrder: [
+      'deviceImage', 'badgeText', 'badgeBgColor', 'badgeTextColor', 'title', 'titleColor', 'description', 'descriptionColor',
+      'buttonText', 'buttonTextColor', 'buttonBgColor', 'buttonUrl', 'features',
+      'hideSection', 'internalName', 'anchorId', 'backgroundColor', 'backgroundImage', 'containerWidth',
+      'sectionPaddingTop', 'sectionPaddingBottom', 'theme', 'textAlignment', 'customClasses',
+    ],
+  },
+  {
+    type: 'europe-reports',
+    label: 'Europe Insights / Reports',
+    description: 'Three-column grid of insight and report cards with image, category, and title',
+    icon: FileText,
+    color: 'bg-violet-50 text-violet-600',
+    defaultVariant: 'default',
+    supportsVariants: false,
+    fieldOrder: [
+      'sectionTitle', 'sectionTitleColor', 'cards',
+      'hideSection', 'internalName', 'anchorId', 'backgroundColor', 'backgroundImage', 'containerWidth',
+      'sectionPaddingTop', 'sectionPaddingBottom', 'theme', 'textAlignment', 'customClasses',
+    ],
   }
 ];
 

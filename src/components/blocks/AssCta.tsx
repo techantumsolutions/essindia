@@ -44,24 +44,28 @@ export function AssCta({ content }: { content?: AssCtaContent }) {
 
         {description.includes('<p>') ? (
           <div
-            className="text-sm md:text-base font-bold leading-relaxed mb-8 max-w-3xl mx-auto prose max-w-none"
+            className="text-sm md:text-base font-normal leading-relaxed mb-8 max-w-3xl mx-auto prose max-w-none"
             style={{ color: descriptionColor }}
             dangerouslySetInnerHTML={{ __html: description }}
           />
         ) : (
           <p
-            className="text-sm md:text-base font-bold leading-relaxed mb-8 max-w-3xl mx-auto"
+            className="text-sm md:text-base font-normal leading-relaxed mb-8 max-w-3xl mx-auto"
             style={{ color: descriptionColor }}
           >
             {description}
           </p>
         )}
 
-        <button onClick={() => setIsModalOpen(true)} className="bg-[#4B2A63] text-white hover:bg-[#3A1F4D] px-8 py-3 rounded-full font-medium transition-colors inline-flex items-center gap-2">
+        <button
+          onClick={() => setIsModalOpen(true)}
+          className="px-8 py-3 rounded-full font-bold transition-all hover:-translate-y-0.5 hover:shadow-lg inline-flex items-center gap-2"
+          style={{ backgroundColor: buttonBgColor, color: buttonTextColor }}
+        >
           {buttonText}
         </button>
       </div>
-    
+
       <CtaLeadModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} pdfUrl={pdfUrl} />
     </section>
   );

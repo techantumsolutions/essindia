@@ -21,7 +21,7 @@ export function IntroSection({ content }: IntroSectionProps) {
   const cta = content?.cta || { label: "Explore More", url: "/about" };
 
   return (
-    <section className="py-20 md:py-32 bg-[#F8F9FA] text-center border-y border-slate-100 overflow-hidden">
+    <section className="py-14 bg-[#F8F9FA] text-center border-y border-slate-100 overflow-hidden">
       <div className="container mx-auto px-4 md:px-8 max-w-7xl">
         <div className="max-w-[1000px] mx-auto">
         <TextReveal 

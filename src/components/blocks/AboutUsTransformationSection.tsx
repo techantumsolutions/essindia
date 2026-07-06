@@ -65,7 +65,7 @@ export function AboutUsTransformationSection({
         </div>
 
         {/* Grid */}
-        <StaggerContainer className="flex flex-wrap">
+        <StaggerContainer className="grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-8">
           {items.map((item, index) => (
             <motion.div
               key={index}
@@ -82,7 +82,7 @@ export function AboutUsTransformationSection({
                   },
                 },
               }}
-              className="border border-[#E4E4E4] rounded-[20px] lg:basis-1/2"
+              className="border border-[#E4E4E4] rounded-[20px]"
             >
               <div className="flex flex-col md:flex-row gap-4 h-full p-2">
                 {/* Image */}

@@ -82,7 +82,7 @@ export default function JobDetailHero({ content }: { content?: JobDetailHeroCont
 
   return (
     <section 
-      className="pt-32 pb-16 px-6 lg:px-8"
+      className="relative min-h-[80vh] flex items-center pt-40 pb-16 px-6 lg:px-8"
       style={{ backgroundColor: bgColor }}
     >
       <div className="container mx-auto max-w-7xl">

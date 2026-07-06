@@ -10,6 +10,8 @@ interface HospitalFeaturesContent {
   description?: string;
   features?: FeaturePoint[];
   image1?: string;
+  image2?: string;
+  image3?: string;
 }
 
 interface HospitalFeaturesProps {
@@ -31,12 +33,17 @@ export function HospitalFeatures({ content }: HospitalFeaturesProps) {
   ];
 
   const features = content?.features || defaultFeatures;
-  const image1 = content?.image1 || "/Hospital Management/Frame 269.png";
+  let image1 = content?.image1 || "/Hospital Management/image 54.png";
+  if (image1 === "/Hospital Management/Frame 269.png") {
+    image1 = "/Hospital Management/image 54.png";
+  }
+  const image2 = content?.image2 || "/Hospital Management/image 69.png";
+  const image3 = content?.image3 || "/Hospital Management/image 70.png";
 
   return (
     <section className="py-14 px-6 bg-white border-b">
       <div className="container mx-auto max-w-7xl">
-        <div className="flex flex-col lg:flex-row items-center gap-12 lg:gap-20">
+        <div className="flex flex-col lg:flex-row items-stretch gap-12 lg:gap-20">
 
           {/* Left Text & Features */}
           <div className="lg:w-1/2 w-full">
@@ -61,8 +68,21 @@ export function HospitalFeatures({ content }: HospitalFeaturesProps) {
 
           {/* Right Image Composition */}
           <div className="lg:w-1/2 w-full">
-            <div className="relative w-full aspect-[4/3] lg:aspect-auto lg:h-[500px]">
-              <Image src={image1} alt="Feature highlight" fill className="object-contain" />
+            <div className="flex flex-col gap-4 w-full h-full">
+              {/* Top Image */}
+              <div className="relative w-full flex-1 min-h-[250px] rounded-3xl overflow-hidden shadow-lg border border-gray-100">
+                <Image src={image1} alt="Feature highlight 1" fill className="object-cover" />
+              </div>
+              
+              {/* Bottom Row */}
+              <div className="flex gap-4 w-full h-48 lg:h-64">
+                <div className="relative w-1/2 h-full rounded-3xl overflow-hidden shadow-lg border border-gray-100">
+                  <Image src={image2} alt="Feature highlight 2" fill className="object-cover" />
+                </div>
+                <div className="relative w-1/2 h-full rounded-3xl overflow-hidden shadow-lg border border-gray-100">
+                  <Image src={image3} alt="Feature highlight 3" fill className="object-cover" />
+                </div>
+              </div>
             </div>
           </div>
 
