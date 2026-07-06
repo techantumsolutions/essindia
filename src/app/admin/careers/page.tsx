@@ -891,32 +891,32 @@ export default function AdminCareersPortal() {
                         {/* Title & Department */}
                         <div className="grid grid-cols-2 gap-4">
                           <div className="space-y-1.5">
-                            <label className="text-[11px] font-bold text-slate-700 uppercase tracking-wider">Job Title *</label>
+                            <label className="admin-label">Job Title *</label>
                             <input
                               type="text"
                               required
                               placeholder="e.g. Senior Backend Engineer"
                               value={jobForm.title}
                               onChange={(e) => setJobForm({ ...jobForm, title: e.target.value })}
-                              className="w-full bg-slate-50 rounded-xl px-4 py-2.5 text-sm font-semibold border border-transparent outline-none focus:border-[#4B2A63] focus:bg-white transition-all"
+                              className="admin-input"
                             />
                           </div>
                           <div className="space-y-1.5">
-                            <label className="text-[11px] font-bold text-slate-700 uppercase tracking-wider">Department *</label>
+                            <label className="admin-label">Department *</label>
                             <input
                               type="text"
                               required
                               placeholder="e.g. Engineering, Sales"
                               value={jobForm.department}
                               onChange={(e) => setJobForm({ ...jobForm, department: e.target.value })}
-                              className="w-full bg-slate-50 rounded-xl px-4 py-2.5 text-sm font-semibold border border-transparent outline-none focus:border-[#4B2A63] focus:bg-white transition-all"
+                              className="admin-input"
                             />
                           </div>
                         </div>
 
                         {/* Location Tag Input */}
                         <div className="space-y-3 p-4 bg-slate-50/50 rounded-2xl border border-slate-100">
-                          <label className="text-[11px] font-bold text-slate-800 uppercase tracking-wider">Locations *</label>
+                          <label className="admin-label">Locations *</label>
                           
                           {jobForm.locations && jobForm.locations.length > 0 && (
                             <div className="flex flex-wrap gap-2 mb-3">
@@ -951,12 +951,12 @@ export default function AdminCareersPortal() {
                                   addListItem('locations', locInput, setLocInput);
                                 }
                               }}
-                              className="w-full bg-white rounded-lg px-3 py-2 text-xs font-medium border border-slate-200 outline-none focus:border-[#4B2A63] transition-colors"
+                              className="admin-input"
                             />
                             <button
                               type="button"
                               onClick={() => addListItem('locations', locInput, setLocInput)}
-                              className="px-3 h-[32px] bg-[#4B2A63] text-white text-xs font-bold rounded-lg hover:bg-[#3B198F] transition-colors flex items-center justify-center cursor-pointer"
+                              className="px-3 h-[32px] bg-[#4B2A63] text-white text-xs font-bold rounded-lg hover:bg-[#3B198F] transition-colors flex items-center justify-center cursor-pointer font-sans"
                             >
                               Add
                             </button>
@@ -966,11 +966,11 @@ export default function AdminCareersPortal() {
                         {/* Type & Experience */}
                         <div className="grid grid-cols-2 gap-4">
                           <div className="space-y-1.5">
-                            <label className="text-[11px] font-bold text-slate-700 uppercase tracking-wider">Job Type</label>
+                            <label className="admin-label">Job Type</label>
                             <select
                               value={jobForm.type}
                               onChange={(e) => setJobForm({ ...jobForm, type: e.target.value })}
-                              className="w-full bg-slate-50 rounded-xl px-4 py-2.5 text-sm font-semibold border border-transparent outline-none focus:border-[#4B2A63] focus:bg-white transition-all"
+                              className="admin-input"
                             >
                               <option value="Full-Time">Full-Time</option>
                               <option value="Part-Time">Part-Time</option>
@@ -979,14 +979,14 @@ export default function AdminCareersPortal() {
                             </select>
                           </div>
                           <div className="space-y-1.5">
-                            <label className="text-[11px] font-bold text-slate-700 uppercase tracking-wider">Experience Level *</label>
+                            <label className="admin-label">Experience Level *</label>
                             <input
                               type="text"
                               required
                               placeholder="e.g. 3-5 Years"
                               value={jobForm.experience}
                               onChange={(e) => setJobForm({ ...jobForm, experience: e.target.value })}
-                              className="w-full bg-slate-50 rounded-xl px-4 py-2.5 text-sm font-semibold border border-transparent outline-none focus:border-[#4B2A63] focus:bg-white transition-all"
+                              className="admin-input"
                             />
                           </div>
                         </div>
@@ -994,11 +994,11 @@ export default function AdminCareersPortal() {
                         {/* Status & Budget Range */}
                         <div className="grid grid-cols-2 gap-4">
                           <div className="space-y-1.5">
-                            <label className="text-[11px] font-bold text-slate-700 uppercase tracking-wider">Posting Status</label>
+                            <label className="admin-label">Posting Status</label>
                             <select
                               value={jobForm.status}
                               onChange={(e) => setJobForm({ ...jobForm, status: e.target.value as any })}
-                              className="w-full bg-slate-50 rounded-xl px-4 py-2.5 text-sm font-semibold border border-transparent outline-none focus:border-[#4B2A63] focus:bg-white transition-all"
+                              className="admin-input"
                             >
                               <option value="active">Active (Visible Publicly)</option>
                               <option value="draft">Draft (Hidden)</option>
@@ -1006,44 +1006,44 @@ export default function AdminCareersPortal() {
                             </select>
                           </div>
                           <div className="space-y-1.5">
-                            <label className="text-[11px] font-bold text-slate-700 uppercase tracking-wider">Budget Range (optional)</label>
+                            <label className="admin-label">Budget Range (optional)</label>
                             <input
                               type="text"
                               placeholder="e.g. ₹6L - ₹10L"
                               value={jobForm.budgetRange}
                               onChange={(e) => setJobForm({ ...jobForm, budgetRange: e.target.value })}
-                              className="w-full bg-slate-50 rounded-xl px-4 py-2.5 text-sm font-semibold border border-transparent outline-none focus:border-[#4B2A63] focus:bg-white transition-all"
+                              className="admin-input"
                             />
                           </div>
                         </div>
 
                         {/* Description (Short summary for cards) */}
                         <div className="space-y-1.5">
-                          <label className="text-[11px] font-bold text-slate-700 uppercase tracking-wider">Short Card Description *</label>
+                          <label className="admin-label">Short Card Description *</label>
                           <textarea
                             required
                             placeholder="Briefly state what this role entails. Shown on job listing cards."
                             value={jobForm.description}
                             onChange={(e) => setJobForm({ ...jobForm, description: e.target.value })}
-                            className="w-full bg-slate-50 rounded-xl p-4 text-sm font-medium border border-transparent outline-none focus:border-[#4B2A63] focus:bg-white transition-all min-h-[70px] resize-none"
+                            className="admin-input min-h-[70px] resize-none"
                           />
                         </div>
 
                         {/* About Role (Detailed markdown/plain text overview) */}
                         <div className="space-y-1.5">
-                          <label className="text-[11px] font-bold text-slate-700 uppercase tracking-wider">Full "About the Role" *</label>
+                          <label className="admin-label">Full "About the Role" *</label>
                           <textarea
                             required
                             placeholder="Provide a comprehensive introduction to the role, responsibilities, culture, and team structure."
                             value={jobForm.aboutText}
                             onChange={(e) => setJobForm({ ...jobForm, aboutText: e.target.value })}
-                            className="w-full bg-slate-50 rounded-xl p-4 text-sm font-medium border border-transparent outline-none focus:border-[#4B2A63] focus:bg-white transition-all min-h-[120px] resize-y"
+                            className="admin-input min-h-[120px] resize-y"
                           />
                         </div>
 
                         {/* List items editor: Requirements */}
                         <div className="space-y-3 p-4 bg-slate-50/50 rounded-2xl border border-slate-100">
-                          <label className="text-[11px] font-bold text-slate-800 uppercase tracking-wider">Role Requirements</label>
+                          <label className="admin-label">Role Requirements</label>
                           
                           {/* List of items */}
                           {jobForm.requirements.length > 0 && (
@@ -1075,12 +1075,12 @@ export default function AdminCareersPortal() {
                                   addListItem('requirements', reqInput, setReqInput);
                                 }
                               }}
-                              className="w-full bg-white rounded-lg px-3 py-2 text-xs font-medium border border-slate-200 outline-none focus:border-[#4B2A63] transition-colors"
+                              className="admin-input"
                             />
                             <button
                               type="button"
                               onClick={() => addListItem('requirements', reqInput, setReqInput)}
-                              className="px-3 h-[32px] bg-[#4B2A63] text-white text-xs font-bold rounded-lg hover:bg-[#3B198F] transition-colors flex items-center justify-center cursor-pointer"
+                              className="px-3 h-[32px] bg-[#4B2A63] text-white text-xs font-bold rounded-lg hover:bg-[#3B198F] transition-colors flex items-center justify-center cursor-pointer font-sans"
                             >
                               Add
                             </button>
@@ -1089,7 +1089,7 @@ export default function AdminCareersPortal() {
 
                         {/* List items editor: Responsibilities */}
                         <div className="space-y-3 p-4 bg-slate-50/50 rounded-2xl border border-slate-100">
-                          <label className="text-[11px] font-bold text-slate-800 uppercase tracking-wider">Key Responsibilities</label>
+                          <label className="admin-label">Key Responsibilities</label>
                           
                           {jobForm.responsibilities.length > 0 && (
                             <ul className="space-y-1.5 max-h-[150px] overflow-y-auto pr-1">
@@ -1120,12 +1120,12 @@ export default function AdminCareersPortal() {
                                   addListItem('responsibilities', respInput, setRespInput);
                                 }
                               }}
-                              className="w-full bg-white rounded-lg px-3 py-2 text-xs font-medium border border-slate-200 outline-none focus:border-[#4B2A63] transition-colors"
+                              className="admin-input"
                             />
                             <button
                               type="button"
                               onClick={() => addListItem('responsibilities', respInput, setRespInput)}
-                              className="px-3 h-[32px] bg-[#4B2A63] text-white text-xs font-bold rounded-lg hover:bg-[#3B198F] transition-colors flex items-center justify-center cursor-pointer"
+                              className="px-3 h-[32px] bg-[#4B2A63] text-white text-xs font-bold rounded-lg hover:bg-[#3B198F] transition-colors flex items-center justify-center cursor-pointer font-sans"
                             >
                               Add
                             </button>
@@ -1134,7 +1134,7 @@ export default function AdminCareersPortal() {
 
                         {/* List items editor: Nice to Have */}
                         <div className="space-y-3 p-4 bg-slate-50/50 rounded-2xl border border-slate-100">
-                          <label className="text-[11px] font-bold text-slate-800 uppercase tracking-wider">Nice to Have (Optional)</label>
+                          <label className="admin-label">Nice to Have (Optional)</label>
                           
                           {jobForm.niceToHave.length > 0 && (
                             <ul className="space-y-1.5 max-h-[150px] overflow-y-auto pr-1">
@@ -1165,12 +1165,12 @@ export default function AdminCareersPortal() {
                                   addListItem('niceToHave', niceInput, setNiceInput);
                                 }
                               }}
-                              className="w-full bg-white rounded-lg px-3 py-2 text-xs font-medium border border-slate-200 outline-none focus:border-[#4B2A63] transition-colors"
+                              className="admin-input"
                             />
                             <button
                               type="button"
                               onClick={() => addListItem('niceToHave', niceInput, setNiceInput)}
-                              className="px-3 h-[32px] bg-[#4B2A63] text-white text-xs font-bold rounded-lg hover:bg-[#3B198F] transition-colors flex items-center justify-center cursor-pointer"
+                              className="px-3 h-[32px] bg-[#4B2A63] text-white text-xs font-bold rounded-lg hover:bg-[#3B198F] transition-colors flex items-center justify-center cursor-pointer font-sans"
                             >
                               Add
                             </button>
@@ -1179,7 +1179,7 @@ export default function AdminCareersPortal() {
 
                         {/* List items editor: What We Offer */}
                         <div className="space-y-3 p-4 bg-slate-50/50 rounded-2xl border border-slate-100">
-                          <label className="text-[11px] font-bold text-slate-800 uppercase tracking-wider">What We Offer</label>
+                          <label className="admin-label">What We Offer</label>
                           
                           {jobForm.whatWeOffer.length > 0 && (
                             <ul className="space-y-1.5 max-h-[150px] overflow-y-auto pr-1">
@@ -1210,12 +1210,12 @@ export default function AdminCareersPortal() {
                                   addListItem('whatWeOffer', offerInput, setOfferInput);
                                 }
                               }}
-                              className="w-full bg-white rounded-lg px-3 py-2 text-xs font-medium border border-slate-200 outline-none focus:border-[#4B2A63] transition-colors"
+                              className="admin-input"
                             />
                             <button
                               type="button"
                               onClick={() => addListItem('whatWeOffer', offerInput, setOfferInput)}
-                              className="px-3 h-[32px] bg-[#4B2A63] text-white text-xs font-bold rounded-lg hover:bg-[#3B198F] transition-colors flex items-center justify-center cursor-pointer"
+                              className="px-3 h-[32px] bg-[#4B2A63] text-white text-xs font-bold rounded-lg hover:bg-[#3B198F] transition-colors flex items-center justify-center cursor-pointer font-sans"
                             >
                               Add
                             </button>
