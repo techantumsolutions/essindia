@@ -51,15 +51,15 @@ export function JudicialHero({ content }: JudicialHeroProps) {
               </div>
             )}
             
-            {title.includes('<p>') ? (
+             {title.includes('<p>') ? (
               <div 
-                className="text-4xl md:text-5xl lg:text-6xl font-light leading-tight prose prose-invert max-w-none"
+                className="text-4xl sm:text-5xl lg:text-6xl font-light leading-[1.1] mb-6 prose prose-invert max-w-none"
                 style={{ color: titleColor }}
                 dangerouslySetInnerHTML={{ __html: title }}
               />
             ) : (
               <h1
-                className="text-4xl md:text-5xl lg:text-6xl font-light leading-tight"
+                className="text-4xl sm:text-5xl lg:text-6xl font-light leading-[1.1] mb-6"
                 style={{ color: titleColor }}
                 dangerouslySetInnerHTML={{ __html: title }}
               />
@@ -67,12 +67,12 @@ export function JudicialHero({ content }: JudicialHeroProps) {
 
             {description.includes('<p>') ? (
               <div 
-                className="text-base md:text-lg max-w-xl prose prose-invert max-w-none prose-p:my-2"
+                className="text-base sm:text-lg max-w-xl leading-relaxed mb-8 prose prose-invert max-w-none prose-p:my-2"
                 style={{ color: descriptionColor }}
                 dangerouslySetInnerHTML={{ __html: description }}
               />
             ) : (
-              <p className="text-base md:text-lg max-w-xl" style={{ color: descriptionColor }}>
+              <p className="text-base sm:text-lg max-w-xl leading-relaxed mb-8" style={{ color: descriptionColor }}>
                 {description}
               </p>
             )}
@@ -80,15 +80,15 @@ export function JudicialHero({ content }: JudicialHeroProps) {
             <div>
               <Link
                 href={buttonUrl}
-                className="inline-block px-8 py-3 rounded-full font-medium hover:brightness-95 transition-all shadow-sm"
+                className="inline-block px-6 py-3 rounded-full font-bold hover:brightness-95 transition-all shadow-md text-sm text-center min-w-[140px]"
                 style={{ backgroundColor: buttonBgColor, color: buttonTextColor }}
               >
                 {buttonText}
               </Link>
             </div>
           </div>
-          <div className="lg:w-1/2 flex justify-end">
-            <div className="relative w-full max-w-[900px] aspect-[4/3]">
+          <div className="lg:w-1/2 flex justify-end w-full">
+            <div className="relative w-full aspect-[4/3] max-w-[500px] rounded-2xl overflow-hidden shadow-2xl">
               <Image
                 src={image}
                 alt="Judicial Automation Illustration"

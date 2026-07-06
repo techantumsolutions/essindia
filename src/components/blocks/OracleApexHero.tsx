@@ -95,7 +95,7 @@ export function OracleApexHero({ content }: { content?: OracleApexHeroContent })
                 initial={{ opacity: 0, y: 15 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.4, delay: 0.1 }}
-                className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-thin tracking-tight leading-[1.1] whitespace-pre-line"
+                className="text-4xl sm:text-5xl lg:text-6xl font-light tracking-tight leading-[1.1] mb-6 whitespace-pre-line"
                 style={{ color: titleTextColor }}
               >
                 {title}
@@ -108,7 +108,7 @@ export function OracleApexHero({ content }: { content?: OracleApexHeroContent })
                 initial={{ opacity: 0, y: 15 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.4, delay: 0.2 }}
-                className="text-base sm:text-lg leading-relaxed font-light opacity-90"
+                className="text-base sm:text-lg leading-relaxed font-light mb-8 max-w-xl opacity-90"
                 style={{ color: descriptionTextColor }}
               >
                 {description}
@@ -120,12 +120,12 @@ export function OracleApexHero({ content }: { content?: OracleApexHeroContent })
               initial={{ opacity: 0, y: 15 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.4, delay: 0.3 }}
-              className="flex flex-wrap items-center gap-4 pt-2"
+              className="flex flex-wrap items-center gap-4"
             >
               {button1Text && (
                 <a
                   href={button1Url}
-                  className="px-6 py-3 rounded-full text-sm font-bold border transition-all hover:-translate-y-0.5 duration-200 block text-center min-w-[150px]"
+                  className="px-6 py-3 rounded-full text-sm font-bold border transition-all hover:-translate-y-0.5 duration-200 block text-center min-w-[140px]"
                   style={{
                     backgroundColor: button1BgColor,
                     borderColor: button1BorderColor,
@@ -138,7 +138,7 @@ export function OracleApexHero({ content }: { content?: OracleApexHeroContent })
               {button2Text && (
                 <a
                   href={button2Url}
-                  className="px-6 py-3 rounded-full text-sm font-bold border shadow-sm hover:shadow-md transition-all hover:-translate-y-0.5 duration-200 block text-center min-w-[180px]"
+                  className="px-6 py-3 rounded-full text-sm font-bold border shadow-sm hover:shadow-md transition-all hover:-translate-y-0.5 duration-200 block text-center min-w-[140px]"
                   style={{
                     backgroundColor: button2BgColor,
                     borderColor: button2BorderColor,
@@ -152,13 +152,13 @@ export function OracleApexHero({ content }: { content?: OracleApexHeroContent })
           </div>
 
           {/* Right Image column */}
-          <div className="lg:col-span-6 flex justify-center lg:justify-end">
+          <div className="lg:col-span-6 flex justify-center lg:justify-end w-full">
             {image && (
               <motion.div
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ duration: 0.5, delay: 0.2 }}
-                className="relative w-full aspect-[4/3] sm:aspect-[16/10] md:aspect-[16/9] lg:aspect-[4/3] max-w-[600px] overflow-hidden"
+                className="relative w-full aspect-[4/3] max-w-[500px] rounded-2xl overflow-hidden shadow-2xl border border-white/10"
               >
                 <Image
                   src={image}

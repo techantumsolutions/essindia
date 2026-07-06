@@ -29,7 +29,7 @@ export function StaffingHero({ content }: StaffingHeroProps) {
   const badgeBorderColor = content?.badgeBorderColor || '#2a2d7c';
   const badgeText = content?.badgeText || 'Staffing Services';
   const badgeTextColor = content?.badgeTextColor || '#2a2d7c';
-  const title = content?.title || 'Smart IT Outsourcing &\nInfrastructure Management\nSolutions';
+  const title = content?.title || 'Smart IT Outsourcing & Infrastructure Management Solutions';
   const titleColor = content?.titleColor || '#ffffff';
   const description = content?.description || 'Streamline healthcare operations with an intelligent Hospital Management System designed to improve patient care, automate workflows, enhance clinical efficiency, and deliver real-time access across the healthcare ecosystem.';
   const descriptionColor = content?.descriptionColor || '#ffffff';
@@ -55,28 +55,28 @@ export function StaffingHero({ content }: StaffingHeroProps) {
               </span>
             )}
 
-            {title.includes('<p>') ? (
+             {title.includes('<p>') ? (
               <div 
-                className="text-4xl md:text-5xl font-light mb-6 leading-[1.1] whitespace-pre-line prose prose-invert max-w-none"
+                className="text-4xl sm:text-5xl lg:text-6xl font-light mb-6 leading-[1.1] whitespace-pre-line prose prose-invert max-w-none"
                 style={{ color: titleColor }}
-                dangerouslySetInnerHTML={{ __html: title }}
+                dangerouslySetInnerHTML={{ __html: title.replace(/<br\s*\/?>/gi, ' ').replace(/\n/g, ' ') }}
               />
             ) : (
               <h1 
-                className="text-4xl md:text-5xl font-light mb-6 leading-[1.1] whitespace-pre-line"
+                className="text-4xl sm:text-5xl lg:text-6xl font-light mb-6 leading-[1.1] whitespace-pre-line"
                 style={{ color: titleColor }}
-                dangerouslySetInnerHTML={{ __html: title }}
+                dangerouslySetInnerHTML={{ __html: title.replace(/<br\s*\/?>/gi, ' ').replace(/\n/g, ' ') }}
               />
             )}
 
             {description.includes('<p>') ? (
               <div 
-                className="text-base md:text-lg leading-relaxed mb-10 max-w-2xl font-light prose prose-invert max-w-none prose-p:my-2"
+                className="text-base sm:text-lg leading-relaxed mb-8 max-w-xl font-light prose prose-invert max-w-none prose-p:my-2"
                 style={{ color: descriptionColor }}
                 dangerouslySetInnerHTML={{ __html: description }}
               />
             ) : (
-              <p className="text-base md:text-lg leading-relaxed mb-10 max-w-2xl font-light" style={{ color: descriptionColor }}>
+              <p className="text-base sm:text-lg leading-relaxed mb-8 max-w-xl font-light" style={{ color: descriptionColor }}>
                 {description}
               </p>
             )}
@@ -84,7 +84,7 @@ export function StaffingHero({ content }: StaffingHeroProps) {
             <div>
               <Link
                 href={buttonUrl}
-                className="inline-block font-bold px-8 py-3.5 rounded-full hover:brightness-95 transition-all shadow-sm"
+                className="inline-block font-bold px-6 py-3 rounded-full hover:brightness-95 transition-all shadow-md text-sm text-center min-w-[140px]"
                 style={{ backgroundColor: buttonBgColor, color: buttonTextColor }}
               >
                 {buttonText}
@@ -94,7 +94,7 @@ export function StaffingHero({ content }: StaffingHeroProps) {
 
           {/* Right Image */}
           <div className="lg:w-1/2 w-full flex justify-center lg:justify-end">
-            <div className="relative w-full max-w-[600px] aspect-[4/3]">
+            <div className="relative w-full aspect-[4/3] max-w-[500px]">
               <Image
                 src={image}
                 alt="Staffing Services Hero"

@@ -98,7 +98,7 @@ export function RoiHero({ content }: { content?: RoiHeroContent }) {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.3, duration: 0.6 }}
-              className="text-4xl sm:text-5xl lg:text-[60px] font-extralight tracking-tight leading-[1.15] font-sans whitespace-pre-line"
+              className="text-4xl sm:text-5xl lg:text-6xl font-light tracking-tight leading-[1.1] mb-6 whitespace-pre-line"
               style={{ color: titleColor }}
             >
               {title}
@@ -108,7 +108,7 @@ export function RoiHero({ content }: { content?: RoiHeroContent }) {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.4, duration: 0.6 }}
-              className="text-sm sm:text-base leading-relaxed max-w-xl opacity-90 font-light"
+              className="text-base sm:text-lg leading-relaxed font-light mb-8 max-w-xl opacity-90"
               style={{ color: descriptionColor }}
             >
               {description}
@@ -118,13 +118,13 @@ export function RoiHero({ content }: { content?: RoiHeroContent }) {
               initial={{ opacity: 0, y: 15 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.5, duration: 0.6 }}
-              className="flex flex-wrap gap-4 pt-2"
+              className="flex flex-wrap gap-4"
             >
               {button1Text && (
                 <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.98 }}>
                   <Link
                     href={button1Url}
-                    className="inline-block px-8 py-3 rounded-full text-sm font-bold shadow-lg transition-colors border text-center"
+                    className="inline-block px-6 py-3 rounded-full text-sm font-bold shadow-md hover:shadow-lg transition-colors border text-center min-w-[140px]"
                     style={{
                       backgroundColor: button1BgColor,
                       borderColor: button1BorderColor,
@@ -139,7 +139,7 @@ export function RoiHero({ content }: { content?: RoiHeroContent }) {
                 <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.98 }}>
                   <Link
                     href={button2Url}
-                    className="inline-block px-8 py-3 rounded-full text-sm font-bold shadow-lg transition-colors border text-center"
+                    className="inline-block px-6 py-3 rounded-full text-sm font-bold border shadow-sm hover:shadow-md transition-colors border text-center min-w-[140px]"
                     style={{
                       backgroundColor: button2BgColor,
                       borderColor: button2BorderColor,
@@ -159,12 +159,12 @@ export function RoiHero({ content }: { content?: RoiHeroContent }) {
               initial={{ opacity: 0, scale: 0.95, x: 20 }}
               animate={{ opacity: 1, scale: 1, x: 0 }}
               transition={{ delay: 0.4, duration: 0.7, ease: 'easeOut' }}
-              className="flex-1 w-full max-w-lg lg:max-w-xl relative aspect-[4/3] lg:h-[420px] shrink-0 flex justify-center items-center"
+              className="flex-1 w-full max-w-[500px] flex justify-center items-center"
             >
               <motion.div 
                 animate={{ y: [0, -10, 0] }}
                 transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut' }}
-                className="w-full h-full relative"
+                className="w-full h-full relative aspect-[4/3] rounded-2xl overflow-hidden shadow-2xl border border-white/10"
               >
                 <Image
                   src={rightImage}

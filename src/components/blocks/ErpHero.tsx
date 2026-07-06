@@ -92,7 +92,7 @@ export function ErpHero({ content }: ErpHeroProps) {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
-              className="text-4xl md:text-5xl pb-2 font-medium tracking-tight leading-[1.15]"
+              className="text-4xl sm:text-5xl lg:text-6xl pb-2 font-light tracking-tight leading-[1.1]"
               style={{ color: titleColor }}
             >
               {highlightTitle(titleText)}
@@ -103,7 +103,7 @@ export function ErpHero({ content }: ErpHeroProps) {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
-              className="text-lg md:text-xl font-light leading-relaxed max-w-xl"
+              className="text-base sm:text-lg font-light leading-relaxed max-w-xl mb-8"
               style={{ color: descriptionColor }}
             >
               {descriptionText}
@@ -114,12 +114,12 @@ export function ErpHero({ content }: ErpHeroProps) {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.3, ease: [0.22, 1, 0.36, 1] }}
-              className="flex flex-wrap gap-4 pt-2"
+              className="flex flex-wrap gap-4"
             >
               <Button
                 onClick={() => (window.location.href = button1Url)}
                 style={{ backgroundColor: button1BgColor, color: button1Color }}
-                className="hover:opacity-90 border-transparent hover:border hover:border-black rounded-full px-8 h-9 text-sm font-medium transition-all duration-300 active:scale-95 cursor-pointer"
+                className="hover:opacity-90 border-transparent hover:border hover:border-black rounded-full px-6 py-3 h-auto text-sm font-bold shadow-md hover:shadow-lg transition-all duration-300 active:scale-95 cursor-pointer min-w-[140px]"
               >
                 {button1Text}
               </Button>
@@ -127,7 +127,7 @@ export function ErpHero({ content }: ErpHeroProps) {
                 variant="outline"
                 onClick={() => (window.location.href = button2Url)}
                 style={{ backgroundColor: button2BgColor, color: button2Color, borderColor: button2BgColor }}
-                className="hover:opacity-90 rounded-full px-8 h-9 text-sm font-medium shadow-md transition-all duration-300 active:scale-95 cursor-pointer"
+                className="hover:opacity-90 rounded-full px-6 py-3 h-auto text-sm font-bold shadow-md transition-all duration-300 active:scale-95 cursor-pointer min-w-[140px]"
               >
                 {button2Text}
               </Button>
@@ -140,18 +140,14 @@ export function ErpHero({ content }: ErpHeroProps) {
               initial={{ opacity: 0, scale: 0.92, y: 30 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               transition={{ duration: 1, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
-              className="relative w-full max-w-155"
+              className="relative w-full aspect-[4/3] max-w-[500px] rounded-2xl overflow-hidden shadow-2xl border border-white/10"
             >
-
-
               {/* ERP Image */}
               <img
                 src={image}
                 alt="ERP Dashboard"
-                className=" rounded-lg object-cover w-full h-auto"
+                className="w-full h-full object-contain"
               />
-
-
             </motion.div>
           </div>
 

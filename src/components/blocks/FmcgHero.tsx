@@ -75,24 +75,24 @@ export function FmcgHero({ content }: { content?: FmcgHeroContent }) {
             )}
 
             <h1
-              className="text-4xl sm:text-5xl lg:text-[64px] font-light tracking-tight leading-[1.1] font-sans whitespace-pre-line"
+              className="text-4xl sm:text-5xl lg:text-6xl font-light tracking-tight leading-[1.1] mb-6 whitespace-pre-line"
               style={{ color: titleColor }}
             >
               {title}
             </h1>
 
             <p
-              className="text-sm sm:text-base leading-relaxed max-w-lg opacity-90 font-light"
+              className="text-base sm:text-lg leading-relaxed font-light mb-8 max-w-xl opacity-90"
               style={{ color: descriptionColor }}
             >
               {description}
             </p>
 
-            <div className="flex flex-wrap gap-4 pt-4">
+            <div className="flex flex-wrap gap-4">
               {buttonText && (
                 <Link
                   href={buttonUrl}
-                  className="px-8 py-3.5 rounded-full text-sm font-bold shadow-lg transition-all duration-300 hover:scale-105 border active:scale-95"
+                  className="px-6 py-3 rounded-full text-sm font-bold shadow-md hover:shadow-lg transition-all duration-300 hover:scale-105 border active:scale-95 text-center min-w-[140px]"
                   style={{
                     backgroundColor: buttonBgColor,
                     borderColor: buttonBorderColor,
@@ -107,7 +107,7 @@ export function FmcgHero({ content }: { content?: FmcgHeroContent }) {
 
           {/* Right Image Column */}
           {rightImage && (
-            <div className="flex-1 w-full max-w-lg lg:max-w-2xl relative aspect-[4/3] lg:h-[480px] shrink-0 flex justify-center items-center">
+            <div className="flex-1 w-full max-w-[500px] relative aspect-[4/3] rounded-2xl overflow-hidden shadow-2xl border border-white/10 flex justify-center items-center">
               <div className="w-full h-full relative">
                 <Image
                   src={rightImage}

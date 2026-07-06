@@ -93,7 +93,7 @@ export function RpaHero({ content }: { content?: RpaHeroContent }) {
                 initial={{ opacity: 0, y: 15 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.4, delay: 0.1 }}
-                className="text-3xl sm:text-4xl md:text-5xl font-light tracking-tight leading-[1.1] whitespace-pre-line"
+                className="text-4xl sm:text-5xl lg:text-6xl font-light tracking-tight leading-[1.1] mb-6 whitespace-pre-line"
                 style={{ color: titleColor }}
               >
                 {title}
@@ -106,7 +106,7 @@ export function RpaHero({ content }: { content?: RpaHeroContent }) {
                 initial={{ opacity: 0, y: 15 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.4, delay: 0.2 }}
-                className="text-base sm:text-lg leading-relaxed font-light"
+                className="text-base sm:text-lg leading-relaxed font-light mb-8 max-w-xl"
                 style={{ color: descriptionColor }}
               >
                 {description}
@@ -118,7 +118,7 @@ export function RpaHero({ content }: { content?: RpaHeroContent }) {
               initial={{ opacity: 0, y: 15 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.4, delay: 0.3 }}
-              className="flex flex-wrap items-center gap-4 pt-2"
+              className="flex flex-wrap items-center gap-4"
             >
               {button1Text && (
                 <a
@@ -152,14 +152,14 @@ export function RpaHero({ content }: { content?: RpaHeroContent }) {
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ duration: 0.5, delay: 0.2 }}
-                className="relative w-full aspect-[2/1] lg:aspect-[1.5/1] max-w-[640px] rounded-2xl overflow-hidden shadow-2xl bg-slate-800/10 border border-white/10"
+                className="relative w-full aspect-[4/3] max-w-[500px] rounded-2xl overflow-hidden shadow-2xl border border-white/10"
               >
                 <Image
                   src={image}
                   alt={title || 'RPA Diagram'}
                   fill
                   priority
-                  className="object-cover"
+                  className="object-contain"
                 />
               </motion.div>
             )}
