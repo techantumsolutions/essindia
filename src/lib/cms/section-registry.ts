@@ -269,7 +269,7 @@ export const SECTION_REGISTRY: SectionTypeDefinition[] = [
     color: 'bg-amber-50 text-amber-600',
     defaultVariant: 'default',
     supportsVariants: false,
-    fieldOrder: ['title', 'logos'],
+    fieldOrder: ['title', 'autoScroll', 'logos'],
   },
   {
     type: 'retail-why-erp',
@@ -470,7 +470,7 @@ export const SECTION_REGISTRY: SectionTypeDefinition[] = [
     color: 'bg-slate-50 text-slate-600',
     defaultVariant: 'default',
     supportsVariants: false,
-    fieldOrder: ['title', 'subtitle', 'ctaText'],
+    fieldOrder: ['title', 'subtitle', 'ctaText', 'pdfUrl'],
   },
   {
     type: 'blog-list-block',
@@ -727,7 +727,7 @@ export const SECTION_REGISTRY: SectionTypeDefinition[] = [
     color: 'bg-emerald-50 text-emerald-600',
     defaultVariant: 'default',
     supportsVariants: false,
-    fieldOrder: ['title', 'description', 'buttonText'],
+    fieldOrder: ['title', 'description', 'buttonText', 'pdfUrl'],
   },
   {
     type: 'contact-hero',
@@ -984,7 +984,8 @@ export const SECTION_REGISTRY: SectionTypeDefinition[] = [
       'descriptionColor',
       'buttonText',
       'buttonBgColor',
-      'buttonTextColor'
+      'buttonTextColor',
+      'pdfUrl'
     ],
   },
   {
@@ -1095,7 +1096,7 @@ export const SECTION_REGISTRY: SectionTypeDefinition[] = [
     color: 'bg-amber-50 text-amber-600',
     defaultVariant: 'default',
     supportsVariants: false,
-    fieldOrder: ['logos'],
+    fieldOrder: ['autoScroll', 'logos'],
   },
   {
     type: 'fmcg-overview',
@@ -1195,7 +1196,7 @@ export const SECTION_REGISTRY: SectionTypeDefinition[] = [
     color: 'bg-indigo-50 text-indigo-600',
     defaultVariant: 'default',
     supportsVariants: false,
-    fieldOrder: ['title', 'buttonText'],
+    fieldOrder: ['title', 'buttonText', 'pdfUrl'],
   },
   {
     type: 'roi-hero',
@@ -1353,7 +1354,7 @@ export const SECTION_REGISTRY: SectionTypeDefinition[] = [
     color: 'bg-indigo-50 text-indigo-600',
     defaultVariant: 'default',
     supportsVariants: false,
-    fieldOrder: ['title', 'description', 'buttonText'],
+    fieldOrder: ['title', 'description', 'buttonText', 'pdfUrl'],
   },
   {
     type: 'bi-hero',
@@ -1513,7 +1514,7 @@ export const SECTION_REGISTRY: SectionTypeDefinition[] = [
     color: 'bg-blue-50 text-blue-600',
     defaultVariant: 'default',
     supportsVariants: false,
-    fieldOrder: ['title', 'description', 'subtitle', 'cards', 'logos']
+    fieldOrder: ['title', 'description', 'subtitle', 'autoScroll', 'cards', 'logos']
   },
   {
     type: 'rpa-industries',
@@ -1543,7 +1544,7 @@ export const SECTION_REGISTRY: SectionTypeDefinition[] = [
     color: 'bg-blue-50 text-blue-600',
     defaultVariant: 'default',
     supportsVariants: false,
-    fieldOrder: ['title', 'logos']
+    fieldOrder: ['title', 'autoScroll', 'logos']
   },
   {
     type: 'rpa-benefits',
@@ -1583,7 +1584,7 @@ export const SECTION_REGISTRY: SectionTypeDefinition[] = [
     color: 'bg-blue-50 text-blue-600',
     defaultVariant: 'default',
     supportsVariants: false,
-    fieldOrder: ['title', 'buttonText']
+    fieldOrder: ['title', 'buttonText', 'pdfUrl'],
   },
   {
     type: 'oracle-apex-hero',
@@ -1664,7 +1665,7 @@ export const SECTION_REGISTRY: SectionTypeDefinition[] = [
     color: 'bg-purple-50 text-purple-600',
     defaultVariant: 'default',
     supportsVariants: false,
-    fieldOrder: ['bgColor', 'title', 'titleColor', 'description', 'descriptionColor', 'buttonText', 'buttonBgColor', 'buttonTextColor']
+    fieldOrder: ['bgColor', 'title', 'titleColor', 'description', 'descriptionColor', 'buttonText', 'buttonBgColor', 'buttonTextColor', 'pdfUrl']
   }
 ];
 

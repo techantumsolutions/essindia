@@ -61,7 +61,7 @@ export function BiHero({ content }: { content?: BiHeroContent }) {
 
   return (
     <section
-      className="pt-40 pb-14 px-6 relative overflow-hidden flex items-center min-h-[660px] text-slate-800"
+      className="relative min-h-[80vh] flex items-center pt-40 pb-16 px-6 overflow-hidden text-slate-800"
       style={bgStyles}
     >
       {/* Soft decorative background circles */}

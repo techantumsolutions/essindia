@@ -225,9 +225,8 @@ async function seed() {
     await db.insert(templateSections).values({
       templateId: newTemplate.id,
       type: section.type,
-      content: section.content,
+      contentJson: section.content,
       orderIndex: section.order,
-      isActive: true,
     });
   }
 

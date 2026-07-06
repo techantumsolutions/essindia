@@ -12,7 +12,7 @@ export default function CareerHero({ content }: { content?: any }) {
   } = content || {};
 
   return (
-    <section className="relative h-screen min-h-[600px] flex items-center justify-center overflow-hidden px-6 py-14">
+    <section className="relative min-h-[80vh] flex items-center justify-center overflow-hidden px-6 pt-40 pb-16">
       {/* Background Image */}
       <div
         className="absolute inset-0 z-0 bg-cover bg-center bg-no-repeat"

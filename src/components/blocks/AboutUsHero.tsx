@@ -35,7 +35,7 @@ export function AboutUsHero({ content }: AboutUsHeroProps) {
   const bgImage = content?.bgImage || "/about-us/banner.png";
 
   return (
-    <section className="relative min-h-[50vh] flex flex-col justify-between pt-30 pb-8 md:pb-30 overflow-hidden bg-gradient-to-b from-[#1C2D4E] to-[#111B2D] text-white">
+    <section className="relative min-h-[80vh] flex flex-col justify-between pt-40 pb-16 overflow-hidden bg-gradient-to-b from-[#1C2D4E] to-[#111B2D] text-white">
       {/* Background Image */}
       <div
         className="absolute inset-0 bg-cover bg-center"

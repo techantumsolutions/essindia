@@ -11,22 +11,20 @@ import { SectionRenderer } from '@/components/cms/SectionRenderer';
 export default function SectionsLibraryModule() {
   const [search, setSearch] = React.useState('');
   const [previewSectionType, setPreviewSectionType] = React.useState<string | null>(null);
-  const [visibleCount, setVisibleCount] = React.useState(12);
 
   const filteredTemplates = SECTION_REGISTRY.filter(s => 
     s.label.toLowerCase().includes(search.toLowerCase()) || 
     s.type.toLowerCase().includes(search.toLowerCase())
   );
 
-  const visibleTemplates = filteredTemplates.slice(0, visibleCount);
-  const hasMore = visibleCount < filteredTemplates.length;
-
   return (
     <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="space-y-8">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
         <div>
           <h1 className="text-3xl font-bold text-slate-900 tracking-tight mb-2">Sections Library</h1>
-          <p className="text-slate-500 font-medium">Browse available templates that can be used on pages.</p>
+          <p className="text-slate-500 font-medium">
+            Browse available templates that can be used on pages. (Total: {filteredTemplates.length} sections)
+          </p>
         </div>
       </div>
 
@@ -41,7 +39,6 @@ export default function SectionsLibraryModule() {
             value={search}
             onChange={(e) => {
               setSearch(e.target.value);
-              setVisibleCount(12); // Reset count on search
             }}
             placeholder="Search templates..."
             className="w-full bg-slate-50 rounded-xl pl-12 pr-4 py-2.5 text-sm font-medium outline-none focus:ring-4 focus:ring-[#4B2A63]/5"
@@ -50,10 +47,10 @@ export default function SectionsLibraryModule() {
       </motion.div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-        {visibleTemplates.length === 0 ? (
+        {filteredTemplates.length === 0 ? (
           <p className="col-span-full text-center text-slate-400 py-12">No templates found matching your search.</p>
         ) : (
-          visibleTemplates.map((template, i) => {
+          filteredTemplates.map((template, i) => {
             const Icon = template.icon || Layers;
             return (
               <motion.div
@@ -88,19 +85,6 @@ export default function SectionsLibraryModule() {
           })
         )}
       </div>
-
-      {hasMore && (
-        <div className="flex justify-center mt-8">
-          <Button 
-            variant="outline" 
-            onClick={() => setVisibleCount(prev => prev + 12)}
-            className="rounded-full px-6 bg-white hover:bg-slate-50 text-slate-600 font-medium border-slate-200"
-          >
-            <ChevronDown className="w-4 h-4 mr-2" />
-            Load More Sections
-          </Button>
-        </div>
-      )}
 
       {/* ===== Section Preview Modal ===== */}
       <AnimatePresence>

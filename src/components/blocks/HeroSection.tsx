@@ -26,7 +26,7 @@ export function HeroSection({ content }: HeroSectionProps) {
   const image = content?.image || "/hero-right.png";
 
   return (
-    <section className="relative min-h-[90vh] flex items-center pt-32 pb-12 overflow-hidden bg-white border-b border-gray-200">
+    <section className="relative min-h-[80vh] flex items-center pt-40 pb-16 overflow-hidden bg-white border-b border-gray-200">
       {/* Background Dotted Pattern */}
       <div 
         className="absolute inset-0 z-0 opacity-20" 

@@ -54,7 +54,7 @@ export function RpaHero({ content }: { content?: RpaHeroContent }) {
 
   return (
     <section
-      className="relative min-h-[500px] flex items-center pt-40 pb-14 overflow-hidden font-sans border-b"
+      className="relative min-h-[80vh] flex items-center pt-40 pb-16 overflow-hidden font-sans border-b"
       style={isGradient ? { backgroundImage: bgColor } : { backgroundColor: bgColor }}
     >
       {/* Background Decorative Graphic Pattern */}

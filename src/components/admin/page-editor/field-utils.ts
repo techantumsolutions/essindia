@@ -104,6 +104,7 @@ const COLOR_PATTERN = /^#([0-9a-f]{3}){1,2}$/i;
 const ICON_PATTERNS = ['icon'];
 
 export function detectFieldType(key: string, value: JsonValue, sectionType?: string): FieldType {
+  if (key === 'autoScroll') return 'boolean';
   if (value === null || value === undefined) return 'null';
   if (typeof value === 'boolean') return 'boolean';
   if (typeof value === 'number') return 'number';

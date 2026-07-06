@@ -32,7 +32,10 @@ export function DynamicFieldRenderer({
   depth = 0,
   sectionType,
 }: DynamicFieldRendererProps) {
-  const fieldType = detectFieldType(fieldKey, value, sectionType);
+  let fieldType = detectFieldType(fieldKey, value, sectionType);
+  if (fieldKey.toLowerCase().includes('pdf')) {
+    fieldType = 'image';
+  }
 
   switch (fieldType) {
     case 'null':
