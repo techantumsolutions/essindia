@@ -570,11 +570,8 @@ function CategoryRow({
     ? registryPages.find((p) => p.id === category.pageId)
     : null;
 
-  const Wrapper: any = depth === 0 ? Reorder.Item : motion.div;
-  const wrapperProps: any = depth === 0 ? { value: category, id: category.id, className: "relative bg-white" } : { className: "relative", layout: true };
-
-  return (
-    <Wrapper {...wrapperProps}>
+  const rowContent = (
+    <>
       {/* Main row */}
       <motion.div
         layout
@@ -658,6 +655,20 @@ function CategoryRow({
           </motion.div>
         )}
       </AnimatePresence>
-    </Wrapper>
+    </>
+  );
+
+  if (depth === 0) {
+    return (
+      <Reorder.Item value={category} id={category.id} className="relative bg-white">
+        {rowContent}
+      </Reorder.Item>
+    );
+  }
+
+  return (
+    <motion.div className="relative" layout>
+      {rowContent}
+    </motion.div>
   );
 }
