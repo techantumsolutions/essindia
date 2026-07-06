@@ -399,7 +399,7 @@ export class PageAdminRepository {
       type: string;
       variant?: string;
       name?: string;
-      content?: Record<string, unknown>;
+      content?: Record<string, unknown> | null;
       sectionLibraryId?: string | null;
       orderIndex?: number;
     }
@@ -440,7 +440,7 @@ export class PageAdminRepository {
   async updateSection(
     sectionId: string,
     data: Partial<{
-      content: Record<string, unknown>;
+      content: Record<string, unknown> | null;
       type: string;
       variant: string;
       name: string;
@@ -454,9 +454,14 @@ export class PageAdminRepository {
     });
     if (!section) return null;
 
+    const { content, ...rest } = data;
     const [updated] = await db
       .update(pageSections)
-      .set({ ...data, updatedAt: new Date() })
+      .set({
+        ...rest,
+        ...(content !== undefined ? { content: content ?? {} } : {}),
+        updatedAt: new Date(),
+      })
       .where(eq(pageSections.id, sectionId))
       .returning();
 
