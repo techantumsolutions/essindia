@@ -25,6 +25,7 @@
     "db:seed-mfg-template": "npx tsx scripts/create-mfg-template.ts",
     "db:seed-career-template": "npx tsx scripts/create-career-template.ts",
     "db:seed-testimonials-template": "npx tsx scripts/create-testimonials-template.ts",
+    "db:seed-europe-template": "npx tsx scripts/seed-europe-template.ts",
     "db:apply-registry": "npx tsx scripts/apply-page-registry-migration.ts",
     "db:apply-page-nav": "npx tsx scripts/apply-page-nav-migration.ts",
     "db:apply-page-hierarchy": "npx tsx scripts/apply-page-hierarchy-migration.ts",

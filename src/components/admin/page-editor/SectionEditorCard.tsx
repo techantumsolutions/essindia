@@ -1545,6 +1545,178 @@ const DEFAULT_ORACLE_APEX_CTA_CONTENT: Record<string, any> = {
   buttonUrl: '/contact'
 };
 
+const EUROPE_COMMON_DEFAULTS = {
+  hideSection: false,
+  internalName: '',
+  anchorId: '',
+  backgroundColor: '',
+  backgroundImage: '',
+  containerWidth: '7xl',
+  sectionPaddingTop: 'pt-14',
+  sectionPaddingBottom: 'pb-14',
+  theme: 'default',
+  textAlignment: 'center',
+  customClasses: '',
+};
+
+const DEFAULT_EUROPE_HERO_CONTENT: Record<string, any> = {
+  ...EUROPE_COMMON_DEFAULTS,
+  badgeBgColor: '#ffffff',
+  badgeBorderColor: '#e2e8f0',
+  badgeText: 'ebizframe ERP for Europe',
+  badgeTextColor: '#4B2A63',
+  title: 'Built on Experience.\nDriven by Outcomes.',
+  titleColor: '#1e293b',
+  subtitle: 'Enterprise ERP for European businesses',
+  subtitleColor: '#64748b',
+  description: 'ebizframe ERP helps European enterprises unify operations, ensure regulatory compliance, and scale with confidence across markets.',
+  descriptionColor: '#64748b',
+  primaryButtonText: 'Book Free Demo',
+  primaryButtonTextColor: '#ffffff',
+  primaryButtonBgColor: '#4B2A63',
+  primaryButtonBorderColor: '#4B2A63',
+  primaryButtonUrl: '/contact',
+  secondaryButtonText: 'Explore Solutions',
+  secondaryButtonTextColor: '#1e293b',
+  secondaryButtonBgColor: '#fbbf24',
+  secondaryButtonBorderColor: '#fbbf24',
+  secondaryButtonUrl: '/solutions',
+  backgroundGradient: 'radial-gradient(ellipse at top left, rgba(139, 92, 246, 0.12) 0%, transparent 50%), radial-gradient(ellipse at top right, rgba(59, 130, 246, 0.10) 0%, transparent 50%), #ffffff',
+  heroIllustration: '/industry-solution-Retail/banner-image.png',
+  enableIllustration: true,
+  enableAnimation: true,
+  sectionPaddingTop: 'pt-40',
+  sectionPaddingBottom: 'pb-14',
+};
+
+const DEFAULT_EUROPE_FEATURE_CARDS_CONTENT: Record<string, any> = {
+  ...EUROPE_COMMON_DEFAULTS,
+  textAlignment: 'left',
+  cards: [
+    { image: '/industry-solution-Retail/industry-1.png', title: 'Production Management', description: 'Plan, schedule, and monitor manufacturing operations with real-time visibility.', buttonText: 'Learn More', buttonLink: '/solutions' },
+    { image: '/industry-solution-Retail/industry-2.png', title: 'Financial Management', description: 'Unify accounting, budgeting, and compliance for European regulatory frameworks.', buttonText: 'Learn More', buttonLink: '/solutions' },
+    { image: '/industry-solution-Retail/industry-3.png', title: 'Supply Chain & Logistics', description: 'Optimize procurement, warehousing, and distribution across your European network.', buttonText: 'Learn More', buttonLink: '/solutions' },
+    { image: '/industry-solution-Retail/img-2.png', title: 'Business Intelligence', description: 'Turn operational data into actionable insights for leadership teams.', buttonText: 'Learn More', buttonLink: '/solutions' },
+  ],
+};
+
+const DEFAULT_EUROPE_DARK_SHOWCASE_CONTENT: Record<string, any> = {
+  ...EUROPE_COMMON_DEFAULTS,
+  badgeText: 'ebizframe ERP',
+  badgeBgColor: 'rgba(255,255,255,0.1)',
+  badgeTextColor: '#ffffff',
+  title: 'One Platform. Complete Enterprise Control.',
+  titleColor: '#ffffff',
+  description: 'See how ebizframe ERP unifies finance, operations, and analytics in a single intelligent platform.',
+  descriptionColor: '#cbd5e1',
+  primaryButtonText: 'Request Demo',
+  primaryButtonTextColor: '#0f172a',
+  primaryButtonBgColor: '#ffffff',
+  primaryButtonBorderColor: '#ffffff',
+  primaryButtonUrl: '/contact',
+  secondaryButtonText: 'View Features',
+  secondaryButtonTextColor: '#ffffff',
+  secondaryButtonBgColor: 'transparent',
+  secondaryButtonBorderColor: '#ffffff',
+  secondaryButtonUrl: '/solutions',
+  dashboardImage: '/industry-solution-Retail/banner-image.png',
+  slides: [
+    { image: '/industry-solution-Retail/banner-image.png', alt: 'Dashboard' },
+    { image: '/industry-solution-Retail/process_ERP_Retail.png', alt: 'Process Overview' },
+  ],
+  enableSlider: true,
+  autoplay: true,
+  autoplayInterval: 5000,
+  backgroundColor: '#0d0720',
+  theme: 'dark',
+};
+
+const DEFAULT_EUROPE_GLOBAL_PRESENCE_CONTENT: Record<string, any> = {
+  ...EUROPE_COMMON_DEFAULTS,
+  textAlignment: 'left',
+  image: '/Career-Page/Group 1.png',
+  subtitle: 'Global Presence',
+  subtitleColor: '#fbbf24',
+  title: 'Discover why over 200,000 businesses trust ebizframe ERP',
+  titleColor: '#ffffff',
+  description: 'With offices across Europe, Asia, and the Americas, ESS delivers localized expertise backed by a proven global ERP platform.',
+  descriptionColor: '#cbd5e1',
+  statistics: [
+    { number: '30+', label: 'Years Experience' },
+    { number: '15+', label: 'Global Offices' },
+    { number: '200,000+', label: 'Businesses Served' },
+    { number: '35+', label: 'Countries' },
+  ],
+  backgroundColor: '#0d0720',
+  theme: 'dark',
+};
+
+const DEFAULT_EUROPE_CASE_STUDY_SLIDER_CONTENT: Record<string, any> = {
+  ...EUROPE_COMMON_DEFAULTS,
+  textAlignment: 'left',
+  slides: [
+    { thumbnail: '/portfolio-1.png', companyName: 'Global Manufacturing Co.', industry: 'Manufacturing', description: 'Streamlined production planning across 12 European facilities.', metric1: '70% Faster processing', metric2: '40% Cost reduction', buttonText: 'View case study', buttonLink: '/case-studies' },
+    { thumbnail: '/portfolio-2.png', companyName: 'Retail Enterprise Group', industry: 'Retail', description: 'Unified POS and inventory across 200+ retail outlets.', metric1: '3x Inventory turnover', metric2: '99.9% Uptime', buttonText: 'View case study', buttonLink: '/case-studies' },
+  ],
+  autoplay: false,
+  loop: true,
+  showNavigation: true,
+  showPagination: true,
+  autoplayInterval: 6000,
+  backgroundColor: '#f2f6f9',
+};
+
+const DEFAULT_EUROPE_PROMO_CTA_CONTENT: Record<string, any> = {
+  ...EUROPE_COMMON_DEFAULTS,
+  smallTitle: 'Webinar',
+  smallTitleColor: '#3b82f6',
+  title: 'Monitor everything that matters to your European operations',
+  titleColor: '#1e293b',
+  description: 'Join our experts for a live session on how ebizframe ERP helps European enterprises achieve operational excellence.',
+  descriptionColor: '#64748b',
+  buttonText: 'Register Now',
+  buttonTextColor: '#ffffff',
+  buttonBgColor: '#4B2A63',
+  buttonBorderColor: '#4B2A63',
+  buttonUrl: '/contact',
+  backgroundColor: '#e8eef5',
+};
+
+const DEFAULT_EUROPE_PRODUCT_SHOWCASE_CONTENT: Record<string, any> = {
+  ...EUROPE_COMMON_DEFAULTS,
+  textAlignment: 'left',
+  deviceImage: '/industry-solution-Retail/banner-image.png',
+  badgeText: 'Mobile App',
+  badgeBgColor: '#dbeafe',
+  badgeTextColor: '#2563eb',
+  title: 'Getting started with ebizframe is easier than ever',
+  titleColor: '#1e293b',
+  description: 'Access your entire ERP from any device. Manage approvals, track inventory, and view analytics on the go.',
+  descriptionColor: '#64748b',
+  buttonText: 'Download App',
+  buttonTextColor: '#ffffff',
+  buttonBgColor: '#4B2A63',
+  buttonUrl: '/contact',
+  features: [
+    { title: 'Real-time Dashboards', description: 'Monitor KPIs across finance, operations, and sales.' },
+    { title: 'Mobile Access', description: 'Approve workflows and view reports on the go.' },
+    { title: 'Multi-language Support', description: 'Built for European markets with localization.' },
+    { title: 'Secure Cloud', description: 'Enterprise-grade security and compliance.' },
+  ],
+  backgroundColor: '#f0f4f8',
+};
+
+const DEFAULT_EUROPE_REPORTS_CONTENT: Record<string, any> = {
+  ...EUROPE_COMMON_DEFAULTS,
+  sectionTitle: "Learn why we're the trusted ERP leader in Europe",
+  sectionTitleColor: '#1e293b',
+  cards: [
+    { image: '/portfolio-1.png', category: 'Analyst Report', title: 'IDC MarketScape for Enterprise ERP Platforms in Europe', link: '/resources' },
+    { image: '/portfolio-2.png', category: 'Whitepaper', title: 'Digital Transformation Roadmap for European Manufacturers', link: '/resources' },
+    { image: '/portfolio-3.png', category: 'Case Study', title: 'How a European Retail Chain Unified 200+ Stores', link: '/case-studies' },
+  ],
+};
+
 
 
 
@@ -1704,6 +1876,22 @@ export function SectionEditorCard({
         baseSchema = DEFAULT_ORACLE_APEX_APPROACH_CONTENT as Record<string, JsonValue>;
       } else if (section.type === 'oracle-apex-cta') {
         baseSchema = DEFAULT_ORACLE_APEX_CTA_CONTENT as Record<string, JsonValue>;
+      } else if (section.type === 'europe-hero') {
+        baseSchema = DEFAULT_EUROPE_HERO_CONTENT as Record<string, JsonValue>;
+      } else if (section.type === 'europe-feature-cards') {
+        baseSchema = DEFAULT_EUROPE_FEATURE_CARDS_CONTENT as Record<string, JsonValue>;
+      } else if (section.type === 'europe-dark-showcase') {
+        baseSchema = DEFAULT_EUROPE_DARK_SHOWCASE_CONTENT as Record<string, JsonValue>;
+      } else if (section.type === 'europe-global-presence') {
+        baseSchema = DEFAULT_EUROPE_GLOBAL_PRESENCE_CONTENT as Record<string, JsonValue>;
+      } else if (section.type === 'europe-case-study-slider') {
+        baseSchema = DEFAULT_EUROPE_CASE_STUDY_SLIDER_CONTENT as Record<string, JsonValue>;
+      } else if (section.type === 'europe-promo-cta') {
+        baseSchema = DEFAULT_EUROPE_PROMO_CTA_CONTENT as Record<string, JsonValue>;
+      } else if (section.type === 'europe-product-showcase') {
+        baseSchema = DEFAULT_EUROPE_PRODUCT_SHOWCASE_CONTENT as Record<string, JsonValue>;
+      } else if (section.type === 'europe-reports') {
+        baseSchema = DEFAULT_EUROPE_REPORTS_CONTENT as Record<string, JsonValue>;
       }
     }
 
@@ -1717,7 +1905,7 @@ export function SectionEditorCard({
       meta.fieldOrder.forEach((key) => {
         if (!(key in finalMerged)) {
           // Default arrays for known list fields
-          if (['items', 'processes', 'features', 'faqs', 'cards', 'values', 'modules', 'paragraphs', 'leftItems', 'rightItems', 'steps', 'logos', 'stats', 'categories', 'tabs', 'benefits', 'industries', 'solutions', 'points', 'topics'].includes(key)) {
+          if (['items', 'processes', 'features', 'faqs', 'cards', 'values', 'modules', 'paragraphs', 'leftItems', 'rightItems', 'steps', 'logos', 'stats', 'statistics', 'slides', 'categories', 'tabs', 'benefits', 'industries', 'solutions', 'points', 'topics'].includes(key)) {
             finalMerged[key] = [];
           } else {
             finalMerged[key] = '';
