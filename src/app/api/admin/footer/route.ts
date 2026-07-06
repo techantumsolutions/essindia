@@ -28,9 +28,6 @@ export async function PUT(request: Request) {
     if (countries && !Array.isArray(countries)) {
       return badRequest('Countries must be an array of strings');
     }
-    if (countries && countries.length > 4) {
-      return badRequest('At most 4 countries can be configured');
-    }
     if (links && typeof links !== 'object') {
       return badRequest('Links must be a valid object grouped by category');
     }

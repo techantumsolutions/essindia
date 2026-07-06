@@ -40,13 +40,24 @@ export async function Footer() {
             </div>
 
             {/* Regions */}
-            <div className="flex items-center gap-2 text-[12px] font-bold text-slate-800 flex-wrap">
-              {footerData.countries.filter(Boolean).map((country, idx, arr) => (
-                <span key={country} className="flex items-center gap-2">
-                  <span>{country}</span>
-                  {idx < arr.length - 1 && <span className="text-slate-300">|</span>}
-                </span>
-              ))}
+            <div className="flex flex-col gap-2">
+              {(() => {
+                const countries = footerData.countries.filter(Boolean);
+                const chunked = [];
+                for (let i = 0; i < countries.length; i += 4) {
+                  chunked.push(countries.slice(i, i + 4));
+                }
+                return chunked.map((row, rowIdx) => (
+                  <div key={rowIdx} className="flex items-center gap-2 text-[12px] font-bold text-slate-800 flex-wrap">
+                    {row.map((country, idx) => (
+                      <span key={country} className="flex items-center gap-2">
+                        <span>{country}</span>
+                        {idx < row.length - 1 && <span className="text-slate-300">|</span>}
+                      </span>
+                    ))}
+                  </div>
+                ));
+              })()}
             </div>
           </div>
 

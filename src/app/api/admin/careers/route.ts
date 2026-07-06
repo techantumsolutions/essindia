@@ -28,6 +28,7 @@ export async function GET() {
         whatWeOffer: careers.whatWeOffer,
         status: careers.status,
         jdUrl: careers.jdUrl,
+        budgetRange: careers.budgetRange,
         createdAt: careers.createdAt,
         updatedAt: careers.updatedAt,
         applicantCount: sql<number>`count(${applications.id})::int`,
@@ -62,6 +63,7 @@ export async function POST(request: Request) {
       whatWeOffer,
       status,
       jdUrl,
+      budgetRange,
     } = body;
 
     if (!title || !department || !description || !experience || !location || !aboutText) {
@@ -93,6 +95,7 @@ export async function POST(request: Request) {
         whatWeOffer: whatWeOffer || [],
         status: status || 'active',
         jdUrl: jdUrl || null,
+        budgetRange: budgetRange || null,
       })
       .returning();
 

@@ -3,6 +3,7 @@
 import React from 'react';
 import Image from 'next/image';
 import { motion } from 'framer-motion';
+import { cn } from '@/lib/utils';
 
 interface IndustryItem {
   image: string;
@@ -44,6 +45,7 @@ export function BiIndustries({ content }: { content?: BiIndustriesContent }) {
   ];
 
   const industries = content?.industries && content.industries.length > 0 ? content.industries : defaultIndustries;
+  const isScrollable = industries.length > 4;
 
   return (
     <section className="py-14 bg-[#c8d4e8] font-sans">
@@ -76,7 +78,10 @@ export function BiIndustries({ content }: { content?: BiIndustriesContent }) {
 
           {/* Right Stack Column */}
           <div className="lg:col-span-6">
-            <div className="flex flex-col space-y-4">
+            <div className={cn(
+              "flex flex-col space-y-4",
+              isScrollable && "max-h-[500px]  overflow-y-auto pr-2 [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-[#4c327f]/30 [&::-webkit-scrollbar-thumb]:rounded-full hover:[&::-webkit-scrollbar-thumb]:bg-[#4c327f]/50"
+            )}>
               {industries.map((item, idx) => (
                 <motion.div
                   key={idx}
@@ -84,7 +89,7 @@ export function BiIndustries({ content }: { content?: BiIndustriesContent }) {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ duration: 0.4, delay: idx * 0.05 }}
-                  whileHover={{ scale: 1.015 }}
+                  whileHover={{ scale: 1 }}
                   className="bg-white rounded-[24px] p-3 flex items-center gap-5 sm:gap-6 border border-[#27256b] shadow-sm transition-all duration-300 group cursor-pointer"
                 >
                   {/* Left side Image with rounded corners */}

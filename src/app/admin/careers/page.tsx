@@ -46,6 +46,7 @@ type JobOpening = {
   updatedAt: string;
   applicantCount?: number;
   jdUrl?: string | null;
+  budgetRange?: string | null;
 };
 
 type Application = {
@@ -86,7 +87,8 @@ const defaultJobForm = {
   niceToHave: [] as string[],
   whatWeOffer: [] as string[],
   status: 'active' as 'active' | 'draft' | 'closed',
-  jdUrl: ''
+  jdUrl: '',
+  budgetRange: ''
 };
 
 export default function AdminCareersPortal() {
@@ -239,7 +241,8 @@ export default function AdminCareersPortal() {
       niceToHave: job.niceToHave || [],
       whatWeOffer: job.whatWeOffer || [],
       status: job.status,
-      jdUrl: job.jdUrl || ''
+      jdUrl: job.jdUrl || '',
+      budgetRange: job.budgetRange || ''
     });
     setLocInput('');
     setReqInput('');
@@ -287,7 +290,8 @@ export default function AdminCareersPortal() {
         niceToHave: parsedData.niceToHave || [],
         whatWeOffer: parsedData.whatWeOffer || [],
         status: 'active',
-        jdUrl: parsedData.jdUrl || ''
+        jdUrl: parsedData.jdUrl || '',
+        budgetRange: parsedData.budgetRange || ''
       });
 
       setParsedFileName(file.name);
@@ -969,18 +973,30 @@ export default function AdminCareersPortal() {
                           </div>
                         </div>
 
-                        {/* Status selection */}
-                        <div className="space-y-1.5">
-                          <label className="text-[11px] font-bold text-slate-700 uppercase tracking-wider">Posting Status</label>
-                          <select
-                            value={jobForm.status}
-                            onChange={(e) => setJobForm({ ...jobForm, status: e.target.value as any })}
-                            className="w-full bg-slate-50 rounded-xl px-4 py-2.5 text-sm font-semibold border border-transparent outline-none focus:border-[#4B2A63] focus:bg-white transition-all"
-                          >
-                            <option value="active">Active (Visible Publicly)</option>
-                            <option value="draft">Draft (Hidden)</option>
-                            <option value="closed">Closed (Archive)</option>
-                          </select>
+                        {/* Status & Budget Range */}
+                        <div className="grid grid-cols-2 gap-4">
+                          <div className="space-y-1.5">
+                            <label className="text-[11px] font-bold text-slate-700 uppercase tracking-wider">Posting Status</label>
+                            <select
+                              value={jobForm.status}
+                              onChange={(e) => setJobForm({ ...jobForm, status: e.target.value as any })}
+                              className="w-full bg-slate-50 rounded-xl px-4 py-2.5 text-sm font-semibold border border-transparent outline-none focus:border-[#4B2A63] focus:bg-white transition-all"
+                            >
+                              <option value="active">Active (Visible Publicly)</option>
+                              <option value="draft">Draft (Hidden)</option>
+                              <option value="closed">Closed (Archive)</option>
+                            </select>
+                          </div>
+                          <div className="space-y-1.5">
+                            <label className="text-[11px] font-bold text-slate-700 uppercase tracking-wider">Budget Range (optional)</label>
+                            <input
+                              type="text"
+                              placeholder="e.g. ₹6L - ₹10L"
+                              value={jobForm.budgetRange}
+                              onChange={(e) => setJobForm({ ...jobForm, budgetRange: e.target.value })}
+                              className="w-full bg-slate-50 rounded-xl px-4 py-2.5 text-sm font-semibold border border-transparent outline-none focus:border-[#4B2A63] focus:bg-white transition-all"
+                            />
+                          </div>
                         </div>
 
                         {/* Description (Short summary for cards) */}

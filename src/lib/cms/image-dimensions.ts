@@ -3,6 +3,9 @@ export function getImageHint(sectionType: string, fieldKey: string): string {
   const key = fieldKey.toLowerCase();
 
   // 1. Specific Section Overrides
+  if (sectionType === 'bi-architecture' && key.includes('image')) {
+    return 'Recommended: 1200x675px (16:9 ratio) PNG, JPEG, or animated GIF';
+  }
   if (sectionType === 'mfg-hero' && key.includes('image')) {
     return 'Recommended: 800x800px (1:1 ratio) transparent PNG';
   }
