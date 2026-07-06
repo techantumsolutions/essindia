@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -70,6 +70,28 @@ export function BiTabs({ content }: { content?: BiTabsContent }) {
   const [activeTabIdx, setActiveTabIdx] = useState(0);
   const activeTab = tabs[activeTabIdx] || tabs[0];
 
+  const [startIndex, setStartIndex] = useState(0);
+  const maxStartIndex = Math.max(0, tabs.length - 3);
+
+  const handlePrev = () => {
+    setStartIndex((prev) => Math.max(0, prev - 1));
+  };
+
+  const handleNext = () => {
+    setStartIndex((prev) => Math.min(maxStartIndex, prev + 1));
+  };
+
+  // Keep active tab in view if it changes from outside
+  useEffect(() => {
+    if (activeTabIdx < startIndex) {
+      setStartIndex(activeTabIdx);
+    } else if (activeTabIdx >= startIndex + 3) {
+      setStartIndex(Math.min(maxStartIndex, activeTabIdx - 2));
+    }
+  }, [activeTabIdx, maxStartIndex]);
+
+  const visibleTabs = tabs.slice(startIndex, startIndex + 3);
+
   return (
     <section className="bg-[#61459a] text-white overflow-hidden font-sans">
 
@@ -82,26 +104,76 @@ export function BiTabs({ content }: { content?: BiTabsContent }) {
             </h2>
           )}
 
-          {/* Tab Headers Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-12 pb-5 border-b border-white/20">
-            {tabs.map((tab, idx) => {
-              const isActive = idx === activeTabIdx;
-              return (
-                <button
-                  key={idx}
-                  type="button"
-                  onClick={() => setActiveTabIdx(idx)}
-                  className="text-left shrink-0 transition-all duration-300 select-none cursor-pointer outline-none focus:outline-none py-1 block w-full"
-                >
-                  <div className={`text-base sm:text-lg font-bold transition-colors duration-300 ${isActive ? 'text-white' : 'text-white/70 hover:text-white'}`}>
-                    {tab.tabName}
-                  </div>
-                  <div className={`text-xs sm:text-sm mt-0.5 font-light transition-colors duration-300 ${isActive ? 'text-white' : 'text-white/50 hover:text-white/80'}`}>
-                    {tab.tabDesc}
-                  </div>
-                </button>
-              );
-            })}
+          {/* Tab Headers Navigation */}
+          <div className="flex items-center gap-4 pb-0 border-b border-white/20">
+            {/* Backward Arrow */}
+            {tabs.length > 3 && (
+              <button
+                type="button"
+                onClick={handlePrev}
+                disabled={startIndex === 0}
+                className={`p-2 rounded-full border border-white/25 text-white transition-all duration-300 flex items-center justify-center shrink-0 ${startIndex === 0
+                  ? 'opacity-35 cursor-not-allowed'
+                  : 'opacity-100 hover:bg-white/10 hover:border-white/50 cursor-pointer active:scale-95'
+                  }`}
+                aria-label="Previous tabs"
+              >
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M15 19l-7-7 7-7" />
+                </svg>
+              </button>
+            )}
+
+            {/* Tabs List */}
+            <div className="flex-1 grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-12">
+              {visibleTabs.map((tab, idx) => {
+                const actualIdx = startIndex + idx;
+                const isActive = actualIdx === activeTabIdx;
+                return (
+                  <button
+                    key={actualIdx}
+                    type="button"
+                    onClick={() => setActiveTabIdx(actualIdx)}
+                    className="text-left shrink-0 transition-all duration-300 select-none cursor-pointer outline-none focus:outline-none py-1 block w-full relative group"
+                  >
+                    <div className={`text-base sm:text-lg font-bold transition-colors duration-300 ${isActive ? 'text-white' : 'text-white/70 group-hover:text-white'}`}>
+                      {tab.tabName}
+                    </div>
+                    <div className={`text-xs sm:text-sm mt-0.5 font-light transition-colors duration-300 ${isActive ? 'text-white' : 'text-white/50 group-hover:text-white/80'}`}>
+                      {tab.tabDesc}
+                    </div>
+                    {/* Active Underline */}
+                    <div className="relative mt-3 h-[3px] w-full bg-white/10 rounded-full overflow-hidden">
+                      {isActive && (
+                        <motion.div
+                          layoutId="activeTabUnderline"
+                          className="absolute inset-0 bg-white"
+                          transition={{ type: 'spring', stiffness: 380, damping: 30 }}
+                        />
+                      )}
+                    </div>
+                  </button>
+                );
+              })}
+            </div>
+
+            {/* Forward Arrow */}
+            {tabs.length > 3 && (
+              <button
+                type="button"
+                onClick={handleNext}
+                disabled={startIndex >= maxStartIndex}
+                className={`p-2 rounded-full border border-white/25 text-white transition-all duration-300 flex items-center justify-center shrink-0 ${startIndex >= maxStartIndex
+                  ? 'opacity-35 cursor-not-allowed'
+                  : 'opacity-100 hover:bg-white/10 hover:border-white/50 cursor-pointer active:scale-95'
+                  }`}
+                aria-label="Next tabs"
+              >
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 5l7 7-7 7" />
+                </svg>
+              </button>
+            )}
           </div>
         </div>
       </div>

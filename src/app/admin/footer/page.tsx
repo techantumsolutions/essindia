@@ -289,12 +289,27 @@ export default function FooterCMSPage() {
     });
   };
 
+  const addCountry = () => {
+    if (!settings) return;
+    setSettings({
+      ...settings,
+      countries: [...settings.countries, ''],
+    });
+  };
+
+  const removeCountry = (index: number) => {
+    if (!settings) return;
+    setSettings({
+      ...settings,
+      countries: settings.countries.filter((_, i) => i !== index),
+    });
+  };
+
   const updateCountry = (index: number, val: string) => {
     if (!settings) return;
     const countries = [...settings.countries];
     countries[index] = val;
-    // Keep array length up to 4
-    updateField('countries', countries.slice(0, 4));
+    updateField('countries', countries);
   };
 
   // Links management helpers
@@ -517,18 +532,40 @@ export default function FooterCMSPage() {
 
             {/* Countries Section */}
             <div className="bg-white rounded-[32px] p-8 border border-slate-100 shadow-[0_20px_50px_-15px_rgba(0,0,0,0.03)]">
-              <h3 className="font-bold text-lg text-slate-900 mb-6 flex items-center gap-2">
-                <Globe className="w-5 h-5 text-purple-500" /> Active Regions / Countries (Up to 4)
-              </h3>
+              <div className="flex justify-between items-center mb-6">
+                <h3 className="font-bold text-lg text-slate-900 flex items-center gap-2 mb-0">
+                  <Globe className="w-5 h-5 text-purple-500" /> Active Regions / Countries
+                </h3>
+                <Button
+                  type="button"
+                  onClick={addCountry}
+                  size="sm"
+                  className="bg-[#4B2A63] hover:bg-[#3b204e] text-white flex items-center gap-1.5 rounded-full px-4"
+                >
+                  <Plus className="w-4 h-4" /> Add Country
+                </Button>
+              </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {[0, 1, 2, 3].map((idx) => (
-                  <div key={idx} className="space-y-2">
-                    <label className="text-[11px] font-black text-slate-400 uppercase tracking-widest ml-1">
-                      Region / Country {idx + 1}
-                    </label>
+                {settings.countries.map((country, idx) => (
+                  <div key={idx} className="space-y-2 relative">
+                    <div className="flex justify-between items-center pr-1">
+                      <label className="text-[11px] font-black text-slate-400 uppercase tracking-widest ml-1">
+                        Region / Country {idx + 1}
+                      </label>
+                      {settings.countries.length > 1 && (
+                        <button
+                          type="button"
+                          onClick={() => removeCountry(idx)}
+                          className="text-red-500 hover:text-red-700 transition-colors p-1"
+                          title="Delete country"
+                        >
+                          <Trash2 className="w-3.5 h-3.5" />
+                        </button>
+                      )}
+                    </div>
                     <input
                       type="text"
-                      value={settings.countries[idx] || ''}
+                      value={country || ''}
                       onChange={(e) => updateCountry(idx, e.target.value)}
                       placeholder={`e.g. India`}
                       className="w-full bg-slate-50 border border-slate-200 focus:border-[#4B2A63]/30 focus:outline-none rounded-xl px-4 py-3 text-[14px] font-bold"

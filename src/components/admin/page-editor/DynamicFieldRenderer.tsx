@@ -207,13 +207,26 @@ function TextField({
   onChange: (value: string) => void;
 }) {
   const isTitleLike = /title|heading|name|label/i.test(fieldKey);
+  const isTabDesc = fieldKey.toLowerCase() === 'tabdesc';
+  const maxLength = isTabDesc ? 50 : undefined;
 
   return (
     <div className="space-y-1.5">
-      <label className="text-xs font-semibold text-slate-500">{humanLabel(fieldKey)}</label>
+      <div className="flex justify-between items-center">
+        <label className="text-xs font-semibold text-slate-500">{humanLabel(fieldKey)}</label>
+        {maxLength && (
+          <span className={cn(
+            "text-[10px] font-medium",
+            (value?.length || 0) >= maxLength ? "text-red-500 font-bold" : "text-slate-400"
+          )}>
+            {(value?.length || 0)}/{maxLength}
+          </span>
+        )}
+      </div>
       <input
         type="text"
-        value={value}
+        value={value || ''}
+        maxLength={maxLength}
         onChange={(e) => onChange(e.target.value)}
         className={cn(
           'w-full bg-slate-50 rounded-xl px-4 py-2.5 outline-none focus:ring-2 focus:ring-[#4B2A63]/10 border border-transparent focus:border-[#4B2A63]/20',
@@ -424,7 +437,25 @@ function ArrayField({
   depth: number;
   sectionType?: string;
 }) {
-  const isPrimitive = value.length > 0 && typeof value[0] !== 'object';
+  let normalizedValue = value;
+  if (sectionType === 'bi-tabs' && fieldKey === 'tabs' && Array.isArray(value)) {
+    normalizedValue = value.map(item => {
+      if (item && typeof item === 'object' && !Array.isArray(item)) {
+        return {
+          tabName: '',
+          tabDesc: '',
+          heading: '',
+          subheading: '',
+          questions: [],
+          image: '',
+          ...item
+        };
+      }
+      return item;
+    });
+  }
+
+  const isPrimitive = normalizedValue.length > 0 && typeof normalizedValue[0] !== 'object';
   const isImageArray = isPrimitive && (
     fieldKey.toLowerCase().includes('image') ||
     fieldKey.toLowerCase().includes('logo') ||
@@ -434,7 +465,7 @@ function ArrayField({
   return (
     <ArrayFieldEditor
       fieldKey={fieldKey}
-      value={value}
+      value={normalizedValue}
       onChange={(newArr) => onChange(keyPath, newArr)}
       keyPathPrefix={keyPath}
       sectionType={sectionType}
@@ -569,7 +600,9 @@ function ArrayField({
             sortedKeys = featureOrder.filter(k => k in objItem);
           } else if (fieldKey === 'tabs') {
             let tabOrder = ['tabName', 'heading', 'subheading', 'questions', 'image'];
-            if (sectionType === 'fmcg-use-cases') {
+            if (sectionType === 'bi-tabs') {
+              tabOrder = ['tabName', 'tabDesc', 'heading', 'subheading', 'questions', 'image'];
+            } else if (sectionType === 'fmcg-use-cases') {
               tabOrder = ['tabName', 'tag', 'heading', 'points', 'buttonText', 'buttonUrl', 'image'];
             } else if (sectionType === 'aom-workspace') {
               tabOrder = ['label', 'desc', 'icon', 'contentTitle', 'contentDescription', 'contentImage', 'benefits', 'ctaText', 'ctaUrl'];

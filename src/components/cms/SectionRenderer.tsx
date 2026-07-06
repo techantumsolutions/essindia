@@ -131,6 +131,14 @@ import { OracleApexWhyMigrate } from '@/components/blocks/OracleApexWhyMigrate';
 import { OracleApexDeliverables } from '@/components/blocks/OracleApexDeliverables';
 import { OracleApexApproach } from '@/components/blocks/OracleApexApproach';
 import { OracleApexCta } from '@/components/blocks/OracleApexCta';
+import { EuropeHero } from '@/components/blocks/europe/EuropeHero';
+import { EuropeFeatureCards } from '@/components/blocks/europe/EuropeFeatureCards';
+import { EuropeDarkShowcase } from '@/components/blocks/europe/EuropeDarkShowcase';
+import { EuropeGlobalPresence } from '@/components/blocks/europe/EuropeGlobalPresence';
+import { EuropeCaseStudySlider } from '@/components/blocks/europe/EuropeCaseStudySlider';
+import { EuropePromoCta } from '@/components/blocks/europe/EuropePromoCta';
+import { EuropeProductShowcase } from '@/components/blocks/europe/EuropeProductShowcase';
+import { EuropeReports } from '@/components/blocks/europe/EuropeReports';
 
 
 
@@ -420,6 +428,22 @@ export function SectionRenderer({ section }: SectionRendererProps) {
       return <OracleApexApproach content={section.content} />;
     case 'oracle-apex-cta':
       return <OracleApexCta content={section.content} />;
+    case 'europe-hero':
+      return <EuropeHero content={section.content} />;
+    case 'europe-feature-cards':
+      return <EuropeFeatureCards content={section.content} />;
+    case 'europe-dark-showcase':
+      return <EuropeDarkShowcase content={section.content} />;
+    case 'europe-global-presence':
+      return <EuropeGlobalPresence content={section.content} />;
+    case 'europe-case-study-slider':
+      return <EuropeCaseStudySlider content={section.content} />;
+    case 'europe-promo-cta':
+      return <EuropePromoCta content={section.content} />;
+    case 'europe-product-showcase':
+      return <EuropeProductShowcase content={section.content} />;
+    case 'europe-reports':
+      return <EuropeReports content={section.content} />;
 
     default:
       if (process.env.NODE_ENV === 'development') {

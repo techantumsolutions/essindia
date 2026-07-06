@@ -130,14 +130,14 @@ export function MediaField({ fieldKey, value, onChange, hint }: MediaFieldProps)
               ref={fileInputRef}
               type="file"
               className="hidden"
-              accept={isPdfField ? "application/pdf" : "image/*,video/*"}
+              accept={isPdfField ? "application/pdf" : "image/*,image/gif,video/*"}
               onChange={handleUpload}
             />
           </div>
           <p className="text-[10px] text-slate-400">
             Paste media URL or click "Upload" to upload from your device.
             <span className="block mt-1 text-rose-500 font-medium">
-              * Disclaimer: Max upload size is 3MB. Supports {isPdfField ? 'PDF files' : 'images and videos'}.
+              * Disclaimer: Max upload size is 3MB. Supports {isPdfField ? 'PDF files' : 'images (including GIFs) and videos'}.
             </span>
             {hint && (
               <span className="block mt-1 text-[#4B2A63] font-medium">

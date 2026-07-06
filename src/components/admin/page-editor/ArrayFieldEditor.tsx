@@ -81,6 +81,7 @@ export function ArrayFieldEditor({
           title: '', 
           desc2: '',
           tabName: '',
+          tabDesc: '',
           heading: '',
           subheading: '',
           questions: [],
