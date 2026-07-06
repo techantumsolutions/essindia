@@ -472,7 +472,7 @@ export default function FooterCMSPage() {
               <div className="space-y-6">
                 {/* Logo Uploader */}
                 <div className="space-y-2">
-                  <label className="text-[11px] font-black text-slate-400 uppercase tracking-widest ml-1">
+                  <label className="admin-label">
                     Footer Logo
                   </label>
                   <div className="flex flex-col sm:flex-row items-center gap-6 p-6 rounded-2xl bg-slate-50 border border-slate-100">
@@ -489,7 +489,7 @@ export default function FooterCMSPage() {
                         value={settings.logoUrl}
                         onChange={(e) => updateField('logoUrl', e.target.value)}
                         placeholder="/footer-logo.png"
-                        className="w-full bg-white border border-slate-200 focus:border-[#4B2A63]/30 focus:outline-none rounded-xl px-4 py-2.5 text-[14px] font-medium"
+                        className="admin-input"
                       />
                       <div className="flex gap-2">
                         <input
@@ -516,7 +516,7 @@ export default function FooterCMSPage() {
 
                 {/* Description */}
                 <div className="space-y-2">
-                  <label className="text-[11px] font-black text-slate-400 uppercase tracking-widest ml-1">
+                  <label className="admin-label">
                     Branding Description
                   </label>
                   <textarea
@@ -524,7 +524,7 @@ export default function FooterCMSPage() {
                     value={settings.description}
                     onChange={(e) => updateField('description', e.target.value)}
                     placeholder="Enter brand description..."
-                    className="w-full bg-slate-50 border-2 border-transparent focus:border-[#4B2A63]/10 focus:bg-white focus:ring-4 focus:ring-[#4B2A63]/5 rounded-2xl px-6 py-4 text-[15px] font-medium outline-none transition-all resize-none"
+                    className="admin-input min-h-[100px] resize-none"
                   />
                 </div>
               </div>
@@ -549,7 +549,7 @@ export default function FooterCMSPage() {
                 {settings.countries.map((country, idx) => (
                   <div key={idx} className="space-y-2 relative">
                     <div className="flex justify-between items-center pr-1">
-                      <label className="text-[11px] font-black text-slate-400 uppercase tracking-widest ml-1">
+                      <label className="admin-label">
                         Region / Country {idx + 1}
                       </label>
                       {settings.countries.length > 1 && (
@@ -568,7 +568,7 @@ export default function FooterCMSPage() {
                       value={country || ''}
                       onChange={(e) => updateCountry(idx, e.target.value)}
                       placeholder={`e.g. India`}
-                      className="w-full bg-slate-50 border border-slate-200 focus:border-[#4B2A63]/30 focus:outline-none rounded-xl px-4 py-3 text-[14px] font-bold"
+                      className="admin-input font-bold"
                     />
                   </div>
                 ))}
@@ -585,7 +585,7 @@ export default function FooterCMSPage() {
 
               <div className="space-y-6">
                 <div className="space-y-2">
-                  <label className="text-[11px] font-black text-slate-400 uppercase tracking-widest ml-1">
+                  <label className="admin-label">
                     X (formerly Twitter)
                   </label>
                   <input
@@ -593,12 +593,12 @@ export default function FooterCMSPage() {
                     value={settings.twitterUrl}
                     onChange={(e) => updateField('twitterUrl', e.target.value)}
                     placeholder="https://x.com/username"
-                    className="w-full bg-slate-50 border border-slate-200 focus:border-[#4B2A63]/30 focus:outline-none rounded-xl px-4 py-3 text-[14px] font-medium"
+                    className="admin-input"
                   />
                 </div>
 
                 <div className="space-y-2">
-                  <label className="text-[11px] font-black text-slate-400 uppercase tracking-widest ml-1">
+                  <label className="admin-label">
                     LinkedIn
                   </label>
                   <input
@@ -606,12 +606,12 @@ export default function FooterCMSPage() {
                     value={settings.linkedinUrl}
                     onChange={(e) => updateField('linkedinUrl', e.target.value)}
                     placeholder="https://linkedin.com/company/name"
-                    className="w-full bg-slate-50 border border-slate-200 focus:border-[#4B2A63]/30 focus:outline-none rounded-xl px-4 py-3 text-[14px] font-medium"
+                    className="admin-input"
                   />
                 </div>
 
                 <div className="space-y-2">
-                  <label className="text-[11px] font-black text-slate-400 uppercase tracking-widest ml-1">
+                  <label className="admin-label">
                     Facebook
                   </label>
                   <input
@@ -619,12 +619,12 @@ export default function FooterCMSPage() {
                     value={settings.facebookUrl}
                     onChange={(e) => updateField('facebookUrl', e.target.value)}
                     placeholder="https://facebook.com/page"
-                    className="w-full bg-slate-50 border border-slate-200 focus:border-[#4B2A63]/30 focus:outline-none rounded-xl px-4 py-3 text-[14px] font-medium"
+                    className="admin-input"
                   />
                 </div>
 
                 <div className="space-y-2">
-                  <label className="text-[11px] font-black text-slate-400 uppercase tracking-widest ml-1">
+                  <label className="admin-label">
                     YouTube
                   </label>
                   <input
@@ -632,7 +632,7 @@ export default function FooterCMSPage() {
                     value={settings.youtubeUrl}
                     onChange={(e) => updateField('youtubeUrl', e.target.value)}
                     placeholder="https://youtube.com/c/channel"
-                    className="w-full bg-slate-50 border border-slate-200 focus:border-[#4B2A63]/30 focus:outline-none rounded-xl px-4 py-3 text-[14px] font-medium"
+                    className="admin-input"
                   />
                 </div>
               </div>
@@ -675,7 +675,7 @@ export default function FooterCMSPage() {
                       >
                         {/* Link Label Input */}
                         <div className="flex-1 w-full space-y-1">
-                          <label className="text-[9px] font-black text-slate-400 uppercase tracking-widest ml-1">
+                          <label className="admin-label">
                             Link Label
                           </label>
                           <input
@@ -683,13 +683,13 @@ export default function FooterCMSPage() {
                             value={link.label}
                             onChange={(e) => handleUpdateLink(colName, idx, 'label', e.target.value)}
                             placeholder="Link Title"
-                            className="w-full bg-white border border-slate-200 focus:outline-none focus:border-purple-300 rounded-xl px-3 py-2 text-sm font-bold"
+                            className="admin-input font-bold"
                           />
                         </div>
 
                         {/* Page selector */}
                         <div className="flex-1 w-full space-y-1">
-                          <label className="text-[9px] font-black text-slate-400 uppercase tracking-widest ml-1">
+                          <label className="admin-label">
                             Assigned Page
                           </label>
                           <SearchablePageSelect

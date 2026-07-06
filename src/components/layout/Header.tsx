@@ -30,7 +30,17 @@ export type NavItem = {
   megaMenu?: MegaMenuPayload;
 };
 
-export function Header({ navData = [] }: { navData?: NavItem[] }) {
+export function Header({
+  navData = [],
+  logoUrl = '/footer-logo.png',
+  getStartedText = 'Get started',
+  getStartedLink = '/contact-us',
+}: {
+  navData?: NavItem[];
+  logoUrl?: string;
+  getStartedText?: string;
+  getStartedLink?: string;
+}) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = React.useState(false);
   const [scrolled, setScrolled] = React.useState(false);
 
@@ -62,7 +72,7 @@ export function Header({ navData = [] }: { navData?: NavItem[] }) {
         {/* Logo */}
         <Link href="/" className="flex items-center group">
           <div className="relative">
-            <img src="/footer-logo.png" alt="Eastern Software Solutions Pvt.Ltd" className="h-10 w-[160px]" />
+            <img src={logoUrl} alt="Eastern Software Solutions Pvt.Ltd" className="h-10 w-[160px]" />
             {/* <span className="font-bold text-lg text-[#4B2A63] transition-transform duration-500 group-hover:scale-105 inline-block">EASTERN</span> */}
           </div>
         </Link>
@@ -77,9 +87,11 @@ export function Header({ navData = [] }: { navData?: NavItem[] }) {
           <button className="text-slate-600 hover:text-slate-900 transition-colors p-2 hover:bg-slate-50 rounded-full cursor-pointer">
             {/* <Search className="w-5 h-5" /> */}
           </button>
-          <Button className="bg-[#111] hover:bg-black text-white rounded-full px-6 transition-all duration-300 hover:shadow-lg hover:-translate-y-0.5 active:scale-95 cursor-pointer">
-            Get started
-          </Button>
+          <Link href={getStartedLink}>
+            <Button className="bg-[#111] hover:bg-black text-white rounded-full px-6 transition-all duration-300 hover:shadow-lg hover:-translate-y-0.5 active:scale-95 cursor-pointer">
+              {getStartedText}
+            </Button>
+          </Link>
         </div>
 
         {/* Mobile Toggle */}
@@ -142,9 +154,11 @@ export function Header({ navData = [] }: { navData?: NavItem[] }) {
             </nav>
 
             <div className="pt-4 border-t border-slate-100">
-              <Button className="w-full bg-[#111] hover:bg-black text-white rounded-full h-12 text-lg transition-all duration-300 hover:shadow-xl">
-                Get started
-              </Button>
+              <Link href={getStartedLink} onClick={() => setIsMobileMenuOpen(false)} className="w-full block">
+                <Button className="w-full bg-[#111] hover:bg-black text-white rounded-full h-12 text-lg transition-all duration-300 hover:shadow-xl">
+                  {getStartedText}
+                </Button>
+              </Link>
             </div>
           </motion.div>
         )}

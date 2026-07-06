@@ -7,6 +7,9 @@ import { navigationRepository } from '@/repositories/navigation.repository';
 import { navigationTreeRepository } from '@/repositories/navigation-tree.repository';
 import { isAdminRequest } from '@/lib/cms/auth';
 import { unauthorized } from '@/lib/cms/api-response';
+import { revalidatePath } from 'next/cache';
+
+export const dynamic = 'force-dynamic';
 
 export async function PUT(
   request: Request,
@@ -43,6 +46,9 @@ export async function PUT(
     await navigationRepository.clearCache('header-main');
     await navigationTreeRepository.clearCache('header-main');
 
+    // Force revalidation of all layouts and pages
+    revalidatePath('/', 'layout');
+
     return NextResponse.json(updated[0]);
   } catch (error) {
     console.error('[API Navigation PUT]', error);
@@ -67,6 +73,9 @@ export async function DELETE(
 
     await navigationTreeRepository.clearCache('header-main');
     await navigationRepository.clearCache('header-main');
+
+    // Force revalidation of all layouts and pages
+    revalidatePath('/', 'layout');
 
     return NextResponse.json({ success: true, deleted: deleted[0] });
   } catch (error) {

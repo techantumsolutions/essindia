@@ -31,6 +31,62 @@ export default function NavigationModule() {
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
   const [draggedIndex, setDraggedIndex] = useState<number | null>(null);
+  const [menuSettings, setMenuSettings] = useState<any>(null);
+  const [isSavingHeaderSettings, setIsSavingHeaderSettings] = useState(false);
+
+  const handleLogoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    const toastId = toast.loading('Uploading logo...');
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('folder', 'logos');
+
+    try {
+      const res = await fetch('/api/admin/media', {
+        method: 'POST',
+        body: formData,
+      });
+
+      if (!res.ok) throw new Error('Upload failed');
+
+      const data = await res.json();
+      setMenuSettings((prev: any) => ({ ...prev, logoUrl: data.url }));
+      toast.success('Logo uploaded successfully!', { id: toastId });
+    } catch (err) {
+      toast.error('Failed to upload logo', { id: toastId });
+    } finally {
+      e.target.value = '';
+    }
+  };
+
+  const handleSaveHeaderSettings = async () => {
+    setIsSavingHeaderSettings(true);
+    try {
+      const res = await fetch('/api/admin/navigation', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          location: activeMenuLocation,
+          logoUrl: menuSettings.logoUrl,
+          getStartedText: menuSettings.getStartedText,
+          getStartedLink: menuSettings.getStartedLink,
+        }),
+      });
+
+      if (!res.ok) throw new Error('Save failed');
+
+      const updatedMenu = await res.json();
+      setMenuSettings(updatedMenu);
+
+      toast.success('Header settings updated successfully!');
+    } catch (err) {
+      toast.error('Failed to save header settings');
+    } finally {
+      setIsSavingHeaderSettings(false);
+    }
+  };
 
   // Fetch all menus and pages on mount
   useEffect(() => {
@@ -89,6 +145,9 @@ export default function NavigationModule() {
           setSelectedItemId((prev) =>
             prev && sorted.some((item: { id: string }) => item.id === prev) ? prev : sorted[0]?.id ?? null
           );
+        }
+        if (data.menu) {
+          setMenuSettings(data.menu);
         }
         if (data.linkedPagesByNavItem) {
           setLinkedPagesByNavItem(data.linkedPagesByNavItem);
@@ -373,18 +432,18 @@ export default function NavigationModule() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
                 <div className="space-y-6">
                   <div className="space-y-2">
-                    <label className="text-[11px] font-black text-slate-400 uppercase tracking-widest ml-1">Label</label>
+                    <label className="text-sm font-medium text-gray-700">Label</label>
                     <input
                       type="text"
                       value={selectedItem?.label || ''}
                       onChange={(e) => handleUpdateItemField('label', e.target.value)}
-                      className="w-full bg-slate-50 border-2 border-transparent focus:border-[#4B2A63]/10 focus:bg-white focus:ring-4 focus:ring-[#4B2A63]/5 rounded-2xl px-6 py-4 text-[15px] font-bold outline-none transition-all"
+                      className="w-full px-4 py-2 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#5C2B6A] focus:border-transparent transition-all text-sm"
                     />
                   </div>
 
                   <div className="space-y-4">
                     <div className="space-y-2">
-                      <label className="text-[11px] font-black text-slate-400 uppercase tracking-widest ml-1">Link URL / Page</label>
+                      <label className="text-sm font-medium text-gray-700">Link URL / Page</label>
                       <select
                         value={selectedItem?.pageId || 'custom'}
                         onChange={(e) => {
@@ -399,7 +458,7 @@ export default function NavigationModule() {
                             }
                           }
                         }}
-                        className="w-full bg-slate-50 border-2 border-transparent focus:border-[#4B2A63]/10 focus:bg-white focus:ring-4 focus:ring-[#4B2A63]/5 rounded-2xl px-6 py-4 text-[15px] font-bold outline-none transition-all"
+                        className="w-full px-4 py-2 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#5C2B6A] focus:border-transparent transition-all text-sm"
                       >
                         <option value="custom">Custom URL...</option>
                         {registryPages.filter(p => p.status === 'published').map((page) => (
@@ -412,14 +471,14 @@ export default function NavigationModule() {
 
                     {!selectedItem?.pageId && (
                       <div className="space-y-2">
-                        <label className="text-[11px] font-black text-slate-400 uppercase tracking-widest ml-1">Custom Link URL</label>
+                        <label className="text-sm font-medium text-gray-700">Custom Link URL</label>
                         <div className="relative">
-                          <LinkIcon className="absolute left-6 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                          <LinkIcon className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
                           <input
                             type="text"
                             value={selectedItem?.url || ''}
                             onChange={(e) => handleUpdateItemField('url', e.target.value)}
-                            className="w-full bg-slate-50 border-2 border-transparent focus:border-[#4B2A63]/10 focus:bg-white focus:ring-4 focus:ring-[#4B2A63]/5 rounded-2xl pl-14 pr-6 py-4 text-[15px] font-bold outline-none transition-all"
+                            className="w-full pl-10 pr-4 py-2 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#5C2B6A] focus:border-transparent transition-all text-sm"
                             placeholder="e.g. /custom-path"
                           />
                         </div>
@@ -473,6 +532,75 @@ export default function NavigationModule() {
               <p className="text-slate-400 text-sm font-bold uppercase tracking-widest text-center py-6">Select a menu item to configure</p>
             )}
           </div>
+
+          {/* Header Settings */}
+          {activeMenuLocation === 'header-main' && menuSettings && (
+            <div className="bg-white rounded-[32px] p-10 border border-slate-100 shadow-[0_20px_50px_-15px_rgba(0,0,0,0.03)] space-y-6">
+              <div className="flex items-center gap-4 pb-6 border-b border-slate-50">
+                <div className="w-12 h-12 rounded-2xl bg-purple-50 text-[#4B2A63] flex items-center justify-center">
+                  <Layout className="w-6 h-6" />
+                </div>
+                <div>
+                  <h3 className="font-bold text-xl text-slate-900">Header Settings</h3>
+                  <p className="text-sm text-slate-400 font-medium">Configure global header logo and call-to-action button.</p>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="space-y-2">
+                  <label className="text-sm font-medium text-gray-700">Logo Image</label>
+                  <div className="flex items-center gap-4">
+                    {menuSettings.logoUrl && (
+                      <div className="relative w-16 h-10 border border-slate-100 rounded-lg overflow-hidden bg-slate-50 flex items-center justify-center shrink-0">
+                        <img src={menuSettings.logoUrl} alt="Logo Preview" className="max-h-full max-w-full object-contain" />
+                      </div>
+                    )}
+                    <label className="inline-flex items-center px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold rounded-lg transition-colors cursor-pointer border border-slate-200">
+                      <span>Upload Logo</span>
+                      <input
+                        type="file"
+                        accept="image/*"
+                        onChange={handleLogoUpload}
+                        className="hidden"
+                      />
+                    </label>
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <label className="text-sm font-medium text-gray-700">Get Started Button Text</label>
+                  <input
+                    type="text"
+                    value={menuSettings.getStartedText || ''}
+                    onChange={(e) => setMenuSettings((prev: any) => ({ ...prev, getStartedText: e.target.value }))}
+                    placeholder="Get started"
+                    className="w-full px-4 py-2 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#5C2B6A] focus:border-transparent transition-all text-sm"
+                  />
+                </div>
+
+                <div className="space-y-2 md:col-span-2">
+                  <label className="text-sm font-medium text-gray-700">Get Started Button Link</label>
+                  <input
+                    type="text"
+                    value={menuSettings.getStartedLink || ''}
+                    onChange={(e) => setMenuSettings((prev: any) => ({ ...prev, getStartedLink: e.target.value }))}
+                    placeholder="/contact-us"
+                    className="w-full px-4 py-2 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#5C2B6A] focus:border-transparent transition-all text-sm"
+                  />
+                </div>
+              </div>
+
+              <div className="pt-4 flex justify-end">
+                <Button
+                  onClick={handleSaveHeaderSettings}
+                  disabled={isSavingHeaderSettings}
+                  className="bg-[#4B2A63] hover:bg-[#3B198F] text-white rounded-full px-6 h-10 font-bold active:scale-95 cursor-pointer"
+                >
+                  {isSavingHeaderSettings ? 'Saving...' : 'Save Header Settings'}
+                </Button>
+              </div>
+            </div>
+          )}
 
           {/* Mega Menu Visual Builder Preview (Mock) */}
           {/* <div className="bg-[#1A1A2E] rounded-[32px] p-10 text-white shadow-2xl relative overflow-hidden">

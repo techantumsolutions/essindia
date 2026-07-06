@@ -239,6 +239,9 @@ export const navigationMenus = pgTable('navigation_menus', {
   id: uuid('id').primaryKey().defaultRandom(),
   name: varchar('name', { length: 255 }).notNull().unique(),
   location: varchar('location', { length: 100 }).notNull(), // 'header', 'footer', 'sidebar'
+  logoUrl: text('logo_url').default('/footer-logo.png'),
+  getStartedText: varchar('get_started_text', { length: 255 }).default('Get started'),
+  getStartedLink: varchar('get_started_link', { length: 500 }).default('/contact-us'),
   createdAt: timestamp('created_at').defaultNow().notNull(),
   updatedAt: timestamp('updated_at').defaultNow().notNull(),
 });
