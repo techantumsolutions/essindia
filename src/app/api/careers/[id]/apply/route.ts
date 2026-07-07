@@ -76,13 +76,17 @@ export async function POST(
       })
       .returning();
 
-    // Fetch configured HR email (default to hr@example.com if not configured)
+    // Fetch configured HR emails (job-specific list, fall back to global default)
     let hrEmail = 'hr@example.com';
     try {
-      const configs = await db.select().from(careersSettings).limit(1);
-      const config = configs[0];
-      if (config?.hrEmail) {
-        hrEmail = config.hrEmail;
+      if (job.hrEmails && Array.isArray(job.hrEmails) && job.hrEmails.length > 0) {
+        hrEmail = (job.hrEmails as string[]).join(', ');
+      } else {
+        const configs = await db.select().from(careersSettings).limit(1);
+        const config = configs[0];
+        if (config?.hrEmail) {
+          hrEmail = config.hrEmail;
+        }
       }
     } catch (dbErr) {
       console.error('Failed to fetch HR settings from database:', dbErr);
@@ -95,6 +99,7 @@ export async function POST(
         candidateName: fullName,
         jobTitle: job.title,
         hrEmail,
+        jdUrl: job.jdUrl,
         applicantDetails: {
           phone,
           experience,

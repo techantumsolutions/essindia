@@ -159,6 +159,8 @@ function SearchablePageSelect({ value, onChange, pages }: SearchablePageSelectPr
   );
 }
 
+type LinkCategory = 'company' | 'products' | 'industries' | 'services';
+
 export default function FooterCMSPage() {
   const [settings, setSettings] = useState<FooterSettingsData | null>(null);
   const [registryPages, setRegistryPages] = useState<any[]>([]);
@@ -169,7 +171,7 @@ export default function FooterCMSPage() {
   const [activeTab, setActiveTab] = useState<'branding' | 'links'>('branding');
   const [deleteModal, setDeleteModal] = useState<{
     isOpen: boolean;
-    category: keyof FooterSettingsData['links'] | null;
+    category: LinkCategory | null;
     index: number | null;
     label: string;
   }>({
@@ -356,9 +358,9 @@ export default function FooterCMSPage() {
   };
 
   // Links management helpers
-  const handleAddLink = (category: keyof FooterSettingsData['links']) => {
+  const handleAddLink = (category: LinkCategory) => {
     if (!settings) return;
-    const list = [...settings.links[category]];
+    const list = [...(settings.links[category] || [])];
 
     const newLink: FooterLink = {
       label: '',
@@ -376,13 +378,13 @@ export default function FooterCMSPage() {
   };
 
   const handleUpdateLink = (
-    category: keyof FooterSettingsData['links'],
+    category: LinkCategory,
     index: number,
     field: keyof FooterLink,
     value: any
   ) => {
     if (!settings) return;
-    const list = [...settings.links[category]];
+    const list = [...(settings.links[category] || [])];
     const updatedLink = { ...list[index], [field]: value };
 
     // Auto-update URL if pageId changes
@@ -407,9 +409,9 @@ export default function FooterCMSPage() {
     });
   };
 
-  const handleRemoveLink = async (category: keyof FooterSettingsData['links'], index: number) => {
+  const handleRemoveLink = async (category: LinkCategory, index: number) => {
     if (!settings) return;
-    const list = settings.links[category].filter((_, i) => i !== index);
+    const list = (settings.links[category] || []).filter((_, i) => i !== index);
     const updated = {
       ...settings,
       links: {
@@ -422,12 +424,12 @@ export default function FooterCMSPage() {
   };
 
   const handleMoveLink = (
-    category: keyof FooterSettingsData['links'],
+    category: LinkCategory,
     index: number,
     direction: 'up' | 'down'
   ) => {
     if (!settings) return;
-    const list = [...settings.links[category]];
+    const list = [...(settings.links[category] || [])];
     const targetIndex = direction === 'up' ? index - 1 : index + 1;
 
     if (targetIndex < 0 || targetIndex >= list.length) return;
@@ -683,7 +685,7 @@ export default function FooterCMSPage() {
       {activeTab === 'links' && (
         <div className="space-y-8">
           <div className="grid grid-cols-1 gap-2">
-            {(['company', 'products', 'industries', 'services'] as Array<keyof FooterSettingsData['links']>).map((colName) => (
+            {(['company', 'products', 'industries', 'services'] as LinkCategory[]).map((colName) => (
               <div
                 key={colName}
                 className="bg-white rounded-[32px] p-8 border border-slate-100 shadow-[0_20px_50px_-15px_rgba(0,0,0,0.03)]"

@@ -35,7 +35,8 @@ export default function FormsAdminPage() {
   const [selectedSub, setSelectedSub] = React.useState<FormSubmission | null>(null);
   
   // Filter State
-  const [dateFilter, setDateFilter] = React.useState('');
+  const [fromDateFilter, setFromDateFilter] = React.useState('');
+  const [toDateFilter, setToDateFilter] = React.useState('');
   const [countryFilter, setCountryFilter] = React.useState('');
   
   // Pagination State
@@ -75,9 +76,14 @@ export default function FormsAdminPage() {
       let dateMatch = true;
       let countryMatch = true;
       
-      if (dateFilter) {
-        const subDate = new Date(sub.createdAt).toISOString().split('T')[0];
-        dateMatch = subDate === dateFilter;
+      const subDate = new Date(sub.createdAt).toISOString().split('T')[0];
+      
+      if (fromDateFilter) {
+        dateMatch = dateMatch && (subDate >= fromDateFilter);
+      }
+      
+      if (toDateFilter) {
+        dateMatch = dateMatch && (subDate <= toDateFilter);
       }
       
       if (countryFilter) {
@@ -86,11 +92,11 @@ export default function FormsAdminPage() {
       
       return dateMatch && countryMatch;
     });
-  }, [submissions, dateFilter, countryFilter, activeTab]);
+  }, [submissions, fromDateFilter, toDateFilter, countryFilter, activeTab]);
 
   React.useEffect(() => {
     setCurrentPage(1);
-  }, [dateFilter, countryFilter, activeTab]);
+  }, [fromDateFilter, toDateFilter, countryFilter, activeTab]);
 
   const totalPages = Math.ceil(filteredSubmissions.length / itemsPerPage);
   const currentItems = filteredSubmissions.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
@@ -127,7 +133,7 @@ export default function FormsAdminPage() {
   };
 
   return (
-    <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="space-y-8 max-w-7xl">
+    <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="space-y-8 max-w-7xl w-full">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
         <div>
           <h1 className="text-3xl font-bold text-slate-900 tracking-tight mb-2">Leads</h1>
@@ -159,14 +165,22 @@ export default function FormsAdminPage() {
         </button>
       </div>
 
-      <div className="flex flex-col md:flex-row gap-4
- bg-white p-4 rounded-2xl border border-slate-200 shadow-sm items-end">
+      <div className="flex flex-col md:flex-row gap-4 bg-white p-4 rounded-2xl border border-slate-200 shadow-sm items-end">
         <div className="flex flex-col flex-1 w-full">
-          <label className="text-xs font-semibold text-slate-500 uppercase mb-2 tracking-wider">Filter by Date</label>
+          <label className="text-xs font-semibold text-slate-500 uppercase mb-2 tracking-wider">From Date</label>
           <input 
             type="date" 
-            value={dateFilter} 
-            onChange={(e) => setDateFilter(e.target.value)}
+            value={fromDateFilter} 
+            onChange={(e) => setFromDateFilter(e.target.value)}
+            className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:ring-2 focus:ring-[#4B2A63]/20 transition-all cursor-pointer"
+          />
+        </div>
+        <div className="flex flex-col flex-1 w-full">
+          <label className="text-xs font-semibold text-slate-500 uppercase mb-2 tracking-wider">To Date</label>
+          <input 
+            type="date" 
+            value={toDateFilter} 
+            onChange={(e) => setToDateFilter(e.target.value)}
             className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:ring-2 focus:ring-[#4B2A63]/20 transition-all cursor-pointer"
           />
         </div>
@@ -186,16 +200,16 @@ export default function FormsAdminPage() {
         <div>
            <Button 
              variant="ghost" 
-             onClick={() => { setDateFilter(''); setCountryFilter(''); }}
+             onClick={() => { setFromDateFilter(''); setToDateFilter(''); setCountryFilter(''); }}
              className="text-slate-500 hover:text-slate-900 rounded-xl h-[42px] px-6"
-             disabled={!dateFilter && !countryFilter}
+             disabled={!fromDateFilter && !toDateFilter && !countryFilter}
            >
              Clear Filters
            </Button>
         </div>
       </div>
 
-      <div className="bg-white rounded-3xl border border-slate-200 shadow-sm flex flex-col">
+      <div className="bg-white rounded-3xl border border-slate-200 shadow-sm flex flex-col overflow-hidden">
         {isLoading ? (
           <div className="flex justify-center p-12">
             <Loader2 className="w-8 h-8 animate-spin text-slate-400" />
@@ -206,55 +220,55 @@ export default function FormsAdminPage() {
           </div>
         ) : (
           <>
-            <div className="overflow-visible flex-1">
+            <div className="w-full overflow-x-auto flex-1">
               <table className="w-full text-left text-sm">
-                <thead className="bg-slate-50/50 text-slate-500 font-medium border-b border-slate-200">
+                 <thead className="bg-slate-50/50 text-slate-500 font-medium border-b border-slate-200">
                   <tr>
-                    <th className="px-6 py-4 whitespace-nowrap rounded-tl-3xl">Date</th>
-                    <th className="px-6 py-4 whitespace-nowrap">Name</th>
-                    <th className="px-6 py-4 whitespace-nowrap">Mail</th>
-                    <th className="px-6 py-4 whitespace-nowrap">Contact</th>
-                    {activeTab === 'contact' && <th className="px-6 py-4 whitespace-nowrap">Company</th>}
-                    <th className="px-6 py-4 whitespace-nowrap">Country</th>
+                    <th className="px-3 py-4 whitespace-nowrap rounded-tl-3xl">Date</th>
+                    <th className="px-3 py-4 whitespace-nowrap">Name</th>
+                    <th className="px-3 py-4 whitespace-nowrap">Mail</th>
+                    <th className="px-3 py-4 whitespace-nowrap">Contact</th>
+                    {activeTab === 'contact' && <th className="px-3 py-4 whitespace-nowrap">Company</th>}
+                    <th className="px-3 py-4 whitespace-nowrap">Country</th>
                     {activeTab === 'contact' ? (
-                      <th className="px-6 py-4 whitespace-nowrap w-1/3">Message</th>
+                      <th className="px-3 py-4 whitespace-nowrap w-1/3">Message</th>
                     ) : (
                       <>
-                        <th className="px-6 py-4 whitespace-nowrap">Page Name</th>
-                        <th className="px-6 py-4 whitespace-nowrap">PDF URL</th>
+                        <th className="px-3 py-4 whitespace-nowrap">Page Name</th>
+                        <th className="px-3 py-4 whitespace-nowrap">PDF URL</th>
                       </>
                     )}
-                    <th className="px-6 py-4 whitespace-nowrap text-right rounded-tr-3xl">Actions</th>
+                    <th className="px-3 py-4 whitespace-nowrap text-right rounded-tr-3xl">Actions</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100">
                   {currentItems.map((sub) => (
                     <tr key={sub.id} className="hover:bg-slate-50/50 transition-colors">
-                      <td className="px-6 py-4 whitespace-nowrap text-slate-500">
+                      <td className="px-3 py-4 whitespace-nowrap text-slate-500">
                         {new Date(sub.createdAt).toLocaleDateString()}
                       </td>
-                      <td className="px-6 py-4 font-medium text-slate-900 whitespace-nowrap">
+                      <td className="px-3 py-4 font-medium text-slate-900 whitespace-nowrap">
                         {sub.name}
                       </td>
-                      <td className="px-6 py-4">
+                      <td className="px-3 py-4">
                         <a href={`mailto:${sub.email}`} className="text-[#4B2A63] hover:underline flex items-center gap-1.5 whitespace-nowrap">
                           <Mail className="w-3.5 h-3.5" />
                           {sub.email}
                         </a>
                       </td>
-                      <td className="px-6 py-4 text-slate-500 whitespace-nowrap">
+                      <td className="px-3 py-4 text-slate-500 whitespace-nowrap">
                         {sub.phone || '-'}
                       </td>
                       {activeTab === 'contact' && (
-                        <td className="px-6 py-4 text-slate-600 whitespace-nowrap">
+                        <td className="px-3 py-4 text-slate-600 whitespace-nowrap">
                           {sub.company || '-'}
                         </td>
                       )}
-                      <td className="px-6 py-4 text-slate-600 whitespace-nowrap">
+                      <td className="px-3 py-4 text-slate-600 whitespace-nowrap">
                         {sub.country || '-'}
                       </td>
                       {activeTab === 'contact' ? (
-                        <td className="px-6 py-4">
+                        <td className="px-3 py-4">
                           <div className="relative group cursor-pointer">
                             <p className="text-slate-600 line-clamp-2 text-xs leading-relaxed max-w-[250px]">
                               {sub.message || '-'}
@@ -269,10 +283,10 @@ export default function FormsAdminPage() {
                         </td>
                       ) : (
                         <>
-                          <td className="px-6 py-4 text-slate-600 whitespace-nowrap">
+                          <td className="px-3 py-4 text-slate-600 whitespace-nowrap">
                             {formatPageName(sub.pageName)}
                           </td>
-                          <td className="px-6 py-4">
+                          <td className="px-3 py-4">
                             {sub.pdfUrl ? (
                               <a href={sub.pdfUrl} target="_blank" rel="noreferrer" className="text-[#4B2A63] hover:underline whitespace-nowrap">
                                 View PDF
@@ -281,7 +295,7 @@ export default function FormsAdminPage() {
                           </td>
                         </>
                       )}
-                      <td className="px-6 py-4 text-right">
+                      <td className="px-3 py-4 text-right">
                         <div className="flex items-center justify-end gap-2">
                           <a
                             href={`mailto:${sub.email}?subject=Reply from ESS India&body=Hi ${sub.name},%0D%0A%0D%0ARegarding your message:%0D%0A"${sub.message}"%0D%0A%0D%0A`}
@@ -306,31 +320,31 @@ export default function FormsAdminPage() {
             </div>
             
             {/* Pagination Controls */}
-            {totalPages > 1 && (
+            {filteredSubmissions.length > 0 && (
               <div className="border-t border-slate-200 px-6 py-4 flex items-center justify-between">
                 <p className="text-sm text-slate-500">
-                  Showing <span className="font-medium text-slate-900">{(currentPage - 1) * itemsPerPage + 1}</span> to <span className="font-medium text-slate-900">{Math.min(currentPage * itemsPerPage, filteredSubmissions.length)}</span> of <span className="font-medium text-slate-900">{filteredSubmissions.length}</span> results
+                  Showing <span className="font-medium text-slate-900">{filteredSubmissions.length === 0 ? 0 : (currentPage - 1) * itemsPerPage + 1}</span> to <span className="font-medium text-slate-900">{Math.min(currentPage * itemsPerPage, filteredSubmissions.length)}</span> of <span className="font-medium text-slate-900">{filteredSubmissions.length}</span> results
                 </p>
                 <div className="flex items-center gap-2">
                   <Button
                     variant="outline"
-                    size="icon"
                     onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
                     disabled={currentPage === 1}
-                    className="h-8 w-8 rounded-lg"
+                    className="h-9 px-4 rounded-xl flex items-center gap-1.5 text-xs font-semibold cursor-pointer"
                   >
                     <ChevronLeft className="w-4 h-4" />
+                    <span>Previous</span>
                   </Button>
-                  <span className="text-sm font-medium text-slate-700 px-2">
-                    Page {currentPage} of {totalPages}
+                  <span className="text-sm font-semibold text-slate-700 px-2">
+                    Page {currentPage} of {totalPages || 1}
                   </span>
                   <Button
                     variant="outline"
-                    size="icon"
                     onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
-                    disabled={currentPage === totalPages}
-                    className="h-8 w-8 rounded-lg"
+                    disabled={currentPage === totalPages || totalPages === 0}
+                    className="h-9 px-4 rounded-xl flex items-center gap-1.5 text-xs font-semibold cursor-pointer"
                   >
+                    <span>Next</span>
                     <ChevronRight className="w-4 h-4" />
                   </Button>
                 </div>

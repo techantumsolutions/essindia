@@ -85,7 +85,8 @@ export async function POST(request: Request) {
                     "requirements": ["string (bullet points of required skills, qualifications, or experience)"],
                     "responsibilities": ["string (bullet points of day-to-day duties and key responsibilities)"],
                     "niceToHave": ["string (bullet points of preferred or optional skills/certifications)"],
-                    "whatWeOffer": ["string (bullet points of perks, benefits, and salary info if mentioned)"]
+                    "whatWeOffer": ["string (bullet points of perks, benefits, and salary info if mentioned)"],
+                    "budgetRange": "string (budget or salary range if mentioned, e.g. '₹6L - ₹10L', otherwise empty string '')"
                   }
 
                   Rules:
@@ -115,7 +116,8 @@ export async function POST(request: Request) {
                   requirements: { type: 'ARRAY', items: { type: 'STRING' } },
                   responsibilities: { type: 'ARRAY', items: { type: 'STRING' } },
                   niceToHave: { type: 'ARRAY', items: { type: 'STRING' } },
-                  whatWeOffer: { type: 'ARRAY', items: { type: 'STRING' } }
+                  whatWeOffer: { type: 'ARRAY', items: { type: 'STRING' } },
+                  budgetRange: { type: 'STRING' }
                 },
                 required: ['title', 'department', 'description', 'type', 'experience', 'locations', 'aboutText', 'requirements', 'responsibilities']
               }

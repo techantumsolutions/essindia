@@ -167,7 +167,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       {/* Main Content */}
       <main
         className={cn(
-          "flex-1 transition-all duration-300 min-h-screen flex flex-col",
+          "flex-1 transition-all duration-300 min-h-screen flex flex-col min-w-0",
           isSidebarOpen ? "ml-[280px]" : "ml-[80px]"
         )}
       >

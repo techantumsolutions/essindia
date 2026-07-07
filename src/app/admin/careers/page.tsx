@@ -47,6 +47,7 @@ type JobOpening = {
   applicantCount?: number;
   jdUrl?: string | null;
   budgetRange?: string | null;
+  hrEmails?: string[];
 };
 
 type Application = {
@@ -88,7 +89,8 @@ const defaultJobForm = {
   whatWeOffer: [] as string[],
   status: 'active' as 'active' | 'draft' | 'closed',
   jdUrl: '',
-  budgetRange: ''
+  budgetRange: '',
+  hrEmails: [] as string[]
 };
 
 export default function AdminCareersPortal() {
@@ -113,6 +115,7 @@ export default function AdminCareersPortal() {
   const [respInput, setRespInput] = React.useState('');
   const [niceInput, setNiceInput] = React.useState('');
   const [offerInput, setOfferInput] = React.useState('');
+  const [hrEmailInput, setHrEmailInput] = React.useState('');
 
   // Application Details Modal State
   const [selectedApp, setSelectedApp] = React.useState<Application | null>(null);
@@ -225,6 +228,89 @@ export default function AdminCareersPortal() {
     setIsJobModalOpen(true);
   };
 
+  const downloadJDTemplate = () => {
+    try {
+      const htmlContent = `
+        <html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>
+        <head>
+          <title>Job Description Template</title>
+          <style>
+            body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+            h1 { color: #4B2A63; border-bottom: 2px solid #4B2A63; padding-bottom: 5px; }
+            h2 { color: #4B2A63; margin-top: 20px; }
+            .field { margin-bottom: 10px; }
+            .label { font-weight: bold; color: #64748b; text-transform: uppercase; font-size: 11px; }
+            .value { font-size: 14px; color: #1e293b; }
+            ul { margin-top: 5px; margin-bottom: 5px; }
+          </style>
+        </head>
+        <body>
+          <h1>JOB DESCRIPTION TEMPLATE</h1>
+          
+          <div class="field"><span class="label">Job Title:</span> <span class="value">[e.g. Senior React Developer]</span></div>
+          <div class="field"><span class="label">Department:</span> <span class="value">[e.g. Engineering]</span></div>
+          <div class="field"><span class="label">Locations:</span> <span class="value">[e.g. Noida, Delhi NCR (comma-separated if multiple)]</span></div>
+          <div class="field"><span class="label">Job Type:</span> <span class="value">[e.g. Full-Time, Part-Time, Contract]</span></div>
+          <div class="field"><span class="label">Experience Level:</span> <span class="value">[e.g. 5+ Years]</span></div>
+          <div class="field"><span class="label">Budget Range:</span> <span class="value">[e.g. 12L - 18L]</span></div>
+          
+          <h2>Short Card Description:</h2>
+          <p>Provide a brief 1-2 sentence overview of the role to be shown on the search page card.</p>
+          <p>Example: We are looking for a Senior React Developer to join our team and build next-gen enterprise UI.</p>
+          
+          <h2>Full "About the Role":</h2>
+          <p>Provide a comprehensive description of the role, team environment, and project scope.</p>
+          <p>Example: As a Senior Developer, you will collaborate with cross-functional teams to design and implement scalable web applications, mentor junior engineers, and champion coding best practices.</p>
+          
+          <h2>Role Requirements:</h2>
+          <ul>
+            <li>Requirement 1: Strong experience in React, TypeScript, and modern state management.</li>
+            <li>Requirement 2: Solid understanding of REST APIs, Tailwind CSS, and web performance optimization.</li>
+            <li>Requirement 3: Excellent communication and teamwork skills.</li>
+          </ul>
+          
+          <h2>Key Responsibilities:</h2>
+          <ul>
+            <li>Responsibility 1: Develop clean, well-tested, and performant user interface components.</li>
+            <li>Responsibility 2: Lead frontend architectural discussions and conduct code reviews.</li>
+            <li>Responsibility 3: Collaborate with backend team members to integrate APIs.</li>
+          </ul>
+          
+          <h2>Nice to Have (Optional):</h2>
+          <ul>
+            <li>Nice to Have 1: Familiarity with Next.js, Turbopack, or Docker containerization.</li>
+            <li>Nice to Have 2: Contributions to open-source libraries.</li>
+          </ul>
+          
+          <h2>What We Offer:</h2>
+          <ul>
+            <li>Offer 1: Competitive salary and comprehensive health benefits.</li>
+            <li>Offer 2: Flexible work-from-home policy and learning allowances.</li>
+            <li>Offer 3: Collaborative workspace with regular team building events.</li>
+          </ul>
+        </body>
+        </html>
+      `;
+
+      const blob = new Blob(['\ufeff' + htmlContent], {
+        type: 'application/msword'
+      });
+      
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'Job_Description_Template.doc';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      toast.success('Job Description Word template downloaded successfully!');
+    } catch (err) {
+      console.error('Failed to generate Word template:', err);
+      toast.error('Failed to download template. Please try again.');
+    }
+  };
+
   const handleOpenEditJob = (job: JobOpening) => {
     setEditingJobId(job.id);
     setJobForm({
@@ -242,13 +328,15 @@ export default function AdminCareersPortal() {
       whatWeOffer: job.whatWeOffer || [],
       status: job.status,
       jdUrl: job.jdUrl || '',
-      budgetRange: job.budgetRange || ''
+      budgetRange: job.budgetRange || '',
+      hrEmails: job.hrEmails || []
     });
     setLocInput('');
     setReqInput('');
     setRespInput('');
     setNiceInput('');
     setOfferInput('');
+    setHrEmailInput('');
     setParsedFileName(null);
     setIsJobModalOpen(true);
   };
@@ -257,9 +345,10 @@ export default function AdminCareersPortal() {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    if (!file.name.toLowerCase().endsWith('.pdf')) {
-      alert('Only PDF files are supported for Job Description parsing.');
-      toast.error('Only PDF files are supported for Job Description parsing.');
+    const fileNameLower = file.name.toLowerCase();
+    if (!fileNameLower.endsWith('.pdf') && !fileNameLower.endsWith('.docx')) {
+      alert('Only PDF and Word (.docx) files are supported for Job Description parsing.');
+      toast.error('Only PDF and Word (.docx) files are supported for Job Description parsing.');
       e.target.value = '';
       return;
     }
@@ -309,7 +398,8 @@ export default function AdminCareersPortal() {
         whatWeOffer: parsedData.whatWeOffer || [],
         status: 'active',
         jdUrl: parsedData.jdUrl || '',
-        budgetRange: parsedData.budgetRange || ''
+        budgetRange: parsedData.budgetRange || '',
+        hrEmails: []
       });
 
       setParsedFileName(file.name);
@@ -425,7 +515,7 @@ export default function AdminCareersPortal() {
   };
 
   // List Items management
-  const addListItem = (field: 'locations' | 'requirements' | 'responsibilities' | 'niceToHave' | 'whatWeOffer', text: string, setter: (val: string) => void) => {
+  const addListItem = (field: 'locations' | 'requirements' | 'responsibilities' | 'niceToHave' | 'whatWeOffer' | 'hrEmails', text: string, setter: (val: string) => void) => {
     if (!text.trim()) return;
     setJobForm(prev => ({
       ...prev,
@@ -434,7 +524,7 @@ export default function AdminCareersPortal() {
     setter('');
   };
 
-  const removeListItem = (field: 'locations' | 'requirements' | 'responsibilities' | 'niceToHave' | 'whatWeOffer', index: number) => {
+  const removeListItem = (field: 'locations' | 'requirements' | 'responsibilities' | 'niceToHave' | 'whatWeOffer' | 'hrEmails', index: number) => {
     setJobForm(prev => ({
       ...prev,
       [field]: prev[field].filter((_, idx) => idx !== index)
@@ -797,17 +887,77 @@ export default function AdminCareersPortal() {
                             Provide standard and additional details for your job posting.
                           </p>
                         </div>
-                        <button
-                          type="button"
-                          className="rounded-xl p-2 bg-slate-50 hover:bg-slate-100 text-slate-500 transition-colors"
-                          onClick={() => setIsJobModalOpen(false)}
-                        >
-                          <X className="w-5 h-5" />
-                        </button>
+                        <div className="flex items-center gap-3">
+                          {!editingJobId && (
+                            <button
+                              type="button"
+                              onClick={downloadJDTemplate}
+                              className="inline-flex items-center gap-1.5 px-3.5 py-2 bg-slate-50 hover:bg-slate-100 text-slate-700 hover:text-[#4B2A63] text-xs font-bold rounded-xl border border-slate-200 transition-colors shadow-sm cursor-pointer"
+                              title="Download Word JD Template"
+                            >
+                              <Download className="w-3.5 h-3.5" />
+                              <span>Download Template</span>
+                            </button>
+                          )}
+                          <button
+                            type="button"
+                            className="rounded-xl p-2 bg-slate-50 hover:bg-slate-100 text-slate-500 transition-colors"
+                            onClick={() => setIsJobModalOpen(false)}
+                          >
+                            <X className="w-5 h-5" />
+                          </button>
+                        </div>
                       </div>
 
                       {/* Form Body */}
                       <div className="space-y-6 mt-8">
+                        {/* HR Emails List Editor */}
+                        <div className="space-y-3 p-4 bg-slate-50/50 rounded-2xl border border-slate-100">
+                          <label className="text-[11px] font-bold text-slate-800 uppercase tracking-wider">HR Notification Emails (Optional)</label>
+                          
+                          {/* List of items */}
+                          {jobForm.hrEmails && jobForm.hrEmails.length > 0 && (
+                            <ul className="space-y-1.5 max-h-[150px] overflow-y-auto pr-1">
+                              {jobForm.hrEmails.map((email, idx) => (
+                                <li key={idx} className="flex justify-between items-center bg-white border border-slate-100 rounded-lg px-3 py-1.5 text-xs text-slate-600 font-medium">
+                                  <span className="truncate flex-1 mr-3">{email}</span>
+                                  <button
+                                    type="button"
+                                    onClick={() => removeListItem('hrEmails', idx)}
+                                    className="text-rose-400 hover:text-rose-600 flex-shrink-0 cursor-pointer"
+                                  >
+                                    <Trash2 className="w-3.5 h-3.5" />
+                                  </button>
+                                </li>
+                              ))}
+                            </ul>
+                          )}
+
+                          <div className="flex gap-2">
+                            <input
+                              type="email"
+                              placeholder="e.g. hr.manager@company.com"
+                              value={hrEmailInput}
+                              onChange={(e) => setHrEmailInput(e.target.value)}
+                              onKeyDown={(e) => {
+                                if (e.key === 'Enter') {
+                                  e.preventDefault();
+                                  addListItem('hrEmails', hrEmailInput, setHrEmailInput);
+                                }
+                              }}
+                              className="w-full bg-white rounded-lg px-3 py-2 text-xs font-medium border border-slate-200 outline-none focus:border-[#4B2A63] transition-colors"
+                            />
+                            <button
+                              type="button"
+                              onClick={() => addListItem('hrEmails', hrEmailInput, setHrEmailInput)}
+                              className="px-3 h-[32px] bg-[#4B2A63] text-white text-xs font-bold rounded-lg hover:bg-[#3B198F] transition-colors flex items-center justify-center cursor-pointer font-sans"
+                            >
+                              Add
+                            </button>
+                          </div>
+                          <p className="text-[10px] text-slate-400 font-medium">If left empty, applications will be sent to the global HR email setting.</p>
+                        </div>
+
                         {/* Attached JD File (Visible when jdUrl is present) */}
                         {jobForm.jdUrl && (
                           <div className="bg-emerald-50/30 border border-emerald-100/70 rounded-2xl p-4 flex items-center justify-between shadow-sm">
@@ -858,7 +1008,7 @@ export default function AdminCareersPortal() {
                                     <span>Use Different File</span>
                                     <input
                                       type="file"
-                                      accept=".pdf"
+                                      accept=".pdf,.docx"
                                       onChange={handleJDUpload}
                                       className="hidden"
                                     />
@@ -871,13 +1021,13 @@ export default function AdminCareersPortal() {
                                   </div>
                                   <div>
                                     <p className="text-sm font-bold text-slate-900">Auto-fill via Job Description</p>
-                                    <p className="text-xs text-slate-500 mt-0.5">Upload a PDF file to populate fields automatically</p>
+                                    <p className="text-xs text-slate-500 mt-0.5">Upload a PDF or Word (.docx) file to populate fields automatically</p>
                                   </div>
                                   <label className="inline-flex items-center px-4 py-2 bg-[#4B2A63] hover:bg-[#3B198F] text-white text-xs font-bold rounded-full transition-colors cursor-pointer shadow-sm mt-1">
                                     <span>Upload JD File</span>
                                     <input
                                       type="file"
-                                      accept=".pdf"
+                                      accept=".pdf,.docx"
                                       onChange={handleJDUpload}
                                       className="hidden"
                                     />
@@ -891,32 +1041,32 @@ export default function AdminCareersPortal() {
                         {/* Title & Department */}
                         <div className="grid grid-cols-2 gap-4">
                           <div className="space-y-1.5">
-                            <label className="admin-label">Job Title *</label>
+                            <label className="text-[11px] font-bold text-slate-700 uppercase tracking-wider">Job Title *</label>
                             <input
                               type="text"
                               required
                               placeholder="e.g. Senior Backend Engineer"
                               value={jobForm.title}
                               onChange={(e) => setJobForm({ ...jobForm, title: e.target.value })}
-                              className="admin-input"
+                              className="w-full bg-slate-50 rounded-xl px-4 py-2.5 text-sm font-semibold border border-transparent outline-none focus:border-[#4B2A63] focus:bg-white transition-all"
                             />
                           </div>
                           <div className="space-y-1.5">
-                            <label className="admin-label">Department *</label>
+                            <label className="text-[11px] font-bold text-slate-700 uppercase tracking-wider">Department *</label>
                             <input
                               type="text"
                               required
                               placeholder="e.g. Engineering, Sales"
                               value={jobForm.department}
                               onChange={(e) => setJobForm({ ...jobForm, department: e.target.value })}
-                              className="admin-input"
+                              className="w-full bg-slate-50 rounded-xl px-4 py-2.5 text-sm font-semibold border border-transparent outline-none focus:border-[#4B2A63] focus:bg-white transition-all"
                             />
                           </div>
                         </div>
 
                         {/* Location Tag Input */}
                         <div className="space-y-3 p-4 bg-slate-50/50 rounded-2xl border border-slate-100">
-                          <label className="admin-label">Locations *</label>
+                          <label className="text-[11px] font-bold text-slate-800 uppercase tracking-wider">Locations *</label>
                           
                           {jobForm.locations && jobForm.locations.length > 0 && (
                             <div className="flex flex-wrap gap-2 mb-3">
@@ -951,12 +1101,12 @@ export default function AdminCareersPortal() {
                                   addListItem('locations', locInput, setLocInput);
                                 }
                               }}
-                              className="admin-input"
+                              className="w-full bg-white rounded-lg px-3 py-2 text-xs font-medium border border-slate-200 outline-none focus:border-[#4B2A63] transition-colors"
                             />
                             <button
                               type="button"
                               onClick={() => addListItem('locations', locInput, setLocInput)}
-                              className="px-3 h-[32px] bg-[#4B2A63] text-white text-xs font-bold rounded-lg hover:bg-[#3B198F] transition-colors flex items-center justify-center cursor-pointer font-sans"
+                              className="px-3 h-[32px] bg-[#4B2A63] text-white text-xs font-bold rounded-lg hover:bg-[#3B198F] transition-colors flex items-center justify-center cursor-pointer"
                             >
                               Add
                             </button>
@@ -966,11 +1116,11 @@ export default function AdminCareersPortal() {
                         {/* Type & Experience */}
                         <div className="grid grid-cols-2 gap-4">
                           <div className="space-y-1.5">
-                            <label className="admin-label">Job Type</label>
+                            <label className="text-[11px] font-bold text-slate-700 uppercase tracking-wider">Job Type</label>
                             <select
                               value={jobForm.type}
                               onChange={(e) => setJobForm({ ...jobForm, type: e.target.value })}
-                              className="admin-input"
+                              className="w-full bg-slate-50 rounded-xl px-4 py-2.5 text-sm font-semibold border border-transparent outline-none focus:border-[#4B2A63] focus:bg-white transition-all"
                             >
                               <option value="Full-Time">Full-Time</option>
                               <option value="Part-Time">Part-Time</option>
@@ -979,14 +1129,14 @@ export default function AdminCareersPortal() {
                             </select>
                           </div>
                           <div className="space-y-1.5">
-                            <label className="admin-label">Experience Level *</label>
+                            <label className="text-[11px] font-bold text-slate-700 uppercase tracking-wider">Experience Level *</label>
                             <input
                               type="text"
                               required
                               placeholder="e.g. 3-5 Years"
                               value={jobForm.experience}
                               onChange={(e) => setJobForm({ ...jobForm, experience: e.target.value })}
-                              className="admin-input"
+                              className="w-full bg-slate-50 rounded-xl px-4 py-2.5 text-sm font-semibold border border-transparent outline-none focus:border-[#4B2A63] focus:bg-white transition-all"
                             />
                           </div>
                         </div>
@@ -994,11 +1144,11 @@ export default function AdminCareersPortal() {
                         {/* Status & Budget Range */}
                         <div className="grid grid-cols-2 gap-4">
                           <div className="space-y-1.5">
-                            <label className="admin-label">Posting Status</label>
+                            <label className="text-[11px] font-bold text-slate-700 uppercase tracking-wider">Posting Status</label>
                             <select
                               value={jobForm.status}
                               onChange={(e) => setJobForm({ ...jobForm, status: e.target.value as any })}
-                              className="admin-input"
+                              className="w-full bg-slate-50 rounded-xl px-4 py-2.5 text-sm font-semibold border border-transparent outline-none focus:border-[#4B2A63] focus:bg-white transition-all"
                             >
                               <option value="active">Active (Visible Publicly)</option>
                               <option value="draft">Draft (Hidden)</option>
@@ -1006,44 +1156,46 @@ export default function AdminCareersPortal() {
                             </select>
                           </div>
                           <div className="space-y-1.5">
-                            <label className="admin-label">Budget Range (optional)</label>
+                            <label className="text-[11px] font-bold text-slate-700 uppercase tracking-wider">Budget Range (optional)</label>
                             <input
                               type="text"
                               placeholder="e.g. ₹6L - ₹10L"
                               value={jobForm.budgetRange}
                               onChange={(e) => setJobForm({ ...jobForm, budgetRange: e.target.value })}
-                              className="admin-input"
+                              className="w-full bg-slate-50 rounded-xl px-4 py-2.5 text-sm font-semibold border border-transparent outline-none focus:border-[#4B2A63] focus:bg-white transition-all"
                             />
                           </div>
                         </div>
 
+
+
                         {/* Description (Short summary for cards) */}
                         <div className="space-y-1.5">
-                          <label className="admin-label">Short Card Description *</label>
+                          <label className="text-[11px] font-bold text-slate-700 uppercase tracking-wider">Short Card Description *</label>
                           <textarea
                             required
                             placeholder="Briefly state what this role entails. Shown on job listing cards."
                             value={jobForm.description}
                             onChange={(e) => setJobForm({ ...jobForm, description: e.target.value })}
-                            className="admin-input min-h-[70px] resize-none"
+                            className="w-full bg-slate-50 rounded-xl p-4 text-sm font-medium border border-transparent outline-none focus:border-[#4B2A63] focus:bg-white transition-all min-h-[70px] resize-none"
                           />
                         </div>
 
                         {/* About Role (Detailed markdown/plain text overview) */}
                         <div className="space-y-1.5">
-                          <label className="admin-label">Full "About the Role" *</label>
+                          <label className="text-[11px] font-bold text-slate-700 uppercase tracking-wider">Full "About the Role" *</label>
                           <textarea
                             required
                             placeholder="Provide a comprehensive introduction to the role, responsibilities, culture, and team structure."
                             value={jobForm.aboutText}
                             onChange={(e) => setJobForm({ ...jobForm, aboutText: e.target.value })}
-                            className="admin-input min-h-[120px] resize-y"
+                            className="w-full bg-slate-50 rounded-xl p-4 text-sm font-medium border border-transparent outline-none focus:border-[#4B2A63] focus:bg-white transition-all min-h-[120px] resize-y"
                           />
                         </div>
 
                         {/* List items editor: Requirements */}
                         <div className="space-y-3 p-4 bg-slate-50/50 rounded-2xl border border-slate-100">
-                          <label className="admin-label">Role Requirements</label>
+                          <label className="text-[11px] font-bold text-slate-800 uppercase tracking-wider">Role Requirements</label>
                           
                           {/* List of items */}
                           {jobForm.requirements.length > 0 && (
@@ -1075,12 +1227,12 @@ export default function AdminCareersPortal() {
                                   addListItem('requirements', reqInput, setReqInput);
                                 }
                               }}
-                              className="admin-input"
+                              className="w-full bg-white rounded-lg px-3 py-2 text-xs font-medium border border-slate-200 outline-none focus:border-[#4B2A63] transition-colors"
                             />
                             <button
                               type="button"
                               onClick={() => addListItem('requirements', reqInput, setReqInput)}
-                              className="px-3 h-[32px] bg-[#4B2A63] text-white text-xs font-bold rounded-lg hover:bg-[#3B198F] transition-colors flex items-center justify-center cursor-pointer font-sans"
+                              className="px-3 h-[32px] bg-[#4B2A63] text-white text-xs font-bold rounded-lg hover:bg-[#3B198F] transition-colors flex items-center justify-center cursor-pointer"
                             >
                               Add
                             </button>
@@ -1089,7 +1241,7 @@ export default function AdminCareersPortal() {
 
                         {/* List items editor: Responsibilities */}
                         <div className="space-y-3 p-4 bg-slate-50/50 rounded-2xl border border-slate-100">
-                          <label className="admin-label">Key Responsibilities</label>
+                          <label className="text-[11px] font-bold text-slate-800 uppercase tracking-wider">Key Responsibilities</label>
                           
                           {jobForm.responsibilities.length > 0 && (
                             <ul className="space-y-1.5 max-h-[150px] overflow-y-auto pr-1">
@@ -1120,12 +1272,12 @@ export default function AdminCareersPortal() {
                                   addListItem('responsibilities', respInput, setRespInput);
                                 }
                               }}
-                              className="admin-input"
+                              className="w-full bg-white rounded-lg px-3 py-2 text-xs font-medium border border-slate-200 outline-none focus:border-[#4B2A63] transition-colors"
                             />
                             <button
                               type="button"
                               onClick={() => addListItem('responsibilities', respInput, setRespInput)}
-                              className="px-3 h-[32px] bg-[#4B2A63] text-white text-xs font-bold rounded-lg hover:bg-[#3B198F] transition-colors flex items-center justify-center cursor-pointer font-sans"
+                              className="px-3 h-[32px] bg-[#4B2A63] text-white text-xs font-bold rounded-lg hover:bg-[#3B198F] transition-colors flex items-center justify-center cursor-pointer"
                             >
                               Add
                             </button>
@@ -1134,7 +1286,7 @@ export default function AdminCareersPortal() {
 
                         {/* List items editor: Nice to Have */}
                         <div className="space-y-3 p-4 bg-slate-50/50 rounded-2xl border border-slate-100">
-                          <label className="admin-label">Nice to Have (Optional)</label>
+                          <label className="text-[11px] font-bold text-slate-800 uppercase tracking-wider">Nice to Have (Optional)</label>
                           
                           {jobForm.niceToHave.length > 0 && (
                             <ul className="space-y-1.5 max-h-[150px] overflow-y-auto pr-1">
@@ -1165,12 +1317,12 @@ export default function AdminCareersPortal() {
                                   addListItem('niceToHave', niceInput, setNiceInput);
                                 }
                               }}
-                              className="admin-input"
+                              className="w-full bg-white rounded-lg px-3 py-2 text-xs font-medium border border-slate-200 outline-none focus:border-[#4B2A63] transition-colors"
                             />
                             <button
                               type="button"
                               onClick={() => addListItem('niceToHave', niceInput, setNiceInput)}
-                              className="px-3 h-[32px] bg-[#4B2A63] text-white text-xs font-bold rounded-lg hover:bg-[#3B198F] transition-colors flex items-center justify-center cursor-pointer font-sans"
+                              className="px-3 h-[32px] bg-[#4B2A63] text-white text-xs font-bold rounded-lg hover:bg-[#3B198F] transition-colors flex items-center justify-center cursor-pointer"
                             >
                               Add
                             </button>
@@ -1179,7 +1331,7 @@ export default function AdminCareersPortal() {
 
                         {/* List items editor: What We Offer */}
                         <div className="space-y-3 p-4 bg-slate-50/50 rounded-2xl border border-slate-100">
-                          <label className="admin-label">What We Offer</label>
+                          <label className="text-[11px] font-bold text-slate-800 uppercase tracking-wider">What We Offer</label>
                           
                           {jobForm.whatWeOffer.length > 0 && (
                             <ul className="space-y-1.5 max-h-[150px] overflow-y-auto pr-1">
@@ -1210,12 +1362,12 @@ export default function AdminCareersPortal() {
                                   addListItem('whatWeOffer', offerInput, setOfferInput);
                                 }
                               }}
-                              className="admin-input"
+                              className="w-full bg-white rounded-lg px-3 py-2 text-xs font-medium border border-slate-200 outline-none focus:border-[#4B2A63] transition-colors"
                             />
                             <button
                               type="button"
                               onClick={() => addListItem('whatWeOffer', offerInput, setOfferInput)}
-                              className="px-3 h-[32px] bg-[#4B2A63] text-white text-xs font-bold rounded-lg hover:bg-[#3B198F] transition-colors flex items-center justify-center cursor-pointer font-sans"
+                              className="px-3 h-[32px] bg-[#4B2A63] text-white text-xs font-bold rounded-lg hover:bg-[#3B198F] transition-colors flex items-center justify-center cursor-pointer"
                             >
                               Add
                             </button>
