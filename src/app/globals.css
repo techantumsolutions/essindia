@@ -137,3 +137,11 @@
     padding-right: 2.75rem !important;
   }
 }
+
+.admin-label {
+  @apply text-sm font-medium text-gray-700 block mb-1;
+}
+
+.admin-input {
+  @apply w-full px-4 py-2 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#5C2B6A] focus:border-transparent transition-all text-sm bg-white text-gray-900;
+}

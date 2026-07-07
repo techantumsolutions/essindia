@@ -416,12 +416,12 @@ export default function CategoriesModule() {
               </h2>
 
               <div className="space-y-1">
-                <label className="text-[11px] font-black text-slate-400 uppercase tracking-widest block mb-2">Category Name</label>
+                <label className="admin-label">Category Name</label>
                 <input
                   placeholder="Category name"
                   value={form.name}
                   onChange={(e) => setForm({ ...form, name: e.target.value })}
-                  className="w-full bg-slate-50 rounded-2xl px-6 py-4 font-bold outline-none focus:ring-4 focus:ring-[#4B2A63]/10"
+                  className="admin-input"
                 />
               </div>
               {newSubParentId && (
@@ -430,11 +430,11 @@ export default function CategoriesModule() {
                 </p>
               )}
               <div className="space-y-1">
-                <label className="text-[11px] font-black text-slate-400 uppercase tracking-widest block mb-2">Status</label>
+                <label className="admin-label">Status</label>
                 <select
                   value={form.status}
                   onChange={(e) => setForm({ ...form, status: e.target.value as 'active' | 'inactive' })}
-                  className="w-full bg-slate-50 rounded-2xl px-6 py-4 font-bold outline-none"
+                  className="admin-input"
                 >
                   <option value="active">Active</option>
                   <option value="inactive">Inactive</option>
@@ -443,14 +443,14 @@ export default function CategoriesModule() {
 
               {/* Link to CMS Page select input */}
               <div className="space-y-1">
-                <label className="text-[11px] font-black text-slate-400 uppercase tracking-widest block mb-2">
+                <label className="admin-label">
                   Link to CMS Page
                 </label>
                 <Select
                   value={form.pageId}
                   onValueChange={(val) => setForm({ ...form, pageId: val || '' })}
                 >
-                  <SelectTrigger className="w-full bg-slate-50 border border-slate-200 focus:border-[#4B2A63]/10 focus:bg-white rounded-2xl px-6 py-4 font-bold outline-none flex items-center justify-between text-slate-700 h-14">
+                  <SelectTrigger className="admin-input flex items-center justify-between h-10 border-gray-200 focus:ring-2 focus:ring-[#5C2B6A] focus:border-transparent text-slate-700">
                     {form.pageId ? (
                       (() => {
                         const selectedPage = registryPages.find((p) => p.id === form.pageId);

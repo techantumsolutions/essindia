@@ -41,7 +41,7 @@ export function DynamicFieldRenderer({
     case 'null':
       return (
         <div className="flex items-center gap-3 py-1">
-          <label className="text-xs font-semibold text-slate-400 w-36 shrink-0 truncate">
+          <label className="admin-label w-36 shrink-0 truncate">
             {humanLabel(fieldKey)}
           </label>
           <span className="text-xs text-slate-300 italic">Empty</span>
@@ -213,7 +213,7 @@ function TextField({
   return (
     <div className="space-y-1.5">
       <div className="flex justify-between items-center">
-        <label className="text-xs font-semibold text-slate-500">{humanLabel(fieldKey)}</label>
+        <label className="admin-label">{humanLabel(fieldKey)}</label>
         {maxLength && (
           <span className={cn(
             "text-[10px] font-medium",
@@ -229,7 +229,7 @@ function TextField({
         maxLength={maxLength}
         onChange={(e) => onChange(e.target.value)}
         className={cn(
-          'w-full bg-slate-50 rounded-xl px-4 py-2.5 outline-none focus:ring-2 focus:ring-[#4B2A63]/10 border border-transparent focus:border-[#4B2A63]/20',
+          'admin-input',
           isTitleLike ? 'text-base font-bold' : 'text-sm font-medium'
         )}
       />
@@ -248,12 +248,12 @@ function TextareaField({
 }) {
   return (
     <div className="space-y-1.5">
-      <label className="text-xs font-semibold text-slate-500">{humanLabel(fieldKey)}</label>
+      <label className="admin-label">{humanLabel(fieldKey)}</label>
       <textarea
         value={value}
         onChange={(e) => onChange(e.target.value)}
         rows={Math.min(8, Math.max(3, Math.ceil((value?.length || 0) / 80)))}
-        className="w-full bg-slate-50 rounded-xl px-4 py-3 text-sm font-medium outline-none focus:ring-2 focus:ring-[#4B2A63]/10 resize-y min-h-[72px] border border-transparent focus:border-[#4B2A63]/20"
+        className="admin-input resize-y min-h-[72px]"
       />
     </div>
   );
@@ -270,12 +270,12 @@ function NumberField({
 }) {
   return (
     <div className="space-y-1.5">
-      <label className="text-xs font-semibold text-slate-500">{humanLabel(fieldKey)}</label>
+      <label className="admin-label">{humanLabel(fieldKey)}</label>
       <input
         type="number"
         value={value}
         onChange={(e) => onChange(Number(e.target.value) || 0)}
-        className="w-full bg-slate-50 rounded-xl px-4 py-2.5 text-sm font-medium outline-none focus:ring-2 focus:ring-[#4B2A63]/10 border border-transparent focus:border-[#4B2A63]/20 max-w-[200px]"
+        className="admin-input max-w-[200px]"
       />
     </div>
   );
@@ -292,14 +292,14 @@ function UrlField({
 }) {
   return (
     <div className="space-y-1.5">
-      <label className="text-xs font-semibold text-slate-500">{humanLabel(fieldKey)}</label>
+      <label className="admin-label">{humanLabel(fieldKey)}</label>
       <div className="flex items-center gap-2">
         <input
           type="url"
           value={value}
           onChange={(e) => onChange(e.target.value)}
           placeholder="https:// or /path..."
-          className="flex-1 bg-slate-50 rounded-xl px-4 py-2.5 text-sm font-medium outline-none focus:ring-2 focus:ring-[#4B2A63]/10 border border-transparent focus:border-[#4B2A63]/20"
+          className="admin-input flex-1"
         />
         {value && (
           <a
@@ -327,7 +327,7 @@ function IconField({
 }) {
   return (
     <div className="space-y-1.5">
-      <label className="text-xs font-semibold text-slate-500">{humanLabel(fieldKey)}</label>
+      <label className="admin-label">{humanLabel(fieldKey)}</label>
       <div className="flex items-center gap-3">
         <div className="w-10 h-10 rounded-xl bg-[#4B2A63]/5 flex items-center justify-center text-sm font-bold text-[#4B2A63] shrink-0">
           {value ? value.charAt(0).toUpperCase() : '?'}
@@ -337,7 +337,7 @@ function IconField({
           value={value}
           onChange={(e) => onChange(e.target.value)}
           placeholder="Icon name (e.g., Shield, Star)"
-          className="flex-1 bg-slate-50 rounded-xl px-4 py-2.5 text-sm font-medium outline-none focus:ring-2 focus:ring-[#4B2A63]/10 border border-transparent focus:border-[#4B2A63]/20"
+          className="admin-input flex-1"
         />
       </div>
     </div>
@@ -499,7 +499,7 @@ function ArrayField({
               type="text"
               value={String(item ?? '')}
               onChange={(e) => onItemChange(_idx, e.target.value)}
-              className="flex-1 bg-slate-50 rounded-xl px-4 py-2.5 text-sm font-medium outline-none focus:ring-2 focus:ring-[#4B2A63]/10 border border-transparent focus:border-[#4B2A63]/20"
+              className="admin-input flex-1"
             />
           );
         }
@@ -683,11 +683,11 @@ function CountryCodeField({
 }) {
   return (
     <div className="space-y-1.5">
-      <label className="text-xs font-semibold text-slate-500">{humanLabel(fieldKey)}</label>
+      <label className="admin-label">{humanLabel(fieldKey)}</label>
       <select
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        className="w-full bg-slate-50 rounded-xl px-4 py-2.5 text-sm font-medium outline-none focus:ring-2 focus:ring-[#4B2A63]/10 border border-transparent focus:border-[#4B2A63]/20"
+        className="admin-input"
       >
         <option value="">Select a country...</option>
         {ALL_COUNTRIES_LIST.map((c) => (
@@ -721,11 +721,11 @@ function TopicSelectField({
 }) {
   return (
     <div className="space-y-1.5 flex-1 min-w-[200px]">
-      <label className="text-xs font-semibold text-slate-500">{humanLabel(fieldKey)}</label>
+      <label className="admin-label">{humanLabel(fieldKey)}</label>
       <select
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        className="w-full bg-slate-50 rounded-xl px-4 py-2.5 text-sm font-medium outline-none focus:ring-2 focus:ring-[#4B2A63]/10 border border-transparent focus:border-[#4B2A63]/20"
+        className="admin-input"
       >
         <option value="">Select a topic...</option>
         {TOPIC_OPTIONS.map((t) => (
@@ -757,11 +757,11 @@ function IndustrySelectField({
 }) {
   return (
     <div className="space-y-1.5 flex-1 min-w-[200px]">
-      <label className="text-xs font-semibold text-slate-500">{humanLabel(fieldKey)}</label>
+      <label className="admin-label">{humanLabel(fieldKey)}</label>
       <select
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        className="w-full bg-slate-50 rounded-xl px-4 py-2.5 text-sm font-medium outline-none focus:ring-2 focus:ring-[#4B2A63]/10 border border-transparent focus:border-[#4B2A63]/20"
+        className="admin-input"
       >
         <option value="">Select an industry...</option>
         {INDUSTRY_OPTIONS.map((i) => (
@@ -848,7 +848,7 @@ function SelectedPagesField({
   return (
     <div className="space-y-4 border border-slate-200 rounded-xl p-4 bg-slate-50">
       <div className="flex items-center justify-between border-b border-slate-200 pb-2">
-        <label className="text-sm font-bold text-slate-700">Selected Pages ({selectedItems.length}/6)</label>
+        <label className="admin-label font-bold text-slate-900">Selected Pages ({selectedItems.length}/6)</label>
       </div>
 
       <div className="space-y-4">
@@ -862,7 +862,7 @@ function SelectedPagesField({
             </button>
               <div className="grid grid-cols-2 gap-4 mt-4">
                   <div className="col-span-2">
-                    <label className="text-xs font-semibold text-slate-500 mb-1 block">Change Page</label>
+                    <label className="admin-label mb-1 block">Change Page</label>
                     <select
                       value={item.ctaUrl || ''}
                       onChange={(e) => {
@@ -870,7 +870,7 @@ function SelectedPagesField({
                         const selectedPage = megaMenuPages.find(p => p.routePath === selectedPath);
                         if (selectedPage) replaceItem(idx, selectedPage);
                       }}
-                      className="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#4B2A63]/20"
+                      className="admin-input"
                     >
                       <option value="" disabled>-- Select a Page --</option>
                       {megaMenuPages.filter(p => p.routePath === item.ctaUrl || !selectedItems.some(si => si.ctaUrl === p.routePath)).map(p => (
@@ -890,7 +890,7 @@ function SelectedPagesField({
 
         {selectedItems.length < 6 && (
           <div className="mt-4">
-            <label className="text-xs font-semibold text-slate-500 block mb-2">Add New Page</label>
+            <label className="admin-label block mb-2">Add New Page</label>
             <select
               value=""
               onChange={(e) => {

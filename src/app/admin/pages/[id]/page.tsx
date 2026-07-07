@@ -436,39 +436,39 @@ function CaseStudyManager({ pageId, onRefresh }: { pageId: string; onRefresh: ()
                     <div className="space-y-6">
                       <div className="grid grid-cols-2 gap-6">
                         <div className="space-y-1">
-                          <label className="text-xs font-semibold text-slate-500">Title</label>
-                          <input type="text" required value={title} onChange={(e) => setTitle(e.target.value)} className="w-full bg-slate-50 rounded-xl px-4 py-3 text-sm outline-none border focus:border-[#4B2A63]/20" />
+                          <label className="admin-label">Title</label>
+                          <input type="text" required value={title} onChange={(e) => setTitle(e.target.value)} className="admin-input" />
                         </div>
                         <div className="space-y-1">
-                          <label className="text-xs font-semibold text-slate-500">URL Slug</label>
-                          <input type="text" required value={slug} onChange={(e) => { setSlug(e.target.value); setSlugTouched(true); }} className="w-full bg-slate-50 rounded-xl px-4 py-3 text-sm outline-none border focus:border-[#4B2A63]/20" />
+                          <label className="admin-label">URL Slug</label>
+                          <input type="text" required value={slug} onChange={(e) => { setSlug(e.target.value); setSlugTouched(true); }} className="admin-input" />
                         </div>
                       </div>
                       <div className="grid grid-cols-3 gap-6">
                         <div className="space-y-1">
-                          <label className="text-xs font-semibold text-slate-500">Topic</label>
-                          <input type="text" value={topic} onChange={(e) => setTopic(e.target.value)} placeholder="e.g. ERP" className="w-full bg-slate-50 rounded-xl px-4 py-3 text-sm outline-none border focus:border-[#4B2A63]/20" />
+                          <label className="admin-label">Topic</label>
+                          <input type="text" value={topic} onChange={(e) => setTopic(e.target.value)} placeholder="e.g. ERP" className="admin-input" />
                         </div>
                         <div className="space-y-1">
-                          <label className="text-xs font-semibold text-slate-500">Industry</label>
-                          <input type="text" value={industry} onChange={(e) => setIndustry(e.target.value)} placeholder="e.g. Retail" className="w-full bg-slate-50 rounded-xl px-4 py-3 text-sm outline-none border focus:border-[#4B2A63]/20" />
+                          <label className="admin-label">Industry</label>
+                          <input type="text" value={industry} onChange={(e) => setIndustry(e.target.value)} placeholder="e.g. Retail" className="admin-input" />
                         </div>
                         <div className="space-y-1">
-                          <label className="text-xs font-semibold text-slate-500">Date</label>
-                          <input type="text" value={date} onChange={(e) => setDate(e.target.value)} placeholder="e.g. Oct 2023" className="w-full bg-slate-50 rounded-xl px-4 py-3 text-sm outline-none border focus:border-[#4B2A63]/20" />
+                          <label className="admin-label">Date</label>
+                          <input type="text" value={date} onChange={(e) => setDate(e.target.value)} placeholder="e.g. Oct 2023" className="admin-input" />
                         </div>
                       </div>
                       <div className="space-y-1">
-                        <label className="text-xs font-semibold text-slate-500">Hero Description</label>
-                        <textarea value={description} onChange={(e) => setDescription(e.target.value)} rows={3} className="w-full bg-slate-50 rounded-xl px-4 py-3 text-sm outline-none border focus:border-[#4B2A63]/20 resize-none" />
+                        <label className="admin-label">Hero Description</label>
+                        <textarea value={description} onChange={(e) => setDescription(e.target.value)} rows={3} className="admin-input resize-none" />
                       </div>
                       <div className="space-y-1">
-                        <label className="text-xs font-semibold text-slate-500">Hero Image URL</label>
+                        <label className="admin-label">Hero Image URL</label>
                         <MediaField fieldKey="hero-image" value={image} onChange={(val) => setImage(val)} />
                       </div>
                       <div className="space-y-1">
-                        <label className="text-xs font-semibold text-slate-500">Initial Status</label>
-                        <select value={status} onChange={(e) => setStatus(e.target.value)} className="w-full bg-slate-50 rounded-xl px-4 py-3 text-sm outline-none border focus:border-[#4B2A63]/20">
+                        <label className="admin-label">Initial Status</label>
+                        <select value={status} onChange={(e) => setStatus(e.target.value)} className="admin-input">
                           <option value="draft">Draft</option>
                           <option value="published">Published</option>
                         </select>
@@ -479,15 +479,15 @@ function CaseStudyManager({ pageId, onRefresh }: { pageId: string; onRefresh: ()
                   {activeTab === 'overview' && (
                     <div className="space-y-6">
                       <div className="space-y-1">
-                        <label className="text-xs font-semibold text-slate-500">Overview Text</label>
-                        <textarea value={overview} onChange={(e) => setOverview(e.target.value)} rows={6} className="w-full bg-slate-50 rounded-xl px-4 py-3 text-sm outline-none border focus:border-[#4B2A63]/20 resize-none" />
+                        <label className="admin-label">Overview Text</label>
+                        <textarea value={overview} onChange={(e) => setOverview(e.target.value)} rows={6} className="admin-input resize-none" />
                       </div>
                       <div className="space-y-1">
-                        <label className="text-xs font-semibold text-slate-500">Overview Image 1 URL</label>
+                        <label className="admin-label">Overview Image 1 URL</label>
                         <MediaField fieldKey="overview-image-1" value={overviewImage1} onChange={(val) => setOverviewImage1(val)} />
                       </div>
                       <div className="space-y-1">
-                        <label className="text-xs font-semibold text-slate-500">Overview Image 2 URL</label>
+                        <label className="admin-label">Overview Image 2 URL</label>
                         <MediaField fieldKey="overview-image-2" value={overviewImage2} onChange={(val) => setOverviewImage2(val)} />
                       </div>
                     </div>
@@ -496,23 +496,23 @@ function CaseStudyManager({ pageId, onRefresh }: { pageId: string; onRefresh: ()
                   {activeTab === 'challenge' && (
                     <div className="space-y-6">
                       <div className="space-y-1">
-                        <label className="text-xs font-semibold text-slate-500">Challenge Title</label>
-                        <input type="text" value={challengeTitle} onChange={(e) => setChallengeTitle(e.target.value)} className="w-full bg-slate-50 rounded-xl px-4 py-3 text-sm outline-none border focus:border-[#4B2A63]/20" />
+                        <label className="admin-label">Challenge Title</label>
+                        <input type="text" value={challengeTitle} onChange={(e) => setChallengeTitle(e.target.value)} className="admin-input" />
                       </div>
                       <div className="space-y-1">
-                        <label className="text-xs font-semibold text-slate-500">Challenge Description</label>
-                        <textarea value={challengeDescription} onChange={(e) => setChallengeDescription(e.target.value)} rows={3} className="w-full bg-slate-50 rounded-xl px-4 py-3 text-sm outline-none border focus:border-[#4B2A63]/20 resize-none" />
+                        <label className="admin-label">Challenge Description</label>
+                        <textarea value={challengeDescription} onChange={(e) => setChallengeDescription(e.target.value)} rows={3} className="admin-input resize-none" />
                       </div>
                       <div className="space-y-1">
-                        <label className="text-xs font-semibold text-slate-500">Challenge Image</label>
+                        <label className="admin-label">Challenge Image</label>
                         <MediaField fieldKey="challenge-image" value={challengeImage} onChange={(val) => setChallengeImage(val)} />
                       </div>
                       <div className="space-y-3">
-                        <label className="text-xs font-semibold text-slate-500">Challenge Points</label>
+                        <label className="admin-label">Challenge Points</label>
                         {challengePoints.map((pt, idx) => (
                           <div key={idx} className="flex gap-3 items-start">
-                            <input type="text" placeholder="Title" value={pt.title} onChange={e => { const n = [...challengePoints]; n[idx].title = e.target.value; setChallengePoints(n); }} className="flex-1 bg-slate-50 rounded-xl px-4 py-2 text-sm outline-none border focus:border-[#4B2A63]/20" />
-                            <input type="text" placeholder="Description" value={pt.description} onChange={e => { const n = [...challengePoints]; n[idx].description = e.target.value; setChallengePoints(n); }} className="flex-[2] bg-slate-50 rounded-xl px-4 py-2 text-sm outline-none border focus:border-[#4B2A63]/20" />
+                            <input type="text" placeholder="Title" value={pt.title} onChange={e => { const n = [...challengePoints]; n[idx].title = e.target.value; setChallengePoints(n); }} className="admin-input flex-1" />
+                            <input type="text" placeholder="Description" value={pt.description} onChange={e => { const n = [...challengePoints]; n[idx].description = e.target.value; setChallengePoints(n); }} className="admin-input flex-[2]" />
                             <button type="button" onClick={() => setChallengePoints(challengePoints.filter((_, i) => i !== idx))} className="p-2 text-rose-500 hover:bg-rose-50 rounded-lg"><Trash2 className="w-4 h-4" /></button>
                           </div>
                         ))}
@@ -524,23 +524,23 @@ function CaseStudyManager({ pageId, onRefresh }: { pageId: string; onRefresh: ()
                   {activeTab === 'solutions' && (
                     <div className="space-y-6">
                       <div className="space-y-1">
-                        <label className="text-xs font-semibold text-slate-500">Solutions Title</label>
-                        <input type="text" value={solutionsTitle} onChange={(e) => setSolutionsTitle(e.target.value)} className="w-full bg-slate-50 rounded-xl px-4 py-3 text-sm outline-none border focus:border-[#4B2A63]/20" />
+                        <label className="admin-label">Solutions Title</label>
+                        <input type="text" value={solutionsTitle} onChange={(e) => setSolutionsTitle(e.target.value)} className="admin-input" />
                       </div>
                       <div className="space-y-1">
-                        <label className="text-xs font-semibold text-slate-500">Solutions Description</label>
-                        <textarea value={solutionsDescription} onChange={(e) => setSolutionsDescription(e.target.value)} rows={3} className="w-full bg-slate-50 rounded-xl px-4 py-3 text-sm outline-none border focus:border-[#4B2A63]/20 resize-none" />
+                        <label className="admin-label">Solutions Description</label>
+                        <textarea value={solutionsDescription} onChange={(e) => setSolutionsDescription(e.target.value)} rows={3} className="admin-input resize-none" />
                       </div>
                       <div className="space-y-3">
-                        <label className="text-xs font-semibold text-slate-500">Solution Modules</label>
+                        <label className="admin-label">Solution Modules</label>
                         {solutionModules.map((mod, idx) => (
                           <div key={idx} className="flex gap-3 items-start bg-slate-50 p-3 rounded-xl border border-slate-100">
                             <div className="w-20 shrink-0">
                               <MediaField fieldKey={`solution-icon-${idx}`} value={mod.icon} onChange={val => { const n = [...solutionModules]; n[idx].icon = val; setSolutionModules(n); }} />
                             </div>
                             <div className="flex-1 space-y-2">
-                              <input type="text" placeholder="Module Name" value={mod.name} onChange={e => { const n = [...solutionModules]; n[idx].name = e.target.value; setSolutionModules(n); }} className="w-full bg-white rounded-lg px-3 py-2 text-sm outline-none border focus:border-[#4B2A63]/20" />
-                              <input type="text" placeholder="Description" value={mod.description} onChange={e => { const n = [...solutionModules]; n[idx].description = e.target.value; setSolutionModules(n); }} className="w-full bg-white rounded-lg px-3 py-2 text-sm outline-none border focus:border-[#4B2A63]/20" />
+                              <input type="text" placeholder="Module Name" value={mod.name} onChange={e => { const n = [...solutionModules]; n[idx].name = e.target.value; setSolutionModules(n); }} className="admin-input" />
+                              <input type="text" placeholder="Description" value={mod.description} onChange={e => { const n = [...solutionModules]; n[idx].description = e.target.value; setSolutionModules(n); }} className="admin-input" />
                             </div>
                             <button type="button" onClick={() => setSolutionModules(solutionModules.filter((_, i) => i !== idx))} className="p-2 text-rose-500 hover:bg-rose-50 rounded-lg shrink-0 mt-1"><Trash2 className="w-4 h-4" /></button>
                           </div>
@@ -553,14 +553,14 @@ function CaseStudyManager({ pageId, onRefresh }: { pageId: string; onRefresh: ()
                   {activeTab === 'results' && (
                     <div className="space-y-6">
                       <div className="space-y-1">
-                        <label className="text-xs font-semibold text-slate-500">Results Title</label>
-                        <input type="text" value={resultsTitle} onChange={(e) => setResultsTitle(e.target.value)} className="w-full bg-slate-50 rounded-xl px-4 py-3 text-sm outline-none border focus:border-[#4B2A63]/20" />
+                        <label className="admin-label">Results Title</label>
+                        <input type="text" value={resultsTitle} onChange={(e) => setResultsTitle(e.target.value)} className="admin-input" />
                       </div>
                       <div className="space-y-3">
-                        <label className="text-xs font-semibold text-slate-500">Result Items</label>
+                        <label className="admin-label">Result Items</label>
                         {resultsItems.map((resItem, idx) => (
                           <div key={idx} className="flex gap-3 items-start">
-                            <input type="text" placeholder="Result bullet point" value={resItem} onChange={e => { const n = [...resultsItems]; n[idx] = e.target.value; setResultsItems(n); }} className="flex-1 bg-slate-50 rounded-xl px-4 py-2 text-sm outline-none border focus:border-[#4B2A63]/20" />
+                            <input type="text" placeholder="Result bullet point" value={resItem} onChange={e => { const n = [...resultsItems]; n[idx] = e.target.value; setResultsItems(n); }} className="admin-input flex-1" />
                             <button type="button" onClick={() => setResultsItems(resultsItems.filter((_, i) => i !== idx))} className="p-2 text-rose-500 hover:bg-rose-50 rounded-lg"><Trash2 className="w-4 h-4" /></button>
                           </div>
                         ))}
@@ -1126,7 +1126,7 @@ function BlogManager({ pageId, onRefresh }: BlogManagerProps) {
                   <>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <div className="space-y-1">
-                        <label className="text-xs font-semibold text-slate-500">
+                        <label className="admin-label">
                           Blog Title
                         </label>
                         <input
@@ -1135,11 +1135,11 @@ function BlogManager({ pageId, onRefresh }: BlogManagerProps) {
                           value={title}
                           onChange={(e) => setTitle(e.target.value)}
                           placeholder="e.g. How Power BI Solves Mismatches"
-                          className="w-full bg-slate-50 rounded-xl px-4 py-2.5 text-sm outline-none border border-transparent focus:border-[#4B2A63]/20 focus:ring-2 focus:ring-[#4B2A63]/10 font-bold"
+                          className="admin-input font-bold"
                         />
                       </div>
                       <div className="space-y-1">
-                        <label className="text-xs font-semibold text-slate-500">
+                        <label className="admin-label">
                           URL Slug
                         </label>
                         <input
@@ -1151,14 +1151,14 @@ function BlogManager({ pageId, onRefresh }: BlogManagerProps) {
                             setSlugTouched(true);
                           }}
                           placeholder="e.g. how-power-bi-solves-mismatches"
-                          className="w-full bg-slate-50 rounded-xl px-4 py-2.5 text-sm outline-none border border-transparent focus:border-[#4B2A63]/20 focus:ring-2 focus:ring-[#4B2A63]/10 font-mono"
+                          className="admin-input font-mono"
                         />
                       </div>
                     </div>
 
                     <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
                       <div className="space-y-1">
-                        <label className="text-xs font-semibold text-slate-500">
+                        <label className="admin-label">
                           Category / Topic
                         </label>
                         <CustomDropdown
@@ -1177,7 +1177,7 @@ function BlogManager({ pageId, onRefresh }: BlogManagerProps) {
                         />
                       </div>
                       <div className="space-y-1">
-                        <label className="text-xs font-semibold text-slate-500">
+                        <label className="admin-label">
                           Industry
                         </label>
                         <CustomDropdown
@@ -1194,7 +1194,7 @@ function BlogManager({ pageId, onRefresh }: BlogManagerProps) {
                         />
                       </div>
                       <div className="space-y-1">
-                        <label className="text-xs font-semibold text-slate-500">
+                        <label className="admin-label">
                           Author Name
                         </label>
                         <input
@@ -1202,11 +1202,11 @@ function BlogManager({ pageId, onRefresh }: BlogManagerProps) {
                           value={authorName}
                           onChange={(e) => setAuthorName(e.target.value)}
                           placeholder="e.g. Jason Francisco"
-                          className="w-full bg-slate-50 rounded-xl px-4 py-2.5 text-sm outline-none border border-transparent focus:border-[#4B2A63]/20 focus:ring-2 focus:ring-[#4B2A63]/10 font-medium"
+                          className="admin-input font-medium"
                         />
                       </div>
                       <div className="space-y-1">
-                        <label className="text-xs font-semibold text-slate-500">
+                        <label className="admin-label">
                           Publish Date String
                         </label>
                         <input
@@ -1214,7 +1214,7 @@ function BlogManager({ pageId, onRefresh }: BlogManagerProps) {
                           value={date}
                           onChange={(e) => setDate(e.target.value)}
                           placeholder="e.g. May 15, 2026"
-                          className="w-full bg-slate-50 rounded-xl px-4 py-2.5 text-sm outline-none border border-transparent focus:border-[#4B2A63]/20 focus:ring-2 focus:ring-[#4B2A63]/10 font-medium"
+                          className="admin-input font-medium"
                         />
                       </div>
                     </div>
@@ -1232,7 +1232,7 @@ function BlogManager({ pageId, onRefresh }: BlogManagerProps) {
                     />
 
                     <div className="space-y-1">
-                      <label className="text-xs font-semibold text-slate-500">
+                      <label className="admin-label">
                         Brief Description / Summary
                       </label>
                       <textarea
@@ -1240,7 +1240,7 @@ function BlogManager({ pageId, onRefresh }: BlogManagerProps) {
                         value={description}
                         onChange={(e) => setDescription(e.target.value)}
                         placeholder="Short excerpt for lists and previews..."
-                        className="w-full bg-slate-50 rounded-xl px-4 py-2.5 text-sm outline-none border border-transparent focus:border-[#4B2A63]/20 focus:ring-2 focus:ring-[#4B2A63]/10 font-medium resize-none"
+                        className="admin-input font-medium resize-none"
                       />
                     </div>
 
@@ -1257,7 +1257,7 @@ function BlogManager({ pageId, onRefresh }: BlogManagerProps) {
                   <div className="space-y-5">
                     <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                       <div className="space-y-1">
-                        <label className="text-xs font-semibold text-slate-500">
+                        <label className="admin-label">
                           Badge Text
                         </label>
                         <input
@@ -1265,11 +1265,11 @@ function BlogManager({ pageId, onRefresh }: BlogManagerProps) {
                           value={badgeText}
                           onChange={(e) => setBadgeText(e.target.value)}
                           placeholder="e.g. Latest Blogs"
-                          className="w-full bg-slate-50 rounded-xl px-4 py-2.5 text-sm outline-none border border-transparent focus:border-[#4B2A63]/20 focus:ring-2 focus:ring-[#4B2A63]/10 font-medium"
+                          className="admin-input font-medium"
                         />
                       </div>
                       <div className="space-y-1 sm:col-span-2">
-                        <label className="text-xs font-semibold text-slate-500">
+                        <label className="admin-label">
                           Hero Heading Text
                         </label>
                         <input
@@ -1277,13 +1277,13 @@ function BlogManager({ pageId, onRefresh }: BlogManagerProps) {
                           value={headingText}
                           onChange={(e) => setHeadingText(e.target.value)}
                           placeholder="e.g. Explore our knowledge hub"
-                          className="w-full bg-slate-50 rounded-xl px-4 py-2.5 text-sm outline-none border border-transparent focus:border-[#4B2A63]/20 focus:ring-2 focus:ring-[#4B2A63]/10 font-medium"
+                          className="admin-input font-medium"
                         />
                       </div>
                     </div>
 
                     <div className="space-y-1">
-                      <label className="text-xs font-semibold text-slate-500">
+                      <label className="admin-label">
                         Hero Subheading Text
                       </label>
                       <textarea
@@ -1291,7 +1291,7 @@ function BlogManager({ pageId, onRefresh }: BlogManagerProps) {
                         value={subheadingText}
                         onChange={(e) => setSubheadingText(e.target.value)}
                         placeholder="Subheading below hero heading..."
-                        className="w-full bg-slate-50 rounded-xl px-4 py-2.5 text-sm outline-none border border-transparent focus:border-[#4B2A63]/20 focus:ring-2 focus:ring-[#4B2A63]/10 font-medium resize-none"
+                        className="admin-input font-medium resize-none"
                       />
                     </div>
 
@@ -1329,7 +1329,7 @@ function BlogManager({ pageId, onRefresh }: BlogManagerProps) {
                                 </button>
                               </div>
                               <div className="space-y-1">
-                                <label className="text-[10px] font-semibold text-slate-500">Title</label>
+                                <label className="admin-label">Title</label>
                                 <input
                                   type="text"
                                   value={highlight.title}
@@ -1339,11 +1339,11 @@ function BlogManager({ pageId, onRefresh }: BlogManagerProps) {
                                     setHighlights(newHighlights);
                                   }}
                                   placeholder="Feature or solution title..."
-                                  className="w-full bg-white rounded-xl px-4 py-2 text-sm outline-none border border-slate-200 focus:border-[#4B2A63]/20 focus:ring-2 focus:ring-[#4B2A63]/10 font-medium"
+                                  className="admin-input font-medium"
                                 />
                               </div>
                               <div className="space-y-1">
-                                <label className="text-[10px] font-semibold text-slate-500">Description</label>
+                                <label className="admin-label">Description</label>
                                 <textarea
                                   rows={2}
                                   value={highlight.description}
@@ -1394,7 +1394,7 @@ function BlogManager({ pageId, onRefresh }: BlogManagerProps) {
 
                 <div className="border-t border-slate-100 pt-4 flex items-center justify-between">
                   <div className="flex items-center gap-3">
-                    <label className="text-xs font-semibold text-slate-500">
+                    <label className="admin-label">
                       Publish Immediately
                     </label>
                     <button
@@ -2059,7 +2059,7 @@ export default function PageEditor() {
               <h2 className="font-bold">SEO Settings</h2>
             </div>
             <div className="space-y-1.5">
-              <label className="text-xs font-semibold text-slate-500">
+              <label className="admin-label">
                 Meta Title
               </label>
               <input
@@ -2084,7 +2084,7 @@ export default function PageEditor() {
               )}
             </div>
             <div className="space-y-1.5">
-              <label className="text-xs font-semibold text-slate-500">
+              <label className="admin-label">
                 Meta Description
               </label>
               <textarea
@@ -2109,7 +2109,7 @@ export default function PageEditor() {
               )}
             </div>
             <div className="space-y-1.5">
-              <label className="text-xs font-semibold text-slate-500">
+              <label className="admin-label">
                 OG Image
               </label>
               <MediaField
@@ -2119,7 +2119,7 @@ export default function PageEditor() {
               />
             </div>
             <div className="space-y-1.5">
-              <label className="text-xs font-semibold text-slate-500">
+              <label className="admin-label">
                 Canonical URL
               </label>
               <input
