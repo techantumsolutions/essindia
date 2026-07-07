@@ -124,14 +124,7 @@ export function ServicesSection({ content }: ServicesSectionProps) {
           ))}
         </StaggerContainer>
 
-        <MotionSection variant="fadeUp" delay={0.4} className="mt-16 text-center">
-          <Button
-            onClick={() => window.location.href = viewAllCta.url}
-            className="bg-[#4B2A63] hover:bg-[#3B198F] text-white rounded-full px-12 h-[54px] text-[16px] font-bold shadow-xl transition-all duration-300 hover:shadow-2xl hover:-translate-y-1 active:scale-95"
-          >
-            {viewAllCta.label}
-          </Button>
-        </MotionSection>
+
 
       </div>
     </section>

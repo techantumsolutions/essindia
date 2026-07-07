@@ -41,6 +41,13 @@ interface FooterSettingsData {
     products: FooterLink[];
     industries: FooterLink[];
     services: FooterLink[];
+    social?: {
+      twitter: { url: string; enabled: boolean };
+      linkedin: { url: string; enabled: boolean };
+      facebook: { url: string; enabled: boolean };
+      youtube: { url: string; enabled: boolean };
+      instagram: { url: string; enabled: boolean };
+    };
   };
 }
 
@@ -183,6 +190,16 @@ export default function FooterCMSPage() {
 
         if (settingsRes.ok) {
           const data = await settingsRes.json();
+          if (data && (!data.links || !data.links.social)) {
+            data.links = data.links || {};
+            data.links.social = {
+              twitter: { url: data.twitterUrl || '#', enabled: !!data.twitterUrl },
+              linkedin: { url: data.linkedinUrl || '#', enabled: !!data.linkedinUrl },
+              facebook: { url: data.facebookUrl || '#', enabled: !!data.facebookUrl },
+              youtube: { url: data.youtubeUrl || '#', enabled: !!data.youtubeUrl },
+              instagram: { url: '', enabled: false }
+            };
+          }
           setSettings(data);
         } else {
           toast.error('Failed to load footer settings');
@@ -227,6 +244,7 @@ export default function FooterCMSPage() {
 
     // Validate that all links have a non-empty label
     for (const [category, links] of Object.entries(settings.links)) {
+      if (category === 'social') continue;
       const linkList = links as FooterLink[];
       for (let i = 0; i < linkList.length; i++) {
         const link = linkList[i];
@@ -286,6 +304,31 @@ export default function FooterCMSPage() {
     setSettings({
       ...settings,
       [field]: value,
+    });
+  };
+
+  const updateSocialLink = (platform: 'twitter' | 'linkedin' | 'facebook' | 'youtube' | 'instagram', key: 'url' | 'enabled', value: any) => {
+    if (!settings) return;
+    const social = settings.links.social || {
+      twitter: { url: settings.twitterUrl || '#', enabled: !!settings.twitterUrl },
+      linkedin: { url: settings.linkedinUrl || '#', enabled: !!settings.linkedinUrl },
+      facebook: { url: settings.facebookUrl || '#', enabled: !!settings.facebookUrl },
+      youtube: { url: settings.youtubeUrl || '#', enabled: !!settings.youtubeUrl },
+      instagram: { url: '', enabled: false }
+    };
+    const updatedSocial = {
+      ...social,
+      [platform]: {
+        ...social[platform],
+        [key]: value
+      }
+    };
+    setSettings({
+      ...settings,
+      links: {
+        ...settings.links,
+        social: updatedSocial
+      }
     });
   };
 
@@ -584,57 +627,53 @@ export default function FooterCMSPage() {
               </h3>
 
               <div className="space-y-6">
-                <div className="space-y-2">
-                  <label className="text-[11px] font-black text-slate-400 uppercase tracking-widest ml-1">
-                    X (formerly Twitter)
-                  </label>
-                  <input
-                    type="text"
-                    value={settings.twitterUrl}
-                    onChange={(e) => updateField('twitterUrl', e.target.value)}
-                    placeholder="https://x.com/username"
-                    className="w-full bg-slate-50 border border-slate-200 focus:border-[#4B2A63]/30 focus:outline-none rounded-xl px-4 py-3 text-[14px] font-medium"
-                  />
-                </div>
+                {(['twitter', 'linkedin', 'facebook', 'youtube', 'instagram'] as const).map((platform) => {
+                  const platformLabels: Record<string, string> = {
+                    twitter: 'X (formerly Twitter)',
+                    linkedin: 'LinkedIn',
+                    facebook: 'Facebook',
+                    youtube: 'YouTube',
+                    instagram: 'Instagram'
+                  };
+                  const platformPlaceholders: Record<string, string> = {
+                    twitter: 'https://x.com/username',
+                    linkedin: 'https://linkedin.com/company/name',
+                    facebook: 'https://facebook.com/page',
+                    youtube: 'https://youtube.com/c/channel',
+                    instagram: 'https://instagram.com/username'
+                  };
+                  
+                  const socialData = settings.links?.social?.[platform] || { url: '', enabled: false };
 
-                <div className="space-y-2">
-                  <label className="text-[11px] font-black text-slate-400 uppercase tracking-widest ml-1">
-                    LinkedIn
-                  </label>
-                  <input
-                    type="text"
-                    value={settings.linkedinUrl}
-                    onChange={(e) => updateField('linkedinUrl', e.target.value)}
-                    placeholder="https://linkedin.com/company/name"
-                    className="w-full bg-slate-50 border border-slate-200 focus:border-[#4B2A63]/30 focus:outline-none rounded-xl px-4 py-3 text-[14px] font-medium"
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <label className="text-[11px] font-black text-slate-400 uppercase tracking-widest ml-1">
-                    Facebook
-                  </label>
-                  <input
-                    type="text"
-                    value={settings.facebookUrl}
-                    onChange={(e) => updateField('facebookUrl', e.target.value)}
-                    placeholder="https://facebook.com/page"
-                    className="w-full bg-slate-50 border border-slate-200 focus:border-[#4B2A63]/30 focus:outline-none rounded-xl px-4 py-3 text-[14px] font-medium"
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <label className="text-[11px] font-black text-slate-400 uppercase tracking-widest ml-1">
-                    YouTube
-                  </label>
-                  <input
-                    type="text"
-                    value={settings.youtubeUrl}
-                    onChange={(e) => updateField('youtubeUrl', e.target.value)}
-                    placeholder="https://youtube.com/c/channel"
-                    className="w-full bg-slate-50 border border-slate-200 focus:border-[#4B2A63]/30 focus:outline-none rounded-xl px-4 py-3 text-[14px] font-medium"
-                  />
-                </div>
+                  return (
+                    <div key={platform} className="space-y-2 border-b border-slate-50 pb-4 last:border-0 last:pb-0">
+                      <div className="flex items-center justify-between">
+                        <label className="text-[11px] font-black text-slate-400 uppercase tracking-widest ml-1">
+                          {platformLabels[platform]}
+                        </label>
+                        <label className="relative inline-flex items-center cursor-pointer">
+                          <input
+                            type="checkbox"
+                            checked={socialData.enabled}
+                            onChange={(e) => updateSocialLink(platform, 'enabled', e.target.checked)}
+                            className="sr-only peer"
+                          />
+                          <div className="w-9 h-5 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-[#4B2A63]"></div>
+                          <span className="ml-2 text-xs font-bold text-slate-500 uppercase tracking-wider">
+                            {socialData.enabled ? 'Enabled' : 'Disabled'}
+                          </span>
+                        </label>
+                      </div>
+                      <input
+                        type="text"
+                        value={socialData.url}
+                        onChange={(e) => updateSocialLink(platform, 'url', e.target.value)}
+                        placeholder={platformPlaceholders[platform]}
+                        className="w-full bg-slate-50 border border-slate-200 focus:border-[#4B2A63]/30 focus:outline-none rounded-xl px-4 py-3 text-[14px] font-medium"
+                      />
+                    </div>
+                  );
+                })}
               </div>
             </div>
           </div>

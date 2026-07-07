@@ -4,6 +4,8 @@ import React, { useState } from 'react';
 import Image from 'next/image';
 import { motion, AnimatePresence } from 'framer-motion';
 
+import { ChevronLeft, ChevronRight } from 'lucide-react';
+
 interface ApproachItem {
   image: string;
   title: string;
@@ -70,6 +72,26 @@ export function OracleApexApproach({ content }: { content?: OracleApexApproachCo
   const tabs = content?.tabs && content.tabs.length > 0 ? content.tabs : defaultTabs;
   const [activeTabIndex, setActiveTabIndex] = useState(0);
   const activeTab = tabs[activeTabIndex] || tabs[0];
+  const tabsContainerRef = React.useRef<HTMLDivElement>(null);
+
+  React.useEffect(() => {
+    if (tabsContainerRef.current) {
+      const activeEl = tabsContainerRef.current.querySelector('[data-active="true"]');
+      if (activeEl) {
+        activeEl.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+      }
+    }
+  }, [activeTabIndex]);
+
+  const scrollTabs = (direction: 'left' | 'right') => {
+    if (tabsContainerRef.current) {
+      const scrollAmount = 250;
+      tabsContainerRef.current.scrollBy({
+        left: direction === 'left' ? -scrollAmount : scrollAmount,
+        behavior: 'smooth'
+      });
+    }
+  };
 
   return (
     <section className="py-14 bg-white font-sans relative overflow-hidden">
@@ -96,36 +118,57 @@ export function OracleApexApproach({ content }: { content?: OracleApexApproachCo
           )}
         </div>
 
-        {/* Tab Selection Bar */}
-        <div className="border-b border-slate-200 mb-10 overflow-x-auto">
-          <div className="flex min-w-max md:grid md:grid-cols-4 divide-x divide-slate-200">
-            {tabs.map((tab, index) => {
-              const isActive = index === activeTabIndex;
-              return (
-                <button
-                  key={index}
-                  type="button"
-                  onClick={() => setActiveTabIndex(index)}
-                  className="flex-1 text-center py-4 px-3 text-xs sm:text-sm font-extrabold tracking-wide uppercase transition-all duration-300 relative cursor-pointer outline-none focus:outline-none"
-                  style={{ color: isActive ? subtitleColor : '#64748B' }}
-                >
-                  <span className="block max-w-xs mx-auto">
-                    {tab.tabName}
-                  </span>
-                  
-                  {/* Active Indicator Underline */}
-                  {isActive && (
-                    <motion.div
-                      layoutId="activeTabUnderline"
-                      className="absolute bottom-0 left-0 right-0 h-1"
-                      style={{ backgroundColor: subtitleColor }}
-                      transition={{ type: 'spring', stiffness: 380, damping: 30 }}
-                    />
-                  )}
-                </button>
-              );
-            })}
+        {/* Tab Selection Bar with Chevrons */}
+        <div className="relative flex items-center border-b border-slate-200 mb-10">
+          {/* Left Chevron */}
+          <button
+            type="button"
+            onClick={() => scrollTabs('left')}
+            className="p-2 text-slate-500 hover:text-slate-800 hover:bg-slate-100 rounded-full transition-colors cursor-pointer outline-none focus:outline-none"
+            aria-label="Scroll left"
+          >
+            <ChevronLeft className="w-5 h-5" />
+          </button>
+
+          {/* Scrollable Tab Container */}
+          <div 
+            ref={tabsContainerRef}
+            className="flex-1 overflow-x-auto mx-2 scrollbar-none" 
+            id="apex-tabs-container" 
+            style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+          >
+            <div className="flex min-w-max md:grid md:grid-cols-4 divide-x divide-slate-200">
+              {tabs.map((tab, index) => {
+                const isActive = index === activeTabIndex;
+                return (
+                  <button
+                    key={index}
+                    type="button"
+                    data-active={isActive}
+                    onClick={() => setActiveTabIndex(index)}
+                    className={`flex-1 text-center py-4 px-3 text-xs sm:text-sm font-extrabold tracking-wide uppercase transition-all duration-300 relative cursor-pointer outline-none focus:outline-none ${
+                      isActive ? 'bg-slate-50' : 'hover:bg-slate-50/50'
+                    }`}
+                    style={{ color: isActive ? subtitleColor : '#64748B' }}
+                  >
+                    <span className="block max-w-xs mx-auto">
+                      {tab.tabName}
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
           </div>
+
+          {/* Right Chevron */}
+          <button
+            type="button"
+            onClick={() => scrollTabs('right')}
+            className="p-2 text-slate-500 hover:text-slate-800 hover:bg-slate-100 rounded-full transition-colors cursor-pointer outline-none focus:outline-none"
+            aria-label="Scroll right"
+          >
+            <ChevronRight className="w-5 h-5" />
+          </button>
         </div>
 
         {/* Cards Grid with AnimatePresence for transitions */}

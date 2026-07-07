@@ -63,7 +63,7 @@ export const SECTION_REGISTRY: SectionTypeDefinition[] = [
     color: 'bg-emerald-50 text-emerald-600',
     defaultVariant: 'default',
     supportsVariants: true,
-    fieldOrder: ['heading', 'subheading', 'services', 'viewAllCta'],
+    fieldOrder: ['heading', 'subheading', 'services'],
   },
   {
     type: 'industries',

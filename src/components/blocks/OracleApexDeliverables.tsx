@@ -127,7 +127,8 @@ export function OracleApexDeliverables({ content }: { content?: OracleApexDelive
                 whileInView={{ opacity: 1, x: 0 }}
                 viewport={{ once: true, margin: '-50px' }}
                 transition={{ duration: 0.4, delay: index * 0.08 }}
-                className="flex items-center gap-4 bg-white p-3 rounded-2xl shadow-sm hover:shadow-md hover:scale-[1.01] transition-all duration-300"
+                className="flex items-center gap-4 p-3 rounded-2xl shadow-sm hover:shadow-md hover:scale-[1.01] transition-all duration-300"
+                style={{ backgroundColor: '#d4dafa' }}
               >
                 <div className="w-12 h-12 rounded-full bg-slate-100 flex items-center justify-center shrink-0 border border-slate-200/50">
                   {renderIcon(item.icon)}
