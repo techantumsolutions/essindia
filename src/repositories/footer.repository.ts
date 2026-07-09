@@ -23,6 +23,21 @@ export interface FooterSettingsData {
     products: FooterLink[];
     industries: FooterLink[];
     services: FooterLink[];
+    social?: {
+      twitter: { url: string; enabled: boolean };
+      linkedin: { url: string; enabled: boolean };
+      facebook: { url: string; enabled: boolean };
+      youtube: { url: string; enabled: boolean };
+      instagram: { url: string; enabled: boolean };
+    };
+    bottomLinks?: FooterLink[];
+    copyright?: string;
+    titles?: {
+      company?: string;
+      products?: string;
+      industries?: string;
+      services?: string;
+    };
   };
 }
 
@@ -35,6 +50,20 @@ export const defaultFooterSettings: FooterSettingsData = {
   youtubeUrl: '#',
   countries: ['India', 'Middle East', 'Africa', 'USA'],
   links: {
+    titles: {
+      company: 'Company',
+      products: 'Products',
+      industries: 'Industries',
+      services: 'Services'
+    },
+    copyright: 'Copyright © 2026. Eastern Software Solutions Pvt. Ltd All Rights Reserved',
+    bottomLinks: [
+      { label: 'Trust & security', url: '#', pageId: null },
+      { label: 'Terms of Use', url: '#', pageId: null },
+      { label: 'Privacy Policy', url: '#', pageId: null },
+      { label: 'Cookies Policy', url: '#', pageId: null },
+      { label: 'Settings', url: '#', pageId: null }
+    ],
     company: [
       { label: 'About', url: '#', pageId: null },
       { label: 'Leadership', url: '#', pageId: null },
@@ -71,7 +100,14 @@ export const defaultFooterSettings: FooterSettingsData = {
       { label: 'ERP Support & Maintenance', url: '#', pageId: null },
       { label: 'Cloud Migration Services', url: '#', pageId: null },
       { label: 'Managed IT Services', url: '#', pageId: null }
-    ]
+    ],
+    social: {
+      twitter: { url: '#', enabled: true },
+      linkedin: { url: '#', enabled: true },
+      facebook: { url: '#', enabled: true },
+      youtube: { url: '#', enabled: true },
+      instagram: { url: '#', enabled: false }
+    }
   }
 };
 
@@ -85,6 +121,15 @@ export class FooterRepository {
       if (!settings) {
         return defaultFooterSettings;
       }
+      const dbLinks = (settings.links as any) || {};
+      const social = dbLinks.social || {
+        twitter: { url: settings.twitterUrl || defaultFooterSettings.twitterUrl || '', enabled: !!settings.twitterUrl },
+        linkedin: { url: settings.linkedinUrl || defaultFooterSettings.linkedinUrl || '', enabled: !!settings.linkedinUrl },
+        facebook: { url: settings.facebookUrl || defaultFooterSettings.facebookUrl || '', enabled: !!settings.facebookUrl },
+        youtube: { url: settings.youtubeUrl || defaultFooterSettings.youtubeUrl || '', enabled: !!settings.youtubeUrl },
+        instagram: { url: '#', enabled: false }
+      };
+
       return {
         id: settings.id,
         logoUrl: settings.logoUrl ?? defaultFooterSettings.logoUrl,
@@ -94,7 +139,16 @@ export class FooterRepository {
         facebookUrl: settings.facebookUrl ?? defaultFooterSettings.facebookUrl,
         youtubeUrl: settings.youtubeUrl ?? defaultFooterSettings.youtubeUrl,
         countries: (settings.countries as string[]) || defaultFooterSettings.countries,
-        links: (settings.links as any) || defaultFooterSettings.links,
+        links: {
+          company: dbLinks.company || defaultFooterSettings.links.company,
+          products: dbLinks.products || defaultFooterSettings.links.products,
+          industries: dbLinks.industries || defaultFooterSettings.links.industries,
+          services: dbLinks.services || defaultFooterSettings.links.services,
+          social,
+          bottomLinks: dbLinks.bottomLinks || defaultFooterSettings.links.bottomLinks,
+          copyright: dbLinks.copyright ?? defaultFooterSettings.links.copyright,
+          titles: dbLinks.titles || defaultFooterSettings.links.titles
+        },
       };
     } catch (error) {
       logger.error('[FooterRepository] Error fetching footer settings, returning defaults', error);
@@ -107,6 +161,15 @@ export class FooterRepository {
    */
   async updateFooterSettings(data: Omit<FooterSettingsData, 'id'>): Promise<FooterSettingsData> {
     const [existing] = await db.select().from(footerSettings).limit(1);
+    
+    // Ensure we keep the schema columns in sync with the social links object
+    const social = data.links.social || {
+      twitter: { url: data.twitterUrl || '', enabled: !!data.twitterUrl },
+      linkedin: { url: data.linkedinUrl || '', enabled: !!data.linkedinUrl },
+      facebook: { url: data.facebookUrl || '', enabled: !!data.facebookUrl },
+      youtube: { url: data.youtubeUrl || '', enabled: !!data.youtubeUrl },
+      instagram: { url: '', enabled: false }
+    };
 
     if (existing) {
       const [updated] = await db
@@ -114,16 +177,18 @@ export class FooterRepository {
         .set({
           logoUrl: data.logoUrl,
           description: data.description,
-          twitterUrl: data.twitterUrl,
-          linkedinUrl: data.linkedinUrl,
-          facebookUrl: data.facebookUrl,
-          youtubeUrl: data.youtubeUrl,
+          twitterUrl: social.twitter?.url || '',
+          linkedinUrl: social.linkedin?.url || '',
+          facebookUrl: social.facebook?.url || '',
+          youtubeUrl: social.youtube?.url || '',
           countries: data.countries,
           links: data.links,
           updatedAt: new Date(),
         })
         .where(eq(footerSettings.id, existing.id))
         .returning();
+
+      const dbLinks = (updated.links as any) || {};
 
       return {
         id: updated.id,
@@ -134,7 +199,16 @@ export class FooterRepository {
         facebookUrl: updated.facebookUrl ?? '',
         youtubeUrl: updated.youtubeUrl ?? '',
         countries: updated.countries as string[],
-        links: updated.links as any,
+        links: {
+          company: dbLinks.company || [],
+          products: dbLinks.products || [],
+          industries: dbLinks.industries || [],
+          services: dbLinks.services || [],
+          social: dbLinks.social || social,
+          bottomLinks: dbLinks.bottomLinks || [],
+          copyright: dbLinks.copyright ?? '',
+          titles: dbLinks.titles || defaultFooterSettings.links.titles
+        },
       };
     } else {
       const [inserted] = await db
@@ -142,14 +216,16 @@ export class FooterRepository {
         .values({
           logoUrl: data.logoUrl,
           description: data.description,
-          twitterUrl: data.twitterUrl,
-          linkedinUrl: data.linkedinUrl,
-          facebookUrl: data.facebookUrl,
-          youtubeUrl: data.youtubeUrl,
+          twitterUrl: social.twitter?.url || '',
+          linkedinUrl: social.linkedin?.url || '',
+          facebookUrl: social.facebook?.url || '',
+          youtubeUrl: social.youtube?.url || '',
           countries: data.countries,
           links: data.links,
         })
         .returning();
+
+      const dbLinks = (inserted.links as any) || {};
 
       return {
         id: inserted.id,
@@ -160,7 +236,16 @@ export class FooterRepository {
         facebookUrl: inserted.facebookUrl ?? '',
         youtubeUrl: inserted.youtubeUrl ?? '',
         countries: inserted.countries as string[],
-        links: inserted.links as any,
+        links: {
+          company: dbLinks.company || [],
+          products: dbLinks.products || [],
+          industries: dbLinks.industries || [],
+          services: dbLinks.services || [],
+          social: dbLinks.social || social,
+          bottomLinks: dbLinks.bottomLinks || [],
+          copyright: dbLinks.copyright ?? '',
+          titles: dbLinks.titles || defaultFooterSettings.links.titles
+        },
       };
     }
   }

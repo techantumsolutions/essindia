@@ -475,6 +475,7 @@ export const careers = pgTable('careers', {
   status: varchar('status', { length: 50 }).notNull().default('active'),
   jdUrl: text('jd_url'),
   budgetRange: text('budget_range'),
+  hrEmails: jsonb('hr_emails').default('[]').notNull(),
   createdAt: timestamp('created_at').defaultNow().notNull(),
   updatedAt: timestamp('updated_at').defaultNow().notNull(),
 });

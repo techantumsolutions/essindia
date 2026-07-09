@@ -3,6 +3,7 @@
 import React from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useCtaAction, type CtaFormType } from '@/hooks/useCtaAction';
 
 interface AomHeroContent {
   bgColor?: string;
@@ -22,11 +23,13 @@ interface AomHeroContent {
   button1Text?: string;
   button1TextColor?: string;
   button1Url?: string;
+  button1FormType?: string;
   button2BgColor?: string;
   button2BorderColor?: string;
   button2Text?: string;
   button2TextColor?: string;
   button2Url?: string;
+  button2FormType?: string;
   image?: string;
 }
 
@@ -53,7 +56,11 @@ export function AomHero({ content }: { content?: AomHeroContent }) {
   const button2Text = content?.button2Text || 'Explore ROI Calculator';
   const button2TextColor = content?.button2TextColor || '#2a2b6a';
   const button2Url = content?.button2Url || '#';
+  const button1FormType = (content?.button1FormType || '') as CtaFormType;
+  const button2FormType = (content?.button2FormType || '') as CtaFormType;
 
+  const { handleClick: handleBtn1Click, modalNode: modal1 } = useCtaAction(button1Url, button1FormType);
+  const { handleClick: handleBtn2Click, modalNode: modal2 } = useCtaAction(button2Url, button2FormType);
   const rightImage = content?.image || '/App- App over view (mobile app)/f3273dba-dc3e-435a-bf5b-2c68d5a7ccd1 1.png';
 
   const gradientColor1 = content?.gradientColor1 || '#06b6d4';
@@ -110,7 +117,7 @@ export function AomHero({ content }: { content?: AomHeroContent }) {
             <div className="flex flex-wrap gap-4">
               {button1Text && (
                 <Link
-                  href={button1Url}
+                  href={button1Url} onClick={button1FormType ? (e: React.MouseEvent) => { e.preventDefault(); handleBtn1Click(); } : undefined}
                   className="px-6 py-3 rounded-full text-sm font-bold shadow-md hover:shadow-lg transition-transform duration-300 hover:-translate-y-0.5 border text-center min-w-[140px]"
                   style={{
                     backgroundColor: button1BgColor,
@@ -124,7 +131,7 @@ export function AomHero({ content }: { content?: AomHeroContent }) {
 
               {button2Text && (
                 <Link
-                  href={button2Url}
+                  href={button2Url} onClick={button2FormType ? (e: React.MouseEvent) => { e.preventDefault(); handleBtn2Click(); } : undefined}
                   className="px-6 py-3 rounded-full text-sm font-bold border shadow-sm hover:shadow-md transition-transform duration-300 hover:-translate-y-0.5 text-center min-w-[140px]"
                   style={{
                     backgroundColor: button2BgColor,
@@ -162,6 +169,8 @@ export function AomHero({ content }: { content?: AomHeroContent }) {
           50% { transform: translateY(-15px); }
         }
       `}</style>
+      {modal1}
+      {modal2}
     </section>
   );
 }

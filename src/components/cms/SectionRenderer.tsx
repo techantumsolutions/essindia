@@ -1,6 +1,7 @@
 import React from 'react';
 import { HeroSection } from '@/components/blocks/HeroSection';
 import { ServicesSection } from '@/components/blocks/ServicesSection';
+import { PrivacyPolicy } from '@/components/blocks/PrivacyPolicy';
 import { IndustrySection } from '@/components/blocks/IndustrySection';
 import { TrustedBrands } from '@/components/blocks/TrustedBrands';
 import { IntroSection } from '@/components/blocks/IntroSection';
@@ -139,6 +140,14 @@ import { EuropeCaseStudySlider } from '@/components/blocks/europe/EuropeCaseStud
 import { EuropePromoCta } from '@/components/blocks/europe/EuropePromoCta';
 import { EuropeProductShowcase } from '@/components/blocks/europe/EuropeProductShowcase';
 import { EuropeReports } from '@/components/blocks/europe/EuropeReports';
+import { EuropeAiMonitor } from '@/components/blocks/europe/EuropeAiMonitor';
+import { UgandaHero } from '@/components/blocks/uganda/UgandaHero';
+import { UgandaPresence } from '@/components/blocks/uganda/UgandaPresence';
+import { UgandaServices } from '@/components/blocks/uganda/UgandaServices';
+import { UgandaControl } from '@/components/blocks/uganda/UgandaControl';
+import { UgandaCapabilities } from '@/components/blocks/uganda/UgandaCapabilities';
+import { UgandaIndustries } from '@/components/blocks/uganda/UgandaIndustries';
+import { UgandaInsights } from '@/components/blocks/uganda/UgandaInsights';
 
 
 
@@ -266,6 +275,8 @@ export function SectionRenderer({ section }: SectionRendererProps) {
       return <JobDetailContent content={section.content} />;
     case 'blog-list-block':
       return <BlogListSection content={section.content} />;
+    case 'privacy-policy-block':
+      return <PrivacyPolicy content={section.content} />;
     case 'blog-detail-block':
       return <BlogDetailSection content={section.content} />;
     case 'case-study-list':
@@ -442,8 +453,24 @@ export function SectionRenderer({ section }: SectionRendererProps) {
       return <EuropePromoCta content={section.content} />;
     case 'europe-product-showcase':
       return <EuropeProductShowcase content={section.content} />;
+    case 'europe-ai-monitor':
+      return <EuropeAiMonitor content={section.content} />;
     case 'europe-reports':
       return <EuropeReports content={section.content} />;
+    case 'uganda-hero':
+      return <UgandaHero content={section.content} />;
+    case 'uganda-presence':
+      return <UgandaPresence content={section.content} />;
+    case 'uganda-services':
+      return <UgandaServices content={section.content} />;
+    case 'uganda-control':
+      return <UgandaControl content={section.content} />;
+    case 'uganda-capabilities':
+      return <UgandaCapabilities content={section.content} />;
+    case 'uganda-industries':
+      return <UgandaIndustries content={section.content} />;
+    case 'uganda-insights':
+      return <UgandaInsights content={section.content} />;
 
     default:
       if (process.env.NODE_ENV === 'development') {

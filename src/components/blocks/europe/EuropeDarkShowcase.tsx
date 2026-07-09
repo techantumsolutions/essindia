@@ -8,6 +8,8 @@ import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { EuropeCommonSettings, EuropeSectionShell } from './EuropeSectionShell';
 
+import { useCtaAction, type CtaFormType } from '@/hooks/useCtaAction';
+
 interface SlideImage {
   image?: string;
   alt?: string;
@@ -26,11 +28,15 @@ export interface EuropeDarkShowcaseContent extends EuropeCommonSettings {
   primaryButtonBgColor?: string;
   primaryButtonBorderColor?: string;
   primaryButtonUrl?: string;
+  primaryButtonFormType?: string;
+  primaryButtonPdfUrl?: string;
   secondaryButtonText?: string;
   secondaryButtonTextColor?: string;
   secondaryButtonBgColor?: string;
   secondaryButtonBorderColor?: string;
   secondaryButtonUrl?: string;
+  secondaryButtonFormType?: string;
+  secondaryButtonPdfUrl?: string;
   dashboardImage?: string;
   slides?: SlideImage[];
   enableSlider?: boolean;
@@ -45,35 +51,41 @@ const DEFAULT_SLIDES: SlideImage[] = [
 ];
 
 export function EuropeDarkShowcase({ content }: { content?: EuropeDarkShowcaseContent }) {
-  const badgeText = content?.badgeText || 'ebizframe ERP';
-  const badgeBgColor = content?.badgeBgColor || 'rgba(255,255,255,0.1)';
-  const badgeTextColor = content?.badgeTextColor || '#ffffff';
-  const title = content?.title || 'One Platform. Complete Enterprise Control.';
-  const titleColor = content?.titleColor || '#ffffff';
+  const badgeText = content?.badgeText || 'AI Services';
+  const badgeBgColor = 'transparent';
+  const badgeBorderColor = 'rgba(255,255,255,0.2)';
+  const badgeTextColor = '#ffffff';
+  const title = content?.title || 'Built on Experience. Driven\nby Outcomes.';
+  const titleColor = '#ffffff';
   const description =
     content?.description ||
-    'See how ebizframe ERP unifies finance, operations, and analytics in a single intelligent platform built for European enterprises.';
-  const descriptionColor = content?.descriptionColor || '#cbd5e1';
+    'AI adoption in European enterprises is no longer an experiment; it is a competitive necessity. But success depends less on the technology itself and more on how effectively it is applied to real business challenges. At ESS, we deliver AI capabilities that are built around your operations, integrated into your systems, and measured by business outcomes.';
+  const descriptionColor = '#94a3b8';
 
-  const primaryButtonText = content?.primaryButtonText || 'Request Demo';
-  const primaryButtonTextColor = content?.primaryButtonTextColor || '#0f172a';
-  const primaryButtonBgColor = content?.primaryButtonBgColor || '#ffffff';
-  const primaryButtonBorderColor = content?.primaryButtonBorderColor || '#ffffff';
-  const primaryButtonUrl = content?.primaryButtonUrl || '/contact';
+  const primaryButtonText = content?.primaryButtonText || 'Case studies';
+  const primaryButtonTextColor = '#111827';
+  const primaryButtonBgColor = '#ffffff';
+  const primaryButtonBorderColor = '#ffffff';
+  const primaryButtonUrl = content?.primaryButtonUrl || '/contact-us';
+  const primaryButtonFormType = (content?.primaryButtonFormType || '') as CtaFormType;
 
-  const secondaryButtonText = content?.secondaryButtonText || 'View Features';
-  const secondaryButtonTextColor = content?.secondaryButtonTextColor || '#ffffff';
-  const secondaryButtonBgColor = content?.secondaryButtonBgColor || 'transparent';
-  const secondaryButtonBorderColor = content?.secondaryButtonBorderColor || '#ffffff';
-  const secondaryButtonUrl = content?.secondaryButtonUrl || '/solutions';
+  const secondaryButtonText = content?.secondaryButtonText || 'Talk to an expert';
+  const secondaryButtonTextColor = '#ffffff';
+  const secondaryButtonBgColor = 'transparent';
+  const secondaryButtonBorderColor = 'rgba(255,255,255,0.4)';
+  const secondaryButtonUrl = content?.secondaryButtonUrl || '/contact-us';
+  const secondaryButtonFormType = (content?.secondaryButtonFormType || '') as CtaFormType;
+
+  const { handleClick: handlePrimaryClick, modalNode: primaryModal } = useCtaAction(primaryButtonUrl, primaryButtonFormType, content?.primaryButtonPdfUrl);
+  const { handleClick: handleSecondaryClick, modalNode: secondaryModal } = useCtaAction(secondaryButtonUrl, secondaryButtonFormType, content?.secondaryButtonPdfUrl);
 
   const enableSlider = content?.enableSlider !== false;
   const autoplay = content?.autoplay !== false;
   const autoplayInterval = content?.autoplayInterval || 5000;
 
   const slides: SlideImage[] = enableSlider
-    ? (content?.slides?.length ? content.slides : content?.dashboardImage ? [{ image: content.dashboardImage }] : DEFAULT_SLIDES)
-    : [{ image: content?.dashboardImage || DEFAULT_SLIDES[0].image, alt: title }];
+    ? (content?.slides?.length ? content.slides : DEFAULT_SLIDES)
+    : DEFAULT_SLIDES;
 
   const [current, setCurrent] = useState(0);
 
@@ -91,42 +103,43 @@ export function EuropeDarkShowcase({ content }: { content?: EuropeDarkShowcaseCo
     return () => clearInterval(timer);
   }, [enableSlider, autoplay, autoplayInterval, next, slides.length]);
 
-  const bgColor = content?.backgroundColor || '#0d0720';
+  const bgColor = '#0b0f19';
 
   return (
     <EuropeSectionShell
       content={{
         ...content,
         backgroundColor: bgColor,
-        textAlignment: content?.textAlignment || 'center',
-        sectionPaddingTop: content?.sectionPaddingTop || 'pt-24',
-        sectionPaddingBottom: content?.sectionPaddingBottom || 'pb-24',
+        textAlignment: 'center',
+        sectionPaddingTop: 'pt-14',
+        sectionPaddingBottom: 'pb-14',
       }}
     >
-      <div className="text-center space-y-5 max-w-3xl mx-auto mb-12">
+      <div className="text-center space-y-6 max-w-4xl mx-auto mb-12">
         {badgeText && (
           <span
-            className="inline-block px-4 py-1.5 rounded-full text-xs font-semibold border border-white/20"
-            style={{ backgroundColor: badgeBgColor, color: badgeTextColor }}
+            className="inline-block px-5 py-2 rounded-full text-xs font-semibold border border-white/20 tracking-wider"
+            style={{ backgroundColor: badgeBgColor, color: badgeTextColor, borderColor: badgeBorderColor }}
           >
             {badgeText}
           </span>
         )}
         {title && (
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight" style={{ color: titleColor }}>
+          <h2 className="text-4xl sm:text-5xl lg:text-[60px] font-bold tracking-tight leading-[1.15] whitespace-pre-line" style={{ color: titleColor }}>
             {title}
           </h2>
         )}
         {description && (
-          <p className="text-base sm:text-lg leading-relaxed" style={{ color: descriptionColor }}>
+          <p className="text-sm sm:text-base leading-relaxed max-w-3xl mx-auto" style={{ color: descriptionColor }}>
             {description}
           </p>
         )}
-        <div className="flex flex-wrap justify-center gap-4 pt-2">
+        <div className="flex flex-wrap justify-center gap-4 pt-4">
           {primaryButtonText && (
             <Link
               href={primaryButtonUrl}
-              className="px-7 py-3 rounded-full text-sm font-bold border transition-all hover:-translate-y-0.5"
+              onClick={primaryButtonFormType ? (e) => { e.preventDefault(); handlePrimaryClick(); } : undefined}
+              className="px-10 py-3.5 rounded-full text-sm font-semibold border transition-all hover:scale-105 duration-200"
               style={{
                 backgroundColor: primaryButtonBgColor,
                 borderColor: primaryButtonBorderColor,
@@ -139,7 +152,8 @@ export function EuropeDarkShowcase({ content }: { content?: EuropeDarkShowcaseCo
           {secondaryButtonText && (
             <Link
               href={secondaryButtonUrl}
-              className="px-7 py-3 rounded-full text-sm font-bold border transition-all hover:-translate-y-0.5"
+              onClick={secondaryButtonFormType ? (e) => { e.preventDefault(); handleSecondaryClick(); } : undefined}
+              className="px-10 py-3.5 rounded-full text-sm font-semibold border transition-all hover:scale-105 duration-200"
               style={{
                 backgroundColor: secondaryButtonBgColor,
                 borderColor: secondaryButtonBorderColor,
@@ -151,6 +165,8 @@ export function EuropeDarkShowcase({ content }: { content?: EuropeDarkShowcaseCo
           )}
         </div>
       </div>
+      {primaryModal}
+      {secondaryModal}
 
       <div className="relative max-w-5xl mx-auto">
         {enableSlider && slides.length > 1 && (

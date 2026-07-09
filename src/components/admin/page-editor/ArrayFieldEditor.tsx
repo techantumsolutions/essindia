@@ -153,7 +153,16 @@ export function ArrayFieldEditor({
                    (sectionType === 'bi-business-impact') ||
                    (sectionType === 'rpa-overview' && fieldKey === 'cards') ||
                    (sectionType === 'rpa-benefits' && fieldKey === 'benefits') ||
-                   (sectionType === 'rpa-capabilities' && fieldKey === 'items');
+                   (sectionType === 'rpa-capabilities' && fieldKey === 'items') ||
+                   (sectionType === 'europe-global-presence' && fieldKey === 'statistics') ||
+                   (sectionType === 'europe-product-showcase' && fieldKey === 'cards') ||
+                   (sectionType === 'europe-reports' && fieldKey === 'cards') ||
+                   (sectionType === 'uganda-presence' && fieldKey === 'stats') ||
+                   (sectionType === 'uganda-services' && fieldKey === 'cards') ||
+                   (sectionType === 'uganda-control' && fieldKey === 'points') ||
+                   (sectionType === 'uganda-capabilities' && fieldKey === 'cards') ||
+                   (sectionType === 'uganda-industries' && fieldKey === 'cards') ||
+                   (sectionType === 'europe-case-study-slider' && fieldKey === 'stats');
 
   return (
     <div className="rounded-xl border border-slate-200 bg-slate-50/30 overflow-hidden">

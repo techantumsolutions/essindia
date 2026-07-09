@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import Image from 'next/image';
 import { Search } from 'lucide-react';
+import { useCtaAction, type CtaFormType } from '@/hooks/useCtaAction';
 
 interface IntegrationItem {
   image?: string;
@@ -10,6 +11,7 @@ interface IntegrationItem {
   description?: string;
   ctaText?: string;
   ctaUrl?: string;
+  ctaFormType?: string;
 }
 
 interface Category {
@@ -23,6 +25,9 @@ interface AssFeaturesGridContent {
 }
 
 export function AssFeaturesGrid({ content }: { content?: AssFeaturesGridContent }) {
+  const ctaUrl = (content as any)?.ctaUrl || '';
+  const ctaFormType = ((content as any)?.ctaFormType || '') as CtaFormType;
+  const { handleClick: handleCtaClick, modalNode } = useCtaAction(ctaUrl, ctaFormType);
   const title = content?.title || 'Simplify Scheduling. Accelerate Productivity.';
 
   const defaultCategories: Category[] = [

@@ -245,70 +245,116 @@ export function BlogDetailSection({ content }: BlogDetailSectionProps) {
       <div className="max-w-7xl mx-auto px-6 mt-6  pb-6">
         <article className="space-y-10">
 
-          {/* Header Info */}
-          <div className="space-y-2">
-            <span className="inline-block px-3 py-1 bg-[#4b6bfb] text-[#fff] rounded-[10px] text-xs font-normal  tracking-wider">
-              {category}
-            </span>
-            <h2 className="text-3xl  font-black text-slate-800 leading-tight">
-              {title}
-            </h2>
-            <div className="flex items-center gap-4 pt-2">
-              <img
-                src={authorAvatar}
-                alt={authorName}
-                className="w-10 h-10 rounded-full border border-slate-100 bg-slate-50"
-              />
-              <div>
-                <p className="text-sm font-bold text-slate-700">{authorName}</p>
-                <p className="text-xs text-slate-400">{date}</p>
+          {hasImage && image ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-10 items-start">
+              {/* Large Featured Image (Left) */}
+              <div className="w-full rounded-[32px] overflow-hidden aspect-[16/10] shadow-md border border-slate-100 bg-slate-100">
+                <img
+                  src={image}
+                  alt={title}
+                  className="w-full h-full object-cover"
+                  onError={(e) => {
+                    (e.target as HTMLImageElement).src = '/blog-1.png';
+                  }}
+                />
+              </div>
+
+              {/* Header Info and Intro Description (Right) */}
+              <div className="space-y-6">
+                {/* Header Info */}
+                <div className="space-y-4">
+                  <div className="flex items-center gap-4">
+                    <div className="flex items-center gap-3">
+                      <img
+                        src={authorAvatar}
+                        alt={authorName}
+                        className="w-10 h-10 rounded-full border border-slate-100 bg-slate-50"
+                      />
+                      <div>
+                        <p className="text-sm font-bold text-slate-700">{authorName}</p>
+                        <p className="text-xs text-slate-400">{date}</p>
+                      </div>
+                    </div>
+                    <span className="inline-block px-3 py-1 bg-[#4b6bfb] text-[#fff] rounded-[10px] text-xs font-normal tracking-wider">
+                      {category}
+                    </span>
+                  </div>
+                  <h2 className="text-3xl font-black text-slate-800 leading-tight">
+                    {title}
+                  </h2>
+                </div>
+
+                {/* Intro Description */}
+                <div className="prose prose-slate max-w-none">
+                  <div dangerouslySetInnerHTML={{ __html: contentHtml }} />
+                </div>
               </div>
             </div>
-          </div>
+          ) : (
+            <>
+              {/* Header Info */}
+              <div className="space-y-4">
+                <div className="flex items-center gap-4">
+                  <div className="flex items-center gap-3">
+                    <img
+                      src={authorAvatar}
+                      alt={authorName}
+                      className="w-10 h-10 rounded-full border border-slate-100 bg-slate-50"
+                    />
+                    <div>
+                      <p className="text-sm font-bold text-slate-700">{authorName}</p>
+                      <p className="text-xs text-slate-400">{date}</p>
+                    </div>
+                  </div>
+                  <span className="inline-block px-3 py-1 bg-[#4b6bfb] text-[#fff] rounded-[10px] text-xs font-normal tracking-wider">
+                    {category}
+                  </span>
+                </div>
+                <h2 className="text-3xl font-black text-slate-800 leading-tight">
+                  {title}
+                </h2>
+              </div>
 
-          {/* Large Featured Image */}
-          {hasImage && image && (
-            <div className="w-full text-center md:w-1/2 mx-auto rounded-[32px] overflow-hidden aspect-[16/10] shadow-md border border-slate-100 bg-slate-100">
-              <img
-                src={image}
-                alt={title}
-                className="w-full h-full object-cover"
-                onError={(e) => {
-                  (e.target as HTMLImageElement).src = '/blog-1.png';
-                }}
-              />
-            </div>
+              {/* Intro Description */}
+              <div className="prose prose-slate max-w-none">
+                <div dangerouslySetInnerHTML={{ __html: contentHtml }} />
+              </div>
+            </>
           )}
 
-          {/* Intro Description */}
-          <div className="prose prose-slate max-w-none">
-            <div dangerouslySetInnerHTML={{ __html: contentHtml }} />
-          </div>
-
-          {/* Key Highlights (Column Layout) */}
-          <div className="my-16 space-y-12">
-            {highlights.map((panel, index) => (
-              <div key={index} className="space-y-4">
-                <h3 className="text-xl md:text-2xl font-black text-slate-800 leading-tight">
-                  {panel.title}
-                </h3>
-                <p className="text-slate-600 leading-relaxed text-sm whitespace-pre-line">
-                  {panel.description}
-                </p>
-                {panel.image && (
-                  <div className="w-full md:w-1/2 mx-auto rounded-[24px] overflow-hidden aspect-[16/10] shadow-sm border border-slate-100 bg-slate-50">
-                    <img
-                      src={panel.image}
-                      alt={panel.title}
-                      className="w-full h-full object-cover"
-                      onError={(e) => {
-                        (e.target as HTMLImageElement).style.display = 'none';
-                      }}
-                    />
+          {/* Key Highlights (Alternating Layout) */}
+          <div className="my-16 space-y-16">
+            {highlights.map((panel, index) => {
+              const isEven = index % 2 === 0;
+              const hasImage = !!panel.image;
+              return (
+                <div
+                  key={index}
+                  className={`grid grid-cols-1 ${hasImage ? 'md:grid-cols-2' : ''} gap-8 items-center`}
+                >
+                  <div className={`space-y-4 ${hasImage && !isEven ? 'md:order-2' : ''}`}>
+                    <h3 className="text-xl md:text-2xl font-black text-slate-800 leading-tight">
+                      {panel.title}
+                    </h3>
+                    <p className="text-slate-600 leading-relaxed text-sm whitespace-pre-line">
+                      {panel.description}
+                    </p>
                   </div>
-                )}
-              </div>
-            ))}
+                  {hasImage && (
+                    <div className={`w-full rounded-[24px] overflow-hidden aspect-[16/10] shadow-sm border border-slate-100 bg-slate-50 ${!isEven ? 'md:order-1' : ''}`}>
+                      <img
+                        src={panel.image}
+                        alt={panel.title}
+                        className="w-full h-full object-cover"
+                        onError={(e) => {
+                          (e.target as HTMLImageElement).style.display = 'none';
+                        }}
+                      />
+                    </div>
+                  )}
+                </div>
+              );
+            })}
           </div>
 
           {/* Conclusion */}

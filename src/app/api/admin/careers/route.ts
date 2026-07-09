@@ -64,6 +64,7 @@ export async function POST(request: Request) {
       status,
       jdUrl,
       budgetRange,
+      hrEmails,
     } = body;
 
     if (!title || !department || !description || !experience || !location || !aboutText) {
@@ -96,6 +97,7 @@ export async function POST(request: Request) {
         status: status || 'active',
         jdUrl: jdUrl || null,
         budgetRange: budgetRange || null,
+        hrEmails: hrEmails || [],
       })
       .returning();
 

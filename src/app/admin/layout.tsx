@@ -22,7 +22,8 @@ import {
   BarChart3,
   Globe,
   Briefcase,
-  Monitor
+  Monitor,
+  ClipboardList
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
@@ -39,6 +40,7 @@ const navGroups = [
       { icon: Briefcase, label: 'Categories', href: '/admin/categories' },
       { icon: Navigation, label: 'Navigation', href: '/admin/navigation' },
       { icon: Layers, label: 'Templates', href: '/admin/templates' },
+      { icon: ClipboardList, label: 'Forms', href: '/admin/forms/definitions' },
     ]
   },
   {
@@ -167,7 +169,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       {/* Main Content */}
       <main
         className={cn(
-          "flex-1 transition-all duration-300 min-h-screen flex flex-col",
+          "flex-1 transition-all duration-300 min-h-screen flex flex-col min-w-0",
           isSidebarOpen ? "ml-[280px]" : "ml-[80px]"
         )}
       >

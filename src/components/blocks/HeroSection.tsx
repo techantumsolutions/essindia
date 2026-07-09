@@ -5,11 +5,19 @@ import { Button } from '@/components/ui/button';
 import { TextReveal } from '@/components/animations/TextReveal';
 import { MotionSection } from '@/components/animations/MotionSection';
 
+import { useCtaAction, type CtaFormType } from '@/hooks/useCtaAction';
+
+interface HeroCta {
+  label: string;
+  url: string;
+  formType?: string;
+}
+
 interface HeroContent {
   title?: string;
   subtitle?: string;
-  primaryCta?: { label: string; url: string };
-  secondaryCta?: { label: string; url: string };
+  primaryCta?: HeroCta;
+  secondaryCta?: HeroCta;
   image?: string;
 }
 
@@ -24,6 +32,9 @@ export function HeroSection({ content }: HeroSectionProps) {
   const primaryCta = content?.primaryCta || { label: "Book Free Demo", url: "/demo" };
   const secondaryCta = content?.secondaryCta || { label: "View Solutions", url: "/solutions" };
   const image = content?.image || "/hero-right.png";
+
+  const { handleClick: handlePrimaryClick, modalNode: primaryModal } = useCtaAction(primaryCta.url, primaryCta.formType as CtaFormType);
+  const { handleClick: handleSecondaryClick, modalNode: secondaryModal } = useCtaAction(secondaryCta.url, secondaryCta.formType as CtaFormType);
 
   return (
     <section className="relative min-h-[80vh] flex items-center pt-40 pb-16 overflow-hidden bg-white border-b border-gray-200">
@@ -83,14 +94,14 @@ export function HeroSection({ content }: HeroSectionProps) {
               <div className="mt-10 flex flex-wrap gap-4">
                 <Button 
                   className="bg-[#4B2A63] hover:bg-[#3B198F] text-white rounded-full px-10 h-14 text-[16px] font-semibold transition-all duration-300 hover:shadow-[0_20px_40px_-10px_rgba(75,42,99,0.3)] hover:-translate-y-1 active:scale-95 cursor-pointer"
-                  onClick={() => window.location.href = primaryCta.url}
+                  onClick={handlePrimaryClick}
                 >
                   {primaryCta.label}
                 </Button>
                 <Button 
                   variant="outline" 
                   className="rounded-full px-10 h-14 text-[16px] font-semibold border-slate-200 hover:bg-slate-50 hover:border-slate-300 transition-all duration-300 active:scale-95 cursor-pointer"
-                  onClick={() => window.location.href = secondaryCta.url}
+                  onClick={handleSecondaryClick}
                 >
                   {secondaryCta.label}
                 </Button>
@@ -134,6 +145,8 @@ export function HeroSection({ content }: HeroSectionProps) {
           </div>
         </div>
       </div>
+      {primaryModal}
+      {secondaryModal}
     </section>
   );
 }

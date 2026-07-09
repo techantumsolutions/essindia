@@ -16,6 +16,7 @@ interface SendEmailParams {
   candidateName: string;
   jobTitle: string;
   hrEmail: string;
+  jdUrl?: string | null;
   applicantDetails: {
     phone: string;
     experience: string;
@@ -33,6 +34,7 @@ export async function sendApplicationEmails({
   candidateName,
   jobTitle,
   hrEmail,
+  jdUrl,
   applicantDetails,
 }: SendEmailParams) {
   // 1. Email to Candidate (Confirmation)
@@ -64,6 +66,17 @@ export async function sendApplicationEmails({
               <td style="padding: 8px 0; border-bottom: 1px solid #edf2f7;">${candidateEmail}</td>
             </tr>
           </table>
+          
+          ${jdUrl ? `
+          <div style="background-color: #f7fafc; padding: 16px; border-radius: 8px; margin-top: 20px; border: 1px solid #edf2f7;">
+            <p style="margin: 0 0 10px 0; font-weight: bold; font-size: 14px;">Job Description Attached:</p>
+            <p style="margin: 0 0 12px 0; font-size: 13px; color: #4a5568;">You can review the detailed job description and role details here:</p>
+            <a href="${jdUrl.startsWith('/') ? `${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:5002'}${jdUrl}` : jdUrl}" target="_blank" style="background-color: #4B2A63; color: white; padding: 8px 16px; text-decoration: none; border-radius: 6px; font-weight: bold; font-size: 12px; display: inline-block;">
+              Download Job Description
+            </a>
+          </div>
+          ` : ''}
+
           <p style="margin-top: 24px;">We wish you the best of luck!</p>
           <hr style="border: 0; border-top: 1px solid #edf2f7; margin: 24px 0;" />
           <p style="font-size: 12px; color: #718096; text-align: center;">This is an automated confirmation email from ESS India. Please do not reply directly to this message.</p>

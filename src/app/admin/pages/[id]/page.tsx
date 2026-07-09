@@ -659,12 +659,49 @@ function CustomDropdown({ value, onChange, options, placeholder }: CustomDropdow
 }
 
 
+const DEFAULT_TOPICS = [
+  'Business Intelligence',
+  'ERP Solutions',
+  'IoT Solutions',
+  'Mobile App Solutions',
+  'CRM Solutions',
+  'Sales Force Automation',
+  'After-Sales Service App'
+];
+
+const DEFAULT_INDUSTRIES = [
+  'FMCG',
+  'Pharma',
+  'Manufacturing',
+  'Retail',
+  'Electronics'
+];
+
 interface BlogManagerProps {
   pageId: string;
   onRefresh: () => void;
+  blogListSection?: PageSection;
 }
 
-function BlogManager({ pageId, onRefresh }: BlogManagerProps) {
+function BlogManager({ pageId, onRefresh, blogListSection }: BlogManagerProps) {
+  const topics = React.useMemo(() => {
+    const sectionContent = blogListSection?.content as any;
+    const rawTopics = sectionContent?.topics;
+    if (Array.isArray(rawTopics) && rawTopics.length > 0) {
+      return rawTopics.filter(Boolean);
+    }
+    return DEFAULT_TOPICS;
+  }, [blogListSection]);
+
+  const industries = React.useMemo(() => {
+    const sectionContent = blogListSection?.content as any;
+    const rawIndustries = sectionContent?.industries;
+    if (Array.isArray(rawIndustries) && rawIndustries.length > 0) {
+      return rawIndustries.filter(Boolean);
+    }
+    return DEFAULT_INDUSTRIES;
+  }, [blogListSection]);
+
   const [blogs, setBlogs] = React.useState<any[]>([]);
   const [templates, setTemplates] = React.useState<any[]>([]);
   const [isLoading, setIsLoading] = React.useState(true);
@@ -1165,15 +1202,7 @@ function BlogManager({ pageId, onRefresh }: BlogManagerProps) {
                           value={category}
                           onChange={setCategory}
                           placeholder="Select Category"
-                          options={[
-                            { value: 'Business Intelligence', label: 'Business Intelligence' },
-                            { value: 'ERP Solutions', label: 'ERP Solutions' },
-                            { value: 'IoT Solutions', label: 'IoT Solutions' },
-                            { value: 'Mobile App Solutions', label: 'Mobile App Solutions' },
-                            { value: 'CRM Solutions', label: 'CRM Solutions' },
-                            { value: 'Sales Force Automation', label: 'Sales Force Automation' },
-                            { value: 'After-Sales Service App', label: 'After-Sales Service App' },
-                          ]}
+                          options={topics.map((t) => ({ value: t, label: t }))}
                         />
                       </div>
                       <div className="space-y-1">
@@ -1184,13 +1213,7 @@ function BlogManager({ pageId, onRefresh }: BlogManagerProps) {
                           value={industry}
                           onChange={setIndustry}
                           placeholder="Select Industry"
-                          options={[
-                            { value: 'FMCG', label: 'FMCG' },
-                            { value: 'Pharma', label: 'Pharma' },
-                            { value: 'Manufacturing', label: 'Manufacturing' },
-                            { value: 'Retail', label: 'Retail' },
-                            { value: 'Electronics', label: 'Electronics' },
-                          ]}
+                          options={industries.map((ind) => ({ value: ind, label: ind }))}
                         />
                       </div>
                       <div className="space-y-1">
@@ -1901,7 +1924,11 @@ export default function PageEditor() {
 
 
           {isBlogsListingPage && (
-            <BlogManager pageId={pageId} onRefresh={fetchPage} />
+            <BlogManager
+              pageId={pageId}
+              onRefresh={fetchPage}
+              blogListSection={page?.sections.find((s) => s.type === 'blog-list-block')}
+            />
           )}
 
           {isCaseStudyListingPage && (

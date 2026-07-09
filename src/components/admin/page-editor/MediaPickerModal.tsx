@@ -14,19 +14,26 @@ interface MediaItem {
   createdAt: string;
 }
 
+export type TabType = 'images' | 'videos' | 'gifs' | 'pdfs';
+
 interface MediaPickerModalProps {
   isOpen: boolean;
   onClose: () => void;
   onSelect: (url: string) => void;
+  allowedTabs?: TabType[];
 }
 
-type TabType = 'images' | 'videos' | 'gifs' | 'pdfs';
-
-export function MediaPickerModal({ isOpen, onClose, onSelect }: MediaPickerModalProps) {
+export function MediaPickerModal({ isOpen, onClose, onSelect, allowedTabs }: MediaPickerModalProps) {
   const [items, setItems] = React.useState<MediaItem[]>([]);
   const [search, setSearch] = React.useState('');
   const [isLoading, setIsLoading] = React.useState(true);
   const [activeTab, setActiveTab] = React.useState<TabType>('images');
+
+  React.useEffect(() => {
+    if (isOpen && allowedTabs && allowedTabs.length > 0) {
+      setActiveTab(allowedTabs[0]);
+    }
+  }, [isOpen, allowedTabs]);
 
   const fetchMedia = React.useCallback(async () => {
     try {
@@ -66,35 +73,43 @@ export function MediaPickerModal({ isOpen, onClose, onSelect }: MediaPickerModal
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="max-w-4xl h-[80vh] flex flex-col p-0 overflow-hidden">
+      <DialogContent className="max-w-7xl w-[95vw] h-[85vh] flex flex-col p-0 overflow-hidden">
         <DialogHeader className="p-6 pb-4 border-b">
           <DialogTitle className="text-xl font-bold">Select Media</DialogTitle>
           <div className="flex flex-col md:flex-row gap-4 mt-4 justify-between items-center">
             <div className="flex p-1 bg-slate-100 rounded-xl space-x-1 w-full md:w-auto overflow-x-auto">
-              <button
-                onClick={() => setActiveTab('images')}
-                className={`px-4 py-2 rounded-lg text-sm font-bold whitespace-nowrap transition-colors ${activeTab === 'images' ? 'bg-white text-[#4B2A63] shadow-sm' : 'text-slate-500 hover:text-slate-700 hover:bg-slate-200/50'}`}
-              >
-                Images
-              </button>
-              <button
-                onClick={() => setActiveTab('videos')}
-                className={`px-4 py-2 rounded-lg text-sm font-bold whitespace-nowrap transition-colors ${activeTab === 'videos' ? 'bg-white text-[#4B2A63] shadow-sm' : 'text-slate-500 hover:text-slate-700 hover:bg-slate-200/50'}`}
-              >
-                Videos
-              </button>
-              <button
-                onClick={() => setActiveTab('gifs')}
-                className={`px-4 py-2 rounded-lg text-sm font-bold whitespace-nowrap transition-colors ${activeTab === 'gifs' ? 'bg-white text-[#4B2A63] shadow-sm' : 'text-slate-500 hover:text-slate-700 hover:bg-slate-200/50'}`}
-              >
-                GIFs
-              </button>
-              <button
-                onClick={() => setActiveTab('pdfs')}
-                className={`px-4 py-2 rounded-lg text-sm font-bold whitespace-nowrap transition-colors ${activeTab === 'pdfs' ? 'bg-white text-[#4B2A63] shadow-sm' : 'text-slate-500 hover:text-slate-700 hover:bg-slate-200/50'}`}
-              >
-                PDFs
-              </button>
+              {(!allowedTabs || allowedTabs.includes('images')) && (
+                <button
+                  onClick={() => setActiveTab('images')}
+                  className={`px-4 py-2 rounded-lg text-sm font-bold whitespace-nowrap transition-colors ${activeTab === 'images' ? 'bg-white text-[#4B2A63] shadow-sm' : 'text-slate-500 hover:text-slate-700 hover:bg-slate-200/50'}`}
+                >
+                  Images
+                </button>
+              )}
+              {(!allowedTabs || allowedTabs.includes('videos')) && (
+                <button
+                  onClick={() => setActiveTab('videos')}
+                  className={`px-4 py-2 rounded-lg text-sm font-bold whitespace-nowrap transition-colors ${activeTab === 'videos' ? 'bg-white text-[#4B2A63] shadow-sm' : 'text-slate-500 hover:text-slate-700 hover:bg-slate-200/50'}`}
+                >
+                  Videos
+                </button>
+              )}
+              {(!allowedTabs || allowedTabs.includes('gifs')) && (
+                <button
+                  onClick={() => setActiveTab('gifs')}
+                  className={`px-4 py-2 rounded-lg text-sm font-bold whitespace-nowrap transition-colors ${activeTab === 'gifs' ? 'bg-white text-[#4B2A63] shadow-sm' : 'text-slate-500 hover:text-slate-700 hover:bg-slate-200/50'}`}
+                >
+                  GIFs
+                </button>
+              )}
+              {(!allowedTabs || allowedTabs.includes('pdfs')) && (
+                <button
+                  onClick={() => setActiveTab('pdfs')}
+                  className={`px-4 py-2 rounded-lg text-sm font-bold whitespace-nowrap transition-colors ${activeTab === 'pdfs' ? 'bg-white text-[#4B2A63] shadow-sm' : 'text-slate-500 hover:text-slate-700 hover:bg-slate-200/50'}`}
+                >
+                  PDFs
+                </button>
+              )}
             </div>
             <div className="relative w-full md:max-w-xs">
               <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />

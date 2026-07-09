@@ -2,12 +2,14 @@
 
 import React from 'react';
 import { motion } from 'framer-motion';
+import { useCtaAction, type CtaFormType } from '@/hooks/useCtaAction';
 
 interface OracleApexIntroContent {
   title?: string;
   paragraphs?: string[];
   buttonText?: string;
   buttonUrl?: string;
+  buttonFormType?: string;
 }
 
 export function OracleApexIntro({ content }: { content?: OracleApexIntroContent }) {
@@ -20,7 +22,8 @@ export function OracleApexIntro({ content }: { content?: OracleApexIntroContent 
   const paragraphs = content?.paragraphs && content.paragraphs.length > 0 ? content.paragraphs : defaultParagraphs;
   const buttonText = content?.buttonText || 'Plan Your Migration';
   const buttonUrl = content?.buttonUrl || '#';
-
+  const buttonFormType = (content?.buttonFormType || '') as CtaFormType;
+  const { handleClick: handleBtnClick, modalNode } = useCtaAction(buttonUrl, buttonFormType);
   return (
     <section className="py-14 px-6 bg-[#F5F5F5] font-sans relative">
       <div className="container mx-auto max-w-4xl text-center space-y-8">
@@ -77,6 +80,7 @@ export function OracleApexIntro({ content }: { content?: OracleApexIntroContent 
         )}
 
       </div>
+      {modalNode}
     </section>
   );
 }

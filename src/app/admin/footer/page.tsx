@@ -41,6 +41,21 @@ interface FooterSettingsData {
     products: FooterLink[];
     industries: FooterLink[];
     services: FooterLink[];
+    social?: {
+      twitter: { url: string; enabled: boolean };
+      linkedin: { url: string; enabled: boolean };
+      facebook: { url: string; enabled: boolean };
+      youtube: { url: string; enabled: boolean };
+      instagram: { url: string; enabled: boolean };
+    };
+    bottomLinks: FooterLink[];
+    copyright: string;
+    titles?: {
+      company?: string;
+      products?: string;
+      industries?: string;
+      services?: string;
+    };
   };
 }
 
@@ -56,6 +71,16 @@ function SearchablePageSelect({ value, onChange, pages }: SearchablePageSelectPr
   const containerRef = useRef<HTMLDivElement>(null);
 
   const selectedPage = pages.find(p => p.id === value);
+
+  const [openUpward, setOpenUpward] = useState(false);
+
+  useEffect(() => {
+    if (isOpen && containerRef.current) {
+      const rect = containerRef.current.getBoundingClientRect();
+      const spaceBelow = window.innerHeight - rect.bottom;
+      setOpenUpward(spaceBelow < 280);
+    }
+  }, [isOpen]);
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -91,7 +116,9 @@ function SearchablePageSelect({ value, onChange, pages }: SearchablePageSelectPr
 
       {/* Popover */}
       {isOpen && (
-        <div className="absolute z-[9999] left-0 w-[300px] md:w-[450px] mt-2 bg-white border border-slate-100 rounded-2xl shadow-[0_15px_35px_rgba(0,0,0,0.1)] overflow-hidden">
+        <div className={`absolute z-[9999] left-0 w-[300px] md:w-[450px] bg-white border border-slate-100 rounded-2xl shadow-[0_15px_35px_rgba(0,0,0,0.1)] overflow-hidden ${
+          openUpward ? 'bottom-full mb-2' : 'top-full mt-2'
+        }`}>
           {/* Search bar */}
           <div className="p-3 border-b border-slate-50 relative">
             <Search className="absolute left-6 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
@@ -152,6 +179,8 @@ function SearchablePageSelect({ value, onChange, pages }: SearchablePageSelectPr
   );
 }
 
+type LinkCategory = 'company' | 'products' | 'industries' | 'services' | 'bottomLinks';
+
 export default function FooterCMSPage() {
   const [settings, setSettings] = useState<FooterSettingsData | null>(null);
   const [registryPages, setRegistryPages] = useState<any[]>([]);
@@ -162,7 +191,7 @@ export default function FooterCMSPage() {
   const [activeTab, setActiveTab] = useState<'branding' | 'links'>('branding');
   const [deleteModal, setDeleteModal] = useState<{
     isOpen: boolean;
-    category: keyof FooterSettingsData['links'] | null;
+    category: LinkCategory | null;
     index: number | null;
     label: string;
   }>({
@@ -183,6 +212,24 @@ export default function FooterCMSPage() {
 
         if (settingsRes.ok) {
           const data = await settingsRes.json();
+          data.links = data.links || {};
+          if (!data.links.social) {
+            data.links.social = {
+              twitter: { url: data.twitterUrl || '#', enabled: !!data.twitterUrl },
+              linkedin: { url: data.linkedinUrl || '#', enabled: !!data.linkedinUrl },
+              facebook: { url: data.facebookUrl || '#', enabled: !!data.facebookUrl },
+              youtube: { url: data.youtubeUrl || '#', enabled: !!data.youtubeUrl },
+              instagram: { url: '', enabled: false }
+            };
+          }
+          data.links.bottomLinks = data.links.bottomLinks || [];
+          data.links.copyright = data.links.copyright || '';
+          data.links.titles = data.links.titles || {
+            company: 'Company',
+            products: 'Products',
+            industries: 'Industries',
+            services: 'Services'
+          };
           setSettings(data);
         } else {
           toast.error('Failed to load footer settings');
@@ -227,6 +274,7 @@ export default function FooterCMSPage() {
 
     // Validate that all links have a non-empty label
     for (const [category, links] of Object.entries(settings.links)) {
+      if (category === 'social' || category === 'copyright' || category === 'titles') continue;
       const linkList = links as FooterLink[];
       for (let i = 0; i < linkList.length; i++) {
         const link = linkList[i];
@@ -289,6 +337,31 @@ export default function FooterCMSPage() {
     });
   };
 
+  const updateSocialLink = (platform: 'twitter' | 'linkedin' | 'facebook' | 'youtube' | 'instagram', key: 'url' | 'enabled', value: any) => {
+    if (!settings) return;
+    const social = settings.links.social || {
+      twitter: { url: settings.twitterUrl || '#', enabled: !!settings.twitterUrl },
+      linkedin: { url: settings.linkedinUrl || '#', enabled: !!settings.linkedinUrl },
+      facebook: { url: settings.facebookUrl || '#', enabled: !!settings.facebookUrl },
+      youtube: { url: settings.youtubeUrl || '#', enabled: !!settings.youtubeUrl },
+      instagram: { url: '', enabled: false }
+    };
+    const updatedSocial = {
+      ...social,
+      [platform]: {
+        ...social[platform],
+        [key]: value
+      }
+    };
+    setSettings({
+      ...settings,
+      links: {
+        ...settings.links,
+        social: updatedSocial
+      }
+    });
+  };
+
   const addCountry = () => {
     if (!settings) return;
     setSettings({
@@ -313,9 +386,9 @@ export default function FooterCMSPage() {
   };
 
   // Links management helpers
-  const handleAddLink = (category: keyof FooterSettingsData['links']) => {
+  const handleAddLink = (category: LinkCategory) => {
     if (!settings) return;
-    const list = [...settings.links[category]];
+    const list = [...(settings.links[category] || [])];
 
     const newLink: FooterLink = {
       label: '',
@@ -333,13 +406,13 @@ export default function FooterCMSPage() {
   };
 
   const handleUpdateLink = (
-    category: keyof FooterSettingsData['links'],
+    category: LinkCategory,
     index: number,
     field: keyof FooterLink,
     value: any
   ) => {
     if (!settings) return;
-    const list = [...settings.links[category]];
+    const list = [...(settings.links[category] || [])];
     const updatedLink = { ...list[index], [field]: value };
 
     // Auto-update URL if pageId changes
@@ -364,9 +437,9 @@ export default function FooterCMSPage() {
     });
   };
 
-  const handleRemoveLink = async (category: keyof FooterSettingsData['links'], index: number) => {
+  const handleRemoveLink = async (category: LinkCategory, index: number) => {
     if (!settings) return;
-    const list = settings.links[category].filter((_, i) => i !== index);
+    const list = (settings.links[category] || []).filter((_, i) => i !== index);
     const updated = {
       ...settings,
       links: {
@@ -379,12 +452,12 @@ export default function FooterCMSPage() {
   };
 
   const handleMoveLink = (
-    category: keyof FooterSettingsData['links'],
+    category: LinkCategory,
     index: number,
     direction: 'up' | 'down'
   ) => {
     if (!settings) return;
-    const list = [...settings.links[category]];
+    const list = [...(settings.links[category] || [])];
     const targetIndex = direction === 'up' ? index - 1 : index + 1;
 
     if (targetIndex < 0 || targetIndex >= list.length) return;
@@ -527,6 +600,28 @@ export default function FooterCMSPage() {
                     className="admin-input min-h-[100px] resize-none"
                   />
                 </div>
+
+                {/* Copyright */}
+                <div className="space-y-2">
+                  <label className="admin-label">
+                    Copyright Notice (HTML allowed)
+                  </label>
+                  <input
+                    type="text"
+                    value={settings.links.copyright || ''}
+                    onChange={(e) => {
+                      setSettings({
+                        ...settings,
+                        links: {
+                          ...settings.links,
+                          copyright: e.target.value
+                        }
+                      });
+                    }}
+                    placeholder="e.g. Copyright © 2026. <span class='font-semibold'>Eastern Software</span> All Rights Reserved"
+                    className="admin-input"
+                  />
+                </div>
               </div>
             </div>
 
@@ -584,57 +679,53 @@ export default function FooterCMSPage() {
               </h3>
 
               <div className="space-y-6">
-                <div className="space-y-2">
-                  <label className="admin-label">
-                    X (formerly Twitter)
-                  </label>
-                  <input
-                    type="text"
-                    value={settings.twitterUrl}
-                    onChange={(e) => updateField('twitterUrl', e.target.value)}
-                    placeholder="https://x.com/username"
-                    className="admin-input"
-                  />
-                </div>
+                {(['twitter', 'linkedin', 'facebook', 'youtube', 'instagram'] as const).map((platform) => {
+                  const platformLabels: Record<string, string> = {
+                    twitter: 'X (formerly Twitter)',
+                    linkedin: 'LinkedIn',
+                    facebook: 'Facebook',
+                    youtube: 'YouTube',
+                    instagram: 'Instagram'
+                  };
+                  const platformPlaceholders: Record<string, string> = {
+                    twitter: 'https://x.com/username',
+                    linkedin: 'https://linkedin.com/company/name',
+                    facebook: 'https://facebook.com/page',
+                    youtube: 'https://youtube.com/c/channel',
+                    instagram: 'https://instagram.com/username'
+                  };
 
-                <div className="space-y-2">
-                  <label className="admin-label">
-                    LinkedIn
-                  </label>
-                  <input
-                    type="text"
-                    value={settings.linkedinUrl}
-                    onChange={(e) => updateField('linkedinUrl', e.target.value)}
-                    placeholder="https://linkedin.com/company/name"
-                    className="admin-input"
-                  />
-                </div>
+                  const socialData = settings.links?.social?.[platform] || { url: '', enabled: false };
 
-                <div className="space-y-2">
-                  <label className="admin-label">
-                    Facebook
-                  </label>
-                  <input
-                    type="text"
-                    value={settings.facebookUrl}
-                    onChange={(e) => updateField('facebookUrl', e.target.value)}
-                    placeholder="https://facebook.com/page"
-                    className="admin-input"
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <label className="admin-label">
-                    YouTube
-                  </label>
-                  <input
-                    type="text"
-                    value={settings.youtubeUrl}
-                    onChange={(e) => updateField('youtubeUrl', e.target.value)}
-                    placeholder="https://youtube.com/c/channel"
-                    className="admin-input"
-                  />
-                </div>
+                  return (
+                    <div key={platform} className="space-y-2 border-b border-slate-50 pb-4 last:border-0 last:pb-0">
+                      <div className="flex items-center justify-between">
+                        <label className="text-[11px] font-black text-slate-400 uppercase tracking-widest ml-1">
+                          {platformLabels[platform]}
+                        </label>
+                        <label className="relative inline-flex items-center cursor-pointer">
+                          <input
+                            type="checkbox"
+                            checked={socialData.enabled}
+                            onChange={(e) => updateSocialLink(platform, 'enabled', e.target.checked)}
+                            className="sr-only peer"
+                          />
+                          <div className="w-9 h-5 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-[#4B2A63]"></div>
+                          <span className="ml-2 text-xs font-bold text-slate-500 uppercase tracking-wider">
+                            {socialData.enabled ? 'Enabled' : 'Disabled'}
+                          </span>
+                        </label>
+                      </div>
+                      <input
+                        type="text"
+                        value={socialData.url}
+                        onChange={(e) => updateSocialLink(platform, 'url', e.target.value)}
+                        placeholder={platformPlaceholders[platform]}
+                        className="w-full bg-slate-50 border border-slate-200 focus:border-[#4B2A63]/30 focus:outline-none rounded-xl px-4 py-3 text-[14px] font-medium"
+                      />
+                    </div>
+                  );
+                })}
               </div>
             </div>
           </div>
@@ -644,14 +735,15 @@ export default function FooterCMSPage() {
       {activeTab === 'links' && (
         <div className="space-y-8">
           <div className="grid grid-cols-1 gap-2">
-            {(['company', 'products', 'industries', 'services'] as Array<keyof FooterSettingsData['links']>).map((colName) => (
+            {(['company', 'products', 'industries', 'services', 'bottomLinks'] as LinkCategory[]).map((colName) => (
               <div
                 key={colName}
                 className="bg-white rounded-[32px] p-8 border border-slate-100 shadow-[0_20px_50px_-15px_rgba(0,0,0,0.03)]"
               >
                 <div className="flex justify-between items-center mb-6 border-b border-slate-50 pb-4">
                   <h3 className="font-bold text-lg text-slate-900 capitalize flex items-center gap-2">
-                    <LayoutGrid className="w-5 h-5 text-purple-500" /> {colName} links
+                    <LayoutGrid className="w-5 h-5 text-purple-500" />{' '}
+                    {colName === 'bottomLinks' ? 'Bottom Bar Links' : `${colName} Links`}
                   </h3>
                   <Button
                     size="sm"
@@ -661,6 +753,33 @@ export default function FooterCMSPage() {
                     <Plus className="w-3.5 h-3.5 mr-1" /> Add Link
                   </Button>
                 </div>
+
+                {colName !== 'bottomLinks' && (
+                  <div className="mb-6 bg-slate-50 p-4 rounded-2xl border border-slate-100/50 space-y-1 max-w-md">
+                    <label className="admin-label text-xs">
+                      Column Header Title
+                    </label>
+                    <input
+                      type="text"
+                      value={settings.links.titles?.[colName as 'company' | 'products' | 'industries' | 'services'] || ''}
+                      onChange={(e) => {
+                        const currentTitles = settings.links.titles || {};
+                        setSettings({
+                          ...settings,
+                          links: {
+                            ...settings.links,
+                            titles: {
+                              ...currentTitles,
+                              [colName]: e.target.value
+                            }
+                          }
+                        });
+                      }}
+                      placeholder={`Enter custom title for ${colName}...`}
+                      className="admin-input bg-white"
+                    />
+                  </div>
+                )}
 
                 {settings.links[colName].length === 0 ? (
                   <div className="text-center py-10 bg-slate-50 rounded-2xl border border-dashed border-slate-200">

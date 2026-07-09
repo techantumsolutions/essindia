@@ -285,6 +285,9 @@ export class PageAdminRepository {
       navigationItemId: string | null;
       depthLevel: number;
       sortOrder: number;
+      megaMenuCategoryId: string | null;
+      megaMenuSubCategoryId: string | null;
+      megaMenuSubSubCategoryId: string | null;
     }>
   ) {
     const current = await this.getById(id);
@@ -315,16 +318,82 @@ export class PageAdminRepository {
       sortOrder = placement.sortOrder;
     }
 
-    if (data.slug || data.parentId !== undefined) {
-      let parentPath: string | null = null;
-      if (parentId) {
+    if (
+      data.slug !== undefined ||
+      data.title !== undefined ||
+      data.parentId !== undefined ||
+      data.navigationItemId !== undefined ||
+      data.categoryId !== undefined ||
+      data.megaMenuCategoryId !== undefined ||
+      data.megaMenuSubCategoryId !== undefined ||
+      data.megaMenuSubSubCategoryId !== undefined
+    ) {
+      const pageSlug = resolvePageSlug(data.title || current.title, data.slug || current.slug);
+      
+      let finalParentId = parentId;
+      let finalNavId = navigationItemId;
+      let finalMegaCatId = data.megaMenuCategoryId !== undefined ? data.megaMenuCategoryId : current.megaMenuCategoryId;
+      let finalMegaSubId = data.megaMenuSubCategoryId !== undefined ? data.megaMenuSubCategoryId : current.megaMenuSubCategoryId;
+      let finalMegaSubSubId = data.megaMenuSubSubCategoryId !== undefined ? data.megaMenuSubSubCategoryId : current.megaMenuSubSubCategoryId;
+      let finalCatId = data.categoryId !== undefined ? data.categoryId : current.categoryId;
+
+      if (finalParentId) {
         const parent = await db.query.pages.findFirst({
-          where: eq(pages.id, parentId),
+          where: eq(pages.id, finalParentId),
           columns: { fullPath: true },
         });
-        parentPath = parent?.fullPath || null;
+        fullPath = buildFullPath(parent?.fullPath || null, pageSlug);
+      } else if (finalNavId) {
+        const nav = await db.query.navigationItems.findFirst({
+          where: eq(navigationItems.id, finalNavId),
+        });
+        if (!nav) throw new Error('Invalid navigation menu item');
+        const navSlug = nav.slug || slugify(nav.label);
+
+        if (finalCatId) {
+          const categorySlugs = await this.getCategorySlugPath(finalCatId);
+          fullPath = buildPagePathFromNavAndCategorySlugs(navSlug, categorySlugs, pageSlug);
+        } else {
+          let categorySlug: string | undefined;
+          let subSlug: string | undefined;
+          let subSubSlug: string | undefined;
+
+          if (finalMegaCatId) {
+            const cat = await db.query.megaMenuCategories.findFirst({
+              where: eq(megaMenuCategories.id, finalMegaCatId),
+            });
+            if (cat) {
+              categorySlug = cat.slug;
+              if (finalMegaSubId) {
+                const sub = await db.query.megaMenuSubCategories.findFirst({
+                  where: eq(megaMenuSubCategories.id, finalMegaSubId),
+                });
+                if (sub) {
+                  subSlug = sub.slug;
+                  if (finalMegaSubSubId) {
+                    const subSub = await db.query.megaMenuSubSubCategories.findFirst({
+                      where: eq(megaMenuSubSubCategories.id, finalMegaSubSubId),
+                    });
+                    if (subSub) {
+                      subSubSlug = subSub.slug;
+                    }
+                  }
+                }
+              }
+            }
+          }
+
+          fullPath = buildPagePathFromNavHierarchy({
+            navSlug,
+            categorySlug,
+            subSlug,
+            subSubSlug,
+            pageSlug,
+          });
+        }
+      } else {
+        fullPath = buildFullPath(null, pageSlug);
       }
-      fullPath = buildFullPath(parentPath, data.slug || current.slug);
     }
 
     const updatePayload = {
@@ -623,8 +692,20 @@ export class PageAdminRepository {
       megaMenuSubSubCategoryId?: string | null;
     },
     pageId: string | null = null
-  ) {
+   ) {
     let navigationItemId = data.navigationItemId || null;
+    
+    // Automatically infer navigationItemId from megaMenuCategoryId if not explicitly provided
+    if (!navigationItemId && data.megaMenuCategoryId) {
+      const cat = await db.query.megaMenuCategories.findFirst({
+        where: eq(megaMenuCategories.id, data.megaMenuCategoryId),
+        columns: { navigationItemId: true },
+      });
+      if (cat?.navigationItemId) {
+        navigationItemId = cat.navigationItemId;
+      }
+    }
+
     let parentId = data.parentId || null;
     let parentDepth: number | null = null;
 

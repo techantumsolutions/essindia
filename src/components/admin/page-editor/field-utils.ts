@@ -15,6 +15,7 @@ export type FieldType =
   | 'countryCode'
   | 'topicSelect'
   | 'industrySelect'
+  | 'formSelect'
   | 'null';
 
 export function humanLabel(key: string): string {
@@ -29,7 +30,7 @@ export function humanLabel(key: string): string {
   if (key === 'solutionModules') return 'Items';
   if (key === 'icon') return 'Icon Upload';
   if (key === 'name') return 'Item Name';
-  if (key === 'subtitle') return 'Tag';
+  if (key === 'subtitle' || key === 'smallTitle') return 'Tag';
   if (key === 'resultsTitle') return 'Title';
   if (key === 'resultsSubtitle') return 'Subtitle';
   if (key === 'resultsItems') return 'Points';
@@ -79,15 +80,26 @@ export function humanLabel(key: string): string {
   if (key === 'buttonBgColor') return 'Button Background Color';
   if (key === 'buttonTextColor') return 'Button Text Color';
   if (key === 'tabs') return 'Category Tabs List';
-  if (key === 'label') return 'Tab Short Label (e.g. SFA)';
-  if (key === 'desc') return 'Tab Short Description';
+  if (key === 'label') return 'Title';
+  if (key === 'number') return 'Value';
   if (key === 'contentTitle') return 'Detail Title';
   if (key === 'contentDescription') return 'Detail Description';
   if (key === 'contentImage') return 'Detail Mockup Image';
   if (key === 'benefits') return 'Benefits Tags (Array)';
   if (key === 'buttonText') return 'CTA Text';
   if (key === 'buttonUrl') return 'CTA URL';
-  if (key === 'pdfUrl' || key === 'ctaPdfUrl' || key === 'ctaPdf') return 'CTA PDF Upload';
+  if (key === 'buttonFormType') return 'Button Form Action';
+  if (key === 'button1FormType') return 'Button 1 Form Action';
+  if (key === 'button2FormType') return 'Button 2 Form Action';
+  if (key === 'ctaFormType') return 'CTA Form Action';
+  if (key.toLowerCase().endsWith('pdfurl') || key.toLowerCase().endsWith('pdf')) {
+    const prefix = key.replace(/PdfUrl$|pdfUrl$|Pdf$|pdf$/, '');
+    if (!prefix || prefix.toLowerCase() === 'cta') return 'CTA PDF Upload';
+    return prefix
+      .replace(/([a-z])([A-Z])/g, '$1 $2')
+      .replace(/[_-]/g, ' ')
+      .replace(/\b\w/g, (c) => c.toUpperCase()) + ' PDF Upload';
+  }
   if (key === 'tabTitle') return 'Tab Detail Title';
   
   return key
@@ -117,6 +129,7 @@ export function detectFieldType(key: string, value: JsonValue, sectionType?: str
     if (lower === 'tabdesc') return 'text';
     if (lower === 'topic') return 'topicSelect';
     if (lower === 'industry') return 'industrySelect';
+    if (lower.endsWith('formtype')) return 'formSelect';
     if (lower === 'icon' && (sectionType === 'bi-business-impact' || sectionType === 'rpa-overview' || sectionType === 'rpa-capabilities' || sectionType === 'rpa-industries' || value.startsWith('/') || value.includes('.') || value.includes('://'))) return 'image';
     if (IMAGE_PATTERNS.some((p) => lower.includes(p)) && !lower.endsWith('alt')) return 'image';
     if (lower === 'color' || lower.endsWith('color') || lower.startsWith('color') || lower.includes('accent')) {

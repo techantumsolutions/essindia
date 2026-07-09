@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Upload, Search, Trash2, Image as ImageIcon, Copy, X, Film, FileText, FileImage, Edit2 } from 'lucide-react';
+import { Upload, Search, Trash2, Image as ImageIcon, Copy, X, Film, FileText, FileImage, Edit2, Code } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 
@@ -115,8 +115,16 @@ export default function MediaLibraryPage() {
   };
 
   const copyUrl = (url: string) => {
-    navigator.clipboard.writeText(url);
-    toast.success('URL copied');
+    const absoluteUrl = url.startsWith('http') ? url : `${window.location.origin}${url}`;
+    navigator.clipboard.writeText(absoluteUrl);
+    toast.success('Absolute URL copied to clipboard');
+  };
+
+  const copyIframeCode = (url: string) => {
+    const absoluteUrl = url.startsWith('http') ? url : `${window.location.origin}${url}`;
+    const iframeCode = `<iframe src="${absoluteUrl}" width="640" height="360" frameborder="0" allowfullscreen></iframe>`;
+    navigator.clipboard.writeText(iframeCode);
+    toast.success('Iframe embed code copied to clipboard');
   };
 
   const handleRename = async (id: string, currentName: string) => {
@@ -270,43 +278,64 @@ export default function MediaLibraryPage() {
                   <p className="font-bold text-sm text-slate-900 truncate">{item.filename}</p>
                   <p className="text-[10px] text-slate-400 font-mono truncate">{item.url}</p>
                   <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity justify-between">
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        copyUrl(item.url);
-                      }}
-                      className="rounded-xl text-slate-400 hover:text-[#4B2A63]"
-                    >
-                      <Copy className="w-4 h-4" />
-                    </Button>
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleRename(item.id, item.filename);
-                      }}
-                      className="rounded-xl text-slate-400 hover:text-[#4B2A63]"
-                    >
-                      <Edit2 className="w-4 h-4" />
-                    </Button>
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleDelete(item.id);
-                      }}
-                      className="rounded-xl text-rose-400 hover:bg-rose-50"
-                    >
-                      <Trash2 className="w-4 h-4" />
-                    </Button>
+                    <div className="flex gap-1">
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          copyUrl(item.url);
+                        }}
+                        className="rounded-xl text-slate-400 hover:text-[#4B2A63]"
+                        title="Copy direct URL"
+                      >
+                        <Copy className="w-4 h-4" />
+                      </Button>
+                      {isVideo && (
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            copyIframeCode(item.url);
+                          }}
+                          className="rounded-xl text-slate-400 hover:text-[#4B2A63]"
+                          title="Copy Iframe code"
+                        >
+                          <Code className="w-4 h-4" />
+                        </Button>
+                      )}
+                    </div>
+                    <div className="flex gap-1">
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleRename(item.id, item.filename);
+                        }}
+                        className="rounded-xl text-slate-400 hover:text-[#4B2A63]"
+                        title="Rename file"
+                      >
+                        <Edit2 className="w-4 h-4" />
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleDelete(item.id);
+                        }}
+                        className="rounded-xl text-rose-400 hover:bg-rose-50"
+                        title="Delete file"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </Button>
+                    </div>
                   </div>
                 </div>
               </motion.div>
-            )
+            );
           })}
         </div>
       )}
@@ -317,7 +346,7 @@ export default function MediaLibraryPage() {
           onClick={() => setSelectedImage(null)}
         >
           <div 
-            className="relative max-w-6xl w-full h-[90vh] flex items-center justify-center"
+            className="relative max-w-6xl w-full h-[90vh] flex flex-col items-center justify-center gap-6"
             onClick={e => e.stopPropagation()}
           >
             <Button 
@@ -328,30 +357,50 @@ export default function MediaLibraryPage() {
             >
               <X className="w-6 h-6" />
             </Button>
-            {selectedImage.mimeType.startsWith('video/') ? (
-              <video 
-                src={selectedImage.url} 
-                controls 
-                className="max-w-full max-h-full rounded-2xl shadow-2xl" 
-                autoPlay 
-              />
-            ) : selectedImage.mimeType === 'application/pdf' ? (
-              <iframe 
-                src={selectedImage.url} 
-                className="w-full h-full rounded-2xl shadow-2xl bg-white" 
-              />
-            ) : selectedImage.mimeType.startsWith('image/') ? (
-              <img 
-                src={selectedImage.url} 
-                alt={selectedImage.altText || selectedImage.filename} 
-                className="max-w-full max-h-full object-contain rounded-2xl shadow-2xl" 
-              />
-            ) : (
-               <div className="bg-white p-20 rounded-[32px] shadow-2xl flex flex-col items-center gap-4">
-                 <ImageIcon className="w-24 h-24 text-slate-300" />
-                 <p className="font-bold text-slate-500">{selectedImage.filename}</p>
-                 <a href={selectedImage.url} target="_blank" rel="noreferrer" className="text-blue-500 hover:underline">Open File</a>
-               </div>
+            
+            <div className="flex-1 w-full flex items-center justify-center min-h-0">
+              {selectedImage.mimeType.startsWith('video/') ? (
+                <video 
+                  src={selectedImage.url} 
+                  controls 
+                  className="max-w-full max-h-full rounded-2xl shadow-2xl" 
+                  autoPlay 
+                />
+              ) : selectedImage.mimeType === 'application/pdf' ? (
+                <iframe 
+                  src={selectedImage.url} 
+                  className="w-full h-full rounded-2xl shadow-2xl bg-white" 
+                />
+              ) : selectedImage.mimeType.startsWith('image/') ? (
+                <img 
+                  src={selectedImage.url} 
+                  alt={selectedImage.altText || selectedImage.filename} 
+                  className="max-w-full max-h-full object-contain rounded-2xl shadow-2xl" 
+                />
+              ) : (
+                 <div className="bg-white p-20 rounded-[32px] shadow-2xl flex flex-col items-center gap-4">
+                   <ImageIcon className="w-24 h-24 text-slate-300" />
+                   <p className="font-bold text-slate-500">{selectedImage.filename}</p>
+                   <a href={selectedImage.url} target="_blank" rel="noreferrer" className="text-blue-500 hover:underline">Open File</a>
+                 </div>
+              )}
+            </div>
+
+            {selectedImage.mimeType.startsWith('video/') && (
+              <div className="flex gap-4 pb-4">
+                <Button
+                  onClick={() => copyUrl(selectedImage.url)}
+                  className="bg-white/10 hover:bg-white/20 text-white rounded-full px-6 py-2.5 text-xs font-bold transition-all flex items-center gap-2 border border-white/10"
+                >
+                  <Copy className="w-4 h-4" /> Copy Direct Link
+                </Button>
+                <Button
+                  onClick={() => copyIframeCode(selectedImage.url)}
+                  className="bg-white/10 hover:bg-white/20 text-white rounded-full px-6 py-2.5 text-xs font-bold transition-all flex items-center gap-2 border border-white/10"
+                >
+                  <Code className="w-4 h-4" /> Copy Iframe Embed Code
+                </Button>
+              </div>
             )}
           </div>
         </div>

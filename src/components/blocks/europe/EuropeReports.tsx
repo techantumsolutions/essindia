@@ -19,37 +19,33 @@ export interface EuropeReportsContent extends EuropeCommonSettings {
   cards?: ReportCard[];
 }
 
+import { FileText } from 'lucide-react';
+
 const DEFAULT_CARDS: ReportCard[] = [
   {
-    image: '/portfolio-1.png',
-    category: 'Analyst Report',
-    title: 'IDC MarketScape for Enterprise ERP Platforms in Europe',
-    link: '/resources',
+    image: '/About-Europe/Container.png',
+    title: 'ESS INDIA is a 2026 Gartner® Magic Quadrant™ Leader for CPaaS',
   },
   {
-    image: '/portfolio-2.png',
-    category: 'Whitepaper',
-    title: 'Digital Transformation Roadmap for European Manufacturers',
-    link: '/resources',
+    image: '/About-Europe/Container-1.png',
+    title: 'ESS INDIA named a Leader in IDC MarketScape for Communications Engagement',
   },
   {
-    image: '/portfolio-3.png',
-    category: 'Case Study',
-    title: 'How a European Retail Chain Unified 200+ Stores with ebizframe',
-    link: '/case-studies',
+    image: '/About-Europe/Container-2.png',
+    title: 'The AI Production Paradox',
   },
 ];
 
 export function EuropeReports({ content }: { content?: EuropeReportsContent }) {
-  const sectionTitle = content?.sectionTitle || "Learn why we're the trusted ERP leader in Europe";
-  const sectionTitleColor = content?.sectionTitleColor || '#1e293b';
-  const cards = (content?.cards?.length ? content.cards : DEFAULT_CARDS).slice(0, 12);
+  const sectionTitle = content?.sectionTitle || "Learn why we're the trusted CPaaS leader";
+  const sectionTitleColor = '#111827';
+  const cards = (content?.cards?.length ? content.cards : DEFAULT_CARDS).slice(0, 3);
 
   return (
-    <EuropeSectionShell content={{ ...content, backgroundColor: content?.backgroundColor || '#ffffff' }}>
+    <EuropeSectionShell content={{ ...content, backgroundColor: '#ffffff' }}>
       {sectionTitle && (
         <h2
-          className="text-3xl sm:text-4xl font-bold text-center mb-12 tracking-tight"
+          className="text-3xl sm:text-[38px] font-bold text-center mb-12 tracking-tight"
           style={{ color: sectionTitleColor }}
         >
           {sectionTitle}
@@ -64,32 +60,27 @@ export function EuropeReports({ content }: { content?: EuropeReportsContent }) {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.4, delay: index * 0.1 }}
-            className="group flex flex-col rounded-2xl overflow-hidden border border-slate-100 shadow-sm hover:shadow-lg transition-shadow duration-300 bg-white"
+            className="group flex flex-col bg-transparent"
           >
             {card.image && (
-              <div className="relative aspect-[16/10] w-full bg-slate-100 overflow-hidden">
+              <div className="relative aspect-[16/10] w-full bg-slate-50 overflow-hidden rounded-lg">
                 <Image
                   src={card.image}
                   alt={card.title || `Report ${index + 1}`}
                   fill
-                  className="object-cover group-hover:scale-105 transition-transform duration-500"
+                  className="object-cover group-hover:scale-[1.02] transition-transform duration-500"
                   sizes="(max-width: 768px) 100vw, 33vw"
                 />
               </div>
             )}
-            <div className="flex flex-col flex-1 p-6">
-              {card.category && (
-                <span className="text-xs font-bold uppercase tracking-wider text-blue-600 mb-3">
-                  {card.category}
-                </span>
-              )}
+            <div className="flex flex-col flex-1 pt-4 text-left">
+              <div className="flex items-center gap-1.5 text-xs text-slate-500 mb-2">
+                <FileText className="w-4 h-4 text-slate-700" />
+                <span>Reports</span>
+              </div>
               {card.title && (
-                <h3 className="text-lg font-bold text-slate-900 leading-snug mb-4 flex-1 group-hover:text-[#4B2A63] transition-colors">
-                  {card.link ? (
-                    <Link href={card.link}>{card.title}</Link>
-                  ) : (
-                    card.title
-                  )}
+                <h3 className="text-lg font-bold text-slate-900 leading-snug mb-4 flex-1">
+                  {card.title}
                 </h3>
               )}
             </div>

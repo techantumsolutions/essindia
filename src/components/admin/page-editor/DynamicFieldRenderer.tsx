@@ -82,6 +82,7 @@ export function DynamicFieldRenderer({
           value={String(value ?? '')}
           onChange={(v) => onChange(keyPath, v)}
           hint={sectionType ? getImageHint(sectionType, fieldKey) : undefined}
+          sectionType={sectionType}
         />
       );
 
@@ -189,6 +190,15 @@ export function DynamicFieldRenderer({
           onChange={onChange}
           depth={depth}
           sectionType={sectionType}
+        />
+      );
+
+    case 'formSelect':
+      return (
+        <FormSelectField
+          fieldKey={fieldKey}
+          value={value as string}
+          onChange={(v) => onChange(keyPath, v)}
         />
       );
 
@@ -316,6 +326,52 @@ function UrlField({
   );
 }
 
+const FORM_OPTIONS = [
+  { value: '', label: 'None (use URL)', icon: '🔗', desc: 'Navigates to the URL above' },
+  { value: 'contact', label: 'Contact Us Form', icon: '✉️', desc: 'Opens the Contact Us modal' },
+  { value: 'cta', label: 'Page CTA Form', icon: '📄', desc: 'Opens the CTA lead-capture modal' },
+] as const;
+
+function FormSelectField({
+  fieldKey,
+  value,
+  onChange,
+}: {
+  fieldKey: string;
+  value: string;
+  onChange: (value: string) => void;
+}) {
+  return (
+    <div className="space-y-2">
+      <label className="admin-label">{humanLabel(fieldKey)}</label>
+      <div className="grid grid-cols-3 gap-2">
+        {FORM_OPTIONS.map((opt) => {
+          const isActive = (value || '') === opt.value;
+          return (
+            <button
+              key={opt.value}
+              type="button"
+              onClick={() => onChange(opt.value)}
+              className={cn(
+                'flex flex-col items-start gap-1 px-3 py-2.5 rounded-xl border text-left transition-all cursor-pointer',
+                isActive
+                  ? 'border-[#4B2A63] bg-[#4B2A63]/5 ring-1 ring-[#4B2A63]/30'
+                  : 'border-slate-200 bg-white hover:border-slate-300 hover:bg-slate-50'
+              )}
+            >
+              <span className="text-base leading-none">{opt.icon}</span>
+              <span className={cn('text-[11px] font-bold leading-tight', isActive ? 'text-[#4B2A63]' : 'text-slate-700')}>
+                {opt.label}
+              </span>
+              <span className="text-[10px] text-slate-400 leading-tight">{opt.desc}</span>
+            </button>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
 function IconField({
   fieldKey,
   value,
@@ -360,7 +416,28 @@ function ObjectField({
   sectionType?: string;
 }) {
   const [collapsed, setCollapsed] = React.useState(depth > 2);
-  const keys = Object.keys(value);
+
+  // Dynamically inject formType if a url/href field is present inside this object
+  const mergedValue = { ...value };
+  const hasUrlKey = Object.keys(mergedValue).some(k => /^(url|href)$/i.test(k));
+  if (hasUrlKey && !('formType' in mergedValue)) {
+    mergedValue['formType'] = '';
+  }
+
+  const keys = Object.keys(mergedValue);
+  
+  // Sort keys so formType is directly under the url/href field
+  const orderedKeys: string[] = [];
+  keys.forEach(k => {
+    if (k === 'formType') return;
+    orderedKeys.push(k);
+    if (/^(url|href)$/i.test(k) && keys.includes('formType')) {
+      orderedKeys.push('formType');
+    }
+  });
+  if (keys.includes('formType') && !orderedKeys.includes('formType')) {
+    orderedKeys.push('formType');
+  }
 
   const isCtaLike = /cta|button|action|link/i.test(fieldKey);
   const isHeadingLike = /heading|header|title/i.test(fieldKey);
@@ -401,17 +478,20 @@ function ObjectField({
         >
           {humanLabel(fieldKey)}
         </span>
-        <span className="text-[10px] text-slate-400">{keys.length} fields</span>
+        <span className="text-[10px] text-slate-400">{orderedKeys.length} fields</span>
       </button>
       {!collapsed && (
         <div className="px-4 pb-4 space-y-3">
-          {keys.map((k) => (
+          {orderedKeys.map((k) => (
             <DynamicFieldRenderer
               key={k}
               keyPath={keyPath ? `${keyPath}.${k}` : k}
               fieldKey={k}
-              value={value[k]}
-              onChange={onChange}
+              value={mergedValue[k]}
+              onChange={(childKeyPath, childVal) => {
+                const updatedObj = { ...mergedValue, [k]: childVal };
+                onChange(keyPath, updatedObj);
+              }}
               depth={depth + 1}
               sectionType={sectionType}
             />
@@ -479,6 +559,7 @@ function ArrayField({
                   value={String(item ?? '')}
                   onChange={(v) => onItemChange(_idx, v)}
                   hint={sectionType ? getImageHint(sectionType, fieldKey) : undefined}
+                  sectionType={sectionType}
                 />
               </div>
             );
@@ -554,7 +635,19 @@ function ArrayField({
             });
           } else if (fieldKey === 'cards') {
             let cardOrder = ['badge', 'icon', 'image', 'title', 'description', 'contact', 'badgeBorderColor', 'badgeTextColor', 'badgeBgColor'];
-            if (sectionType && sectionType.startsWith('fmcg-')) {
+            if (sectionType === 'europe-feature-cards') {
+              cardOrder = ['image', 'title', 'description'];
+            } else if (sectionType === 'europe-product-showcase') {
+              cardOrder = ['title', 'description'];
+            } else if (sectionType === 'europe-reports') {
+              cardOrder = ['image', 'title'];
+            } else if (sectionType === 'uganda-services') {
+              cardOrder = ['image', 'title', 'description', 'ctaText', 'ctaUrl', 'ctaFormType'];
+            } else if (sectionType === 'uganda-capabilities') {
+              cardOrder = ['icon', 'title', 'description'];
+            } else if (sectionType === 'uganda-industries') {
+              cardOrder = ['image', 'title', 'description'];
+            } else if (sectionType && sectionType.startsWith('fmcg-')) {
               if (sectionType === 'fmcg-action') {
                 cardOrder = ['badge', 'image', 'title', 'description', 'badgeBorderColor', 'badgeTextColor', 'badgeBgColor'];
               } else if (sectionType === 'fmcg-impact' || sectionType === 'fmcg-integrations') {
@@ -610,19 +703,32 @@ function ArrayField({
               tabOrder = ['tabName', 'tabTitle', 'points', 'buttonText', 'buttonUrl', 'image'];
             } else if (sectionType === 'oracle-apex-approach') {
               tabOrder = ['tabName', 'items'];
+            } else if (sectionType === 'uganda-insights') {
+              tabOrder = ['tabName', 'contentTitle', 'body1', 'body2', 'points', 'subsections', 'image'];
             } else if (sectionType === 'mfg-icons') {
               tabOrder = ['label', 'iconImage', 'sections'];
             }
             sortedKeys = tabOrder.filter(k => k in objItem);
-          } else if (fieldKey === 'stats') {
-            const statOrder = ['value', 'label'];
+          } else if (fieldKey === 'stats' || fieldKey === 'statistics') {
+            let statOrder = ['number', 'value', 'label'];
+            if (sectionType === 'uganda-presence') {
+              statOrder = ['title', 'description'];
+            } else if (sectionType === 'europe-case-study-slider') {
+              statOrder = ['value', 'title'];
+            }
             sortedKeys = statOrder.filter(k => k in objItem);
+          } else if (fieldKey === 'slides') {
+            let slideOrder = ['image', 'logo', 'title', 'stats', 'ctaText', 'ctaUrl'];
+            sortedKeys = slideOrder.filter(k => k in objItem);
           } else if (fieldKey === 'solutions') {
             const solutionOrder = ['title', 'description'];
             sortedKeys = solutionOrder.filter(k => k in objItem);
           } else if (fieldKey === 'benefits') {
             const benefitOrder = ['image', 'title'];
             sortedKeys = benefitOrder.filter(k => k in objItem);
+          } else if (fieldKey === 'points') {
+            const pointsOrder = ['title', 'description'];
+            sortedKeys = pointsOrder.filter(k => k in objItem);
           } else if (fieldKey === 'industries' && sectionType === 'rpa-industries') {
             const industryOrder = ['icon', 'title', 'description'];
             sortedKeys = industryOrder.filter(k => k in objItem);

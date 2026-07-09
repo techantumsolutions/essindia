@@ -22,31 +22,31 @@ export interface EuropeGlobalPresenceContent extends EuropeCommonSettings {
 }
 
 const DEFAULT_STATS: Statistic[] = [
-  { number: '30+', label: 'Years Experience' },
-  { number: '15+', label: 'Global Offices' },
-  { number: '200,000+', label: 'Businesses Served' },
-  { number: '35+', label: 'Countries' },
+  { number: '30+', label: 'Years of Expertise' },
+  { number: '15+', label: 'Industry Sectors' },
+  { number: '500+', label: 'Enterprise Clients' },
+  { number: '98%', label: 'Client Satisfaction' },
 ];
 
 export function EuropeGlobalPresence({ content }: { content?: EuropeGlobalPresenceContent }) {
-  const image = content?.image || '/Career-Page/Group 1.png';
-  const title = content?.title || 'Discover why over 200,000 businesses trust ebizframe ERP';
-  const titleColor = content?.titleColor || '#ffffff';
-  const subtitle = content?.subtitle || 'Global Presence';
-  const subtitleColor = content?.subtitleColor || '#fbbf24';
+  const image = content?.image || '/About-Europe/image 141.png';
+  const title = content?.title || 'Discover why over 200,000 businesses trust the Sinch Super Network';
+  const titleColor = '#ffffff';
+  const subtitle = content?.subtitle || 'The ESS India Super Network';
+  const subtitleColor = '#94a3b8';
   const description =
     content?.description ||
-    'With offices across Europe, Asia, and the Americas, ESS delivers localized expertise backed by a proven global ERP platform.';
-  const descriptionColor = content?.descriptionColor || '#cbd5e1';
-  const statistics = content?.statistics?.length ? content.statistics : DEFAULT_STATS;
+    "Meet the network that powers other networks. It's the most direct, secure, and reliable tier-1 network for messaging, voice, and email.";
+  const descriptionColor = '#94a3b8';
+  const statistics = (content?.statistics?.length ? content.statistics : DEFAULT_STATS).slice(0, 4);
 
   return (
     <EuropeSectionShell
       content={{
         ...content,
-        backgroundColor: content?.backgroundColor || '#0d0720',
-        sectionPaddingTop: content?.sectionPaddingTop || 'pt-24',
-        sectionPaddingBottom: content?.sectionPaddingBottom || 'pb-24',
+        backgroundColor: '#111827',
+        sectionPaddingTop: content?.sectionPaddingTop || 'pt-16',
+        sectionPaddingBottom: content?.sectionPaddingBottom || 'pb-16',
       }}
     >
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
@@ -70,17 +70,17 @@ export function EuropeGlobalPresence({ content }: { content?: EuropeGlobalPresen
 
         <div className="space-y-6">
           {subtitle && (
-            <p className="text-sm font-bold uppercase tracking-widest" style={{ color: subtitleColor }}>
+            <p className="text-sm font-normal text-slate-400 tracking-wide">
               {subtitle}
             </p>
           )}
           {title && (
-            <h2 className="text-3xl sm:text-4xl font-bold leading-tight" style={{ color: titleColor }}>
+            <h2 className="text-3xl sm:text-[38px] leading-[1.2] font-semibold text-white">
               {title}
             </h2>
           )}
           {description && (
-            <p className="text-base leading-relaxed" style={{ color: descriptionColor }}>
+            <p className="text-sm leading-relaxed" style={{ color: descriptionColor }}>
               {description}
             </p>
           )}
@@ -96,12 +96,12 @@ export function EuropeGlobalPresence({ content }: { content?: EuropeGlobalPresen
                 className="text-left"
               >
                 {stat.number && (
-                  <div className="text-3xl sm:text-4xl font-bold mb-1" style={{ color: subtitleColor }}>
+                  <div className="text-3xl sm:text-4xl font-bold mb-1 text-[#f5c234]">
                     {stat.number}
                   </div>
                 )}
                 {stat.label && (
-                  <div className="text-sm text-slate-300">{stat.label}</div>
+                  <div className="text-sm font-medium text-white">{stat.label}</div>
                 )}
               </motion.div>
             ))}

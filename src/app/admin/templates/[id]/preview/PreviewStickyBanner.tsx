@@ -7,11 +7,16 @@ import { Eye, ArrowLeft, Plus } from 'lucide-react';
 interface PreviewStickyBannerProps {
   templateId: string;
   templateName: string;
+  isPageMode?: boolean;
 }
 
-export function PreviewStickyBanner({ templateId, templateName }: PreviewStickyBannerProps) {
-  const handleUseTemplate = () => {
-    window.location.href = `/admin/pages?createPage=true&templateId=${templateId}`;
+export function PreviewStickyBanner({ templateId, templateName, isPageMode }: PreviewStickyBannerProps) {
+  const handleAction = () => {
+    if (isPageMode) {
+      window.location.href = `/admin/pages/${templateId}`;
+    } else {
+      window.location.href = `/admin/pages?createPage=true&templateId=${templateId}`;
+    }
   };
 
   return (
@@ -23,7 +28,7 @@ export function PreviewStickyBanner({ templateId, templateName }: PreviewStickyB
         <div>
           <div className="flex items-center gap-2">
             <span className="text-[10px] font-black tracking-widest text-[#FFD54F] uppercase bg-white/10 px-2 py-0.5 rounded-full">
-              Preview Mode
+              {isPageMode ? 'Page Preview' : 'Preview Mode'}
             </span>
             <h4 className="text-sm font-black truncate max-w-[200px] md:max-w-xs">{templateName}</h4>
           </div>
@@ -40,11 +45,11 @@ export function PreviewStickyBanner({ templateId, templateName }: PreviewStickyB
           Close
         </Button>
         <Button
-          onClick={handleUseTemplate}
+          onClick={handleAction}
           className="bg-[#FFD54F] hover:bg-[#F7C844] text-[#4B2A63] font-black rounded-full px-5 h-9 text-xs shadow-md transition-all duration-300 active:scale-95 cursor-pointer shrink-0"
         >
           <Plus className="w-3.5 h-3.5 mr-1.5 stroke-[3]" />
-          Use Template
+          {isPageMode ? 'Edit Page' : 'Use Template'}
         </Button>
       </div>
     </div>

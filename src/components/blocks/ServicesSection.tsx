@@ -4,6 +4,7 @@ import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { MotionSection, StaggerContainer } from '@/components/animations/MotionSection';
 import { Spotlight } from '@/components/ui/Spotlight';
+import { useCtaAction, type CtaFormType } from '@/hooks/useCtaAction';
 
 // Generic placeholder SVGs
 const Icon1 = () => <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1" className="text-slate-700"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>;
@@ -15,6 +16,7 @@ interface Service {
   bgImage: string;
   ctaText?: string;
   ctaUrl?: string;
+  ctaFormType?: string;
 }
 
 interface ServicesContent {
@@ -31,6 +33,9 @@ interface ServicesSectionProps {
 const defaultServices: Service[] = [];
 
 export function ServicesSection({ content }: ServicesSectionProps) {
+  const ctaUrl = (content as any)?.ctaUrl || '';
+  const ctaFormType = ((content as any)?.ctaFormType || '') as CtaFormType;
+  const { handleClick: handleCtaClick, modalNode } = useCtaAction(ctaUrl, ctaFormType);
   const heading = content?.heading || "Services we offer";
   const subheading = content?.subheading || "Manage your operations with guidance that evolves with your business goals.";
   const services = content?.services || defaultServices;
@@ -124,14 +129,7 @@ export function ServicesSection({ content }: ServicesSectionProps) {
           ))}
         </StaggerContainer>
 
-        <MotionSection variant="fadeUp" delay={0.4} className="mt-16 text-center">
-          <Button
-            onClick={() => window.location.href = viewAllCta.url}
-            className="bg-[#4B2A63] hover:bg-[#3B198F] text-white rounded-full px-12 h-[54px] text-[16px] font-bold shadow-xl transition-all duration-300 hover:shadow-2xl hover:-translate-y-1 active:scale-95"
-          >
-            {viewAllCta.label}
-          </Button>
-        </MotionSection>
+
 
       </div>
     </section>

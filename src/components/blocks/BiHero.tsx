@@ -4,6 +4,7 @@ import React from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
+import { useCtaAction, type CtaFormType } from '@/hooks/useCtaAction';
 
 interface BiHeroContent {
   bgColor?: string;
@@ -20,11 +21,15 @@ interface BiHeroContent {
   button1Text?: string;
   button1TextColor?: string;
   button1Url?: string;
+  button1FormType?: string;
+  button1PdfUrl?: string;
   button2BgColor?: string;
   button2BorderColor?: string;
   button2Text?: string;
   button2TextColor?: string;
   button2Url?: string;
+  button2FormType?: string;
+  button2PdfUrl?: string;
   image?: string;
 }
 
@@ -45,14 +50,19 @@ export function BiHero({ content }: { content?: BiHeroContent }) {
   const button1Text = content?.button1Text || 'Book your Demo';
   const button1TextColor = content?.button1TextColor || '#000000';
   const button1Url = content?.button1Url || '#';
+  const button1FormType = (content?.button1FormType || '') as CtaFormType;
 
   const button2BgColor = content?.button2BgColor || '#5e35b1';
   const button2BorderColor = content?.button2BorderColor || '#5e35b1';
   const button2Text = content?.button2Text || 'Case studies';
   const button2TextColor = content?.button2TextColor || '#ffffff';
   const button2Url = content?.button2Url || '#';
+  const button2FormType = (content?.button2FormType || '') as CtaFormType;
 
   const rightImage = content?.image || '/Business intilligence/Frame 211.png';
+
+  const { handleClick: handleBtn1Click, modalNode: modal1 } = useCtaAction(button1Url, button1FormType, content?.button1PdfUrl);
+  const { handleClick: handleBtn2Click, modalNode: modal2 } = useCtaAction(button2Url, button2FormType, content?.button2PdfUrl);
 
   const hasCustomBg = content?.bgColor && content.bgColor !== '#f3f6fc';
   const bgStyles = hasCustomBg
@@ -122,32 +132,44 @@ export function BiHero({ content }: { content?: BiHeroContent }) {
             >
               {button1Text && (
                 <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.98 }}>
-                  <Link
-                    href={button1Url}
-                    className="inline-block px-6 py-3 rounded-full text-sm font-bold shadow-md hover:shadow-lg transition-all border text-center min-w-[140px]"
-                    style={{
-                      backgroundColor: button1BgColor,
-                      borderColor: button1BorderColor,
-                      color: button1TextColor,
-                    }}
-                  >
-                    {button1Text}
-                  </Link>
+                  {button1FormType ? (
+                    <button
+                      onClick={handleBtn1Click}
+                      className="inline-block px-6 py-3 rounded-full text-sm font-bold shadow-md hover:shadow-lg transition-all border text-center min-w-[140px] cursor-pointer"
+                      style={{ backgroundColor: button1BgColor, borderColor: button1BorderColor, color: button1TextColor }}
+                    >
+                      {button1Text}
+                    </button>
+                  ) : (
+                    <Link
+                      href={button1Url}
+                      className="inline-block px-6 py-3 rounded-full text-sm font-bold shadow-md hover:shadow-lg transition-all border text-center min-w-[140px]"
+                      style={{ backgroundColor: button1BgColor, borderColor: button1BorderColor, color: button1TextColor }}
+                    >
+                      {button1Text}
+                    </Link>
+                  )}
                 </motion.div>
               )}
               {button2Text && (
                 <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.98 }}>
-                  <Link
-                    href={button2Url}
-                    className="inline-block px-6 py-3 rounded-full text-sm font-bold border shadow-sm hover:shadow-md transition-all border text-center min-w-[140px]"
-                    style={{
-                      backgroundColor: button2BgColor,
-                      borderColor: button2BorderColor,
-                      color: button2TextColor,
-                    }}
-                  >
-                    {button2Text}
-                  </Link>
+                  {button2FormType ? (
+                    <button
+                      onClick={handleBtn2Click}
+                      className="inline-block px-6 py-3 rounded-full text-sm font-bold border shadow-sm hover:shadow-md transition-all text-center min-w-[140px] cursor-pointer"
+                      style={{ backgroundColor: button2BgColor, borderColor: button2BorderColor, color: button2TextColor }}
+                    >
+                      {button2Text}
+                    </button>
+                  ) : (
+                    <Link
+                      href={button2Url}
+                      className="inline-block px-6 py-3 rounded-full text-sm font-bold border shadow-sm hover:shadow-md transition-all border text-center min-w-[140px]"
+                      style={{ backgroundColor: button2BgColor, borderColor: button2BorderColor, color: button2TextColor }}
+                    >
+                      {button2Text}
+                    </Link>
+                  )}
                 </motion.div>
               )}
             </motion.div>
@@ -180,6 +202,8 @@ export function BiHero({ content }: { content?: BiHeroContent }) {
 
         </div>
       </div>
+      {modal1}
+      {modal2}
     </section>
   );
 }

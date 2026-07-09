@@ -4,16 +4,17 @@ import React from 'react';
 import { ImageIcon, X, FolderOpen, Upload, FileText } from 'lucide-react';
 import { humanLabel } from './field-utils';
 import { toast } from 'sonner';
-import { MediaPickerModal } from './MediaPickerModal';
+import { MediaPickerModal, type TabType } from './MediaPickerModal';
 
 interface MediaFieldProps {
   fieldKey: string;
   value: string;
   onChange: (value: string) => void;
   hint?: string;
+  sectionType?: string;
 }
 
-export function MediaField({ fieldKey, value, onChange, hint }: MediaFieldProps) {
+export function MediaField({ fieldKey, value, onChange, hint, sectionType }: MediaFieldProps) {
   const [showPreview, setShowPreview] = React.useState(true);
   const [isUploading, setIsUploading] = React.useState(false);
   const [isPickerOpen, setIsPickerOpen] = React.useState(false);
@@ -53,6 +54,30 @@ export function MediaField({ fieldKey, value, onChange, hint }: MediaFieldProps)
   const isVideo = value && (value.toLowerCase().match(/\.(mp4|webm|ogg|mov)$/) || value.includes('video'));
   const isPdfField = fieldKey.toLowerCase().includes('pdf');
   const isPdfFile = value && value.toLowerCase().endsWith('.pdf');
+
+  const allowedTabs = React.useMemo((): TabType[] => {
+    const key = fieldKey.toLowerCase();
+    if (key.includes('pdf')) {
+      return ['pdfs'];
+    }
+    if (key.includes('gif')) {
+      return ['gifs'];
+    }
+    if (sectionType === 'europe-case-study-slider' && (key === 'image' || key.includes('image'))) {
+      return ['images', 'videos'];
+    }
+    // Default fallback to images only
+    return ['images'];
+  }, [fieldKey, sectionType]);
+
+  const acceptString = React.useMemo(() => {
+    if (allowedTabs.includes('pdfs')) return 'application/pdf';
+    const parts: string[] = [];
+    if (allowedTabs.includes('images')) parts.push('image/*');
+    if (allowedTabs.includes('gifs')) parts.push('image/gif');
+    if (allowedTabs.includes('videos')) parts.push('video/*');
+    return parts.join(',');
+  }, [allowedTabs]);
 
   return (
     <div className="space-y-2">
@@ -130,14 +155,14 @@ export function MediaField({ fieldKey, value, onChange, hint }: MediaFieldProps)
               ref={fileInputRef}
               type="file"
               className="hidden"
-              accept={isPdfField ? "application/pdf" : "image/*,image/gif,video/*"}
+              accept={acceptString}
               onChange={handleUpload}
             />
           </div>
           <p className="text-[10px] text-slate-400">
             Paste media URL or click "Upload" to upload from your device.
             <span className="block mt-1 text-rose-500 font-medium">
-              * Disclaimer: Max upload size is 3MB. Supports {isPdfField ? 'PDF files' : 'images (including GIFs) and videos'}.
+              * Disclaimer: Max upload size is 3MB. Supports {allowedTabs.join(', ')}.
             </span>
             {hint && (
               <span className="block mt-1 text-[#4B2A63] font-medium">
@@ -151,6 +176,7 @@ export function MediaField({ fieldKey, value, onChange, hint }: MediaFieldProps)
       <MediaPickerModal
         isOpen={isPickerOpen}
         onClose={() => setIsPickerOpen(false)}
+        allowedTabs={allowedTabs}
         onSelect={(url) => {
           onChange(url);
           setShowPreview(true);

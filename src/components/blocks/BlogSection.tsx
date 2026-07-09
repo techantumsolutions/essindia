@@ -5,6 +5,7 @@ import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { TextReveal } from '@/components/animations/TextReveal';
 import { MotionSection, StaggerContainer } from '@/components/animations/MotionSection';
+import { useCtaAction, type CtaFormType } from '@/hooks/useCtaAction';
 
 interface Blog {
   title: string;
@@ -12,6 +13,7 @@ interface Blog {
   image: string;
   ctaText?: string;
   ctaUrl?: string;
+  ctaFormType?: string;
 }
 
 interface BlogContent {
@@ -50,6 +52,9 @@ const defaultBlogs = [
 ];
 
 export function BlogSection({ content }: BlogSectionProps) {
+  const ctaUrl = (content as any)?.ctaUrl || '';
+  const ctaFormType = ((content as any)?.ctaFormType || '') as CtaFormType;
+  const { handleClick: handleCtaClick, modalNode } = useCtaAction(ctaUrl, ctaFormType);
   const heading = content?.heading || "News, Launches & Product Thinking";
   const subheading = content?.subheading || "Stay updated on what we're building, learning, and launching.";
   const viewAllCta = content?.viewAllCta || { label: "Explore More", url: "/blog" };

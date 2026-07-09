@@ -1,6 +1,9 @@
+'use client';
+
 import React from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useCtaAction, type CtaFormType } from '@/hooks/useCtaAction';
 
 interface StaffingHeroContent {
   bgColor?: string;

@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useCtaAction, type CtaFormType } from '@/hooks/useCtaAction';
 
 interface WorkspaceTab {
   label: string;
@@ -14,6 +15,7 @@ interface WorkspaceTab {
   benefits?: string[];
   ctaText?: string;
   ctaUrl?: string;
+  ctaFormType?: string;
 }
 
 interface WorkspaceCategory {
@@ -27,6 +29,9 @@ interface AomWorkspaceContent {
 }
 
 export function AomWorkspace({ content }: { content?: AomWorkspaceContent }) {
+  const ctaUrl = (content as any)?.ctaUrl || '';
+  const ctaFormType = ((content as any)?.ctaFormType || '') as CtaFormType;
+  const { handleClick: handleCtaClick, modalNode } = useCtaAction(ctaUrl, ctaFormType);
   const title = content?.title || 'Explore every mobile business application from one intelligent workspace.';
 
   const defaultCategories: WorkspaceCategory[] = [

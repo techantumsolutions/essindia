@@ -18,6 +18,7 @@ export const metadata: Metadata = {
 };
 
 import { Toaster } from "@/components/ui/sonner";
+import { FormModalProvider } from "@/components/ui/FormModalProvider";
 
 export default function RootLayout({
   children,
@@ -31,6 +32,7 @@ export default function RootLayout({
           {children}
         </QueryProvider>
         <Toaster />
+        <FormModalProvider />
       </body>
     </html>
   );

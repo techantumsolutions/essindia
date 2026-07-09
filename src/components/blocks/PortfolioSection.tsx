@@ -7,6 +7,7 @@ import { ArrowRight, ChevronLeft, ChevronRight } from 'lucide-react';
 import { TextReveal } from '@/components/animations/TextReveal';
 import { MotionSection, StaggerContainer } from '@/components/animations/MotionSection';
 import { cn } from '@/lib/utils';
+import { useCtaAction, type CtaFormType } from '@/hooks/useCtaAction';
 
 interface Project {
   title: string;
@@ -14,6 +15,7 @@ interface Project {
   image: string;
   ctaText?: string;
   ctaUrl?: string;
+  ctaFormType?: string;
 }
 
 interface PortfolioContent {
@@ -52,6 +54,9 @@ const defaultPortfolios = [
 ];
 
 export function PortfolioSection({ content }: PortfolioSectionProps) {
+  const ctaUrl = (content as any)?.ctaUrl || '';
+  const ctaFormType = ((content as any)?.ctaFormType || '') as CtaFormType;
+  const { handleClick: handleCtaClick, modalNode } = useCtaAction(ctaUrl, ctaFormType);
   const heading = content?.heading || "Real Work. Real Results.";
   const subheading = content?.subheading || "Explore the ESS story, a legacy of transformation across high-end brands and verticals.";
   const projects = content?.projects || defaultPortfolios;
