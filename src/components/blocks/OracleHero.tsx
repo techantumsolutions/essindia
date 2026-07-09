@@ -4,6 +4,7 @@ import React from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
+import { useCtaAction, type CtaFormType } from '@/hooks/useCtaAction';
 
 interface OracleHeroContent {
   bgColor?: string;
@@ -20,11 +21,15 @@ interface OracleHeroContent {
   button1Text?: string;
   button1TextColor?: string;
   button1Url?: string;
+  button1FormType?: string;
+  button1PdfUrl?: string;
   button2BgColor?: string;
   button2BorderColor?: string;
   button2Text?: string;
   button2TextColor?: string;
   button2Url?: string;
+  button2FormType?: string;
+  button2PdfUrl?: string;
   image?: string;
 }
 
@@ -51,7 +56,11 @@ export function OracleHero({ content }: { content?: OracleHeroContent }) {
   const button2Text = content?.button2Text || 'Explore ROI Calculator';
   const button2TextColor = content?.button2TextColor || '#2e2a72';
   const button2Url = content?.button2Url || '#';
+  const button1FormType = (content?.button1FormType || '') as CtaFormType;
+  const button2FormType = (content?.button2FormType || '') as CtaFormType;
 
+  const { handleClick: handleBtn1Click, modalNode: modal1 } = useCtaAction(button1Url, button1FormType, content?.button1PdfUrl);
+  const { handleClick: handleBtn2Click, modalNode: modal2 } = useCtaAction(button2Url, button2FormType, content?.button2PdfUrl);
   const rightImage = content?.image || '/migration-orcl datebase upgrade and optimization/mygration-orcl datebase upgrade and optimization.png';
 
   const hasCustomBg = content?.bgColor && content.bgColor !== '#091E2E';
@@ -124,7 +133,7 @@ export function OracleHero({ content }: { content?: OracleHeroContent }) {
               {button1Text && (
                 <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.98 }}>
                   <Link
-                    href={button1Url}
+                    href={button1Url} onClick={button1FormType ? (e: React.MouseEvent) => { e.preventDefault(); handleBtn1Click(); } : undefined}
                     className="inline-block px-6 py-3 rounded-full text-sm font-bold shadow-md hover:shadow-lg transition-all border text-center min-w-[140px]"
                     style={{
                       backgroundColor: button1BgColor,
@@ -139,7 +148,7 @@ export function OracleHero({ content }: { content?: OracleHeroContent }) {
               {button2Text && (
                 <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.98 }}>
                   <Link
-                    href={button2Url}
+                    href={button2Url} onClick={button2FormType ? (e: React.MouseEvent) => { e.preventDefault(); handleBtn2Click(); } : undefined}
                     className="inline-block px-6 py-3 rounded-full text-sm font-bold border shadow-sm hover:shadow-md transition-all border text-center min-w-[140px]"
                     style={{
                       backgroundColor: button2BgColor,
@@ -181,6 +190,8 @@ export function OracleHero({ content }: { content?: OracleHeroContent }) {
 
         </div>
       </div>
+      {modal1}
+      {modal2}
     </section>
   );
 }

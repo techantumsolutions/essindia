@@ -30,6 +30,14 @@ export interface FooterSettingsData {
       youtube: { url: string; enabled: boolean };
       instagram: { url: string; enabled: boolean };
     };
+    bottomLinks?: FooterLink[];
+    copyright?: string;
+    titles?: {
+      company?: string;
+      products?: string;
+      industries?: string;
+      services?: string;
+    };
   };
 }
 
@@ -42,6 +50,20 @@ export const defaultFooterSettings: FooterSettingsData = {
   youtubeUrl: '#',
   countries: ['India', 'Middle East', 'Africa', 'USA'],
   links: {
+    titles: {
+      company: 'Company',
+      products: 'Products',
+      industries: 'Industries',
+      services: 'Services'
+    },
+    copyright: 'Copyright © 2026. Eastern Software Solutions Pvt. Ltd All Rights Reserved',
+    bottomLinks: [
+      { label: 'Trust & security', url: '#', pageId: null },
+      { label: 'Terms of Use', url: '#', pageId: null },
+      { label: 'Privacy Policy', url: '#', pageId: null },
+      { label: 'Cookies Policy', url: '#', pageId: null },
+      { label: 'Settings', url: '#', pageId: null }
+    ],
     company: [
       { label: 'About', url: '#', pageId: null },
       { label: 'Leadership', url: '#', pageId: null },
@@ -122,7 +144,10 @@ export class FooterRepository {
           products: dbLinks.products || defaultFooterSettings.links.products,
           industries: dbLinks.industries || defaultFooterSettings.links.industries,
           services: dbLinks.services || defaultFooterSettings.links.services,
-          social
+          social,
+          bottomLinks: dbLinks.bottomLinks || defaultFooterSettings.links.bottomLinks,
+          copyright: dbLinks.copyright ?? defaultFooterSettings.links.copyright,
+          titles: dbLinks.titles || defaultFooterSettings.links.titles
         },
       };
     } catch (error) {
@@ -179,7 +204,10 @@ export class FooterRepository {
           products: dbLinks.products || [],
           industries: dbLinks.industries || [],
           services: dbLinks.services || [],
-          social: dbLinks.social || social
+          social: dbLinks.social || social,
+          bottomLinks: dbLinks.bottomLinks || [],
+          copyright: dbLinks.copyright ?? '',
+          titles: dbLinks.titles || defaultFooterSettings.links.titles
         },
       };
     } else {
@@ -213,7 +241,10 @@ export class FooterRepository {
           products: dbLinks.products || [],
           industries: dbLinks.industries || [],
           services: dbLinks.services || [],
-          social: dbLinks.social || social
+          social: dbLinks.social || social,
+          bottomLinks: dbLinks.bottomLinks || [],
+          copyright: dbLinks.copyright ?? '',
+          titles: dbLinks.titles || defaultFooterSettings.links.titles
         },
       };
     }

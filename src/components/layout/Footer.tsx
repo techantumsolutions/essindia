@@ -1,8 +1,11 @@
+import React from 'react';
 import Link from 'next/link';
 import { footerRepository } from '@/repositories/footer.repository';
 
 export async function Footer() {
   const footerData = await footerRepository.getFooterSettings();
+  const bottomLinks = footerData.links.bottomLinks || [];
+  const copyrightText = footerData.links.copyright || 'Copyright © 2026. Eastern Software Solutions Pvt. Ltd All Rights Reserved';
 
   return (
     <footer className="bg-[#ececec] border-t border-slate-100 pt-8 pb-0 px-6">
@@ -88,7 +91,9 @@ export async function Footer() {
 
           {/* Column 2: Company */}
           <div>
-            <h4 className="text-[16px] font-bold text-slate-900 mb-6">Company</h4>
+            <h4 className="text-[16px] font-bold text-slate-900 mb-6">
+              {footerData.links.titles?.company || 'Company'}
+            </h4>
             <ul className="space-y-1">
               {footerData.links.company.map((link, idx) => (
                 <li key={idx}>
@@ -102,7 +107,9 @@ export async function Footer() {
 
           {/* Column 3: Products */}
           <div>
-            <h4 className="text-[16px] font-bold text-slate-900 mb-6">Products</h4>
+            <h4 className="text-[16px] font-bold text-slate-900 mb-6">
+              {footerData.links.titles?.products || 'Products'}
+            </h4>
             <ul className="space-y-1">
               {footerData.links.products.map((link, idx) => (
                 <li key={idx}>
@@ -116,7 +123,9 @@ export async function Footer() {
 
           {/* Column 4: Industries */}
           <div>
-            <h4 className="text-[16px] font-bold text-slate-900 mb-6">Industries</h4>
+            <h4 className="text-[16px] font-bold text-slate-900 mb-6">
+              {footerData.links.titles?.industries || 'Industries'}
+            </h4>
             <ul className="space-y-1">
               {footerData.links.industries.map((link, idx) => (
                 <li key={idx}>
@@ -130,7 +139,9 @@ export async function Footer() {
 
           {/* Column 5: Services */}
           <div>
-            <h4 className="text-[16px] font-bold text-slate-900 mb-6">Services</h4>
+            <h4 className="text-[16px] font-bold text-slate-900 mb-6">
+              {footerData.links.titles?.services || 'Services'}
+            </h4>
             <ul className="space-y-1">
               {footerData.links.services.map((link, idx) => (
                 <li key={idx}>
@@ -149,20 +160,17 @@ export async function Footer() {
       <div className="border-t border-slate-300 w-full mt-2">
         <div className="container mx-auto max-w-7xl px-6 py-2 flex flex-col md:flex-row justify-between items-center gap-4">
           <div className="flex flex-wrap items-center gap-3 text-[12px] text-slate-500">
-            <Link href="#" className="hover:text-slate-800">Trust & security</Link>
-            <span className="text-slate-300">|</span>
-            <Link href="#" className="hover:text-slate-800">Terms of Use</Link>
-            <span className="text-slate-300">|</span>
-            <Link href="#" className="hover:text-slate-800">Privacy Policy</Link>
-            <span className="text-slate-300">|</span>
-            <Link href="#" className="hover:text-slate-800">Cookies Policy</Link>
-            <span className="text-slate-300">|</span>
-            <Link href="#" className="hover:text-slate-800">Settings</Link>
+            {bottomLinks.map((link, idx) => (
+              <React.Fragment key={idx}>
+                {idx > 0 && <span className="text-slate-300">|</span>}
+                <Link href={link.url || '#'} className="hover:text-slate-800">
+                  {link.label}
+                </Link>
+              </React.Fragment>
+            ))}
           </div>
 
-          <div className="text-[12px] text-slate-500 flex items-center gap-1">
-            Copyright © 2026. <span className="font-semibold text-slate-700">Eastern Software Solutions Pvt. Ltd</span> All Rights Reserved
-          </div>
+          <div className="text-[12px] text-slate-500 flex items-center gap-1" dangerouslySetInnerHTML={{ __html: copyrightText }} />
         </div>
       </div>
     </footer>

@@ -4,6 +4,7 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { MotionSection } from '@/components/animations/MotionSection';
+import { useCtaAction, type CtaFormType } from '@/hooks/useCtaAction';
 
 interface ErpHeroContent {
   bgColor?: string;
@@ -19,10 +20,12 @@ interface ErpHeroContent {
   button1Color?: string;
   button1BgColor?: string;
   button1Url?: string;
+  button1FormType?: string;
   button2Text?: string;
   button2Color?: string;
   button2BgColor?: string;
   button2Url?: string;
+  button2FormType?: string;
   image?: string;
 }
 
@@ -44,11 +47,16 @@ export function ErpHero({ content }: ErpHeroProps) {
   const button1Color = content?.button1Color || '#ffffff';
   const button1BgColor = content?.button1BgColor || '#462294';
   const button1Url = content?.button1Url || '/rpa';
+  const button1FormType = (content?.button1FormType || '') as CtaFormType;
   const button2Text = content?.button2Text || 'ERP OFFERINGS';
   const button2Color = content?.button2Color || '#ffffff';
-  const button2BgColor = content?.button2BgColor || '#0f172a'; // slate-900 roughly
+  const button2BgColor = content?.button2BgColor || '#0f172a';
   const button2Url = content?.button2Url || '/erp-offerings';
+  const button2FormType = (content?.button2FormType || '') as CtaFormType;
   const image = content?.image || '/BANNER-IMMAGE-LEFT.png';
+
+  const { handleClick: handleBtn1Click, modalNode: modal1 } = useCtaAction(button1Url, button1FormType);
+  const { handleClick: handleBtn2Click, modalNode: modal2 } = useCtaAction(button2Url, button2FormType);
   // Highlight 4th, 5th, and 7th words (indices 3, 4, 6)
   const highlightTitle = (text: string) => {
     const words = text.split(' ');
@@ -117,7 +125,7 @@ export function ErpHero({ content }: ErpHeroProps) {
               className="flex flex-wrap gap-4"
             >
               <Button
-                onClick={() => (window.location.href = button1Url)}
+                onClick={handleBtn1Click}
                 style={{ backgroundColor: button1BgColor, color: button1Color }}
                 className="hover:opacity-90 border-transparent hover:border hover:border-black rounded-full px-6 py-3 h-auto text-sm font-bold shadow-md hover:shadow-lg transition-all duration-300 active:scale-95 cursor-pointer min-w-[140px]"
               >
@@ -125,7 +133,7 @@ export function ErpHero({ content }: ErpHeroProps) {
               </Button>
               <Button
                 variant="outline"
-                onClick={() => (window.location.href = button2Url)}
+                onClick={handleBtn2Click}
                 style={{ backgroundColor: button2BgColor, color: button2Color, borderColor: button2BgColor }}
                 className="hover:opacity-90 rounded-full px-6 py-3 h-auto text-sm font-bold shadow-md transition-all duration-300 active:scale-95 cursor-pointer min-w-[140px]"
               >
@@ -153,6 +161,8 @@ export function ErpHero({ content }: ErpHeroProps) {
 
         </div>
       </div>
+      {modal1}
+      {modal2}
     </section>
   );
 }

@@ -7,6 +7,8 @@ import { motion } from 'framer-motion';
 import { cn } from '@/lib/utils';
 import { EuropeCommonSettings, EuropeSectionShell } from './EuropeSectionShell';
 
+import { useCtaAction, type CtaFormType } from '@/hooks/useCtaAction';
+
 export interface EuropeHeroContent extends EuropeCommonSettings {
   badgeBgColor?: string;
   badgeBorderColor?: string;
@@ -23,11 +25,13 @@ export interface EuropeHeroContent extends EuropeCommonSettings {
   primaryButtonBgColor?: string;
   primaryButtonBorderColor?: string;
   primaryButtonUrl?: string;
+  primaryButtonFormType?: string;
   secondaryButtonText?: string;
   secondaryButtonTextColor?: string;
   secondaryButtonBgColor?: string;
   secondaryButtonBorderColor?: string;
   secondaryButtonUrl?: string;
+  secondaryButtonFormType?: string;
   backgroundGradient?: string;
   heroIllustration?: string;
   enableIllustration?: boolean;
@@ -36,40 +40,45 @@ export interface EuropeHeroContent extends EuropeCommonSettings {
 
 export function EuropeHero({ content }: { content?: EuropeHeroContent }) {
   const badgeBgColor = content?.badgeBgColor || '#ffffff';
-  const badgeBorderColor = content?.badgeBorderColor || '#e2e8f0';
+  const badgeBorderColor = content?.badgeBorderColor || '#8b5cf6';
   const badgeText = content?.badgeText || 'ebizframe ERP for Europe';
-  const badgeTextColor = content?.badgeTextColor || '#4B2A63';
+  const badgeTextColor = content?.badgeTextColor || '#2b2657';
   const title = content?.title || 'Built on Experience.\nDriven by Outcomes.';
-  const titleColor = content?.titleColor || '#1e293b';
-  const subtitle = content?.subtitle || 'Enterprise ERP for European businesses';
+  const titleColor = content?.titleColor || '#816191';
+  const subtitle = content?.subtitle || '';
   const subtitleColor = content?.subtitleColor || '#64748b';
   const description =
     content?.description ||
-    'ebizframe ERP helps European enterprises unify operations, ensure regulatory compliance, and scale with confidence across markets — backed by 30+ years of global delivery expertise.';
-  const descriptionColor = content?.descriptionColor || '#64748b';
+    '30 years of enterprise technology transformation. We help European organizations navigate complexity, modernize operations, and build capabilities that endure through AI-powered innovation and intelligent automation.';
+  const descriptionColor = content?.descriptionColor || '#556877';
 
-  const primaryButtonText = content?.primaryButtonText || 'Book Free Demo';
+  const primaryButtonText = content?.primaryButtonText || 'Try for free';
   const primaryButtonTextColor = content?.primaryButtonTextColor || '#ffffff';
-  const primaryButtonBgColor = content?.primaryButtonBgColor || '#4B2A63';
-  const primaryButtonBorderColor = content?.primaryButtonBorderColor || '#4B2A63';
-  const primaryButtonUrl = content?.primaryButtonUrl || '/contact';
+  const primaryButtonBgColor = content?.primaryButtonBgColor || '#231f61';
+  const primaryButtonBorderColor = content?.primaryButtonBorderColor || '#231f61';
+  const primaryButtonUrl = content?.primaryButtonUrl || '/contact-us';
+  const primaryButtonFormType = (content?.primaryButtonFormType || '') as CtaFormType;
 
-  const secondaryButtonText = content?.secondaryButtonText || 'Explore Solutions';
-  const secondaryButtonTextColor = content?.secondaryButtonTextColor || '#1e293b';
-  const secondaryButtonBgColor = content?.secondaryButtonBgColor || '#fbbf24';
-  const secondaryButtonBorderColor = content?.secondaryButtonBorderColor || '#fbbf24';
-  const secondaryButtonUrl = content?.secondaryButtonUrl || '/solutions';
+  const secondaryButtonText = content?.secondaryButtonText || 'Talk to an expert';
+  const secondaryButtonTextColor = content?.secondaryButtonTextColor || '#231f61';
+  const secondaryButtonBgColor = content?.secondaryButtonBgColor || '#f5c234';
+  const secondaryButtonBorderColor = content?.secondaryButtonBorderColor || '#f5c234';
+  const secondaryButtonUrl = content?.secondaryButtonUrl || '/contact-us';
+  const secondaryButtonFormType = (content?.secondaryButtonFormType || '') as CtaFormType;
+
+  const { handleClick: handlePrimaryClick, modalNode: primaryModal } = useCtaAction(primaryButtonUrl, primaryButtonFormType);
+  const { handleClick: handleSecondaryClick, modalNode: secondaryModal } = useCtaAction(secondaryButtonUrl, secondaryButtonFormType);
 
   const backgroundGradient =
     content?.backgroundGradient ||
-    'radial-gradient(ellipse at top left, rgba(139, 92, 246, 0.12) 0%, transparent 50%), radial-gradient(ellipse at top right, rgba(59, 130, 246, 0.10) 0%, transparent 50%), #ffffff';
+    'radial-gradient(circle at center, #ffffff 40%, #f6f1fc 100%)';
 
-  const heroIllustration = content?.heroIllustration || '/industry-solution-Retail/banner-image.png';
   const enableIllustration = content?.enableIllustration !== false;
   const enableAnimation = content?.enableAnimation !== false;
 
   const align = content?.textAlignment || 'center';
-  const alignClass = align === 'left' ? 'text-left items-start' : align === 'right' ? 'text-right items-end' : 'text-center items-center';
+  const alignClass =
+    align === 'center' ? 'items-center text-center' : align === 'right' ? 'items-end text-right' : 'items-start text-left';
 
   const MotionWrap = enableAnimation ? motion.div : 'div';
   const motionProps = enableAnimation
@@ -81,23 +90,25 @@ export function EuropeHero({ content }: { content?: EuropeHeroContent }) {
       content={{
         ...content,
         sectionPaddingTop: content?.sectionPaddingTop || 'pt-40',
-        sectionPaddingBottom: content?.sectionPaddingBottom || 'pb-14',
+        sectionPaddingBottom: content?.sectionPaddingBottom || 'pb-20',
       }}
-      className="min-h-[520px] flex items-center"
+      className="min-h-[560px] flex items-center relative overflow-hidden border-b border-slate-200"
       style={{ background: backgroundGradient }}
     >
-      <div className={cn('flex flex-col w-full', alignClass)}>
-        {enableAnimation && (
-          <>
-            <div className="absolute top-20 left-10 w-72 h-72 bg-purple-200/30 rounded-full blur-3xl pointer-events-none" aria-hidden="true" />
-            <div className="absolute bottom-10 right-10 w-80 h-80 bg-blue-200/20 rounded-full blur-3xl pointer-events-none" aria-hidden="true" />
-          </>
-        )}
+      {/* Soft background pattern overlays */}
+      <div
+        className="absolute inset-0 opacity-[0.25] pointer-events-none"
+        style={{
+          backgroundImage: 'radial-gradient(#8b5cf6 0.75px, transparent 0.75px)',
+          backgroundSize: '32px 32px',
+        }}
+      />
 
-        <MotionWrap {...motionProps} className={cn('flex flex-col space-y-5 max-w-4xl', align === 'center' ? 'mx-auto' : '')}>
+      <div className={cn('flex flex-col w-full relative z-10', alignClass)}>
+        <MotionWrap {...motionProps} className={cn('flex flex-col space-y-6 max-w-5xl', align === 'center' ? 'mx-auto' : '')}>
           {badgeText && (
             <span
-              className="inline-flex self-center px-4 py-2 rounded-full text-xs sm:text-sm font-semibold border"
+              className="inline-flex self-center px-6 py-2 rounded-full text-xs font-semibold border tracking-wider"
               style={{
                 backgroundColor: badgeBgColor,
                 borderColor: badgeBorderColor,
@@ -110,30 +121,25 @@ export function EuropeHero({ content }: { content?: EuropeHeroContent }) {
 
           {title && (
             <h1
-              className="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight leading-[1.1] whitespace-pre-line"
+              className="text-4xl sm:text-5xl lg:text-[64px] font-thin tracking-tight leading-[1.15] whitespace-pre-line"
               style={{ color: titleColor }}
             >
               {title}
             </h1>
           )}
 
-          {subtitle && (
-            <p className="text-lg sm:text-xl font-medium" style={{ color: subtitleColor }}>
-              {subtitle}
-            </p>
-          )}
-
           {description && (
-            <p className="text-base sm:text-lg leading-relaxed max-w-2xl mx-auto" style={{ color: descriptionColor }}>
+            <p className="text-sm sm:text-base leading-relaxed max-w-3xl mx-auto font-normal" style={{ color: descriptionColor }}>
               {description}
             </p>
           )}
 
-          <div className={cn('flex flex-wrap gap-4 pt-2', align === 'center' ? 'justify-center' : align === 'right' ? 'justify-end' : 'justify-start')}>
+          <div className={cn('flex flex-wrap gap-4 pt-4', align === 'center' ? 'justify-center' : align === 'right' ? 'justify-end' : 'justify-start')}>
             {primaryButtonText && (
               <Link
                 href={primaryButtonUrl}
-                className="px-7 py-3 rounded-full text-sm font-bold border transition-all hover:-translate-y-0.5 duration-200"
+                onClick={primaryButtonFormType ? (e) => { e.preventDefault(); handlePrimaryClick(); } : undefined}
+                className="px-10 py-3.5 rounded-full text-sm font-semibold border transition-all hover:scale-105 hover:shadow-md duration-200"
                 style={{
                   backgroundColor: primaryButtonBgColor,
                   borderColor: primaryButtonBorderColor,
@@ -146,7 +152,8 @@ export function EuropeHero({ content }: { content?: EuropeHeroContent }) {
             {secondaryButtonText && (
               <Link
                 href={secondaryButtonUrl}
-                className="px-7 py-3 rounded-full text-sm font-bold border transition-all hover:-translate-y-0.5 duration-200 shadow-sm"
+                onClick={secondaryButtonFormType ? (e) => { e.preventDefault(); handleSecondaryClick(); } : undefined}
+                className="px-10 py-3.5 rounded-full text-sm font-semibold border transition-all hover:scale-105 hover:shadow-md duration-200"
                 style={{
                   backgroundColor: secondaryButtonBgColor,
                   borderColor: secondaryButtonBorderColor,
@@ -159,6 +166,8 @@ export function EuropeHero({ content }: { content?: EuropeHeroContent }) {
           </div>
         </MotionWrap>
       </div>
+      {primaryModal}
+      {secondaryModal}
     </EuropeSectionShell>
   );
 }

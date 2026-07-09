@@ -2,6 +2,7 @@
 
 import React from 'react';
 import { motion } from 'framer-motion';
+import { useSearchParams } from 'next/navigation';
 import { Loader2, Mail, Eye, X, Download, ChevronLeft, ChevronRight } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
@@ -29,7 +30,7 @@ const formatPageName = (path: string | null) => {
   return lastPart.split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
 };
 
-export default function FormsAdminPage() {
+function FormsAdminInner() {
   const [submissions, setSubmissions] = React.useState<FormSubmission[]>([]);
   const [isLoading, setIsLoading] = React.useState(true);
   const [selectedSub, setSelectedSub] = React.useState<FormSubmission | null>(null);
@@ -40,8 +41,12 @@ export default function FormsAdminPage() {
   const [countryFilter, setCountryFilter] = React.useState('');
   
   // Pagination State
+  const searchParams = useSearchParams();
   const [currentPage, setCurrentPage] = React.useState(1);
-  const [activeTab, setActiveTab] = React.useState<'contact'|'cta'>('contact');
+  const [activeTab, setActiveTab] = React.useState<'contact'|'cta'>(() => {
+    const t = searchParams?.get('tab');
+    return (t === 'cta' ? 'cta' : 'contact') as 'contact' | 'cta';
+  });
   const itemsPerPage = 10;
 
   React.useEffect(() => {
@@ -426,5 +431,17 @@ export default function FormsAdminPage() {
         </DialogContent>
       </Dialog>
     </motion.div>
+  );
+}
+
+export default function FormsAdminPage() {
+  return (
+    <React.Suspense fallback={
+      <div className="flex items-center justify-center min-h-screen bg-slate-50/50">
+        <Loader2 className="w-8 h-8 animate-spin text-[#4B2A63]" />
+      </div>
+    }>
+      <FormsAdminInner />
+    </React.Suspense>
   );
 }

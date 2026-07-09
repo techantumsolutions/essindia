@@ -157,6 +157,17 @@ const DEFAULT_BLOG_LIST_CONTENT: Record<string, any> = {
   ]
 };
 
+const DEFAULT_PRIVACY_POLICY_CONTENT: Record<string, any> = {
+  title: 'Privacy Policy',
+  contentHtml: `
+    <p>We value your privacy. This policy outlines how we collect, use, and safeguard your personal information when you visit our website.</p>
+    <h3>1. Information Collection</h3>
+    <p>We collect information that you voluntarily provide to us when registering, filling out contact forms, or subscribing to our newsletters.</p>
+    <h3>2. Information Usage</h3>
+    <p>Your information is used to personalize your experience, improve customer service, and process transaction requests.</p>
+  `
+};
+
 const DEFAULT_TESTIMONIALS_CONTENT: Record<string, any> = {
   bgColor: '#0d0720',
   badgeBgColor: '#ffffff',
@@ -1570,41 +1581,57 @@ const EUROPE_COMMON_DEFAULTS = {
 const DEFAULT_EUROPE_HERO_CONTENT: Record<string, any> = {
   ...EUROPE_COMMON_DEFAULTS,
   badgeBgColor: '#ffffff',
-  badgeBorderColor: '#e2e8f0',
+  badgeBorderColor: '#8b5cf6',
   badgeText: 'ebizframe ERP for Europe',
-  badgeTextColor: '#4B2A63',
+  badgeTextColor: '#2b2657',
   title: 'Built on Experience.\nDriven by Outcomes.',
-  titleColor: '#1e293b',
-  subtitle: 'Enterprise ERP for European businesses',
+  titleColor: '#816191',
+  subtitle: '',
   subtitleColor: '#64748b',
-  description: 'ebizframe ERP helps European enterprises unify operations, ensure regulatory compliance, and scale with confidence across markets.',
-  descriptionColor: '#64748b',
-  primaryButtonText: 'Book Free Demo',
+  description: '30 years of enterprise technology transformation. We help European organizations navigate complexity, modernize operations, and build capabilities that endure through AI-powered innovation and intelligent automation.',
+  descriptionColor: '#556877',
+  primaryButtonText: 'Try for free',
   primaryButtonTextColor: '#ffffff',
-  primaryButtonBgColor: '#4B2A63',
-  primaryButtonBorderColor: '#4B2A63',
-  primaryButtonUrl: '/contact',
-  secondaryButtonText: 'Explore Solutions',
-  secondaryButtonTextColor: '#1e293b',
-  secondaryButtonBgColor: '#fbbf24',
-  secondaryButtonBorderColor: '#fbbf24',
-  secondaryButtonUrl: '/solutions',
-  backgroundGradient: 'radial-gradient(ellipse at top left, rgba(139, 92, 246, 0.12) 0%, transparent 50%), radial-gradient(ellipse at top right, rgba(59, 130, 246, 0.10) 0%, transparent 50%), #ffffff',
+  primaryButtonBgColor: '#231f61',
+  primaryButtonBorderColor: '#231f61',
+  primaryButtonUrl: '/contact-us',
+  secondaryButtonText: 'Talk to an expert',
+  secondaryButtonTextColor: '#231f61',
+  secondaryButtonBgColor: '#f5c234',
+  secondaryButtonBorderColor: '#f5c234',
+  secondaryButtonUrl: '/contact-us',
+  backgroundGradient: 'radial-gradient(circle at center, #ffffff 40%, #f6f1fc 100%)',
   heroIllustration: '/industry-solution-Retail/banner-image.png',
   enableIllustration: true,
   enableAnimation: true,
   sectionPaddingTop: 'pt-40',
-  sectionPaddingBottom: 'pb-14',
+  sectionPaddingBottom: 'pb-20',
 };
 
 const DEFAULT_EUROPE_FEATURE_CARDS_CONTENT: Record<string, any> = {
   ...EUROPE_COMMON_DEFAULTS,
   textAlignment: 'left',
   cards: [
-    { image: '/industry-solution-Retail/industry-1.png', title: 'Production Management', description: 'Plan, schedule, and monitor manufacturing operations with real-time visibility.', buttonText: 'Learn More', buttonLink: '/solutions' },
-    { image: '/industry-solution-Retail/industry-2.png', title: 'Financial Management', description: 'Unify accounting, budgeting, and compliance for European regulatory frameworks.', buttonText: 'Learn More', buttonLink: '/solutions' },
-    { image: '/industry-solution-Retail/industry-3.png', title: 'Supply Chain & Logistics', description: 'Optimize procurement, warehousing, and distribution across your European network.', buttonText: 'Learn More', buttonLink: '/solutions' },
-    { image: '/industry-solution-Retail/img-2.png', title: 'Business Intelligence', description: 'Turn operational data into actionable insights for leadership teams.', buttonText: 'Learn More', buttonLink: '/solutions' },
+    {
+      image: '/About-Europe/Rectangle 4326.png',
+      title: 'Production Management',
+      description: 'Manage production with real-time work order tracking, advanced scheduling, and live monitoring, helping identify bottlenecks, optimize resource allocation, and ensure smooth, timely execution of manufacturing processes across all stages.',
+    },
+    {
+      image: '/About-Europe/Rectangle 4342.png',
+      title: 'Financial Management',
+      description: 'Manage finances with integrated data, real-time budget tracking, and automated reporting, providing clear insights into cash flow, expenses, and profitability while enabling better financial control and faster decision-making.',
+    },
+    {
+      image: '/About-Europe/Rectangle 4343.png',
+      title: 'Reporting and Analytics',
+      description: 'Generate real-time reports and customizable dashboards with key performance indicators, enabling data-driven insights, better decision-making, and complete visibility across all business operations and modules.',
+    },
+    {
+      image: '/About-Europe/Rectangle 4344.png',
+      title: 'Inventory Control',
+      description: 'Track raw materials, work-in-progress, and finished goods with real-time visibility, automated reorder alerts, and accurate stock data, ensuring optimal inventory levels, reduced shortages, and efficient material management.',
+    },
   ],
 };
 
@@ -1642,86 +1669,244 @@ const DEFAULT_EUROPE_DARK_SHOWCASE_CONTENT: Record<string, any> = {
 const DEFAULT_EUROPE_GLOBAL_PRESENCE_CONTENT: Record<string, any> = {
   ...EUROPE_COMMON_DEFAULTS,
   textAlignment: 'left',
-  image: '/Career-Page/Group 1.png',
-  subtitle: 'Global Presence',
-  subtitleColor: '#fbbf24',
-  title: 'Discover why over 200,000 businesses trust ebizframe ERP',
+  image: '/About-Europe/image 141.png',
+  subtitle: 'The ESS India Super Network',
+  subtitleColor: '#94a3b8',
+  title: 'Discover why over 200,000 businesses trust the Sinch Super Network',
   titleColor: '#ffffff',
-  description: 'With offices across Europe, Asia, and the Americas, ESS delivers localized expertise backed by a proven global ERP platform.',
-  descriptionColor: '#cbd5e1',
+  description: "Meet the network that powers other networks. It's the most direct, secure, and reliable tier-1 network for messaging, voice, and email.",
+  descriptionColor: '#94a3b8',
   statistics: [
-    { number: '30+', label: 'Years Experience' },
-    { number: '15+', label: 'Global Offices' },
-    { number: '200,000+', label: 'Businesses Served' },
-    { number: '35+', label: 'Countries' },
+    { number: '30+', label: 'Years of Expertise' },
+    { number: '15+', label: 'Industry Sectors' },
+    { number: '500+', label: 'Enterprise Clients' },
+    { number: '98%', label: 'Client Satisfaction' },
   ],
-  backgroundColor: '#0d0720',
+  backgroundColor: '#111827',
   theme: 'dark',
 };
 
 const DEFAULT_EUROPE_CASE_STUDY_SLIDER_CONTENT: Record<string, any> = {
   ...EUROPE_COMMON_DEFAULTS,
-  textAlignment: 'left',
   slides: [
-    { thumbnail: '/portfolio-1.png', companyName: 'Global Manufacturing Co.', industry: 'Manufacturing', description: 'Streamlined production planning across 12 European facilities.', metric1: '70% Faster processing', metric2: '40% Cost reduction', buttonText: 'View case study', buttonLink: '/case-studies' },
-    { thumbnail: '/portfolio-2.png', companyName: 'Retail Enterprise Group', industry: 'Retail', description: 'Unified POS and inventory across 200+ retail outlets.', metric1: '3x Inventory turnover', metric2: '99.9% Uptime', buttonText: 'View case study', buttonLink: '/case-studies' },
+    {
+      image: '/About-Europe/image 144.png',
+      logo: '/About-Europe/Rectangle 4326.png',
+      title: 'Innovative Medical Products, Inc. CT Manufacturing & Distribution Company',
+      stats: [
+        { value: '79%', title: 'Read Rate' },
+        { value: '3.5x', title: 'Rich SMS campaigns' },
+      ],
+      ctaText: 'Read the customer story',
+      ctaUrl: '/contact-us',
+    },
+    {
+      image: '/About-Europe/image 144.png',
+      logo: '/About-Europe/Rectangle 4326.png',
+      title: 'Thor – CT Manufacturing & Distribution Company',
+      stats: [
+        { value: '79%', title: 'Read Rate' },
+        { value: '3.5x', title: 'Rich SMS campaigns' },
+      ],
+      ctaText: 'Read the customer story',
+      ctaUrl: '/contact-us',
+    },
   ],
-  autoplay: false,
-  loop: true,
   showNavigation: true,
   showPagination: true,
-  autoplayInterval: 6000,
-  backgroundColor: '#f2f6f9',
+  backgroundColor: '#ffffff',
 };
 
 const DEFAULT_EUROPE_PROMO_CTA_CONTENT: Record<string, any> = {
   ...EUROPE_COMMON_DEFAULTS,
-  smallTitle: 'Webinar',
-  smallTitleColor: '#3b82f6',
-  title: 'Monitor everything that matters to your European operations',
-  titleColor: '#1e293b',
-  description: 'Join our experts for a live session on how ebizframe ERP helps European enterprises achieve operational excellence.',
-  descriptionColor: '#64748b',
-  buttonText: 'Register Now',
-  buttonTextColor: '#ffffff',
-  buttonBgColor: '#4B2A63',
-  buttonBorderColor: '#4B2A63',
-  buttonUrl: '/contact',
-  backgroundColor: '#e8eef5',
+  textAlignment: 'left',
+  image: '/About-Europe/image%20144.png',
+  smallTitle: 'ESS AI',
+  title: 'Monitor everything, so your brand is prepared for anything',
+  description: 'Stay ahead of trends, safeguard your brand health, and uncover what your audience really cares about. Talkwalker by Hootsuite tracks billions of conversations and turns them into your competitive edge.',
+  buttonText: 'Meet our team',
+  buttonUrl: '/contact-us',
+  backgroundColor: '#f4f7fa',
+};
+
+const DEFAULT_EUROPE_AI_MONITOR_CONTENT: Record<string, any> = {
+  ...EUROPE_COMMON_DEFAULTS,
+  textAlignment: 'left',
+  image: '/About-Europe/image 144.png',
+  badgeText: 'ESS AI',
+  title: 'Monitor everything, so your brand is prepared for anything',
+  description: 'Stay ahead of trends, safeguard your brand health, and uncover what your audience really cares about. Talkwalker by Hootsuite tracks billions of conversations and turns them into your competitive edge.',
+  buttonText: 'Meet our team',
+  buttonUrl: '/contact-us',
+  backgroundColor: '#f4f7fa',
 };
 
 const DEFAULT_EUROPE_PRODUCT_SHOWCASE_CONTENT: Record<string, any> = {
   ...EUROPE_COMMON_DEFAULTS,
   textAlignment: 'left',
-  deviceImage: '/industry-solution-Retail/banner-image.png',
-  badgeText: 'Mobile App',
-  badgeBgColor: '#dbeafe',
-  badgeTextColor: '#2563eb',
-  title: 'Getting started with ebizframe is easier than ever',
-  titleColor: '#1e293b',
-  description: 'Access your entire ERP from any device. Manage approvals, track inventory, and view analytics on the go.',
-  descriptionColor: '#64748b',
-  buttonText: 'Download App',
-  buttonTextColor: '#ffffff',
-  buttonBgColor: '#4B2A63',
-  buttonUrl: '/contact',
-  features: [
-    { title: 'Real-time Dashboards', description: 'Monitor KPIs across finance, operations, and sales.' },
-    { title: 'Mobile Access', description: 'Approve workflows and view reports on the go.' },
-    { title: 'Multi-language Support', description: 'Built for European markets with localization.' },
-    { title: 'Secure Cloud', description: 'Enterprise-grade security and compliance.' },
+  deviceImage: '/About-Europe/rcs-carousel-benefits-highlight 1.png',
+  badgeText: 'RCS FOR BUSINESS',
+  title: 'Getting started with Albino is easier than ever',
+  description: 'With lots of unique blocks, you can easily build a page without coding. Build your next landing page so quickly with Albino.',
+  buttonText: 'Meet our team',
+  buttonUrl: '/contact-us',
+  cards: [
+    { title: 'Trusted Branding', description: 'Trusted branding' },
+    { title: 'Verified Sender ID', description: 'Verified sender ID' },
+    { title: 'Richer Media', description: 'Richer media' },
+    { title: 'Time-Saving Actions', description: 'Time-saving actions' },
   ],
-  backgroundColor: '#f0f4f8',
+  backgroundColor: '#eef2f6',
 };
 
 const DEFAULT_EUROPE_REPORTS_CONTENT: Record<string, any> = {
   ...EUROPE_COMMON_DEFAULTS,
-  sectionTitle: "Learn why we're the trusted ERP leader in Europe",
-  sectionTitleColor: '#1e293b',
+  sectionTitle: "Learn why we're the trusted CPaaS leader",
   cards: [
-    { image: '/portfolio-1.png', category: 'Analyst Report', title: 'IDC MarketScape for Enterprise ERP Platforms in Europe', link: '/resources' },
-    { image: '/portfolio-2.png', category: 'Whitepaper', title: 'Digital Transformation Roadmap for European Manufacturers', link: '/resources' },
-    { image: '/portfolio-3.png', category: 'Case Study', title: 'How a European Retail Chain Unified 200+ Stores', link: '/case-studies' },
+    { image: '/About-Europe/Container.png', title: 'ESS INDIA is a 2026 Gartner® Magic Quadrant™ Leader for CPaaS' },
+    { image: '/About-Europe/Container-1.png', title: 'ESS INDIA named a Leader in IDC MarketScape for Communications Engagement' },
+    { image: '/About-Europe/Container-2.png', title: 'The AI Production Paradox' },
+  ],
+};
+
+const DEFAULT_UGANDA_HERO_CONTENT: Record<string, any> = {
+  backgroundGradient: '#7c95b7',
+  badgeBorderColor: '#8b5cf6',
+  badgeBgColor: '#ffffff',
+  badgeText: 'ebizframe ERP for Uganda',
+  badgeTextColor: '#2b2657',
+  title: 'Run finance, supply chain, operations,\nand growth from one ERP platform.',
+  titleColor: '#ffffff',
+  description: 'A modern enterprise resource planning experience for Ugandan businesses that need faster reporting, tighter controls, and connected workflows across branches, warehouses, plants, and field teams.',
+  descriptionColor: 'rgba(255, 255, 255, 0.85)',
+  primaryButtonText: 'Book a Consultation',
+  primaryButtonBgColor: '#1d1b4b',
+  primaryButtonTextColor: '#ffffff',
+  primaryButtonBorderColor: '#1d1b4b',
+  primaryButtonUrl: '/contact-us',
+  secondaryButtonText: 'Explore Capabilities',
+  secondaryButtonBgColor: '#ffffff',
+  secondaryButtonTextColor: '#2b2657',
+  secondaryButtonBorderColor: '#ffffff',
+  secondaryButtonUrl: '/contact-us',
+};
+
+const DEFAULT_UGANDA_PRESENCE_CONTENT: Record<string, any> = {
+  image: '/About-Uganda/Frame%20303.png',
+  stats: [
+    { title: '20+', description: 'Countries served across Africa and beyond' },
+    { title: '1,200+', description: 'Enterprise implementations and rollouts' },
+    { title: 'Modular', description: 'Adopt what you need now, expand when ready' },
+    { title: 'Localizable', description: 'Workflows tailored for policy, tax, and operations' },
+  ],
+};
+
+const DEFAULT_UGANDA_SERVICES_CONTENT: Record<string, any> = {
+  badgeText: 'OUR SERVICES',
+  title: 'We provide great services for our customers based on needs',
+  cards: [
+    { image: '/About-Uganda/Designer-rafiki.png', title: 'Custom Software Development', description: 'With lots of unique blocks, you can easily build a page without coding. Build your next landing page.', ctaText: 'Learn more', ctaUrl: '/contact-us' },
+    { image: '/About-Uganda/Programming-rafiki.png', title: 'Web & Mobile App Development', description: 'With lots of unique blocks, you can easily build a page without coding. Build your next landing page.', ctaText: 'Learn more', ctaUrl: '/contact-us' },
+    { image: '/About-Uganda/Notes-rafiki.png', title: 'Enterprise & ERP Solutions', description: 'With lots of unique blocks, you can easily build a page without coding. Build your next landing page.', ctaText: 'Learn more', ctaUrl: '/contact-us' },
+    { image: '/About-Uganda/image 148.png', title: 'Cloud Application Development', description: 'With lots of unique blocks, you can easily build a page without coding. Build your next landing page.', ctaText: 'Learn more', ctaUrl: '/contact-us' },
+  ],
+};
+
+const DEFAULT_UGANDA_CONTROL_CONTENT: Record<string, any> = {
+  subtitle: 'Why Uganda teams choose ERP',
+  title: 'Replace disconnected tools with governed, real-time business control.',
+  desc1: "Over the years, ebizframe ERP has stood steadfast with Uganda's Enterprise in its march towards growth and development for many years. ebizframe has contributed significantly to the automation of several Ugandan enterprises and bringing them face to face with the world's leading technology platforms and IT solutions.",
+  desc2: 'It is therefore not surprising that ebizframe is the no. 1 ERP Solution in the mid-segment in East Africa.',
+  image: '/About-Uganda/Background+Border+Shadow.png',
+  points: [
+    { title: 'Regional branch visibility', description: 'Track sales, stock, collections, purchases, and approvals across Kampala, upcountry branches, and regional distribution networks.' },
+    { title: 'Faster, cleaner reporting', description: 'Standardize ledgers, cost centers, budgeting, audit trails, and management dashboards to shorten reporting cycles.' },
+    { title: 'Process controls built in', description: 'Use role-based access, approval hierarchies, document workflows, and exception alerts to keep decisions accountable.' },
+  ],
+};
+
+const DEFAULT_UGANDA_CAPABILITIES_CONTENT: Record<string, any> = {
+  subtitle: 'Key Benefits',
+  title: 'Core enterprise capabilities,\nredesigned around everyday work.',
+  description: 'ERP value is grouped into outcome-led cards that are easy for leaders, finance teams, and operations teams to scan.',
+  cards: [
+    { icon: '/About-Uganda/Frame 276.png', title: 'Financial Command', description: 'General ledger, receivables, payables, fixed assets, cash flow, budgets, and consolidated reporting.' },
+    { icon: '/About-Uganda/Frame 277.png', title: 'Supply chain clarity', description: 'Purchasing, vendor management, inventory movement, reorder planning, landed cost, and stock reconciliation.' },
+    { icon: '/About-Uganda/Frame 278.png', title: 'Order-to-cash flow', description: 'Quotations, orders, pricing controls, dispatch, invoicing, collections, and customer performance tracking.' },
+    { icon: '/About-Uganda/bill-receipt_svgrepo.com.png', title: 'Production planning', description: 'Bill of materials, shop-floor controls, quality checks, job costing, and production visibility for manufacturers.' },
+    { icon: '/About-Uganda/Frame 280.png', title: 'People operations', description: 'Employee records, payroll workflows, leave, attendance, role structures, and workforce reporting.' },
+    { icon: '/About-Uganda/Frame 279.png', title: 'Analytics and alerts', description: 'Executive dashboards, exception reports, performance scorecards, and alerts that surface what needs attention.' },
+  ],
+};
+
+const DEFAULT_UGANDA_INDUSTRIES_CONTENT: Record<string, any> = {
+  subtitle: 'ESS for Industry',
+  title: 'Built for Ugandan businesses with\ncomplex operating models.',
+  description: 'The page now makes industry relevance visible early, with practical scenarios instead of a long navigation list.',
+  cards: [
+    { image: '/About-Uganda/Frame 284.png', title: 'Manufacturing', description: 'Plan production, monitor quality, and control material costs.' },
+    { image: '/About-Uganda/Frame 283.png', title: 'Distribution', description: 'Keep inventory, dispatch, and dealer orders synchronized.' },
+    { image: '/About-Uganda/Frame 282.png', title: 'Retail and Trading', description: 'Connect sales, procurement, collections, and branch stock.' },
+    { image: '/About-Uganda/Frame 281.png', title: 'Services', description: 'Manage projects, people, billing, and business performance.' },
+  ],
+};
+
+const DEFAULT_UGANDA_INSIGHTS_CONTENT: Record<string, any> = {
+  tag: 'Insights',
+  title: 'Leverage our expertise',
+  description: 'Looking for more information that can help you grow your business? Make sure you check out our Insights. You are also welcome to sign up for our newsletter, find the link at the bottom of the page.',
+  tabs: [
+    {
+      tabName: 'Understanding ERP Software',
+      contentTitle: 'Understanding ERP Software and its role in real-life',
+      body1: 'Enterprise Resource Planning (ERP) software is the backbone of modern business operations, integrating core functions like finance, HR, manufacturing, and supply chain into a single system.',
+      body2: 'By breaking down data silos, a modern ERP system provides a single source of truth that helps teams make faster, more accurate operational decisions.',
+      points: [
+        { title: 'Centralized Database', description: 'Eliminates departmental silos by keeping all records in a single, accessible repository.' },
+        { title: 'Process Automation', description: 'Streamlines repetitive manual workflows to reduce human errors and cycle times.' },
+      ],
+      image: '/About-Uganda/Container/Figure/Image.png',
+    },
+    {
+      tabName: 'Finance and accounting',
+      contentTitle: 'Finance and accounting: ERP examples for streamlined operations',
+      body1: 'Finance and accounting are at the heart of any business, and an efficient ERP system can make a significant impact on these critical functions. ERP systems centralize financial data, automate routine tasks, and ensure compliance with financial regulations, allowing businesses to focus on strategy and growth rather than getting bogged down in manual processes. By looking at ERP examples within finance and accounting, we can see how these systems help businesses achieve greater accuracy and efficiency.',
+      body2: 'Importance of Finance and Accounting in ERP: For businesses, maintaining accurate financial records, managing cash flow, and ensuring regulatory compliance are non-negotiable. As ERP examples in finance and accounting show, a tailored ERP system integrates all financial activities—from accounts payable and receivable to financial reporting and tax management. This integration not only improves accuracy also provides real-time insights into the financial health of the business.',
+      points: [
+        { title: 'Automated Invoicing and Billing', description: 'Reduces manual data entry, speeds up payment cycles, and minimizes errors.' },
+        { title: 'General Ledger Management', description: 'Consolidates all financial data into one system, enabling easy access and reporting.' },
+        { title: 'Accounts Payable and Receivable', description: 'Automates tracking and management of payments to suppliers and receipts from customers.' },
+        { title: 'Financial Reporting', description: 'Generates real-time financial statements, helping businesses make informed decisions.' },
+        { title: 'Compliance and Audit Trail', description: 'Ensures that all transactions are compliant with financial regulations and standards.' },
+      ],
+      subsections: `ERP Examples in Finance and Accounting
+
+Microsoft Dynamics 365 Business Central
+• Overview: Business Central is a cloud-based ERP solution designed for small to medium-sized businesses, offering comprehensive financial management tools.
+• Example Use Case: A small business automates its invoicing process using Business Central, reducing the time spent on manual data entry and minimizing errors.
+
+Oracle NetSuite
+• Overview: Oracle NetSuite is another cloud-based ERP system known for robust financial management capabilities, ideal for businesses with complex financial needs.
+• Example Use Case: A growing e-commerce company uses Oracle NetSuite to manage financial operations across multiple regions and currencies.
+
+Case Example
+Consider a mid-sized manufacturing company that was struggling with outdated financial software. By implementing Microsoft Dynamics 365 Business Central, the company was able to centralize its financial data, automate its reporting processes, and gain real-time visibility into its cash flow.
+
+Benefits
+Implementing an ERP system for finance and accounting offers several key benefits.`,
+      image: '/About-Uganda/Container/Figure/Image.png',
+    },
+    {
+      tabName: 'Supply chain management',
+      contentTitle: 'Supply chain management: ERP examples for enhanced efficiency',
+      body1: 'Supply chain management demands tight coordination of sourcing, inventory control, warehousing, and transportation channels.',
+      body2: 'An integrated ERP links procurement directly with production schedules and distributor demands to ensure perfect order fulfillment rates.',
+      points: [
+        { title: 'Demand Forecasting', description: 'Predicts stock needs based on historical sales data and seasonal branch trends.' },
+        { title: 'Inventory Management', description: 'Real-time tracking of raw materials and finished goods across multiple warehouse hubs.' },
+      ],
+      image: '/About-Uganda/Container/Figure/Image.png',
+    },
   ],
 };
 
@@ -1768,6 +1953,8 @@ export function SectionEditorCard({
         baseSchema = DEFAULT_CASE_STUDY_CONTENT as Record<string, JsonValue>;
       } else if (section.type === 'blog-detail-block') {
         baseSchema = DEFAULT_BLOG_CONTENT as Record<string, JsonValue>;
+      } else if (section.type === 'privacy-policy-block') {
+        baseSchema = DEFAULT_PRIVACY_POLICY_CONTENT as Record<string, JsonValue>;
       } else if (section.type === 'blog-list-block') {
         baseSchema = DEFAULT_BLOG_LIST_CONTENT as Record<string, JsonValue>;
       } else if (section.type === 'testimonials-block') {
@@ -1898,8 +2085,24 @@ export function SectionEditorCard({
         baseSchema = DEFAULT_EUROPE_PROMO_CTA_CONTENT as Record<string, JsonValue>;
       } else if (section.type === 'europe-product-showcase') {
         baseSchema = DEFAULT_EUROPE_PRODUCT_SHOWCASE_CONTENT as Record<string, JsonValue>;
+      } else if (section.type === 'europe-ai-monitor') {
+        baseSchema = DEFAULT_EUROPE_AI_MONITOR_CONTENT as Record<string, JsonValue>;
       } else if (section.type === 'europe-reports') {
         baseSchema = DEFAULT_EUROPE_REPORTS_CONTENT as Record<string, JsonValue>;
+      } else if (section.type === 'uganda-hero') {
+        baseSchema = DEFAULT_UGANDA_HERO_CONTENT as Record<string, JsonValue>;
+      } else if (section.type === 'uganda-presence') {
+        baseSchema = DEFAULT_UGANDA_PRESENCE_CONTENT as Record<string, JsonValue>;
+      } else if (section.type === 'uganda-services') {
+        baseSchema = DEFAULT_UGANDA_SERVICES_CONTENT as Record<string, JsonValue>;
+      } else if (section.type === 'uganda-control') {
+        baseSchema = DEFAULT_UGANDA_CONTROL_CONTENT as Record<string, JsonValue>;
+      } else if (section.type === 'uganda-capabilities') {
+        baseSchema = DEFAULT_UGANDA_CAPABILITIES_CONTENT as Record<string, JsonValue>;
+      } else if (section.type === 'uganda-industries') {
+        baseSchema = DEFAULT_UGANDA_INDUSTRIES_CONTENT as Record<string, JsonValue>;
+      } else if (section.type === 'uganda-insights') {
+        baseSchema = DEFAULT_UGANDA_INSIGHTS_CONTENT as Record<string, JsonValue>;
       }
     }
 
@@ -1924,13 +2127,23 @@ export function SectionEditorCard({
       });
     }
 
+    // Automatically inject companion FormType fields for any Url fields
+    Object.keys(finalMerged).forEach((key) => {
+      if (key.endsWith('Url')) {
+        const formTypeKey = key.replace(/Url$/, 'FormType');
+        if (!(formTypeKey in finalMerged)) {
+          finalMerged[formTypeKey] = '';
+        }
+      }
+    });
+
     return finalMerged;
   }, [schema, section.content, section.type]);
 
   const contentKeys = React.useMemo(() => {
     const keys = Object.keys(mergedContent);
     let finalKeys = keys;
-    if ((section.type.startsWith('contact-') || section.type === 'job-detail-hero' || section.type === 'job-detail-content' || section.type === 'bi-highlight-strip' || section.type === 'bi-industries' || section.type === 'career-positions' || section.type === 'about-us-cta' || section.type === 'career-cta' || section.type === 'blog' || section.type === 'about-us-services-overview' || section.type.startsWith('oracle-') || (section.type.startsWith('rpa-') && section.type !== 'rpa-hero') || section.type.startsWith('ass-') || section.type.startsWith('aom-') || section.type.startsWith('fmcg-') || section.type.startsWith('roi-') || section.type.startsWith('retail-')) && meta?.fieldOrder) {
+    if ((section.type.startsWith('contact-') || section.type.startsWith('europe-') || section.type.startsWith('uganda-') || section.type === 'job-detail-hero' || section.type === 'job-detail-content' || section.type === 'bi-highlight-strip' || section.type === 'bi-industries' || section.type === 'career-positions' || section.type === 'about-us-cta' || section.type === 'career-cta' || section.type === 'blog' || section.type === 'about-us-services-overview' || section.type.startsWith('oracle-') || (section.type.startsWith('rpa-') && section.type !== 'rpa-hero') || section.type.startsWith('ass-') || section.type.startsWith('aom-') || section.type.startsWith('fmcg-') || section.type.startsWith('roi-') || section.type.startsWith('retail-')) && meta?.fieldOrder) {
       finalKeys = meta.fieldOrder;
     } else if (meta?.fieldOrder) {
       finalKeys = keys.sort((a, b) => {
@@ -1943,14 +2156,79 @@ export function SectionEditorCard({
       });
     }
 
-    // Force pdfUrl to be present for CTA sections
-    if (section.type.endsWith('cta') || section.type === 'about-us-cta' || section.type === 'career-cta') {
-      if (!finalKeys.includes('pdfUrl')) {
-        finalKeys = [...finalKeys, 'pdfUrl'];
+    // Map each form type field ending in FormType to its corresponding PDF Url field if 'cta' is selected
+    const ctaFormTypes = Object.keys(mergedContent).filter(
+      (key) => key.endsWith('FormType') && mergedContent[key] === 'cta'
+    );
+    const pdfKeysMap: Record<string, string> = {};
+    ctaFormTypes.forEach((ftKey) => {
+      const prefix = ftKey.replace(/FormType$/, '');
+      let pdfKey = `${prefix}PdfUrl`;
+      if (!prefix || prefix === 'cta' || prefix === 'button') {
+        if (Object.keys(mergedContent).includes('pdfUrl') || !Object.keys(mergedContent).includes(pdfKey)) {
+          pdfKey = 'pdfUrl';
+        }
       }
-    }
+      pdfKeysMap[ftKey] = pdfKey;
+    });
 
-    return finalKeys;
+    const activePdfKeys = Object.values(pdfKeysMap);
+    activePdfKeys.forEach((pk) => {
+      if (!finalKeys.includes(pk)) {
+        finalKeys = [...finalKeys, pk];
+      }
+    });
+
+    // Filter out inactive PDF keys
+    const possiblePdfSuffixes = ['PdfUrl', 'pdfUrl', 'ctaPdfUrl', 'ctaPdf'];
+    finalKeys = finalKeys.filter((k) => {
+      const isPossiblePdf = possiblePdfSuffixes.some((suffix) => k.endsWith(suffix));
+      if (!isPossiblePdf) return true;
+      return activePdfKeys.includes(k);
+    });
+
+    // Order any FormType fields to be immediately after their corresponding Url fields
+    const orderedKeys: string[] = [];
+    finalKeys.forEach((key) => {
+      if (key.endsWith('FormType')) {
+        // Skip for now, will place after its matching URL key
+        return;
+      }
+      if (possiblePdfSuffixes.some((suffix) => key.endsWith(suffix))) {
+        // Skip for now, will place after its corresponding FormType key
+        return;
+      }
+      orderedKeys.push(key);
+      const companionFormType = key.endsWith('Url') ? key.replace(/Url$/, 'FormType') : '';
+      if (companionFormType && finalKeys.includes(companionFormType)) {
+        orderedKeys.push(companionFormType);
+        // If this FormType has 'cta' selected, place its PDF field right after it
+        const pdfKey = pdfKeysMap[companionFormType];
+        if (pdfKey && finalKeys.includes(pdfKey)) {
+          orderedKeys.push(pdfKey);
+        }
+      }
+    });
+    
+    // Add any remaining FormType fields that didn't have a matching URL
+    finalKeys.forEach((key) => {
+      if (key.endsWith('FormType') && !orderedKeys.includes(key)) {
+        orderedKeys.push(key);
+        const pdfKey = pdfKeysMap[key];
+        if (pdfKey && finalKeys.includes(pdfKey) && !orderedKeys.includes(pdfKey)) {
+          orderedKeys.push(pdfKey);
+        }
+      }
+    });
+
+    // Fallback: append any active PDF keys that were missed
+    activePdfKeys.forEach((pk) => {
+      if (!orderedKeys.includes(pk)) {
+        orderedKeys.push(pk);
+      }
+    });
+
+    return orderedKeys;
   }, [mergedContent, meta, section.type]);
 
   const handleSave = async () => {
@@ -2060,7 +2338,9 @@ export function SectionEditorCard({
                     No content fields for this section.
                   </p>
                   <p className="text-xs text-slate-300 mt-1">
-                    This section may use default content from the template.
+                    {section.type === 'europe-case-study-slider'
+                      ? 'All the case studies will show directly in this section.'
+                      : 'This section may use default content from the template.'}
                   </p>
                 </div>
               ) : section.type === 'blog-detail-block' || section.type === 'testimonials-block' || section.type === 'case-study-detail' ? (

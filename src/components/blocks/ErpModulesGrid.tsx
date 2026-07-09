@@ -3,6 +3,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { MotionSection } from '@/components/animations/MotionSection';
+import { useCtaAction, type CtaFormType } from '@/hooks/useCtaAction';
 
 interface ErpModule {
   image?: string;
@@ -10,6 +11,7 @@ interface ErpModule {
   description?: string;
   ctaLabel?: string;
   ctaUrl?: string;
+  ctaFormType?: string;
 }
 
 interface ErpModulesGridContent {
@@ -23,6 +25,9 @@ interface ErpModulesGridProps {
 }
 
 export function ErpModulesGrid({ content }: ErpModulesGridProps) {
+  const ctaUrl = (content as any)?.ctaUrl || '';
+  const ctaFormType = ((content as any)?.ctaFormType || '') as CtaFormType;
+  const { handleClick: handleCtaClick, modalNode } = useCtaAction(ctaUrl, ctaFormType);
   const heading = content?.heading || 'ERP Modules';
   const subheading = content?.subheading || 'Choose standard version or customizable version of our technology. ERP modules contribute to business growth in the following ways';
   const modules = content?.modules || [

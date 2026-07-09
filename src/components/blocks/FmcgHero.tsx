@@ -3,6 +3,7 @@
 import React from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useCtaAction, type CtaFormType } from '@/hooks/useCtaAction';
 
 interface FmcgHeroContent {
   bgColor?: string;
@@ -19,6 +20,7 @@ interface FmcgHeroContent {
   buttonText?: string;
   buttonTextColor?: string;
   buttonUrl?: string;
+  buttonFormType?: string;
   image?: string;
 }
 
@@ -39,7 +41,8 @@ export function FmcgHero({ content }: { content?: FmcgHeroContent }) {
   const buttonText = content?.buttonText || 'Book your Demo';
   const buttonTextColor = content?.buttonTextColor || '#2b2a6c';
   const buttonUrl = content?.buttonUrl || '#';
-
+  const buttonFormType = (content?.buttonFormType || '') as CtaFormType;
+  const { handleClick: handleBtnClick, modalNode } = useCtaAction(buttonUrl, buttonFormType);
   const rightImage = content?.image || '/BI-industy solution-FMGC/2b58cf43-2428-4667-ac1c-680abeb784a1 1.png';
 
   const hasCustomBg = content?.bgColor && content.bgColor !== '#4b4685';
@@ -91,7 +94,7 @@ export function FmcgHero({ content }: { content?: FmcgHeroContent }) {
             <div className="flex flex-wrap gap-4">
               {buttonText && (
                 <Link
-                  href={buttonUrl}
+                  href={buttonUrl} onClick={buttonFormType ? (e: React.MouseEvent) => { e.preventDefault(); handleBtnClick(); } : undefined}
                   className="px-6 py-3 rounded-full text-sm font-bold shadow-md hover:shadow-lg transition-all duration-300 hover:scale-105 border active:scale-95 text-center min-w-[140px]"
                   style={{
                     backgroundColor: buttonBgColor,
@@ -122,6 +125,7 @@ export function FmcgHero({ content }: { content?: FmcgHeroContent }) {
 
         </div>
       </div>
+      {modalNode}
     </section>
   );
 }

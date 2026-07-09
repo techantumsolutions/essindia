@@ -445,11 +445,12 @@ export default function NavigationModule() {
                     <div className="space-y-2">
                       <label className="text-sm font-medium text-gray-700">Link URL / Page</label>
                       <select
-                        value={selectedItem?.pageId || 'custom'}
+                        value={selectedItem?.pageId || ''}
                         onChange={(e) => {
                           const val = e.target.value;
-                          if (val === 'custom') {
+                          if (!val) {
                             handleUpdateItemField('pageId', null);
+                            handleUpdateItemField('url', '');
                           } else {
                             const page = registryPages.find(p => p.id === val);
                             if (page) {
@@ -460,7 +461,7 @@ export default function NavigationModule() {
                         }}
                         className="w-full px-4 py-2 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#5C2B6A] focus:border-transparent transition-all text-sm"
                       >
-                        <option value="custom">Custom URL...</option>
+                        <option value="">Select a page...</option>
                         {registryPages.filter(p => p.status === 'published').map((page) => (
                           <option key={page.id} value={page.id}>
                             {page.title} ({page.routePath})
@@ -468,22 +469,6 @@ export default function NavigationModule() {
                         ))}
                       </select>
                     </div>
-
-                    {!selectedItem?.pageId && (
-                      <div className="space-y-2">
-                        <label className="text-sm font-medium text-gray-700">Custom Link URL</label>
-                        <div className="relative">
-                          <LinkIcon className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
-                          <input
-                            type="text"
-                            value={selectedItem?.url || ''}
-                            onChange={(e) => handleUpdateItemField('url', e.target.value)}
-                            className="w-full pl-10 pr-4 py-2 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#5C2B6A] focus:border-transparent transition-all text-sm"
-                            placeholder="e.g. /custom-path"
-                          />
-                        </div>
-                      </div>
-                    )}
                   </div>
                 </div>
 

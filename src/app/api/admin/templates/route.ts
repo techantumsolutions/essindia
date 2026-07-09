@@ -4,6 +4,9 @@ import { templateRepository } from '@/repositories/template.repository';
 import { templateSchema } from '@/lib/cms/validators';
 import { badRequest, serverError, unauthorized } from '@/lib/cms/api-response';
 
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+
 export async function GET() {
   try {
     const templates = await templateRepository.findAll();

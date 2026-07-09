@@ -3,6 +3,7 @@
 import React from 'react';
 import Image from 'next/image';
 import { motion } from 'framer-motion';
+import { useCtaAction, type CtaFormType } from '@/hooks/useCtaAction';
 
 interface RpaHeroContent {
   bgColor?: string;
@@ -18,11 +19,15 @@ interface RpaHeroContent {
   button1Text?: string;
   button1TextColor?: string;
   button1Url?: string;
+  button1FormType?: string;
+  button1PdfUrl?: string;
   button2BgColor?: string;
   button2BorderColor?: string;
   button2Text?: string;
   button2TextColor?: string;
   button2Url?: string;
+  button2FormType?: string;
+  button2PdfUrl?: string;
   image?: string;
 }
 
@@ -41,14 +46,19 @@ export function RpaHero({ content }: { content?: RpaHeroContent }) {
   const button1Text = content?.button1Text || 'Book your Demo';
   const button1TextColor = content?.button1TextColor || '#ffffff';
   const button1Url = content?.button1Url || '#';
+  const button1FormType = (content?.button1FormType || '') as CtaFormType;
 
   const button2BgColor = content?.button2BgColor || '#ffffff';
   const button2BorderColor = content?.button2BorderColor || '#ffffff';
   const button2Text = content?.button2Text || 'Case studies';
   const button2TextColor = content?.button2TextColor || '#27256b';
   const button2Url = content?.button2Url || '#';
+  const button2FormType = (content?.button2FormType || '') as CtaFormType;
 
   const image = content?.image || '/RPA-Robotic Process Automation (RPA)/de84036c921d93c37b98e83bda27549bc7ae4a96.png';
+
+  const { handleClick: handleBtn1Click, modalNode: modal1 } = useCtaAction(button1Url, button1FormType, content?.button1PdfUrl);
+  const { handleClick: handleBtn2Click, modalNode: modal2 } = useCtaAction(button2Url, button2FormType, content?.button2PdfUrl);
 
   const isGradient = bgColor.includes('gradient') || bgColor.includes('rgba') || bgColor.startsWith('linear') || bgColor.startsWith('radial');
 
@@ -121,26 +131,42 @@ export function RpaHero({ content }: { content?: RpaHeroContent }) {
               className="flex flex-wrap items-center gap-4"
             >
               {button1Text && (
-                <a
-                  href={button1Url}
-                  className="px-6 py-3 rounded-full text-sm font-bold shadow-md hover:shadow-lg transition-all hover:-translate-y-0.5 duration-200 block text-center min-w-[140px]"
-                  style={{ backgroundColor: button1BgColor, color: button1TextColor }}
-                >
-                  {button1Text}
-                </a>
+                button1FormType ? (
+                  <button
+                    onClick={handleBtn1Click}
+                    className="px-6 py-3 rounded-full text-sm font-bold shadow-md hover:shadow-lg transition-all hover:-translate-y-0.5 duration-200 block text-center min-w-[140px] cursor-pointer"
+                    style={{ backgroundColor: button1BgColor, color: button1TextColor }}
+                  >
+                    {button1Text}
+                  </button>
+                ) : (
+                  <a
+                    href={button1Url}
+                    className="px-6 py-3 rounded-full text-sm font-bold shadow-md hover:shadow-lg transition-all hover:-translate-y-0.5 duration-200 block text-center min-w-[140px]"
+                    style={{ backgroundColor: button1BgColor, color: button1TextColor }}
+                  >
+                    {button1Text}
+                  </a>
+                )
               )}
               {button2Text && (
-                <a
-                  href={button2Url}
-                  className="px-6 py-3 rounded-full text-sm font-bold border shadow-sm hover:shadow-md transition-all hover:-translate-y-0.5 duration-200 block text-center min-w-[140px]"
-                  style={{
-                    backgroundColor: button2BgColor,
-                    color: button2TextColor,
-                    borderColor: button2BorderColor
-                  }}
-                >
-                  {button2Text}
-                </a>
+                button2FormType ? (
+                  <button
+                    onClick={handleBtn2Click}
+                    className="px-6 py-3 rounded-full text-sm font-bold border shadow-sm hover:shadow-md transition-all hover:-translate-y-0.5 duration-200 block text-center min-w-[140px] cursor-pointer"
+                    style={{ backgroundColor: button2BgColor, color: button2TextColor, borderColor: button2BorderColor }}
+                  >
+                    {button2Text}
+                  </button>
+                ) : (
+                  <a
+                    href={button2Url}
+                    className="px-6 py-3 rounded-full text-sm font-bold border shadow-sm hover:shadow-md transition-all hover:-translate-y-0.5 duration-200 block text-center min-w-[140px]"
+                    style={{ backgroundColor: button2BgColor, color: button2TextColor, borderColor: button2BorderColor }}
+                  >
+                    {button2Text}
+                  </a>
+                )
               )}
             </motion.div>
           </div>
@@ -167,6 +193,8 @@ export function RpaHero({ content }: { content?: RpaHeroContent }) {
 
         </div>
       </div>
+      {modal1}
+      {modal2}
     </section>
   );
 }

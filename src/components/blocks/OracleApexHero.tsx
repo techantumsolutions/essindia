@@ -3,6 +3,7 @@
 import React from 'react';
 import Image from 'next/image';
 import { motion } from 'framer-motion';
+import { useCtaAction, type CtaFormType } from '@/hooks/useCtaAction';
 
 interface OracleApexHeroContent {
   bgColor?: string;
@@ -19,11 +20,15 @@ interface OracleApexHeroContent {
   button1Text?: string;
   button1TextColor?: string;
   button1Url?: string;
+  button1FormType?: string;
+  button1PdfUrl?: string;
   button2BgColor?: string;
   button2BorderColor?: string;
   button2Text?: string;
   button2TextColor?: string;
   button2Url?: string;
+  button2FormType?: string;
+  button2PdfUrl?: string;
   image?: string;
 }
 
@@ -49,7 +54,11 @@ export function OracleApexHero({ content }: { content?: OracleApexHeroContent })
   const button2Text = content?.button2Text || 'Explore ROI Calculator';
   const button2TextColor = content?.button2TextColor || '#351570';
   const button2Url = content?.button2Url || '#';
+  const button1FormType = (content?.button1FormType || '') as CtaFormType;
+  const button2FormType = (content?.button2FormType || '') as CtaFormType;
 
+  const { handleClick: handleBtn1Click, modalNode: modal1 } = useCtaAction(button1Url, button1FormType, content?.button1PdfUrl);
+  const { handleClick: handleBtn2Click, modalNode: modal2 } = useCtaAction(button2Url, button2FormType, content?.button2PdfUrl);
   const image = content?.image || '/Migration-Oracle Forms to Oracle APEX/ChatGPT Image Jun 25, 2026, 11_52_29 AM 1.png';
 
   const isGradient = bgColor.includes('gradient') || bgColor.includes('rgba') || bgColor.startsWith('linear') || bgColor.startsWith('radial');
@@ -174,6 +183,8 @@ export function OracleApexHero({ content }: { content?: OracleApexHeroContent })
 
         </div>
       </div>
+      {modal1}
+      {modal2}
     </section>
   );
 }

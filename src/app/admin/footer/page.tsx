@@ -48,6 +48,14 @@ interface FooterSettingsData {
       youtube: { url: string; enabled: boolean };
       instagram: { url: string; enabled: boolean };
     };
+    bottomLinks: FooterLink[];
+    copyright: string;
+    titles?: {
+      company?: string;
+      products?: string;
+      industries?: string;
+      services?: string;
+    };
   };
 }
 
@@ -63,6 +71,16 @@ function SearchablePageSelect({ value, onChange, pages }: SearchablePageSelectPr
   const containerRef = useRef<HTMLDivElement>(null);
 
   const selectedPage = pages.find(p => p.id === value);
+
+  const [openUpward, setOpenUpward] = useState(false);
+
+  useEffect(() => {
+    if (isOpen && containerRef.current) {
+      const rect = containerRef.current.getBoundingClientRect();
+      const spaceBelow = window.innerHeight - rect.bottom;
+      setOpenUpward(spaceBelow < 280);
+    }
+  }, [isOpen]);
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -98,7 +116,9 @@ function SearchablePageSelect({ value, onChange, pages }: SearchablePageSelectPr
 
       {/* Popover */}
       {isOpen && (
-        <div className="absolute z-[9999] left-0 w-[300px] md:w-[450px] mt-2 bg-white border border-slate-100 rounded-2xl shadow-[0_15px_35px_rgba(0,0,0,0.1)] overflow-hidden">
+        <div className={`absolute z-[9999] left-0 w-[300px] md:w-[450px] bg-white border border-slate-100 rounded-2xl shadow-[0_15px_35px_rgba(0,0,0,0.1)] overflow-hidden ${
+          openUpward ? 'bottom-full mb-2' : 'top-full mt-2'
+        }`}>
           {/* Search bar */}
           <div className="p-3 border-b border-slate-50 relative">
             <Search className="absolute left-6 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
@@ -159,7 +179,7 @@ function SearchablePageSelect({ value, onChange, pages }: SearchablePageSelectPr
   );
 }
 
-type LinkCategory = 'company' | 'products' | 'industries' | 'services';
+type LinkCategory = 'company' | 'products' | 'industries' | 'services' | 'bottomLinks';
 
 export default function FooterCMSPage() {
   const [settings, setSettings] = useState<FooterSettingsData | null>(null);
@@ -192,8 +212,8 @@ export default function FooterCMSPage() {
 
         if (settingsRes.ok) {
           const data = await settingsRes.json();
-          if (data && (!data.links || !data.links.social)) {
-            data.links = data.links || {};
+          data.links = data.links || {};
+          if (!data.links.social) {
             data.links.social = {
               twitter: { url: data.twitterUrl || '#', enabled: !!data.twitterUrl },
               linkedin: { url: data.linkedinUrl || '#', enabled: !!data.linkedinUrl },
@@ -202,6 +222,14 @@ export default function FooterCMSPage() {
               instagram: { url: '', enabled: false }
             };
           }
+          data.links.bottomLinks = data.links.bottomLinks || [];
+          data.links.copyright = data.links.copyright || '';
+          data.links.titles = data.links.titles || {
+            company: 'Company',
+            products: 'Products',
+            industries: 'Industries',
+            services: 'Services'
+          };
           setSettings(data);
         } else {
           toast.error('Failed to load footer settings');
@@ -246,7 +274,7 @@ export default function FooterCMSPage() {
 
     // Validate that all links have a non-empty label
     for (const [category, links] of Object.entries(settings.links)) {
-      if (category === 'social') continue;
+      if (category === 'social' || category === 'copyright' || category === 'titles') continue;
       const linkList = links as FooterLink[];
       for (let i = 0; i < linkList.length; i++) {
         const link = linkList[i];
@@ -572,6 +600,28 @@ export default function FooterCMSPage() {
                     className="admin-input min-h-[100px] resize-none"
                   />
                 </div>
+
+                {/* Copyright */}
+                <div className="space-y-2">
+                  <label className="admin-label">
+                    Copyright Notice (HTML allowed)
+                  </label>
+                  <input
+                    type="text"
+                    value={settings.links.copyright || ''}
+                    onChange={(e) => {
+                      setSettings({
+                        ...settings,
+                        links: {
+                          ...settings.links,
+                          copyright: e.target.value
+                        }
+                      });
+                    }}
+                    placeholder="e.g. Copyright © 2026. <span class='font-semibold'>Eastern Software</span> All Rights Reserved"
+                    className="admin-input"
+                  />
+                </div>
               </div>
             </div>
 
@@ -685,14 +735,15 @@ export default function FooterCMSPage() {
       {activeTab === 'links' && (
         <div className="space-y-8">
           <div className="grid grid-cols-1 gap-2">
-            {(['company', 'products', 'industries', 'services'] as LinkCategory[]).map((colName) => (
+            {(['company', 'products', 'industries', 'services', 'bottomLinks'] as LinkCategory[]).map((colName) => (
               <div
                 key={colName}
                 className="bg-white rounded-[32px] p-8 border border-slate-100 shadow-[0_20px_50px_-15px_rgba(0,0,0,0.03)]"
               >
                 <div className="flex justify-between items-center mb-6 border-b border-slate-50 pb-4">
                   <h3 className="font-bold text-lg text-slate-900 capitalize flex items-center gap-2">
-                    <LayoutGrid className="w-5 h-5 text-purple-500" /> {colName} links
+                    <LayoutGrid className="w-5 h-5 text-purple-500" />{' '}
+                    {colName === 'bottomLinks' ? 'Bottom Bar Links' : `${colName} Links`}
                   </h3>
                   <Button
                     size="sm"
@@ -702,6 +753,33 @@ export default function FooterCMSPage() {
                     <Plus className="w-3.5 h-3.5 mr-1" /> Add Link
                   </Button>
                 </div>
+
+                {colName !== 'bottomLinks' && (
+                  <div className="mb-6 bg-slate-50 p-4 rounded-2xl border border-slate-100/50 space-y-1 max-w-md">
+                    <label className="admin-label text-xs">
+                      Column Header Title
+                    </label>
+                    <input
+                      type="text"
+                      value={settings.links.titles?.[colName as 'company' | 'products' | 'industries' | 'services'] || ''}
+                      onChange={(e) => {
+                        const currentTitles = settings.links.titles || {};
+                        setSettings({
+                          ...settings,
+                          links: {
+                            ...settings.links,
+                            titles: {
+                              ...currentTitles,
+                              [colName]: e.target.value
+                            }
+                          }
+                        });
+                      }}
+                      placeholder={`Enter custom title for ${colName}...`}
+                      className="admin-input bg-white"
+                    />
+                  </div>
+                )}
 
                 {settings.links[colName].length === 0 ? (
                   <div className="text-center py-10 bg-slate-50 rounded-2xl border border-dashed border-slate-200">

@@ -3,6 +3,7 @@
 import React from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useCtaAction, type CtaFormType } from '@/hooks/useCtaAction';
 
 interface AssHeroContent {
   bgColor?: string;
@@ -19,11 +20,13 @@ interface AssHeroContent {
   button1Text?: string;
   button1TextColor?: string;
   button1Url?: string;
+  button1FormType?: string;
   button2BgColor?: string;
   button2BorderColor?: string;
   button2Text?: string;
   button2TextColor?: string;
   button2Url?: string;
+  button2FormType?: string;
   image?: string;
 }
 
@@ -47,7 +50,11 @@ export function AssHero({ content }: { content?: AssHeroContent }) {
   const button2Text = content?.button2Text || 'Explore Features';
   const button2TextColor = content?.button2TextColor || '#2a2b6a';
   const button2Url = content?.button2Url || '#features';
-  const image = content?.image || '/App-After Sales Service/002b2026-6c0c-4820-958f-344b26611bc6 1.png';
+  const button1FormType = (content?.button1FormType || '') as CtaFormType;
+  const button2FormType = (content?.button2FormType || '') as CtaFormType;
+
+  const { handleClick: handleBtn1Click, modalNode: modal1 } = useCtaAction(button1Url, button1FormType);
+  const { handleClick: handleBtn2Click, modalNode: modal2 } = useCtaAction(button2Url, button2FormType);  const image = content?.image || '/App-After Sales Service/002b2026-6c0c-4820-958f-344b26611bc6 1.png';
 
   return (
     <section className="relative min-h-[80vh] flex items-center pt-40 pb-16 px-6" style={{ backgroundColor: bgColor }}>
@@ -94,14 +101,14 @@ export function AssHero({ content }: { content?: AssHeroContent }) {
 
             <div className="flex flex-wrap gap-4">
               <Link
-                href={button1Url}
+                href={button1Url} onClick={button1FormType ? (e: React.MouseEvent) => { e.preventDefault(); handleBtn1Click(); } : undefined}
                 className="inline-block font-bold px-6 py-3 rounded-full border-2 hover:brightness-110 transition-all text-sm text-center min-w-[140px]"
                 style={{ backgroundColor: button1BgColor, color: button1TextColor, borderColor: button1BorderColor }}
               >
                 {button1Text}
               </Link>
               <Link
-                href={button2Url}
+                href={button2Url} onClick={button2FormType ? (e: React.MouseEvent) => { e.preventDefault(); handleBtn2Click(); } : undefined}
                 className="inline-block font-bold px-6 py-3 rounded-full border-2 hover:brightness-110 transition-all text-sm text-center min-w-[140px]"
                 style={{ backgroundColor: button2BgColor, color: button2TextColor, borderColor: button2BorderColor }}
               >
@@ -125,6 +132,8 @@ export function AssHero({ content }: { content?: AssHeroContent }) {
 
         </div>
       </div>
+      {modal1}
+      {modal2}
     </section>
   );
 }

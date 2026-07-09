@@ -4,6 +4,7 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { ArrowRight } from 'lucide-react';
 import Link from 'next/link';
+import { useCtaAction, type CtaFormType } from '@/hooks/useCtaAction';
 
 export interface RetailHeroContent {
   bgColor?: string;
@@ -18,6 +19,7 @@ export interface RetailHeroContent {
   buttonText?: string;
   buttonTextColor?: string;
   buttonUrl?: string;
+  buttonFormType?: string;
   image?: string;
 }
 
@@ -32,7 +34,8 @@ export function RetailHero({ content }: { content: RetailHeroContent }) {
   const descriptionColor = content?.descriptionColor || '#818183';
   const buttonText = content?.buttonText || 'Lorem Ipsum';
   const buttonUrl = content?.buttonUrl || '#';
-  const buttonBgColor = content?.buttonBgColor || '#fbbf24';
+  const buttonFormType = (content?.buttonFormType || '') as CtaFormType;
+  const { handleClick: handleBtnClick, modalNode } = useCtaAction(buttonUrl, buttonFormType);  const buttonBgColor = content?.buttonBgColor || '#fbbf24';
   const buttonTextColor = content?.buttonTextColor || '#472393';
   const image = content?.image || '/industry-solution-Retail/banner-image.png';
 
@@ -82,7 +85,7 @@ export function RetailHero({ content }: { content: RetailHeroContent }) {
             )}
 
             <Link
-              href={buttonUrl}
+              href={buttonUrl} onClick={buttonFormType ? (e: React.MouseEvent) => { e.preventDefault(); handleBtnClick(); } : undefined}
               className="group text-sm inline-flex items-center justify-center space-x-2 font-bold py-3 px-6 rounded-full transition-all duration-300 shadow-md hover:shadow-lg transform hover:-translate-y-1 min-w-[140px]"
               style={{ backgroundColor: buttonBgColor, color: buttonTextColor }}
             >
@@ -111,6 +114,7 @@ export function RetailHero({ content }: { content: RetailHeroContent }) {
 
       {/* Decorative background blob */}
       <div className="absolute top-0 right-0 -mr-20 -mt-20 w-96 h-96 bg-indigo-100 rounded-full mix-blend-multiply filter blur-3xl opacity-50 animate-blob pointer-events-none"></div>
+      {modalNode}
     </section>
   );
 }

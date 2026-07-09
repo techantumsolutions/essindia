@@ -22,7 +22,8 @@ import {
   BarChart3,
   Globe,
   Briefcase,
-  Monitor
+  Monitor,
+  ClipboardList
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
@@ -39,6 +40,7 @@ const navGroups = [
       { icon: Briefcase, label: 'Categories', href: '/admin/categories' },
       { icon: Navigation, label: 'Navigation', href: '/admin/navigation' },
       { icon: Layers, label: 'Templates', href: '/admin/templates' },
+      { icon: ClipboardList, label: 'Forms', href: '/admin/forms/definitions' },
     ]
   },
   {

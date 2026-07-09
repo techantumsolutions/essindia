@@ -1,87 +1,89 @@
 'use client';
 
 import React from 'react';
+import Image from 'next/image';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
+import { ArrowRight } from 'lucide-react';
 import { EuropeCommonSettings, EuropeSectionShell } from './EuropeSectionShell';
+import { useCtaAction, type CtaFormType } from '@/hooks/useCtaAction';
 
 export interface EuropePromoCtaContent extends EuropeCommonSettings {
+  image?: string;
   smallTitle?: string;
-  smallTitleColor?: string;
   title?: string;
-  titleColor?: string;
   description?: string;
-  descriptionColor?: string;
   buttonText?: string;
-  buttonTextColor?: string;
-  buttonBgColor?: string;
-  buttonBorderColor?: string;
   buttonUrl?: string;
+  buttonFormType?: string;
 }
 
 export function EuropePromoCta({ content }: { content?: EuropePromoCtaContent }) {
-  const smallTitle = content?.smallTitle || 'Webinar';
-  const smallTitleColor = content?.smallTitleColor || '#3b82f6';
-  const title = content?.title || 'Monitor everything that matters to your European operations';
-  const titleColor = content?.titleColor || '#1e293b';
+  const image = content?.image || '/About-Europe/image%20144.png';
+  const smallTitle = content?.smallTitle || 'ESS AI';
+  const title = content?.title || 'Monitor everything, so your brand is prepared for anything';
   const description =
     content?.description ||
-    'Join our experts for a live session on how ebizframe ERP helps European enterprises achieve operational excellence, compliance, and growth.';
-  const descriptionColor = content?.descriptionColor || '#64748b';
-  const buttonText = content?.buttonText || 'Register Now';
-  const buttonTextColor = content?.buttonTextColor || '#ffffff';
-  const buttonBgColor = content?.buttonBgColor || '#4B2A63';
-  const buttonBorderColor = content?.buttonBorderColor || '#4B2A63';
-  const buttonUrl = content?.buttonUrl || '/contact';
+    'Stay ahead of trends, safeguard your brand health, and uncover what your audience really cares about. Talkwalker by Hootsuite tracks billions of conversations and turns them into your competitive edge.';
+  const buttonText = content?.buttonText || 'Meet our team';
+  const buttonUrl = content?.buttonUrl || '/contact-us';
+  const buttonFormType = (content?.buttonFormType || '') as CtaFormType;
 
-  const align = content?.textAlignment || 'center';
+  const { handleClick: handleBtnClick, modalNode } = useCtaAction(buttonUrl, buttonFormType);
 
   return (
-    <EuropeSectionShell
-      content={{
-        ...content,
-        backgroundColor: content?.backgroundColor || '#e8eef5',
-        textAlignment: align,
-      }}
-    >
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true }}
-        transition={{ duration: 0.5 }}
-        className={`max-w-3xl space-y-5 ${align === 'center' ? 'mx-auto text-center' : align === 'right' ? 'ml-auto text-right' : 'text-left'}`}
-      >
-        {smallTitle && (
-          <p className="text-sm font-bold uppercase tracking-widest" style={{ color: smallTitleColor }}>
-            {smallTitle}
-          </p>
-        )}
-        {title && (
-          <h2 className="text-3xl sm:text-4xl font-bold tracking-tight" style={{ color: titleColor }}>
-            {title}
-          </h2>
-        )}
-        {description && (
-          <p className="text-base sm:text-lg leading-relaxed" style={{ color: descriptionColor }}>
-            {description}
-          </p>
-        )}
-        {buttonText && (
-          <div className={align === 'center' ? 'flex justify-center' : align === 'right' ? 'flex justify-end' : ''}>
+    <EuropeSectionShell content={{ ...content, backgroundColor: '#f4f7fa', sectionPaddingTop: 'pt-14', sectionPaddingBottom: 'pb-14' }}>
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
+        <div className="space-y-4 text-left flex flex-col justify-center">
+          {smallTitle && (
+            <span className="inline-block text-xs sm:text-sm font-bold uppercase tracking-wider text-[#231f61]">
+              {smallTitle}
+            </span>
+          )}
+          {title && (
+            <h2 className="text-3xl sm:text-[40px] leading-[1.15] font-bold text-[#111827]">
+              {title}
+            </h2>
+          )}
+          {description && (
+            <p className="text-sm sm:text-base text-slate-500 leading-relaxed max-w-xl">
+              {description}
+            </p>
+          )}
+          {buttonText && (
             <Link
               href={buttonUrl}
-              className="inline-flex px-8 py-3.5 rounded-full text-sm font-bold border transition-all hover:-translate-y-0.5 shadow-md hover:shadow-lg"
-              style={{
-                backgroundColor: buttonBgColor,
-                borderColor: buttonBorderColor,
-                color: buttonTextColor,
-              }}
+              onClick={buttonFormType ? (e) => { e.preventDefault(); handleBtnClick(); } : undefined}
+              className="inline-flex items-center gap-2 px-8 py-3.5 rounded-lg text-sm font-medium text-white bg-[#231f61] hover:bg-[#1a174d] transition-all shadow-md w-fit cursor-pointer"
             >
               {buttonText}
+              <ArrowRight className="w-4 h-4" aria-hidden="true" />
             </Link>
+          )}
+          {modalNode}
+        </div>
+
+        <motion.div
+          initial={{ opacity: 0, x: 30 }}
+          whileInView={{ opacity: 1, x: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5 }}
+          className="relative flex justify-center lg:justify-end"
+        >
+          <div className="relative w-full aspect-[4/3] md:aspect-[5/4] shrink-0">
+            {image && (
+              <Image
+                src={image}
+                alt="AI Brand Monitoring Dashboard"
+                fill
+                className="object-contain"
+                sizes="(max-width: 1024px) 100vw, 50vw"
+                priority
+              />
+            )}
           </div>
-        )}
-      </motion.div>
+        </motion.div>
+      </div>
     </EuropeSectionShell>
   );
 }
