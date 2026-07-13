@@ -49,6 +49,7 @@ export type NavigationTreeItem = {
   slug: string;
   url: string | null;
   megaMenuEnabled: boolean;
+  megaMenuConfig?: any;
   orderIndex: number;
   categories: NavigationTreeCategory[];
   children?: NavigationTreeChild[];

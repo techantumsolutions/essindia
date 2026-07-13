@@ -188,6 +188,19 @@ export default function NavigationModule() {
 
   const handleSave = async () => {
     if (!selectedItemId || !selectedItem) return;
+
+    // Validate that all simple dropdown links have a selected page
+    if (!selectedItem.megaMenuEnabled && selectedItem.megaMenuConfig?.links) {
+      const links = selectedItem.megaMenuConfig.links;
+      if (Array.isArray(links) && links.length > 0) {
+        const hasEmptyPage = links.some((link: any) => !link.pageId);
+        if (hasEmptyPage) {
+          toast.error('Please select a target page for all dropdown links.');
+          return;
+        }
+      }
+    }
+
     setIsSaving(true);
     try {
       const res = await fetch(`/api/admin/navigation/${selectedItemId}`, {
@@ -431,37 +444,167 @@ export default function NavigationModule() {
                     />
                   </div>
 
-                  <div className="space-y-1">
-                    <label className="text-xs font-semibold text-slate-700">Linked page</label>
-                    <p className="text-[11px] text-slate-400">Where visitors land when they click this item.</p>
-                    <select
-                      value={selectedItem?.pageId || ''}
-                      onChange={(e) => {
-                        const val = e.target.value;
-                        if (!val) {
-                          handleUpdateItemField('pageId', null);
-                          handleUpdateItemField('url', '');
-                        } else {
-                          const page = registryPages.find(p => p.id === val);
-                          if (page) {
-                            handleUpdateItemField('pageId', page.id);
-                            handleUpdateItemField('url', page.routePath);
-                          }
-                        }
-                      }}
-                      className="w-full px-2.5 py-1.5 rounded-md border border-slate-200 focus:outline-none focus:ring-2 focus:ring-[#5C2B6A]/40 focus:border-[#5C2B6A] transition-all text-xs"
-                    >
-                      <option value="">Select a page...</option>
-                      {registryPages.filter(p => p.status === 'published').map((page) => (
-                        <option key={page.id} value={page.id}>
-                          {page.title} ({page.routePath})
-                        </option>
-                      ))}
-                    </select>
-                    {selectedItem?.url ? (
-                      <p className="text-[11px] font-mono text-slate-400 pt-0.5">Current URL: {selectedItem.url}</p>
-                    ) : null}
-                  </div>
+                  {!selectedItem?.megaMenuEnabled && (
+                    <div className="space-y-4 pt-2">
+                      <div className="space-y-1">
+                        <label className="text-xs font-semibold text-slate-700">Link Mode</label>
+                        <p className="text-[11px] text-slate-400">Choose if this menu item opens a direct page or a list of links.</p>
+                        <div className="grid grid-cols-2 gap-3 mt-1">
+                          <div
+                            onClick={() => {
+                              const config = { ...((selectedItem.megaMenuConfig || {}) as Record<string, any>) };
+                              delete config.links;
+                              handleUpdateItemField('megaMenuConfig', config);
+                            }}
+                            className={cn(
+                              "p-2.5 rounded-xl border-2 flex items-center justify-center gap-1.5 cursor-pointer transition-all text-xs font-semibold",
+                              !(selectedItem.megaMenuConfig?.links?.length > 0)
+                                ? "bg-[#4B2A63]/5 border-[#4B2A63] text-[#4B2A63]"
+                                : "bg-slate-50 border-transparent text-slate-500"
+                            )}
+                          >
+                            <span>Direct Page</span>
+                          </div>
+                          <div
+                            onClick={() => {
+                              const config = { ...((selectedItem.megaMenuConfig || {}) as Record<string, any>) };
+                              if (!config.links) {
+                                config.links = [{ label: 'New Link', url: '', pageId: '' }];
+                              }
+                              handleUpdateItemField('megaMenuConfig', config);
+                            }}
+                            className={cn(
+                              "p-2.5 rounded-xl border-2 flex items-center justify-center gap-1.5 cursor-pointer transition-all text-xs font-semibold",
+                              (selectedItem.megaMenuConfig?.links?.length > 0)
+                                ? "bg-[#4B2A63]/5 border-[#4B2A63] text-[#4B2A63]"
+                                : "bg-slate-50 border-transparent text-slate-500"
+                            )}
+                          >
+                            <span>Vertical Dropdown</span>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Direct Page Select */}
+                      {!(selectedItem.megaMenuConfig?.links?.length > 0) ? (
+                        <div className="space-y-1">
+                          <label className="text-xs font-semibold text-slate-700">Linked page</label>
+                          <select
+                            value={selectedItem?.pageId || ''}
+                            onChange={(e) => {
+                              const val = e.target.value;
+                              if (!val) {
+                                handleUpdateItemField('pageId', null);
+                                handleUpdateItemField('url', '');
+                              } else {
+                                const page = registryPages.find(p => p.id === val);
+                                if (page) {
+                                  handleUpdateItemField('pageId', page.id);
+                                  handleUpdateItemField('url', page.routePath);
+                                }
+                              }
+                            }}
+                            className="w-full px-2.5 py-1.5 rounded-md border border-slate-200 focus:outline-none focus:ring-2 focus:ring-[#5C2B6A]/40 focus:border-[#5C2B6A] transition-all text-xs"
+                          >
+                            <option value="">Select a page...</option>
+                            {registryPages.filter(p => p.status === 'published').map((page) => (
+                              <option key={page.id} value={page.id}>
+                                {page.title} ({page.routePath})
+                              </option>
+                            ))}
+                          </select>
+                          {selectedItem?.url ? (
+                            <p className="text-[11px] font-mono text-slate-400 pt-0.5">Current URL: {selectedItem.url}</p>
+                          ) : null}
+                        </div>
+                      ) : (
+                        /* Vertical Dropdown Links Editor */
+                        <div className="space-y-2 pt-1 border-t border-slate-100">
+                          <div className="flex justify-between items-center pb-1">
+                            <label className="text-xs font-semibold text-slate-700">Dropdown Links</label>
+                            <Button
+                              type="button"
+                              size="xs"
+                              variant="outline"
+                              onClick={() => {
+                                const config = selectedItem.megaMenuConfig || {};
+                                const links = config.links || [];
+                                handleUpdateItemField('megaMenuConfig', {
+                                  ...config,
+                                  links: [...links, { label: 'New Link', url: '', pageId: '' }]
+                                });
+                              }}
+                              className="gap-1 h-7 text-[10px]"
+                            >
+                              <Plus className="w-3 h-3" /> Add Link
+                            </Button>
+                          </div>
+
+                          <div className="space-y-2 max-h-[220px] overflow-y-auto pr-1">
+                            {(selectedItem.megaMenuConfig.links || []).map((link: any, index: number) => (
+                              <div key={index} className="p-2.5 bg-slate-50 rounded-xl border border-slate-150 flex flex-col gap-2 relative">
+                                <button
+                                  type="button"
+                                  onClick={() => {
+                                    const config = selectedItem.megaMenuConfig || {};
+                                    const links = [...(config.links || [])];
+                                    links.splice(index, 1);
+                                    handleUpdateItemField('megaMenuConfig', { ...config, links });
+                                  }}
+                                  className="absolute top-2 right-2 text-slate-400 hover:text-rose-500 p-0.5"
+                                >
+                                  <Trash2 className="w-3.5 h-3.5" />
+                                </button>
+
+                                <div className="grid grid-cols-2 gap-2">
+                                  <div className="space-y-1">
+                                    <span className="text-[9px] font-bold text-slate-400 uppercase tracking-wide">Label</span>
+                                    <input
+                                      type="text"
+                                      value={link.label || ''}
+                                      onChange={(e) => {
+                                        const config = selectedItem.megaMenuConfig || {};
+                                        const links = [...(config.links || [])];
+                                        links[index] = { ...links[index], label: e.target.value };
+                                        handleUpdateItemField('megaMenuConfig', { ...config, links });
+                                      }}
+                                      className="w-full px-2 py-1 rounded bg-white border border-slate-200 text-[11px] focus:outline-none focus:ring-1 focus:ring-[#5C2B6A]"
+                                    />
+                                  </div>
+                                  <div className="space-y-1">
+                                    <span className="text-[9px] font-bold text-slate-400 uppercase tracking-wide">Page</span>
+                                    <select
+                                      value={link.pageId || ''}
+                                      onChange={(e) => {
+                                        const val = e.target.value;
+                                        const config = selectedItem.megaMenuConfig || {};
+                                        const links = [...(config.links || [])];
+                                        const page = registryPages.find(p => p.id === val);
+                                        links[index] = {
+                                          ...links[index],
+                                          pageId: val || null,
+                                          url: page ? page.routePath : ''
+                                        };
+                                        handleUpdateItemField('megaMenuConfig', { ...config, links });
+                                      }}
+                                      className="w-full px-1.5 py-1 rounded bg-white border border-slate-200 text-[11px] focus:outline-none focus:ring-1 focus:ring-[#5C2B6A]"
+                                    >
+                                      <option value="">Select page...</option>
+                                      {registryPages.filter(p => p.status === 'published').map((page) => (
+                                        <option key={page.id} value={page.id}>
+                                          {page.title}
+                                        </option>
+                                      ))}
+                                    </select>
+                                  </div>
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  )}
                 </div>
 
                 <div className="space-y-2">
@@ -470,12 +613,16 @@ export default function NavigationModule() {
                     <p className="text-[11px] text-slate-400">Choose how this item behaves in the header.</p>
                   </div>
                   <div className="space-y-2" role="radiogroup" aria-label="Menu item behavior">
+                    {/* Simple Link */}
                     <label className="admin-radio-option" data-checked={!selectedItem?.megaMenuEnabled}>
                       <input
                         type="radio"
                         name="nav-item-behavior"
                         checked={!selectedItem?.megaMenuEnabled}
-                        onChange={() => handleUpdateItemField('megaMenuEnabled', false)}
+                        onChange={() => {
+                          handleUpdateItemField('megaMenuEnabled', false);
+                          handleUpdateItemField('megaMenuConfig', {});
+                        }}
                       />
                       <span>
                         <span className="flex items-center gap-1.5 text-xs font-semibold text-slate-800">
@@ -484,24 +631,50 @@ export default function NavigationModule() {
                         <span className="block text-[11px] text-slate-400 mt-0.5">Clicking navigates directly to the linked page.</span>
                       </span>
                     </label>
-                    <label className="admin-radio-option" data-checked={!!selectedItem?.megaMenuEnabled}>
+
+                    {/* Vertical Dropdown */}
+                    {/* <label className="admin-radio-option" data-checked={!!selectedItem?.megaMenuEnabled && (selectedItem.megaMenuConfig as any)?.displayType === 'dropdown'}>
                       <input
                         type="radio"
                         name="nav-item-behavior"
-                        checked={!!selectedItem?.megaMenuEnabled}
-                        onChange={() => handleUpdateItemField('megaMenuEnabled', true)}
+                        checked={!!selectedItem?.megaMenuEnabled && (selectedItem.megaMenuConfig as any)?.displayType === 'dropdown'}
+                        onChange={() => {
+                          handleUpdateItemField('megaMenuEnabled', true);
+                          const config = { ...((selectedItem?.megaMenuConfig || {}) as Record<string, any>), displayType: 'dropdown' };
+                          handleUpdateItemField('megaMenuConfig', config);
+                        }}
                       />
                       <span>
                         <span className="flex items-center gap-1.5 text-xs font-semibold text-slate-800">
-                          <Layout className="w-3.5 h-3.5 text-[#4B2A63]" /> Mega menu
+                          <ChevronDown className="w-3.5 h-3.5 text-[#4B2A63]" /> Vertical dropdown
                         </span>
-                        <span className="block text-[11px] text-slate-400 mt-0.5">Hovering opens a dropdown panel with sub-categories and pages.</span>
+                        <span className="block text-[11px] text-slate-400 mt-0.5">Hovering opens a compact vertical list of individual pages.</span>
+                      </span>
+                    </label> */}
+
+                    {/* Mega Menu Grid */}
+                    <label className="admin-radio-option" data-checked={!!selectedItem?.megaMenuEnabled && (selectedItem.megaMenuConfig as any)?.displayType !== 'dropdown'}>
+                      <input
+                        type="radio"
+                        name="nav-item-behavior"
+                        checked={!!selectedItem?.megaMenuEnabled && (selectedItem.megaMenuConfig as any)?.displayType !== 'dropdown'}
+                        onChange={() => {
+                          handleUpdateItemField('megaMenuEnabled', true);
+                          const config = { ...((selectedItem?.megaMenuConfig || {}) as Record<string, any>), displayType: 'grid' };
+                          handleUpdateItemField('megaMenuConfig', config);
+                        }}
+                      />
+                      <span>
+                        <span className="flex items-center gap-1.5 text-xs font-semibold text-slate-800">
+                          <Layout className="w-3.5 h-3.5 text-[#4B2A63]" /> Mega menu grid
+                        </span>
+                        <span className="block text-[11px] text-slate-400 mt-0.5">Hovering opens a wide panel with tabbed sub-categories.</span>
                       </span>
                     </label>
                   </div>
                   {selectedItem?.megaMenuEnabled && selectedLinkedPages.length > 0 && (
                     <p className="text-[11px] text-slate-400 pt-1">
-                      {selectedLinkedPages.length} linked page group{selectedLinkedPages.length > 1 ? 's' : ''} shown in this mega menu. Manage them in Categories.
+                      {selectedLinkedPages.length} linked page group{selectedLinkedPages.length > 1 ? 's' : ''} shown in this menu. Manage them in Categories.
                     </p>
                   )}
                 </div>

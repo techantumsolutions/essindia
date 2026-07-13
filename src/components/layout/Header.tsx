@@ -26,6 +26,7 @@ export type NavItem = {
   label: string;
   url?: string | null;
   megaMenuEnabled?: boolean;
+  megaMenuConfig?: any;
   children?: NavItem[];
   megaMenu?: MegaMenuPayload;
 };
@@ -171,39 +172,100 @@ function DesktopNav({ items = [] }: { items: NavItem[] }) {
   return (
     <NavigationMenu align="center">
       <NavigationMenuList className="gap-2">
-        {items.map((item) => (
-          <NavigationMenuItem key={item.id}>
-            {hasRenderableMegaMenu(item.megaMenu) ? (
-              <>
-                <NavigationMenuTrigger className="bg-transparent hover:bg-slate-50 text-[13px] text-slate-700 font-medium cursor-pointer">
+        {items.map((item) => {
+          const isDropdown = item.megaMenuConfig?.displayType === 'dropdown';
+          const simpleLinks = item.megaMenuConfig?.links || [];
+
+          return (
+            <NavigationMenuItem key={item.id}>
+              {hasRenderableMegaMenu(item.megaMenu) ? (
+                isDropdown ? (
+                  <>
+                    <NavigationMenuTrigger className="bg-transparent hover:bg-slate-50 text-[13px] text-slate-700 font-medium cursor-pointer">
+                      {item.label}
+                    </NavigationMenuTrigger>
+                    <NavigationMenuContent>
+                      <motion.div
+                        initial={{ opacity: 0, y: 10, scale: 0.98 }}
+                        animate={{ opacity: 1, y: 0, scale: 1 }}
+                        transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+                        className="w-[280px] bg-white rounded-[20px] shadow-[0_20px_50px_-12px_rgba(0,0,0,0.15)] flex flex-col p-3 overflow-hidden border border-slate-100"
+                      >
+                        <ul className="flex flex-col gap-1">
+                          {item.megaMenu!.categories.map((cat) => (
+                            <li key={cat.id}>
+                              <NavigationMenuLink
+                                render={<Link href={cat.href || '#'} />}
+                                className="block select-none rounded-xl px-4 py-3 text-sm font-medium text-slate-700 hover:text-[#4B2A63] hover:bg-[#F3EFFF] transition-colors cursor-pointer"
+                              >
+                                {cat.name}
+                              </NavigationMenuLink>
+                            </li>
+                          ))}
+                        </ul>
+                      </motion.div>
+                    </NavigationMenuContent>
+                  </>
+                ) : (
+                  <>
+                    <NavigationMenuTrigger className="bg-transparent hover:bg-slate-50 text-[13px] text-slate-700 font-medium cursor-pointer">
+                      {item.label}
+                    </NavigationMenuTrigger>
+                    <MegaMenuContent data={item.megaMenu!} />
+                  </>
+                )
+              ) : simpleLinks.length > 0 ? (
+                <>
+                  <NavigationMenuTrigger className="bg-transparent hover:bg-slate-50 text-[13px] text-slate-700 font-medium cursor-pointer">
+                    {item.label}
+                  </NavigationMenuTrigger>
+                  <NavigationMenuContent>
+                    <motion.div
+                      initial={{ opacity: 0, y: 10, scale: 0.98 }}
+                      animate={{ opacity: 1, y: 0, scale: 1 }}
+                      transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+                      className="w-[280px] bg-white rounded-[20px] shadow-[0_20px_50px_-12px_rgba(0,0,0,0.15)] flex flex-col p-3 overflow-hidden border border-slate-100"
+                    >
+                      <ul className="flex flex-col gap-1">
+                        {simpleLinks.map((link: any, idx: number) => (
+                          <li key={idx}>
+                            <NavigationMenuLink
+                              render={<Link href={link.url || '#'} />}
+                              className="block select-none rounded-xl px-4 py-3 text-sm font-medium text-slate-700 hover:text-[#4B2A63] hover:bg-[#F3EFFF] transition-colors cursor-pointer"
+                            >
+                              {link.label}
+                            </NavigationMenuLink>
+                          </li>
+                        ))}
+                      </ul>
+                    </motion.div>
+                  </NavigationMenuContent>
+                </>
+              ) : item.children && item.children.length > 0 ? (
+                <>
+                  <NavigationMenuTrigger className="bg-transparent hover:bg-slate-50 text-[13px] text-slate-700 font-medium cursor-pointer">
+                    {item.label}
+                  </NavigationMenuTrigger>
+                  <NavigationMenuContent>
+                    <motion.div className="p-4 w-[400px]">
+                      <ul className="grid gap-3">
+                        {item.children.map((child) => (
+                          <ListItem key={child.id} title={child.label} href={child.url ?? '#'}>
+                            {(child as NavItem & { description?: string }).description || ''}
+                          </ListItem>
+                        ))}
+                      </ul>
+                    </motion.div>
+                  </NavigationMenuContent>
+                </>
+              ) : (
+                <NavigationMenuLink render={<Link href={item.url || '#'} />} className={cn(navigationMenuTriggerStyle(), "bg-transparent hover:bg-slate-50 text-[13px] text-slate-700 font-medium cursor-pointer")}>
                   {item.label}
-                </NavigationMenuTrigger>
-                <MegaMenuContent data={item.megaMenu!} />
-              </>
-            ) : item.children && item.children.length > 0 ? (
-              <>
-                <NavigationMenuTrigger className="bg-transparent hover:bg-slate-50 text-[13px] text-slate-700 font-medium cursor-pointer">
-                  {item.label}
-                </NavigationMenuTrigger>
-                <NavigationMenuContent>
-                  <motion.div className="p-4 w-[400px]">
-                    <ul className="grid gap-3">
-                      {item.children.map((child) => (
-                        <ListItem key={child.id} title={child.label} href={child.url ?? '#'}>
-                          {(child as NavItem & { description?: string }).description || ''}
-                        </ListItem>
-                      ))}
-                    </ul>
-                  </motion.div>
-                </NavigationMenuContent>
-              </>
-            ) : (
-              <NavigationMenuLink render={<Link href={item.url || '#'} />} className={cn(navigationMenuTriggerStyle(), "bg-transparent hover:bg-slate-50 text-[13px] text-slate-700 font-medium cursor-pointer")}>
-                {item.label}
-              </NavigationMenuLink>
-            )}
-          </NavigationMenuItem>
-        ))}
+                </NavigationMenuLink>
+              )}
+            </NavigationMenuItem>
+          );
+        })}
       </NavigationMenuList>
     </NavigationMenu>
   );

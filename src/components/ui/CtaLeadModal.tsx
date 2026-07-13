@@ -7,6 +7,7 @@ import { Input } from '@/components/ui/input';
 import { Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
 import { usePathname } from 'next/navigation';
+import { validatePhoneNumber } from '@/lib/phone-validation';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { ALL_COUNTRIES_LIST } from '@/lib/countries';
 import countryCodesList from 'country-codes-list';
@@ -60,6 +61,12 @@ export function CtaLeadModal({ isOpen, onClose, pdfUrl, pageName }: CtaLeadModal
     
     if (!selectedCountry) {
       toast.error('Please select a country.');
+      return;
+    }
+
+    const validation = validatePhoneNumber(formData.phone, selectedDialCode);
+    if (!validation.isValid) {
+      toast.error(validation.message);
       return;
     }
 

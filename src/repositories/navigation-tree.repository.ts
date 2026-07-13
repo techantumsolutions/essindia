@@ -465,6 +465,7 @@ export class NavigationTreeRepository {
           slug: item.slug || slugify(item.label),
           url: item.url,
           megaMenuEnabled: false,
+          megaMenuConfig: item.megaMenuConfig,
           orderIndex: item.orderIndex,
           categories: [],
           children: childRows.map((c) => ({
@@ -568,6 +569,7 @@ export class NavigationTreeRepository {
         slug: navSlug,
         url: item.url,
         megaMenuEnabled: true,
+        megaMenuConfig: item.megaMenuConfig,
         orderIndex: item.orderIndex,
         categories: treeCategories.filter(
           (cat) => mode === 'admin' || cat.subCategories.length > 0 || cat.pageId || cat.href
@@ -581,6 +583,7 @@ export class NavigationTreeRepository {
           slug: item.slug || slugify(item.label),
           url: item.url,
           megaMenuEnabled: false,
+          megaMenuConfig: item.megaMenuConfig,
           orderIndex: item.orderIndex,
           categories: [],
         });
