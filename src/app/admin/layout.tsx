@@ -29,6 +29,7 @@ import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { AdminProfileMenu } from '@/components/admin/AdminProfileMenu';
 import { AdminNotificationMenu } from '@/components/admin/AdminNotificationMenu';
+import './admin.css';
 
 const navGroups = [
   {
@@ -75,26 +76,44 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   const pathname = usePathname();
   const router = useRouter();
   const [isSidebarOpen, setIsSidebarOpen] = React.useState(true);
+  const [logoUrl, setLogoUrl] = React.useState<string | null>(null);
+
+  React.useEffect(() => {
+    const controller = new AbortController();
+    fetch('/api/admin/navigation?location=header-main', { signal: controller.signal })
+      .then((response) => response.ok ? response.json() : null)
+      .then((data) => setLogoUrl(data?.menu?.logoUrl || null))
+      .catch((error) => {
+        if (error instanceof Error && error.name !== 'AbortError') {
+          console.error('Unable to load admin brand logo', error);
+        }
+      });
+    return () => controller.abort();
+  }, []);
 
   if (pathname === '/admin/login' || pathname.endsWith('/preview')) {
     return <>{children}</>;
   }
 
   return (
-    <div className="min-h-screen bg-[#F8F9FA] flex overflow-hidden font-sans">
+    <div className="admin-shell min-h-screen bg-[#F6F7F9] flex overflow-hidden font-sans">
       {/* Sidebar */}
       <motion.aside
         initial={false}
-        animate={{ width: isSidebarOpen ? 280 : 80 }}
-        className="fixed inset-y-0 left-0 bg-[#1A1A2E] text-white z-50 flex flex-col border-r border-white/5"
+        animate={{ width: isSidebarOpen ? 248 : 68 }}
+        className="fixed inset-y-0 left-0 bg-[#172033] text-white z-50 flex flex-col border-r border-white/5"
       >
         {/* Brand Header */}
         <div 
           onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-          className="h-20 flex items-center px-6 border-b border-white/5 shrink-0 cursor-pointer hover:bg-white/5 transition-colors"
+          className="h-16 flex items-center px-4 border-b border-white/10 shrink-0 cursor-pointer hover:bg-white/5 transition-colors"
         >
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#4B2A63] to-[#3B198F] flex items-center justify-center shrink-0 shadow-lg shadow-purple-500/20">
-            <Monitor className="w-6 h-6 text-white" />
+          <div className="w-9 h-9 rounded-lg bg-white flex items-center justify-center shrink-0 overflow-hidden border border-white/10">
+            {logoUrl ? (
+              <img src={logoUrl} alt="Website logo" className="h-full w-full object-contain p-1" />
+            ) : (
+              <Monitor className="w-4 h-4 text-[#4B2A63]" />
+            )}
           </div>
           <AnimatePresence>
             {isSidebarOpen && (
@@ -102,30 +121,31 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                 initial={{ opacity: 0, x: -10 }}
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: -10 }}
-                className="ml-4 font-bold text-xl tracking-tight overflow-hidden whitespace-nowrap"
+                className="ml-3 overflow-hidden whitespace-nowrap"
               >
-                ESS <span className="text-purple-400">Admin</span>
+                <span className="block text-sm font-semibold">Content Manager</span>
+                <span className="block text-[10px] text-white/45 font-medium">Administration</span>
               </motion.div>
             )}
           </AnimatePresence>
         </div>
 
         {/* Navigation Groups */}
-        <div className="flex-1 overflow-y-auto overflow-x-hidden py-6 custom-scrollbar">
+        <div className="flex-1 overflow-y-auto overflow-x-hidden py-4 custom-scrollbar">
           {navGroups.map((group, groupIdx) => (
-            <div key={groupIdx} className="mb-8 last:mb-0">
+            <div key={groupIdx} className="mb-5 last:mb-0">
               <AnimatePresence>
                 {isSidebarOpen && (
                   <motion.h4
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
-                    className="px-8 text-[10px] font-black text-white/30 uppercase tracking-[0.2em] mb-4"
+                    className="px-5 text-[9px] font-bold text-white/35 uppercase tracking-[0.14em] mb-2"
                   >
                     {group.label}
                   </motion.h4>
                 )}
               </AnimatePresence>
-              <nav className="px-3 space-y-1">
+              <nav className="px-2.5 space-y-0.5">
                 {group.items.map((item) => {
                   const isActive = pathname === item.href || pathname.startsWith(item.href + '/');
                   return (
@@ -134,19 +154,19 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                       onClick={() => router.push(item.href)}
                       title={!isSidebarOpen ? item.label : undefined}
                       className={cn(
-                        "flex items-center w-full px-4 py-3 rounded-xl transition-all duration-300 group relative cursor-pointer",
+                        "flex items-center w-full px-3 py-2 rounded-lg transition-all duration-200 group relative cursor-pointer",
                         isActive
                           ? "bg-white/10 text-white shadow-xl shadow-black/10"
                           : "text-white/50 hover:text-white hover:bg-white/5"
                       )}
                     >
-                      <item.icon className={cn("w-5 h-5 shrink-0 transition-transform group-hover:scale-110", isActive ? "text-purple-400" : "")} />
+                      <item.icon className={cn("w-4 h-4 shrink-0", isActive ? "text-[#C9A7DE]" : "")} />
                       <AnimatePresence>
                         {isSidebarOpen && (
                           <motion.span
                             initial={{ opacity: 0, x: -10 }}
                             animate={{ opacity: 1, x: 0 }}
-                            className="ml-4 font-semibold text-[14px] whitespace-nowrap"
+                            className="ml-3 font-medium text-[12px] whitespace-nowrap"
                           >
                             {item.label}
                           </motion.span>
@@ -170,11 +190,11 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       <main
         className={cn(
           "flex-1 transition-all duration-300 min-h-screen flex flex-col min-w-0",
-          isSidebarOpen ? "ml-[280px]" : "ml-[80px]"
+          isSidebarOpen ? "ml-[248px]" : "ml-[68px]"
         )}
       >
         {/* Top Header */}
-        <header className="h-20 bg-white border-b border-slate-200 flex items-center justify-between px-8 sticky top-0 z-40 backdrop-blur-md bg-white/80">
+        <header className="h-14 bg-white border-b border-slate-200 flex items-center justify-between px-5 sticky top-0 z-40 backdrop-blur-md bg-white/90">
           <div className="flex items-center gap-6 flex-1">
           </div>
 
@@ -187,7 +207,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                 document.cookie = "mock-admin-session=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
                 window.location.href = '/admin/login';
               }}
-              className="px-4 h-10 flex items-center justify-center rounded-xl bg-rose-50 hover:bg-rose-100 transition-colors text-sm font-semibold text-rose-600 cursor-pointer"
+              className="px-3 h-8 flex items-center justify-center rounded-md bg-rose-50 hover:bg-rose-100 transition-colors text-xs font-semibold text-rose-600 cursor-pointer"
             >
               Logout
             </button>
@@ -195,7 +215,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         </header>
 
         {/* Page Content */}
-        <div className="p-8 flex-1">
+        <div className="admin-content p-5 flex-1">
           <AnimatePresence mode="wait">
             <motion.div
               key={pathname}

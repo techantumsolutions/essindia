@@ -324,48 +324,36 @@ export default function NavigationModule() {
   }
 
   return (
-    <div className="space-y-10">
+    <div className="space-y-4">
       {/* Header */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-3">
         <div>
-          <h1 className="text-3xl font-bold text-slate-900 tracking-tight mb-2">Navigation Manager</h1>
-          <div className="flex items-center gap-4">
-            {/* <select 
-              value={activeMenuLocation}
-              onChange={(e) => setActiveMenuLocation(e.target.value)}
-              className="bg-slate-50 border-none text-slate-900 font-bold text-sm rounded-lg px-3 py-1 outline-none"
-            >
-              {menus.map(m => <option key={m.id} value={m.location}>{m.name}</option>)}
-            </select> */}
-            <p className="text-slate-500 font-medium">Design your site navigation structure with drag-and-drop ease.</p>
-          </div>
+          <h1 className="font-semibold text-slate-900">Navigation Manager</h1>
+          <p className="text-slate-500">Structure the site menu, link pages and configure the header.</p>
         </div>
-        <div className="flex gap-3">
-          <Button
-            onClick={handleSave}
-            disabled={isSaving}
-            className="bg-[#4B2A63] hover:bg-[#3B198F] text-white rounded-full px-10 h-12 font-bold shadow-lg shadow-[#4B2A63]/20 active:scale-95 cursor-pointer gap-2"
-          >
-            {isSaving ? 'Saving...' : 'Save Changes'}
-          </Button>
-        </div>
+        <Button size="sm" onClick={handleSave} disabled={isSaving || !selectedItemId}>
+          {isSaving ? 'Saving...' : 'Save changes'}
+        </Button>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 items-start">
 
-        {/* Left Column: Menu Structure (1/3) */}
-        <div className="lg:col-span-4 space-y-6">
-          <div className="bg-white rounded-[32px] p-8 border border-slate-100 shadow-[0_20px_50px_-15px_rgba(0,0,0,0.03)]">
-            <div className="flex items-center justify-between mb-8">
-              <h3 className="font-bold text-lg text-slate-900">Menu Hierarchy</h3>
-              <Button size="icon" variant="ghost" onClick={handleAddItem} className="rounded-full bg-slate-50 text-[#4B2A63]">
-                <Plus className="w-5 h-5" />
+        {/* Left Column: Menu Structure */}
+        <div className="lg:col-span-4">
+          <div className="admin-compact-card overflow-hidden">
+            <div className="admin-card-header">
+              <div>
+                <h3>Menu Hierarchy</h3>
+                <p>Drag to reorder. Click to configure.</p>
+              </div>
+              <Button size="sm" variant="outline" onClick={handleAddItem} className="gap-1">
+                <Plus className="w-3.5 h-3.5" /> Add
               </Button>
             </div>
 
-            <div className="space-y-2">
+            <div className="p-2 space-y-1">
               {items.map((item, index) => (
-                <motion.div
+                <div
                   key={item.id}
                   draggable
                   onDragStart={(e: any) => handleDragStart(e, index)}
@@ -373,175 +361,186 @@ export default function NavigationModule() {
                   onDragEnd={handleDragEnd}
                   onClick={() => setSelectedItemId(item.id)}
                   className={cn(
-                    "flex items-center gap-4 p-4 rounded-2xl border transition-all cursor-grab active:cursor-grabbing group",
+                    "flex items-center gap-2 px-2.5 py-2 rounded-lg border transition-colors cursor-grab active:cursor-grabbing",
                     selectedItemId === item.id
-                      ? "bg-[#4B2A63] border-[#4B2A63] text-white shadow-xl shadow-[#4B2A63]/20"
-                      : "bg-white border-slate-50 text-slate-600 hover:border-[#4B2A63]/20 hover:bg-slate-50",
-                    draggedIndex === index && "opacity-40 border-dashed border-2 border-[#4B2A63]"
+                      ? "bg-[#4B2A63] border-[#4B2A63] text-white"
+                      : "bg-white border-transparent text-slate-600 hover:bg-slate-50 hover:border-slate-200",
+                    draggedIndex === index && "opacity-40 border-dashed border-[#4B2A63]"
                   )}
                 >
-                  <GripVertical className={cn("w-4 h-4 shrink-0", selectedItemId === item.id ? "text-white/40" : "text-slate-300")} />
-                  <span className="flex-1 font-bold text-[14px]">{item.label}</span>
+                  <GripVertical className={cn("w-3.5 h-3.5 shrink-0", selectedItemId === item.id ? "text-white/40" : "text-slate-300")} />
+                  <span className="flex-1 text-xs font-semibold truncate">{item.label}</span>
                   {item.megaMenuEnabled && (
                     <span className={cn(
-                      "text-[9px] font-black px-1.5 py-0.5 rounded uppercase tracking-tighter",
-                      selectedItemId === item.id ? "bg-white/20 text-white" : "bg-purple-50 text-purple-600"
+                      "text-[9px] font-bold px-1.5 py-0.5 rounded uppercase tracking-tight",
+                      selectedItemId === item.id ? "bg-white/20 text-white" : "bg-purple-50 text-purple-700"
                     )}>
                       Mega
                     </span>
                   )}
-                  <ChevronDown className={cn("w-4 h-4 shrink-0 transition-transform", selectedItemId === item.id ? "-rotate-90 opacity-40" : "opacity-20")} />
-                </motion.div>
+                  <ChevronDown className={cn("w-3.5 h-3.5 shrink-0 transition-transform", selectedItemId === item.id ? "-rotate-90 opacity-50" : "opacity-20")} />
+                </div>
               ))}
-            </div>
 
-            <Button
-              onClick={handleAddItem}
-              variant="outline" className="w-full mt-6 rounded-2xl border-dashed border-2 py-8 text-slate-400 font-bold gap-2">
-              <Plus className="w-4 h-4" />
-              Add Menu Item
-            </Button>
+              <button
+                onClick={handleAddItem}
+                className="w-full mt-1 flex items-center justify-center gap-1.5 rounded-lg border border-dashed border-slate-200 py-2.5 text-[11px] font-semibold text-slate-400 hover:text-[#4B2A63] hover:border-[#4B2A63]/40 transition-colors"
+              >
+                <Plus className="w-3.5 h-3.5" />
+                Add menu item
+              </button>
+            </div>
           </div>
         </div>
 
-        {/* Right Column: Configuration & Preview (2/3) */}
-        <div className="lg:col-span-8 space-y-8">
+        {/* Right Column: Configuration */}
+        <div className="lg:col-span-8 space-y-4">
 
           {/* Item Configuration */}
-          <div className="bg-white rounded-[32px] p-10 border border-slate-100 shadow-[0_20px_50px_-15px_rgba(0,0,0,0.03)]">
-            <div className="flex items-center justify-between mb-10 pb-6 border-b border-slate-50">
-              <div className="flex items-center gap-4">
-                <div className="w-12 h-12 rounded-2xl bg-purple-50 text-[#4B2A63] flex items-center justify-center">
-                  <Settings2 className="w-6 h-6" />
+          <div className="admin-compact-card overflow-hidden">
+            <div className="admin-card-header">
+              <div className="flex items-center gap-2.5">
+                <div className="w-7 h-7 rounded-md bg-purple-50 text-[#4B2A63] flex items-center justify-center shrink-0">
+                  <Settings2 className="w-3.5 h-3.5" />
                 </div>
                 <div>
-                  <h3 className="font-bold text-xl text-slate-900">Item Configuration</h3>
-                  <p className="text-sm text-slate-400 font-medium">Customize behavior and mega menu layout.</p>
+                  <h3>Item Configuration</h3>
+                  <p>{selectedItem ? <>Editing <span className="font-semibold text-slate-700">{selectedItem.label}</span></> : 'Select a menu item on the left to edit it.'}</p>
                 </div>
               </div>
-              <div className="flex gap-2">
+              {selectedItem && (
                 <Button
                   onClick={handleDeleteItem}
-                  variant="ghost" size="icon" className="rounded-xl text-slate-400 hover:text-rose-500">
-                  <Trash2 className="w-5 h-5" />
+                  variant="ghost" size="sm" className="text-slate-400 hover:text-rose-600 gap-1">
+                  <Trash2 className="w-3.5 h-3.5" /> Delete
                 </Button>
-              </div>
+              )}
             </div>
 
             {selectedItem ? (
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
-                <div className="space-y-6">
-                  <div className="space-y-2">
-                    <label className="text-sm font-medium text-gray-700">Label</label>
+              <div className="p-4 grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-3">
+                  <div className="space-y-1">
+                    <label className="text-xs font-semibold text-slate-700">Label</label>
+                    <p className="text-[11px] text-slate-400">Text shown in the site header menu.</p>
                     <input
                       type="text"
                       value={selectedItem?.label || ''}
                       onChange={(e) => handleUpdateItemField('label', e.target.value)}
-                      className="w-full px-4 py-2 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#5C2B6A] focus:border-transparent transition-all text-sm"
+                      className="w-full px-2.5 py-1.5 rounded-md border border-slate-200 focus:outline-none focus:ring-2 focus:ring-[#5C2B6A]/40 focus:border-[#5C2B6A] transition-all text-xs"
                     />
                   </div>
 
-                  <div className="space-y-4">
-                    <div className="space-y-2">
-                      <label className="text-sm font-medium text-gray-700">Link URL / Page</label>
-                      <select
-                        value={selectedItem?.pageId || ''}
-                        onChange={(e) => {
-                          const val = e.target.value;
-                          if (!val) {
-                            handleUpdateItemField('pageId', null);
-                            handleUpdateItemField('url', '');
-                          } else {
-                            const page = registryPages.find(p => p.id === val);
-                            if (page) {
-                              handleUpdateItemField('pageId', page.id);
-                              handleUpdateItemField('url', page.routePath);
-                            }
+                  <div className="space-y-1">
+                    <label className="text-xs font-semibold text-slate-700">Linked page</label>
+                    <p className="text-[11px] text-slate-400">Where visitors land when they click this item.</p>
+                    <select
+                      value={selectedItem?.pageId || ''}
+                      onChange={(e) => {
+                        const val = e.target.value;
+                        if (!val) {
+                          handleUpdateItemField('pageId', null);
+                          handleUpdateItemField('url', '');
+                        } else {
+                          const page = registryPages.find(p => p.id === val);
+                          if (page) {
+                            handleUpdateItemField('pageId', page.id);
+                            handleUpdateItemField('url', page.routePath);
                           }
-                        }}
-                        className="w-full px-4 py-2 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#5C2B6A] focus:border-transparent transition-all text-sm"
-                      >
-                        <option value="">Select a page...</option>
-                        {registryPages.filter(p => p.status === 'published').map((page) => (
-                          <option key={page.id} value={page.id}>
-                            {page.title} ({page.routePath})
-                          </option>
-                        ))}
-                      </select>
-                    </div>
+                        }
+                      }}
+                      className="w-full px-2.5 py-1.5 rounded-md border border-slate-200 focus:outline-none focus:ring-2 focus:ring-[#5C2B6A]/40 focus:border-[#5C2B6A] transition-all text-xs"
+                    >
+                      <option value="">Select a page...</option>
+                      {registryPages.filter(p => p.status === 'published').map((page) => (
+                        <option key={page.id} value={page.id}>
+                          {page.title} ({page.routePath})
+                        </option>
+                      ))}
+                    </select>
+                    {selectedItem?.url ? (
+                      <p className="text-[11px] font-mono text-slate-400 pt-0.5">Current URL: {selectedItem.url}</p>
+                    ) : null}
                   </div>
                 </div>
 
-                <div className="space-y-6">
-                  <div className="space-y-4">
-                    <label className="text-[11px] font-black text-slate-400 uppercase tracking-widest ml-1">Behavior</label>
-                    <div className="grid grid-cols-2 gap-4">
-                      <div
-                        onClick={() => handleUpdateItemField('megaMenuEnabled', true)}
-                        className={cn(
-                          "p-4 rounded-2xl border-2 flex flex-col items-center gap-2 cursor-pointer transition-all",
-                          selectedItem?.megaMenuEnabled ? "bg-[#4B2A63]/5 border-[#4B2A63]" : "bg-slate-50 border-transparent"
-                        )}
-                      >
-                        <Layout className={cn("w-6 h-6", selectedItem?.megaMenuEnabled ? "text-[#4B2A63]" : "text-slate-400")} />
-                        <span className={cn("text-[12px] font-bold", selectedItem?.megaMenuEnabled ? "text-[#4B2A63]" : "text-slate-500")}>Mega Menu</span>
-                      </div>
-                      <div
-                        onClick={() => handleUpdateItemField('megaMenuEnabled', false)}
-                        className={cn(
-                          "p-4 rounded-2xl border-2 flex flex-col items-center gap-2 cursor-pointer transition-all",
-                          !selectedItem?.megaMenuEnabled ? "bg-[#4B2A63]/5 border-[#4B2A63]" : "bg-slate-50 border-transparent"
-                        )}
-                      >
-                        <ExternalLink className={cn("w-6 h-6", !selectedItem?.megaMenuEnabled ? "text-[#4B2A63]" : "text-slate-400")} />
-                        <span className={cn("text-[12px] font-bold", !selectedItem?.megaMenuEnabled ? "text-[#4B2A63]" : "text-slate-500")}>Simple Link</span>
-                      </div>
-                    </div>
+                <div className="space-y-2">
+                  <div>
+                    <label className="text-xs font-semibold text-slate-700">Behavior</label>
+                    <p className="text-[11px] text-slate-400">Choose how this item behaves in the header.</p>
                   </div>
-                  <div className="space-y-2">
-                    {/* 
-                    {selectedItem?.megaMenuEnabled && selectedItemId ? (
-                      <Link
-                        href={`/admin/navigation/mega-menu/${selectedItemId}`}
-                        className="flex items-center justify-center gap-2 p-4 rounded-2xl bg-[#4B2A63] text-white font-bold text-sm hover:bg-[#3B198F] transition-colors"
-                      >
-                        <Layout className="w-4 h-4" />
-                        Manage Mega Menu Structure
-                      </Link>
-                    ) : null}
-                    */}
+                  <div className="space-y-2" role="radiogroup" aria-label="Menu item behavior">
+                    <label className="admin-radio-option" data-checked={!selectedItem?.megaMenuEnabled}>
+                      <input
+                        type="radio"
+                        name="nav-item-behavior"
+                        checked={!selectedItem?.megaMenuEnabled}
+                        onChange={() => handleUpdateItemField('megaMenuEnabled', false)}
+                      />
+                      <span>
+                        <span className="flex items-center gap-1.5 text-xs font-semibold text-slate-800">
+                          <ExternalLink className="w-3.5 h-3.5 text-[#4B2A63]" /> Simple link
+                        </span>
+                        <span className="block text-[11px] text-slate-400 mt-0.5">Clicking navigates directly to the linked page.</span>
+                      </span>
+                    </label>
+                    <label className="admin-radio-option" data-checked={!!selectedItem?.megaMenuEnabled}>
+                      <input
+                        type="radio"
+                        name="nav-item-behavior"
+                        checked={!!selectedItem?.megaMenuEnabled}
+                        onChange={() => handleUpdateItemField('megaMenuEnabled', true)}
+                      />
+                      <span>
+                        <span className="flex items-center gap-1.5 text-xs font-semibold text-slate-800">
+                          <Layout className="w-3.5 h-3.5 text-[#4B2A63]" /> Mega menu
+                        </span>
+                        <span className="block text-[11px] text-slate-400 mt-0.5">Hovering opens a dropdown panel with sub-categories and pages.</span>
+                      </span>
+                    </label>
                   </div>
+                  {selectedItem?.megaMenuEnabled && selectedLinkedPages.length > 0 && (
+                    <p className="text-[11px] text-slate-400 pt-1">
+                      {selectedLinkedPages.length} linked page group{selectedLinkedPages.length > 1 ? 's' : ''} shown in this mega menu. Manage them in Categories.
+                    </p>
+                  )}
                 </div>
               </div>
             ) : (
-              <p className="text-slate-400 text-sm font-bold uppercase tracking-widest text-center py-6">Select a menu item to configure</p>
+              <p className="text-slate-400 text-xs font-medium text-center py-8">Select a menu item on the left to configure it.</p>
             )}
           </div>
 
           {/* Header Settings */}
           {activeMenuLocation === 'header-main' && menuSettings && (
-            <div className="bg-white rounded-[32px] p-10 border border-slate-100 shadow-[0_20px_50px_-15px_rgba(0,0,0,0.03)] space-y-6">
-              <div className="flex items-center gap-4 pb-6 border-b border-slate-50">
-                <div className="w-12 h-12 rounded-2xl bg-purple-50 text-[#4B2A63] flex items-center justify-center">
-                  <Layout className="w-6 h-6" />
+            <div className="admin-compact-card overflow-hidden">
+              <div className="admin-card-header">
+                <div className="flex items-center gap-2.5">
+                  <div className="w-7 h-7 rounded-md bg-purple-50 text-[#4B2A63] flex items-center justify-center shrink-0">
+                    <Layout className="w-3.5 h-3.5" />
+                  </div>
+                  <div>
+                    <h3>Header Settings</h3>
+                    <p>Global header logo and call-to-action button.</p>
+                  </div>
                 </div>
-                <div>
-                  <h3 className="font-bold text-xl text-slate-900">Header Settings</h3>
-                  <p className="text-sm text-slate-400 font-medium">Configure global header logo and call-to-action button.</p>
-                </div>
+                <Button size="sm" onClick={handleSaveHeaderSettings} disabled={isSavingHeaderSettings}>
+                  {isSavingHeaderSettings ? 'Saving...' : 'Save settings'}
+                </Button>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="space-y-2">
-                  <label className="text-sm font-medium text-gray-700">Logo Image</label>
-                  <div className="flex items-center gap-4">
+              <div className="p-4 grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-1">
+                  <label className="text-xs font-semibold text-slate-700">Logo image</label>
+                  <p className="text-[11px] text-slate-400">Shown in the site header and admin sidebar.</p>
+                  <div className="flex items-center gap-3 pt-1">
                     {menuSettings.logoUrl && (
-                      <div className="relative w-16 h-10 border border-slate-100 rounded-lg overflow-hidden bg-slate-50 flex items-center justify-center shrink-0">
+                      <div className="relative w-16 h-9 border border-slate-200 rounded-md overflow-hidden bg-slate-50 flex items-center justify-center shrink-0">
                         <img src={menuSettings.logoUrl} alt="Logo Preview" className="max-h-full max-w-full object-contain" />
                       </div>
                     )}
-                    <label className="inline-flex items-center px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold rounded-lg transition-colors cursor-pointer border border-slate-200">
-                      <span>Upload Logo</span>
+                    <label className="inline-flex items-center px-2.5 py-1.5 bg-white hover:bg-slate-50 text-slate-700 text-[11px] font-semibold rounded-md transition-colors cursor-pointer border border-slate-200">
+                      <span>Upload logo</span>
                       <input
                         type="file"
                         accept="image/*"
@@ -552,37 +551,28 @@ export default function NavigationModule() {
                   </div>
                 </div>
 
-                <div className="space-y-2">
-                  <label className="text-sm font-medium text-gray-700">Get Started Button Text</label>
+                <div className="space-y-1">
+                  <label className="text-xs font-semibold text-slate-700">CTA button text</label>
+                  <p className="text-[11px] text-slate-400">Label for the header call-to-action button.</p>
                   <input
                     type="text"
                     value={menuSettings.getStartedText || ''}
                     onChange={(e) => setMenuSettings((prev: any) => ({ ...prev, getStartedText: e.target.value }))}
                     placeholder="Get started"
-                    className="w-full px-4 py-2 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#5C2B6A] focus:border-transparent transition-all text-sm"
+                    className="w-full px-2.5 py-1.5 rounded-md border border-slate-200 focus:outline-none focus:ring-2 focus:ring-[#5C2B6A]/40 focus:border-[#5C2B6A] transition-all text-xs"
                   />
                 </div>
 
-                <div className="space-y-2 md:col-span-2">
-                  <label className="text-sm font-medium text-gray-700">Get Started Button Link</label>
+                <div className="space-y-1 md:col-span-2">
+                  <label className="text-xs font-semibold text-slate-700">CTA button link</label>
                   <input
                     type="text"
                     value={menuSettings.getStartedLink || ''}
                     onChange={(e) => setMenuSettings((prev: any) => ({ ...prev, getStartedLink: e.target.value }))}
                     placeholder="/contact-us"
-                    className="w-full px-4 py-2 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#5C2B6A] focus:border-transparent transition-all text-sm"
+                    className="w-full px-2.5 py-1.5 rounded-md border border-slate-200 focus:outline-none focus:ring-2 focus:ring-[#5C2B6A]/40 focus:border-[#5C2B6A] transition-all text-xs"
                   />
                 </div>
-              </div>
-
-              <div className="pt-4 flex justify-end">
-                <Button
-                  onClick={handleSaveHeaderSettings}
-                  disabled={isSavingHeaderSettings}
-                  className="bg-[#4B2A63] hover:bg-[#3B198F] text-white rounded-full px-6 h-10 font-bold active:scale-95 cursor-pointer"
-                >
-                  {isSavingHeaderSettings ? 'Saving...' : 'Save Header Settings'}
-                </Button>
               </div>
             </div>
           )}

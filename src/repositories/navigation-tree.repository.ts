@@ -129,11 +129,84 @@ export class NavigationTreeRepository {
 
   /** Mega menu payload for admin builder — includes draft pages. */
   async getAdminMegaMenuPayload(navigationItemId: string): Promise<MegaMenuPayload | null> {
-    await ensureNavPagesSyncedToMegaMenu(navigationItemId);
-    const tree = await this.fetchTree('header-main', 'admin');
-    const item = tree.find((entry) => entry.id === navigationItemId);
-    if (!item?.megaMenuEnabled || item.categories.length === 0) return null;
-    return this.buildMegaMenuPayloadFromTreeItem(item, 'admin');
+    const navItem = await db.query.navigationItems.findFirst({
+      where: eq(navigationItems.id, navigationItemId),
+    });
+    if (!navItem?.megaMenuEnabled) return null;
+
+    const categories = await db.query.megaMenuCategories.findMany({
+      where: eq(megaMenuCategories.navigationItemId, navigationItemId),
+      orderBy: [asc(megaMenuCategories.orderIndex)],
+      with: {
+        subCategories: {
+          orderBy: [asc(megaMenuSubCategories.orderIndex)],
+          with: {
+            subSubCategories: {
+              orderBy: [asc(megaMenuSubSubCategories.orderIndex)],
+            },
+          },
+        },
+      },
+    });
+
+    if (categories.length === 0) return null;
+
+    const pageIds = categories.flatMap((category) => [
+      ...(category.pageId ? [category.pageId] : []),
+      ...category.subCategories.flatMap((subCategory) => [
+        ...(subCategory.pageId ? [subCategory.pageId] : []),
+        ...subCategory.subSubCategories.flatMap((leaf) => leaf.pageId ? [leaf.pageId] : []),
+      ]),
+    ]);
+    const pageMap = await this.loadNavPages([...new Set(pageIds)]);
+    const navSlug = navItem.slug || slugify(navItem.label);
+
+    return {
+      navigationItemId: navItem.id,
+      navSlug,
+      label: navItem.label,
+      categories: categories.map((category) => ({
+        id: category.id,
+        name: category.name,
+        slug: category.slug,
+        pageId: category.pageId,
+        href: buildMegaMenuHref(
+          navSlug,
+          category.slug,
+          undefined,
+          undefined,
+          category.pageId ? pageMap.get(category.pageId)?.fullPath ?? null : null
+        ),
+        subCategories: category.subCategories.map((subCategory) => ({
+          id: subCategory.id,
+          name: subCategory.name,
+          slug: subCategory.slug,
+          description: subCategory.description,
+          thumbnail: subCategory.thumbnail,
+          pageId: subCategory.pageId,
+          href: buildMegaMenuHref(
+            navSlug,
+            category.slug,
+            subCategory.slug,
+            undefined,
+            subCategory.pageId ? pageMap.get(subCategory.pageId)?.fullPath ?? null : null
+          ),
+          subSubCategories: subCategory.subSubCategories.map((leaf) => ({
+            id: leaf.id,
+            name: leaf.name,
+            slug: leaf.slug,
+            pageId: leaf.pageId,
+            href: buildMegaMenuHref(
+              navSlug,
+              category.slug,
+              subCategory.slug,
+              leaf.slug,
+              leaf.pageId ? pageMap.get(leaf.pageId)?.fullPath ?? null : null
+            ),
+          })),
+        })),
+      })),
+    };
   }
 
   private buildMegaMenuPayloadFromTreeItem(

@@ -490,30 +490,24 @@ export default function FooterCMSPage() {
   if (!settings) return null;
 
   return (
-    <div className="space-y-10">
+    <div className="space-y-4">
       {/* Header Section */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-3">
         <div>
-          <h1 className="text-3xl font-bold text-slate-900 tracking-tight mb-2">Footer CMS Manager</h1>
-          <p className="text-slate-500 font-medium">Manage company footer columns, branding, and region flags.</p>
+          <h1 className="font-semibold text-slate-900">Footer CMS Manager</h1>
+          <p className="text-slate-500">Manage company footer columns, branding, and region flags.</p>
         </div>
-        <div>
-          <Button
-            onClick={handleSave}
-            disabled={isSaving}
-            className="bg-[#4B2A63] hover:bg-[#3B198F] text-white rounded-full px-10 h-12 font-bold shadow-lg shadow-[#4B2A63]/20 active:scale-95 cursor-pointer gap-2"
-          >
-            {isSaving ? 'Saving...' : 'Save Settings'}
-            <Save className="w-4 h-4 ml-1" />
-          </Button>
-        </div>
+        <Button size="sm" onClick={handleSave} disabled={isSaving}>
+          {isSaving ? 'Saving...' : 'Save settings'}
+          <Save />
+        </Button>
       </div>
 
       {/* Tabs Menu */}
-      <div className="flex border-b border-slate-200 gap-6">
+      <div className="flex border-b border-slate-200 gap-4">
         <button
           onClick={() => setActiveTab('branding')}
-          className={`pb-4 text-sm font-bold transition-all relative ${activeTab === 'branding' ? 'text-[#4B2A63]' : 'text-slate-400 hover:text-slate-600'
+          className={`pb-2 text-xs font-semibold transition-all relative cursor-pointer ${activeTab === 'branding' ? 'text-[#4B2A63]' : 'text-slate-400 hover:text-slate-600'
             }`}
         >
           Branding & Socials
@@ -523,7 +517,7 @@ export default function FooterCMSPage() {
         </button>
         <button
           onClick={() => setActiveTab('links')}
-          className={`pb-4 text-sm font-bold transition-all relative ${activeTab === 'links' ? 'text-[#4B2A63]' : 'text-slate-400 hover:text-slate-600'
+          className={`pb-2 text-xs font-semibold transition-all relative cursor-pointer ${activeTab === 'links' ? 'text-[#4B2A63]' : 'text-slate-400 hover:text-slate-600'
             }`}
         >
           Column Links

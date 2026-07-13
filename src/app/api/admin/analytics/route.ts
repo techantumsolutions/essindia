@@ -6,38 +6,33 @@ import { SECTION_REGISTRY } from '@/lib/cms/section-registry';
 
 export async function GET() {
   try {
-    // Pages counts
-    const pagesResult = await db.select({
-      status: pages.status,
-      count: sql<number>`count(*)`
-    }).from(pages).groupBy(pages.status);
+    const [pagesResult, templatesResult, leadsResult, topTemplates, recentPages] = await Promise.all([
+      db.select({
+        status: pages.status,
+        count: sql<number>`count(*)`
+      }).from(pages).groupBy(pages.status),
+      db.select({ count: sql<number>`count(*)` }).from(templates),
+      db.select({ count: sql<number>`count(*)` }).from(formSubmissions),
+      db.query.templates.findMany({
+        orderBy: (templateTable, { desc }) => [
+          desc(templateTable.usageCount),
+          desc(templateTable.updatedAt),
+        ],
+        limit: 10,
+      }),
+      db.query.pages.findMany({
+        orderBy: (pageTable, { desc }) => [desc(pageTable.updatedAt)],
+        limit: 7,
+      }),
+    ]);
 
     const totalPages = pagesResult.reduce((acc, row) => acc + Number(row.count), 0);
     const publishedPages = pagesResult.find(r => r.status === 'published')?.count || 0;
     const draftPages = pagesResult.find(r => r.status === 'draft')?.count || 0;
 
-    // Templates count
-    const templatesResult = await db.select({ count: sql<number>`count(*)` }).from(templates);
     const totalTemplates = Number(templatesResult[0]?.count || 0);
-
-    // Sections count (templates available)
     const totalSections = SECTION_REGISTRY.length;
-
-    // Leads count
-    const leadsResult = await db.select({ count: sql<number>`count(*)` }).from(formSubmissions);
     const totalLeads = Number(leadsResult[0]?.count || 0);
-
-    // Top 10 Templates
-    const topTemplates = await db.query.templates.findMany({
-      orderBy: (templates, { desc }) => [desc(templates.usageCount), desc(templates.updatedAt)],
-      limit: 10,
-    });
-
-    // Recent Pages
-    const recentPages = await db.query.pages.findMany({
-      orderBy: (pages, { desc }) => [desc(pages.updatedAt)],
-      limit: 7,
-    });
 
     return NextResponse.json({
       pages: {

@@ -1,0 +1,218 @@
+.admin-shell {
+  --admin-primary: #4b2a63;
+  --admin-primary-hover: #3b198f;
+  --admin-ink: #18212f;
+  --admin-muted: #64748b;
+  --admin-border: #e2e8f0;
+  --admin-surface: #ffffff;
+  /* Map shadcn tokens to the ESS brand so default buttons render purple, not black */
+  --primary: #4b2a63;
+  --primary-foreground: #ffffff;
+  --ring: #5c2b6a;
+  color: var(--admin-ink);
+  font-size: 13px;
+}
+
+.admin-content > div > div[class*="space-y-8"],
+.admin-content > div > div[class*="space-y-10"] {
+  gap: 1rem !important;
+}
+
+.admin-content h1 {
+  margin-bottom: 0.2rem !important;
+  font-size: 1.45rem !important;
+  line-height: 1.8rem !important;
+  letter-spacing: -0.025em;
+}
+
+.admin-content h2 {
+  font-size: 1rem;
+  line-height: 1.4rem;
+}
+
+.admin-content p,
+.admin-content label,
+.admin-content input,
+.admin-content select,
+.admin-content textarea {
+  font-size: 0.78rem;
+}
+
+.admin-content [data-slot="button"] {
+  min-height: 1.75rem !important;
+  height: 1.75rem !important;
+  padding-inline: 0.65rem !important;
+  border-radius: 0.45rem !important;
+  font-size: 0.72rem !important;
+  font-weight: 650 !important;
+  box-shadow: none !important;
+}
+
+.admin-content [data-slot="button"]:not([class*="bg-rose"]):not([class*="text-rose"]):not([class*="destructive"]) {
+  border-color: color-mix(in srgb, var(--admin-primary) 25%, white) !important;
+}
+
+.admin-content [data-slot="button"][class*="bg-[#4B2A63]"],
+.admin-content [data-slot="button"]:not([class*="outline"]):not([class*="ghost"]):not([class*="link"]):not([class*="bg-white"]):not([class*="bg-slate"]):not([class*="bg-rose"]) {
+  background: var(--admin-primary) !important;
+  color: #fff !important;
+}
+
+.admin-content [data-slot="button"]:hover {
+  transform: none !important;
+}
+
+.admin-content [data-slot="button"] svg {
+  width: 0.85rem !important;
+  height: 0.85rem !important;
+}
+
+.admin-content table {
+  font-size: 0.75rem;
+}
+
+.admin-content table th {
+  height: 2rem !important;
+  padding: 0.4rem 0.65rem !important;
+  color: #64748b;
+  font-size: 0.64rem !important;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+}
+
+.admin-content table td {
+  height: 2.5rem !important;
+  padding: 0.45rem 0.65rem !important;
+}
+
+.admin-content input:not([type="checkbox"]):not([type="radio"]),
+.admin-content select {
+  min-height: 2rem !important;
+}
+
+.admin-content [class*="rounded-[32px]"],
+.admin-content [class*="rounded-3xl"] {
+  border-radius: 0.75rem !important;
+}
+
+.admin-content [class*="p-8"] {
+  padding: 1rem;
+}
+
+.admin-content [class*="p-6"] {
+  padding: 0.85rem;
+}
+
+.admin-content [class*="py-4"][class*="grid-cols"] {
+  padding-block: 0.55rem !important;
+}
+
+.admin-content [class*="px-6"][class*="grid-cols"] {
+  padding-inline: 0.85rem !important;
+}
+
+.admin-content [class*="gap-6"] {
+  gap: 0.85rem;
+}
+
+.admin-content [class*="space-y-6"] > :not([hidden]) ~ :not([hidden]) {
+  margin-top: 0.85rem;
+}
+
+.admin-content [class*="space-y-8"] > :not([hidden]) ~ :not([hidden]),
+.admin-content [class*="space-y-10"] > :not([hidden]) ~ :not([hidden]) {
+  margin-top: 1rem;
+}
+
+.admin-content [class*="w-14"][class*="h-14"] {
+  width: 2.25rem !important;
+  height: 2.25rem !important;
+}
+
+.admin-compact-card {
+  border: 1px solid var(--admin-border);
+  border-radius: 0.75rem;
+  background: var(--admin-surface);
+  box-shadow: 0 1px 2px rgb(15 23 42 / 0.04);
+}
+
+/* ── Unified table & card chrome (match dashboard) ──────────────── */
+
+/* Soft marketing shadows → flat enterprise card */
+.admin-content [class*="shadow-[0_20px_50px"],
+.admin-content [class*="shadow-[0_8px_30px"] {
+  box-shadow: 0 1px 2px rgb(15 23 42 / 0.04) !important;
+  border: 1px solid var(--admin-border) !important;
+}
+
+/* Grid fake-table headers → dashboard header style */
+.admin-content [class*="tracking-\[0.15em\]"] {
+  letter-spacing: 0.06em !important;
+  font-size: 0.62rem !important;
+  font-weight: 600 !important;
+  color: var(--admin-muted) !important;
+  padding-block: 0.5rem !important;
+}
+
+/* Row radii inside lists/tables */
+.admin-content [class*="rounded-2xl"] {
+  border-radius: 0.5rem !important;
+}
+
+/* Compact gaps used between cards/sections */
+.admin-content [class*="gap-8"],
+.admin-content [class*="gap-10"] {
+  gap: 1rem !important;
+}
+
+.admin-content [class*="space-y-4"] > :not([hidden]) ~ :not([hidden]) {
+  margin-top: 0.75rem;
+}
+
+/* Section header bar used by compact cards */
+.admin-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.7rem 1rem;
+  border-bottom: 1px solid var(--admin-border);
+}
+
+.admin-card-header h2,
+.admin-card-header h3 {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--admin-ink);
+}
+
+.admin-card-header p {
+  font-size: 0.68rem;
+  color: var(--admin-muted);
+}
+
+/* Radio option rows (behavior selectors etc.) */
+.admin-radio-option {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.6rem;
+  padding: 0.6rem 0.75rem;
+  border: 1px solid var(--admin-border);
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s;
+}
+
+.admin-radio-option:hover {
+  border-color: color-mix(in srgb, var(--admin-primary) 35%, white);
+}
+
+.admin-radio-option[data-checked="true"] {
+  border-color: var(--admin-primary);
+  background: color-mix(in srgb, var(--admin-primary) 5%, white);
+}
+
+.admin-radio-option input[type="radio"] {
+  margin-top: 0.15rem;
+  accent-color: var(--admin-primary);
+}

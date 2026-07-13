@@ -156,50 +156,35 @@ function PagesModuleContent() {
   };
 
   return (
-    <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="space-y-8">
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+    <motion.div initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} className="space-y-4">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-3">
         <div>
-          <h1 className="text-3xl font-bold text-slate-900 tracking-tight mb-2">Pages</h1>
-          <p className="text-slate-500 font-medium">Manage your website hierarchy and content structure.</p>
+          <h1 className="font-semibold text-slate-900">Pages</h1>
+          <p className="text-slate-500">Manage your website hierarchy and content structure.</p>
         </div>
-        <div className="flex gap-3">
-          <Button
-            variant="outline"
-            onClick={handleSyncRegistry}
-            disabled={isSyncing}
-            className="hidden rounded-full px-6 h-12 font-bold"
-          >
-            {isSyncing ? 'Syncing…' : 'Sync Registry'}
-          </Button>
-          <Button
-            onClick={() => setIsModalOpen(true)}
-            className="bg-[#4B2A63] hover:bg-[#3B198F] text-white rounded-full px-8 h-12 font-bold shadow-lg shadow-[#4B2A63]/20"
-          >
-            <Plus className="w-5 h-5 mr-2" />
-            Create New Page
+        <div className="flex gap-2">
+          <Button size="sm" onClick={() => setIsModalOpen(true)}>
+            <Plus /> New page
           </Button>
         </div>
       </div>
 
-      <div className="bg-white rounded-2xl p-4 border border-slate-100 flex items-center shadow-sm">
-        <div className="relative flex-1 max-w-md">
-          <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
-          <input
-            type="text"
-            placeholder="Filter pages..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full bg-slate-50 rounded-xl pl-12 pr-4 py-2.5 text-sm font-medium outline-none focus:ring-4 focus:ring-[#4B2A63]/5"
-          />
+      <div className="admin-compact-card overflow-hidden">
+        <div className="flex items-center justify-between gap-3 border-b border-slate-200 px-4 py-2.5">
+          <div className="relative flex-1 max-w-xs">
+            <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-slate-400" />
+            <input
+              type="text"
+              placeholder="Filter pages..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full bg-slate-50 rounded-md pl-8 pr-3 py-1.5 text-xs font-medium outline-none border border-transparent focus:border-[#4B2A63]/30 focus:bg-white transition-colors"
+            />
+          </div>
+          <span className="text-[11px] text-slate-400 font-medium shrink-0">{filteredPages.length} pages</span>
         </div>
-      </div>
 
-      <motion.div
-        initial={{ opacity: 0, y: 8 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="bg-white rounded-[32px] border border-slate-100 shadow-[0_20px_50px_-15px_rgba(0,0,0,0.03)] overflow-hidden"
-      >
-        <div className="bg-slate-50/50 px-6 py-4 grid grid-cols-12 gap-2 text-[10px] font-black text-slate-400 uppercase tracking-[0.15em] border-b border-slate-100">
+        <div className="bg-slate-50/60 px-4 py-2 grid grid-cols-12 gap-2 text-[10px] font-semibold text-slate-500 uppercase tracking-[0.06em] border-b border-slate-200">
           <div className="col-span-4">Page</div>
           <div className="col-span-2">Route</div>
           <div className="col-span-1 text-center">Status</div>
@@ -208,11 +193,11 @@ function PagesModuleContent() {
           <div className="col-span-1 text-center">Updated</div>
           <div className="col-span-2 text-right">Actions</div>
         </div>
-        <div className="p-2">
+        <div className="divide-y divide-slate-100">
           {isLoading ? (
-            <div className="p-16 text-center text-slate-400">Loading pages...</div>
+            <div className="p-12 text-center text-xs text-slate-400">Loading pages...</div>
           ) : pages.length === 0 ? (
-            <div className="p-16 text-center text-slate-400">No pages yet. Create your first page.</div>
+            <div className="p-12 text-center text-xs text-slate-400">No pages yet. Create your first page.</div>
           ) : (
             <>
               {paginatedPages.map((page) => (
@@ -223,16 +208,15 @@ function PagesModuleContent() {
                   onAction={handlePageAction}
                 />
               ))}
-              
-              <div className="flex items-center justify-between px-6 py-4 border-t border-slate-100 mt-2">
-                <div className="text-xs text-slate-500 font-medium">
-                  Showing <span className="font-bold text-slate-900">{filteredPages.length > 0 ? currentPage : 0}</span> of <span className="font-bold text-slate-900">{totalPages || 1}</span>
+
+              <div className="flex items-center justify-between px-4 py-2.5">
+                <div className="text-[11px] text-slate-500">
+                  Page <span className="font-semibold text-slate-900">{filteredPages.length > 0 ? currentPage : 0}</span> of <span className="font-semibold text-slate-900">{totalPages || 1}</span>
                 </div>
-                <div className="flex gap-2">
+                <div className="flex gap-1.5">
                   <Button
                     variant="outline"
-                    size="sm"
-                    className="h-8 text-xs font-bold rounded-lg"
+                    size="xs"
                     disabled={currentPage === 1}
                     onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
                   >
@@ -240,8 +224,7 @@ function PagesModuleContent() {
                   </Button>
                   <Button
                     variant="outline"
-                    size="sm"
-                    className="h-8 text-xs font-bold rounded-lg"
+                    size="xs"
                     disabled={currentPage === totalPages || totalPages === 0}
                     onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
                   >
@@ -252,7 +235,7 @@ function PagesModuleContent() {
             </>
           )}
         </div>
-      </motion.div>
+      </div>
 
       <PageCreateWizard
         open={isModalOpen}
@@ -276,37 +259,36 @@ function RegistryPageRow({
   if (!page.pageId) return null;
 
   return (
-    <motion.div className="group grid grid-cols-12 gap-2 items-center py-3 px-6 rounded-2xl hover:bg-slate-50/80 transition-all my-1">
-      <motion.div className="col-span-4 flex items-center gap-3">
-        <motion.div className="w-10 h-10 rounded-xl bg-slate-50 flex items-center justify-center">
-          <FileText className="w-5 h-5 text-slate-400" />
-        </motion.div>
-        <motion.div>
-          <h4 className="text-[15px] font-bold text-slate-900">{page.title}</h4>
+    <div className="group grid grid-cols-12 gap-2 items-center px-4 py-2 hover:bg-slate-50/80 transition-colors">
+      <div className="col-span-4 flex items-center gap-2.5 min-w-0">
+        <div className="w-7 h-7 rounded-md bg-slate-100 flex items-center justify-center shrink-0">
+          <FileText className="w-3.5 h-3.5 text-slate-400" />
+        </div>
+        <div className="min-w-0">
+          <h4 className="text-xs font-semibold text-slate-900 truncate">{page.title}</h4>
           <p className="text-[10px] text-slate-400 truncate">
             {page.source}
           </p>
-        </motion.div>
-      </motion.div>
-      <motion.div className="col-span-2 font-mono text-xs text-slate-500 truncate" title={page.routePath}>{page.routePath}</motion.div>
-      <motion.div className="col-span-1 flex justify-center">
-        <span className={cn('text-[10px] font-black px-2 py-1 rounded-full uppercase', page.status === 'published' ? 'bg-emerald-50 text-emerald-600' : 'bg-amber-50 text-amber-600')}>
+        </div>
+      </div>
+      <div className="col-span-2 font-mono text-[11px] text-slate-500 truncate" title={page.routePath}>{page.routePath}</div>
+      <div className="col-span-1 flex justify-center">
+        <span className={cn('text-[9px] font-bold px-2 py-0.5 rounded-full uppercase', page.status === 'published' ? 'bg-emerald-50 text-emerald-700' : 'bg-amber-50 text-amber-700')}>
           {page.status}
         </span>
-      </motion.div>
-      <motion.div className="col-span-1 text-center text-xs">{page.seoStatus}</motion.div>
-      <motion.div className="col-span-1 text-center text-xs font-bold">{page.sectionCount}</motion.div>
-      <motion.div className="col-span-1 text-center text-xs text-slate-400">{new Date(page.updatedAt).toLocaleDateString()}</motion.div>
+      </div>
+      <div className="col-span-1 text-center text-[11px] text-slate-500">{page.seoStatus}</div>
+      <div className="col-span-1 text-center text-[11px] font-semibold text-slate-600">{page.sectionCount}</div>
+      <div className="col-span-1 text-center text-[11px] text-slate-400">{new Date(page.updatedAt).toLocaleDateString()}</div>
       <div className="col-span-2 flex justify-end gap-1">
-        <Link href={page.routePath} target="_blank"><Button variant="ghost" size="icon"><Eye className="w-4 h-4" /></Button></Link>
-        <Link href={`/admin/pages/${page.pageId}`}><Button className="bg-[#4B2A63] text-white rounded-xl h-9 px-3 text-xs font-bold">Edit</Button></Link>
-        <Button 
-          variant="outline" 
-          size="sm"
+        <Link href={page.routePath} target="_blank"><Button variant="ghost" size="icon-xs"><Eye /></Button></Link>
+        <Link href={`/admin/pages/${page.pageId}`}><Button size="xs">Edit</Button></Link>
+        <Button
+          variant="outline"
+          size="xs"
           className={cn(
-            "h-9 px-3 text-xs font-bold rounded-xl transition-colors",
-            page.status === 'published' 
-              ? "text-amber-600 border-amber-200 hover:bg-amber-50" 
+            page.status === 'published'
+              ? "text-amber-600 border-amber-200 hover:bg-amber-50"
               : "text-emerald-600 border-emerald-200 hover:bg-emerald-50"
           )}
           onClick={() => onAction(page.pageId!, page.status === 'published' ? 'unpublish' : 'publish')}
@@ -314,7 +296,7 @@ function RegistryPageRow({
           {page.status === 'published' ? 'Disable' : 'Enable'}
         </Button>
       </div>
-    </motion.div>
+    </div>
   );
 }
 

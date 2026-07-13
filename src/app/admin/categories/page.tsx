@@ -108,6 +108,8 @@ export default function CategoriesModule() {
   const [editingId, setEditingId] = React.useState<string | null>(null);
   const [form, setForm] = React.useState<CategoryForm>(emptyForm);
   const [newSubParentId, setNewSubParentId] = React.useState<string | null>(null);
+  const [searchQuery, setSearchQuery] = React.useState('');
+  const [expandSignal, setExpandSignal] = React.useState<'expand' | 'collapse' | null>(null);
 
   const flatten = (nodes: CategoryTreeNode[], acc: CategoryTreeNode[] = []) => {
     nodes.forEach((n) => {
@@ -119,10 +121,10 @@ export default function CategoriesModule() {
 
   const fetchNavItems = React.useCallback(async () => {
     try {
-      const res = await fetch('/api/navigation/tree?location=header-main');
+      const res = await fetch('/api/admin/navigation?location=header-main&compact=true');
       if (res.ok) {
         const data = await res.json();
-        const items = data.tree || [];
+        const items = data.items || [];
         const megaNavs = items.filter((item: any) => item.megaMenuEnabled);
         setNavItems(megaNavs);
 
@@ -142,7 +144,7 @@ export default function CategoriesModule() {
 
   const fetchRegistryPages = React.useCallback(async () => {
     try {
-      const res = await fetch('/api/admin/pages?registry=true');
+      const res = await fetch('/api/admin/pages?registry=true&compact=true');
       if (res.ok) {
         const data = await res.json();
         if (Array.isArray(data)) {
@@ -211,6 +213,22 @@ export default function CategoriesModule() {
   React.useEffect(() => {
     fetchCategories();
   }, [fetchCategories]);
+
+  const visibleTree = React.useMemo(() => {
+    const query = searchQuery.trim().toLowerCase();
+    if (!query) return tree;
+
+    const filterNodes = (nodes: CategoryTreeNode[]): CategoryTreeNode[] =>
+      nodes.flatMap((node) => {
+        const children = filterNodes(node.children || []);
+        const matches =
+          node.name.toLowerCase().includes(query) ||
+          node.slug.toLowerCase().includes(query);
+        return matches || children.length ? [{ ...node, children }] : [];
+      });
+
+    return filterNodes(tree);
+  }, [tree, searchQuery]);
 
   const openCreate = (parentId?: string) => {
     setEditingId(null);
@@ -336,18 +354,18 @@ export default function CategoriesModule() {
   };
 
   return (
-    <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="space-y-8">
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+    <motion.div initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} className="space-y-4">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-3">
         <div>
-          <h1 className="text-3xl font-bold text-slate-900 tracking-tight mb-2">Categories</h1>
-          <p className="text-slate-500 font-medium">Manage hierarchy and page mappings for live website menus.</p>
+          <h1 className="font-semibold text-slate-900">Categories</h1>
+          <p className="text-slate-500">Manage menu hierarchy and linked website pages.</p>
         </div>
-        <div className="flex items-center gap-4 flex-wrap">
+        <div className="flex items-center gap-2 flex-wrap">
           {navItems.length > 0 && (
             <select
               value={selectedNavId}
               onChange={(e) => setSelectedNavId(e.target.value)}
-              className="bg-white border border-slate-200 rounded-full px-6 h-12 font-bold outline-none shadow-sm focus:ring-4 focus:ring-[#4B2A63]/5 text-slate-700"
+              className="bg-white border border-slate-200 rounded-md px-3 h-8 text-xs font-medium outline-none focus:ring-2 focus:ring-[#4B2A63]/10 text-slate-700"
             >
               {navItems.map((item) => (
                 <option key={item.id} value={item.id}>
@@ -358,25 +376,45 @@ export default function CategoriesModule() {
           )}
           <Button
             onClick={() => openCreate()}
-            className="bg-[#4B2A63] hover:bg-[#3B198F] text-white rounded-full px-8 h-12 font-bold shadow-lg shadow-[#4B2A63]/20"
+            size="sm"
           >
-            <Plus className="w-5 h-5 mr-2" />
+            <Plus />
             Add Category
           </Button>
         </div>
       </div>
 
-      <div className="bg-white rounded-[32px] border border-slate-100 shadow-[0_20px_50px_-15px_rgba(0,0,0,0.03)] overflow-hidden">
+      <div className="admin-compact-card overflow-hidden">
+        <div className="flex flex-wrap items-center justify-between gap-2 border-b border-slate-200 px-3 py-2">
+          <div className="relative min-w-[220px] flex-1 max-w-sm">
+            <input
+              value={searchQuery}
+              onChange={(event) => setSearchQuery(event.target.value)}
+              placeholder="Search categories or slugs…"
+              className="h-8 w-full rounded-md border border-slate-200 bg-slate-50 px-3 text-xs outline-none focus:border-[#4B2A63]/40 focus:ring-2 focus:ring-[#4B2A63]/10"
+            />
+          </div>
+          <div className="flex items-center gap-1.5">
+            <span className="mr-2 text-[10px] font-medium text-slate-500">{flat.length} items</span>
+            <Button variant="outline" size="xs" onClick={() => setExpandSignal('expand')}>Expand all</Button>
+            <Button variant="outline" size="xs" onClick={() => setExpandSignal('collapse')}>Collapse all</Button>
+          </div>
+        </div>
         {isLoading ? (
-          <div className="p-16 text-center text-slate-400 font-medium">Loading categories...</div>
-        ) : tree.length === 0 ? (
-          <div className="p-16 text-center text-slate-400 font-medium">
+          <div className="p-12 text-center text-xs text-slate-400">Loading categories...</div>
+        ) : visibleTree.length === 0 ? (
+          <div className="p-12 text-center text-xs text-slate-400">
             No categories yet. Create your first category to organize pages.
           </div>
         ) : (
-          <div className="p-4">
-            <Reorder.Group axis="y" values={tree} onReorder={handleReorder} className="w-full">
-              {tree.map((cat) => (
+          <div className="p-2">
+            <Reorder.Group
+              axis="y"
+              values={visibleTree}
+              onReorder={searchQuery ? () => {} : handleReorder}
+              className="w-full"
+            >
+              {visibleTree.map((cat) => (
                 <CategoryRow
                   key={cat.id}
                   category={cat}
@@ -386,6 +424,7 @@ export default function CategoriesModule() {
                   onRefresh={handleRefresh}
                   onEdit={openEdit}
                   onAddSubCategory={(parentId) => openCreate(parentId)}
+                  expandSignal={searchQuery ? 'expand' : expandSignal}
                 />
               ))}
             </Reorder.Group>
@@ -530,6 +569,7 @@ function CategoryRow({
   onRefresh,
   onEdit,
   onAddSubCategory,
+  expandSignal,
 }: {
   category: CategoryTreeNode;
   depth: number;
@@ -538,10 +578,16 @@ function CategoryRow({
   onRefresh: () => void;
   onEdit: (category: CategoryTreeNode) => void;
   onAddSubCategory: (parentId: string) => void;
+  expandSignal: 'expand' | 'collapse' | null;
 }) {
   const [open, setOpen] = React.useState(depth < 1);
 
   const hasChildren = category.children && category.children.length > 0;
+
+  React.useEffect(() => {
+    if (expandSignal === 'expand') setOpen(true);
+    if (expandSignal === 'collapse') setOpen(false);
+  }, [expandSignal]);
 
   const handleDelete = async () => {
     if (!confirm(`Delete "${category.name}"?`)) return;
@@ -576,32 +622,32 @@ function CategoryRow({
       <motion.div
         layout
         className={cn(
-          'flex items-center gap-3 py-3 px-4 rounded-2xl hover:bg-slate-50 group',
-          depth > 0 && 'ml-6 border-l-2 border-slate-100'
+          'flex items-center gap-2 py-1.5 px-2 rounded-md hover:bg-slate-50 group border-b border-slate-100/70 last:border-b-0',
+          depth > 0 && 'ml-5 border-l border-l-slate-200'
         )}
       >
         {depth === 0 && (
-          <GripVertical className="w-4 h-4 text-slate-300 cursor-grab active:cursor-grabbing hover:text-slate-600 transition-colors shrink-0" />
+          <GripVertical className="w-3.5 h-3.5 text-slate-300 cursor-grab active:cursor-grabbing hover:text-slate-600 transition-colors shrink-0" />
         )}
         {/* Expand tree */}
         <button
           type="button"
           onClick={() => setOpen(!open)}
-          className={cn('w-6 h-6 flex items-center justify-center', !hasChildren && 'invisible')}
+          className={cn('w-5 h-5 flex items-center justify-center rounded hover:bg-slate-200', !hasChildren && 'invisible')}
         >
-          {open ? <ChevronDown className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />}
+          {open ? <ChevronDown className="w-3.5 h-3.5" /> : <ChevronRight className="w-3.5 h-3.5" />}
         </button>
 
         {hasChildren ? (
-          open ? <FolderOpen className="w-5 h-5 text-blue-500 flex-shrink-0" /> : <Folder className="w-5 h-5 text-blue-500 flex-shrink-0" />
+          open ? <FolderOpen className="w-4 h-4 text-[#4B2A63] flex-shrink-0" /> : <Folder className="w-4 h-4 text-[#4B2A63] flex-shrink-0" />
         ) : (
-          <Folder className="w-5 h-5 text-slate-300 flex-shrink-0" />
+          <FileText className="w-3.5 h-3.5 text-slate-400 flex-shrink-0" />
         )}
 
         {/* Name & slug */}
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 flex-wrap">
-            <p className="font-bold text-slate-900">{category.name}</p>
+            <p className="text-xs font-semibold text-slate-900">{category.name}</p>
             {linkedPage && (
               <span className="inline-flex items-center gap-1 bg-emerald-50 text-emerald-700 text-[10px] font-bold px-2 py-0.5 rounded-md border border-emerald-100">
                 <FileText className="w-3 h-3" />
@@ -609,28 +655,30 @@ function CategoryRow({
               </span>
             )}
           </div>
-          <p className="text-xs text-slate-400 font-mono">/{category.slug}</p>
+          <p className="text-[10px] text-slate-400 font-mono">/{category.slug}</p>
         </div>
 
-        <span className="text-[10px] font-black uppercase tracking-widest text-slate-300">{category.status}</span>
+        <span className={cn(
+          'rounded-full px-2 py-0.5 text-[9px] font-semibold uppercase',
+          category.status === 'active' ? 'bg-emerald-50 text-emerald-700' : 'bg-slate-100 text-slate-500'
+        )}>{category.status}</span>
 
         {/* Action buttons */}
-        <div className="opacity-0 group-hover:opacity-100 flex gap-1 transition-opacity">
+        <div className="flex gap-1 transition-opacity sm:opacity-0 sm:group-hover:opacity-100">
           {depth < 2 && (
             <Button
               variant="ghost"
-              size="icon"
-              className="rounded-xl h-8 w-8"
+              size="icon-xs"
               title="Add sub-category"
               onClick={() => onAddSubCategory(category.id)}
             >
               <Plus className="w-4 h-4" />
             </Button>
           )}
-          <Button variant="ghost" size="icon" className="rounded-xl h-8 w-8" onClick={() => onEdit(category)}>
+          <Button variant="ghost" size="icon-xs" onClick={() => onEdit(category)}>
             <Edit2 className="w-4 h-4" />
           </Button>
-          <Button variant="ghost" size="icon" className="rounded-xl h-8 w-8 text-rose-400" onClick={handleDelete}>
+          <Button variant="ghost" size="icon-xs" className="text-rose-500" onClick={handleDelete}>
             <Trash2 className="w-4 h-4" />
           </Button>
         </div>
@@ -650,6 +698,7 @@ function CategoryRow({
                 onRefresh={onRefresh}
                 onEdit={onEdit}
                 onAddSubCategory={onAddSubCategory}
+                expandSignal={expandSignal}
               />
             ))}
           </motion.div>

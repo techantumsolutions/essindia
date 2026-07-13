@@ -68,97 +68,92 @@ export default function AnalyticsPage() {
   }
 
   return (
-    <div className="space-y-8 max-w-7xl mx-auto pb-12">
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
-        <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }}>
-          <h1 className="text-3xl font-bold text-slate-900 tracking-tight mb-2">Analytics Overview</h1>
-          <p className="text-slate-500 font-medium">Real-time metrics and insights for your website.</p>
+    <div className="space-y-4 max-w-7xl mx-auto pb-8">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-3">
+        <motion.div initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }}>
+          <h1 className="font-semibold text-slate-900">Analytics Overview</h1>
+          <p className="text-slate-500">Real-time metrics and insights for your website.</p>
         </motion.div>
       </div>
 
-      <motion.div 
+      <motion.div
         variants={container}
         initial="hidden"
         animate="show"
-        className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6"
+        className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-3"
       >
         {/* Pages Card */}
-        <motion.div variants={item} className="bg-white rounded-3xl p-6 border border-slate-200/60 shadow-[0_8px_30px_rgb(0,0,0,0.04)] relative overflow-hidden group hover:border-blue-200 transition-colors">
-          <div className="absolute top-0 right-0 w-32 h-32 bg-blue-50/50 rounded-bl-full -mr-8 -mt-8 transition-transform group-hover:scale-110 duration-500" />
-          <div className="flex justify-between items-start relative z-10">
+        <motion.div variants={item} className="admin-compact-card p-4">
+          <div className="flex justify-between items-start">
             <div>
-              <p className="text-sm font-semibold text-slate-500 uppercase tracking-wider mb-1">Total Pages</p>
-              <h3 className="text-4xl font-bold text-slate-900 tracking-tight mb-4">{data.pages.total}</h3>
+              <p className="text-[10px] font-semibold text-slate-500 uppercase tracking-[0.08em]">Total Pages</p>
+              <h3 className="mt-1 text-2xl font-semibold text-slate-900 tracking-tight">{data.pages.total}</h3>
             </div>
-            <div className="w-12 h-12 rounded-2xl bg-blue-100 flex items-center justify-center text-blue-600">
-              <FileText className="w-6 h-6" />
+            <div className="flex size-8 items-center justify-center rounded-lg bg-blue-50 text-blue-600">
+              <FileText className="size-4" />
             </div>
           </div>
-          <div className="flex items-center gap-4 text-sm relative z-10">
-            <div className="flex items-center gap-1.5 text-emerald-600 font-medium">
-              <CheckCircle className="w-4 h-4" />
+          <div className="mt-2 flex items-center gap-3 text-[11px]">
+            <span className="flex items-center gap-1 text-emerald-600 font-medium">
+              <CheckCircle className="size-3" />
               {data.pages.published} Published
-            </div>
-            <div className="w-1 h-1 rounded-full bg-slate-200" />
-            <div className="flex items-center gap-1.5 text-amber-600 font-medium">
-              <Clock className="w-4 h-4" />
+            </span>
+            <span className="flex items-center gap-1 text-amber-600 font-medium">
+              <Clock className="size-3" />
               {data.pages.draft} Drafts
-            </div>
+            </span>
           </div>
         </motion.div>
 
         {/* Templates Card */}
-        <motion.div variants={item} className="bg-white rounded-3xl p-6 border border-slate-200/60 shadow-[0_8px_30px_rgb(0,0,0,0.04)] relative overflow-hidden group hover:border-purple-200 transition-colors">
-          <div className="absolute top-0 right-0 w-32 h-32 bg-purple-50/50 rounded-bl-full -mr-8 -mt-8 transition-transform group-hover:scale-110 duration-500" />
-          <div className="flex justify-between items-start relative z-10">
+        <motion.div variants={item} className="admin-compact-card p-4">
+          <div className="flex justify-between items-start">
             <div>
-              <p className="text-sm font-semibold text-slate-500 uppercase tracking-wider mb-1">Templates</p>
-              <h3 className="text-4xl font-bold text-slate-900 tracking-tight mb-4">{data.templates.total}</h3>
+              <p className="text-[10px] font-semibold text-slate-500 uppercase tracking-[0.08em]">Templates</p>
+              <h3 className="mt-1 text-2xl font-semibold text-slate-900 tracking-tight">{data.templates.total}</h3>
             </div>
-            <div className="w-12 h-12 rounded-2xl bg-purple-100 flex items-center justify-center text-purple-600">
-              <LayoutTemplate className="w-6 h-6" />
+            <div className="flex size-8 items-center justify-center rounded-lg bg-purple-50 text-[#4B2A63]">
+              <LayoutTemplate className="size-4" />
             </div>
           </div>
-          <div className="flex items-center gap-1.5 text-slate-500 text-sm font-medium relative z-10">
-            <TrendingUp className="w-4 h-4 text-purple-500" />
+          <p className="mt-2 flex items-center gap-1 text-[11px] text-slate-500">
+            <TrendingUp className="size-3 text-[#4B2A63]" />
             Active across platform
-          </div>
+          </p>
         </motion.div>
 
         {/* Sections Card */}
-        <motion.div variants={item} className="bg-white rounded-3xl p-6 border border-slate-200/60 shadow-[0_8px_30px_rgb(0,0,0,0.04)] relative overflow-hidden group hover:border-emerald-200 transition-colors">
-          <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-50/50 rounded-bl-full -mr-8 -mt-8 transition-transform group-hover:scale-110 duration-500" />
-          <div className="flex justify-between items-start relative z-10">
+        <motion.div variants={item} className="admin-compact-card p-4">
+          <div className="flex justify-between items-start">
             <div>
-              <p className="text-sm font-semibold text-slate-500 uppercase tracking-wider mb-1">Components</p>
-              <h3 className="text-4xl font-bold text-slate-900 tracking-tight mb-4">{data.sections.total}</h3>
+              <p className="text-[10px] font-semibold text-slate-500 uppercase tracking-[0.08em]">Components</p>
+              <h3 className="mt-1 text-2xl font-semibold text-slate-900 tracking-tight">{data.sections.total}</h3>
             </div>
-            <div className="w-12 h-12 rounded-2xl bg-emerald-100 flex items-center justify-center text-emerald-600">
-              <Layers className="w-6 h-6" />
+            <div className="flex size-8 items-center justify-center rounded-lg bg-emerald-50 text-emerald-600">
+              <Layers className="size-4" />
             </div>
           </div>
-          <div className="flex items-center gap-1.5 text-slate-500 text-sm font-medium relative z-10">
-            <TrendingUp className="w-4 h-4 text-emerald-500" />
+          <p className="mt-2 flex items-center gap-1 text-[11px] text-slate-500">
+            <TrendingUp className="size-3 text-emerald-500" />
             Reusable building blocks
-          </div>
+          </p>
         </motion.div>
 
         {/* Leads Card */}
-        <motion.div variants={item} className="bg-white rounded-3xl p-6 border border-slate-200/60 shadow-[0_8px_30px_rgb(0,0,0,0.04)] relative overflow-hidden group hover:border-amber-200 transition-colors">
-          <div className="absolute top-0 right-0 w-32 h-32 bg-amber-50/50 rounded-bl-full -mr-8 -mt-8 transition-transform group-hover:scale-110 duration-500" />
-          <div className="flex justify-between items-start relative z-10">
+        <motion.div variants={item} className="admin-compact-card p-4">
+          <div className="flex justify-between items-start">
             <div>
-              <p className="text-sm font-semibold text-slate-500 uppercase tracking-wider mb-1">Total Leads</p>
-              <h3 className="text-4xl font-bold text-slate-900 tracking-tight mb-4">{data.leads.total}</h3>
+              <p className="text-[10px] font-semibold text-slate-500 uppercase tracking-[0.08em]">Total Leads</p>
+              <h3 className="mt-1 text-2xl font-semibold text-slate-900 tracking-tight">{data.leads.total}</h3>
             </div>
-            <div className="w-12 h-12 rounded-2xl bg-amber-100 flex items-center justify-center text-amber-600">
-              <Users className="w-6 h-6" />
+            <div className="flex size-8 items-center justify-center rounded-lg bg-amber-50 text-amber-600">
+              <Users className="size-4" />
             </div>
           </div>
-          <div className="flex items-center gap-1.5 text-slate-500 text-sm font-medium relative z-10">
-            <TrendingUp className="w-4 h-4 text-amber-500" />
+          <p className="mt-2 flex items-center gap-1 text-[11px] text-slate-500">
+            <TrendingUp className="size-3 text-amber-500" />
             From contact forms
-          </div>
+          </p>
         </motion.div>
       </motion.div>
     </div>

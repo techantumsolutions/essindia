@@ -17,6 +17,7 @@ export async function GET(request: Request) {
   try {
     const { searchParams } = new URL(request.url);
     const location = searchParams.get('location');
+    const compact = searchParams.get('compact') === 'true';
 
     if (location) {
       const menu = await db.query.navigationMenus.findFirst({
@@ -28,6 +29,24 @@ export async function GET(request: Request) {
       const items = await db.query.navigationItems.findMany({
         where: eq(navigationItems.menuId, menu.id),
       });
+
+      if (compact) {
+        return NextResponse.json(
+          {
+            menu,
+            items: items
+              .filter((item) => !item.parentId)
+              .map((item) => ({
+                id: item.id,
+                label: item.label,
+                slug: item.slug,
+                megaMenuEnabled: item.megaMenuEnabled,
+                orderIndex: item.orderIndex,
+              })),
+          },
+          { headers: { 'Cache-Control': 'private, max-age=30, stale-while-revalidate=60' } }
+        );
+      }
 
       const buildTree = (items: any[], parentId: string | null = null): any[] => {
         return items

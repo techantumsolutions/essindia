@@ -176,75 +176,56 @@ export default function MediaLibraryPage() {
   };
 
   return (
-    <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="space-y-8">
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+    <motion.div initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} className="space-y-4">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-3">
         <div>
-          <h1 className="text-3xl font-bold text-slate-900 tracking-tight mb-2">Media Library</h1>
-          <p className="text-slate-500 font-medium">Upload and manage assets for pages and sections.</p>
+          <h1 className="font-semibold text-slate-900">Media Library</h1>
+          <p className="text-slate-500">Upload and manage assets for pages and sections.</p>
         </div>
         <div>
           <input ref={fileRef} type="file" className="hidden" accept={getAcceptType()} onChange={handleUpload} />
-          <Button
-            onClick={() => fileRef.current?.click()}
-            disabled={isUploading}
-            className="bg-[#4B2A63] text-white rounded-full px-8 h-12 font-bold"
-          >
-            <Upload className="w-5 h-5 mr-2" />
-            {isUploading ? 'Uploading...' : 'Upload File'}
+          <Button size="sm" onClick={() => fileRef.current?.click()} disabled={isUploading}>
+            <Upload />
+            {isUploading ? 'Uploading...' : 'Upload file'}
           </Button>
         </div>
       </div>
 
-      <div className="bg-white rounded-2xl p-4 border border-slate-100 flex flex-col md:flex-row gap-4 justify-between items-center">
-        <div className="flex p-1 bg-slate-100 rounded-xl space-x-1 w-full md:w-auto overflow-x-auto">
-          <button
-            onClick={() => setActiveTab('images')}
-            className={`px-4 py-2 rounded-lg text-sm font-bold whitespace-nowrap transition-colors ${activeTab === 'images' ? 'bg-white text-[#4B2A63] shadow-sm' : 'text-slate-500 hover:text-slate-700 hover:bg-slate-200/50'}`}
-          >
-            Images
-          </button>
-          <button
-            onClick={() => setActiveTab('videos')}
-            className={`px-4 py-2 rounded-lg text-sm font-bold whitespace-nowrap transition-colors ${activeTab === 'videos' ? 'bg-white text-[#4B2A63] shadow-sm' : 'text-slate-500 hover:text-slate-700 hover:bg-slate-200/50'}`}
-          >
-            Videos
-          </button>
-          <button
-            onClick={() => setActiveTab('gifs')}
-            className={`px-4 py-2 rounded-lg text-sm font-bold whitespace-nowrap transition-colors ${activeTab === 'gifs' ? 'bg-white text-[#4B2A63] shadow-sm' : 'text-slate-500 hover:text-slate-700 hover:bg-slate-200/50'}`}
-          >
-            GIFs
-          </button>
-          <button
-            onClick={() => setActiveTab('pdfs')}
-            className={`px-4 py-2 rounded-lg text-sm font-bold whitespace-nowrap transition-colors ${activeTab === 'pdfs' ? 'bg-white text-[#4B2A63] shadow-sm' : 'text-slate-500 hover:text-slate-700 hover:bg-slate-200/50'}`}
-          >
-            PDFs
-          </button>
+      <div className="admin-compact-card px-3 py-2 flex flex-col md:flex-row gap-2 justify-between items-center">
+        <div className="flex p-0.5 bg-slate-100 rounded-lg space-x-0.5 w-full md:w-auto overflow-x-auto">
+          {(['images', 'videos', 'gifs', 'pdfs'] as TabType[]).map((tab) => (
+            <button
+              key={tab}
+              onClick={() => setActiveTab(tab)}
+              className={`px-3 py-1.5 rounded-md text-xs font-semibold whitespace-nowrap transition-colors capitalize ${activeTab === tab ? 'bg-white text-[#4B2A63] shadow-sm' : 'text-slate-500 hover:text-slate-700 hover:bg-slate-200/50'}`}
+            >
+              {tab === 'gifs' ? 'GIFs' : tab === 'pdfs' ? 'PDFs' : tab.charAt(0).toUpperCase() + tab.slice(1)}
+            </button>
+          ))}
         </div>
-        <div className="relative w-full md:max-w-md">
-          <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+        <div className="relative w-full md:max-w-xs">
+          <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-slate-400" />
           <input
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Search files..."
-            className="w-full bg-slate-50 rounded-xl pl-12 pr-4 py-2.5 text-sm font-medium outline-none focus:ring-2 focus:ring-[#4B2A63]/20 transition-all"
+            className="w-full bg-slate-50 rounded-md pl-8 pr-3 py-1.5 text-xs font-medium outline-none border border-transparent focus:border-[#4B2A63]/30 focus:bg-white transition-colors"
           />
         </div>
       </div>
 
       {isLoading ? (
-        <p className="text-center text-slate-400 py-16">Loading media...</p>
+        <p className="text-center text-xs text-slate-400 py-14">Loading media...</p>
       ) : filteredItems.length === 0 ? (
-        <div className="text-center py-16 bg-white rounded-[32px] border border-dashed border-slate-200">
-          {activeTab === 'images' && <ImageIcon className="w-12 h-12 text-slate-300 mx-auto mb-4" />}
-          {activeTab === 'videos' && <Film className="w-12 h-12 text-slate-300 mx-auto mb-4" />}
-          {activeTab === 'gifs' && <FileImage className="w-12 h-12 text-slate-300 mx-auto mb-4" />}
-          {activeTab === 'pdfs' && <FileText className="w-12 h-12 text-slate-300 mx-auto mb-4" />}
-          <p className="text-slate-400 font-medium">No {activeTab} yet. Upload your first file.</p>
+        <div className="text-center py-14 admin-compact-card border-dashed">
+          {activeTab === 'images' && <ImageIcon className="w-8 h-8 text-slate-300 mx-auto mb-3" />}
+          {activeTab === 'videos' && <Film className="w-8 h-8 text-slate-300 mx-auto mb-3" />}
+          {activeTab === 'gifs' && <FileImage className="w-8 h-8 text-slate-300 mx-auto mb-3" />}
+          {activeTab === 'pdfs' && <FileText className="w-8 h-8 text-slate-300 mx-auto mb-3" />}
+          <p className="text-xs text-slate-400 font-medium">No {activeTab} yet. Upload your first file.</p>
         </div>
       ) : (
-        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
+        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-3">
           {filteredItems.map((item, i) => {
             const isVideo = item.mimeType.startsWith('video/');
             const isPdf = item.mimeType === 'application/pdf';
@@ -252,10 +233,10 @@ export default function MediaLibraryPage() {
             return (
               <motion.div
                 key={item.id}
-                initial={{ opacity: 0, scale: 0.95 }}
+                initial={{ opacity: 0, scale: 0.97 }}
                 animate={{ opacity: 1, scale: 1 }}
-                transition={{ delay: i * 0.03 }}
-                className="bg-white rounded-[20px] border border-slate-100 overflow-hidden group cursor-pointer hover:shadow-xl hover:shadow-slate-200/50 transition-all"
+                transition={{ delay: Math.min(i * 0.02, 0.3) }}
+                className="admin-compact-card overflow-hidden group cursor-pointer hover:border-[#4B2A63]/30 transition-colors"
                 onClick={() => setSelectedImage(item)}
               >
                 <div className="aspect-square bg-slate-50 flex items-center justify-center overflow-hidden relative">
@@ -263,73 +244,73 @@ export default function MediaLibraryPage() {
                     <>
                       <video src={item.url} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
                       <div className="absolute inset-0 flex items-center justify-center bg-black/20">
-                        <Film className="w-8 h-8 text-white drop-shadow-md" />
+                        <Film className="w-6 h-6 text-white drop-shadow-md" />
                       </div>
                     </>
                   ) : isPdf ? (
-                    <FileText className="w-12 h-12 text-rose-500" />
+                    <FileText className="w-8 h-8 text-rose-500" />
                   ) : item.mimeType.startsWith('image/') ? (
                     <img src={item.url} alt={item.altText || item.filename} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
                   ) : (
-                    <ImageIcon className="w-10 h-10 text-slate-300" />
+                    <ImageIcon className="w-8 h-8 text-slate-300" />
                   )}
                 </div>
-                <div className="p-4 space-y-2">
-                  <p className="font-bold text-sm text-slate-900 truncate">{item.filename}</p>
+                <div className="p-2.5 space-y-1">
+                  <p className="text-xs font-semibold text-slate-900 truncate">{item.filename}</p>
                   <p className="text-[10px] text-slate-400 font-mono truncate">{item.url}</p>
-                  <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity justify-between">
-                    <div className="flex gap-1">
+                  <div className="flex gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity justify-between">
+                    <div className="flex gap-0.5">
                       <Button
                         variant="ghost"
-                        size="icon"
+                        size="icon-xs"
                         onClick={(e) => {
                           e.stopPropagation();
                           copyUrl(item.url);
                         }}
-                        className="rounded-xl text-slate-400 hover:text-[#4B2A63]"
+                        className="text-slate-400 hover:text-[#4B2A63]"
                         title="Copy direct URL"
                       >
-                        <Copy className="w-4 h-4" />
+                        <Copy />
                       </Button>
                       {isVideo && (
                         <Button
                           variant="ghost"
-                          size="icon"
+                          size="icon-xs"
                           onClick={(e) => {
                             e.stopPropagation();
                             copyIframeCode(item.url);
                           }}
-                          className="rounded-xl text-slate-400 hover:text-[#4B2A63]"
+                          className="text-slate-400 hover:text-[#4B2A63]"
                           title="Copy Iframe code"
                         >
-                          <Code className="w-4 h-4" />
+                          <Code />
                         </Button>
                       )}
                     </div>
-                    <div className="flex gap-1">
+                    <div className="flex gap-0.5">
                       <Button
                         variant="ghost"
-                        size="icon"
+                        size="icon-xs"
                         onClick={(e) => {
                           e.stopPropagation();
                           handleRename(item.id, item.filename);
                         }}
-                        className="rounded-xl text-slate-400 hover:text-[#4B2A63]"
+                        className="text-slate-400 hover:text-[#4B2A63]"
                         title="Rename file"
                       >
-                        <Edit2 className="w-4 h-4" />
+                        <Edit2 />
                       </Button>
                       <Button
                         variant="ghost"
-                        size="icon"
+                        size="icon-xs"
                         onClick={(e) => {
                           e.stopPropagation();
                           handleDelete(item.id);
                         }}
-                        className="rounded-xl text-rose-400 hover:bg-rose-50"
+                        className="text-rose-400 hover:bg-rose-50"
                         title="Delete file"
                       >
-                        <Trash2 className="w-4 h-4" />
+                        <Trash2 />
                       </Button>
                     </div>
                   </div>

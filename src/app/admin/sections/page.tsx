@@ -35,51 +35,46 @@ export default function SectionsLibraryModule() {
   }, [filteredTemplates, currentPage]);
 
   return (
-    <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="space-y-8 w-full">
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+    <motion.div initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} className="space-y-4 w-full">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-3">
         <div>
-          <h1 className="text-3xl font-bold text-slate-900 tracking-tight mb-2">Sections Library</h1>
-          <p className="text-slate-500 font-medium">
-            Browse available templates that can be used on pages. (Total: {filteredTemplates.length} sections)
+          <h1 className="font-semibold text-slate-900">Sections Library</h1>
+          <p className="text-slate-500">
+            Browse available section blocks that can be used on pages.
           </p>
         </div>
       </div>
 
-      {/* Search Bar */}
-      <motion.div
-        initial={{ opacity: 0, y: 6 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="bg-white rounded-2xl p-4 border border-slate-200 flex gap-4 shadow-sm"
-      >
-        <motion.div className="relative flex-1 max-w-md" whileFocus={{ scale: 1.01 }}>
-          <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
-          <input
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            placeholder="Search templates..."
-            className="w-full bg-slate-50 rounded-xl pl-12 pr-4 py-2.5 text-sm font-medium outline-none focus:ring-4 focus:ring-[#4B2A63]/5 border border-transparent focus:border-slate-200"
-          />
-        </motion.div>
-      </motion.div>
-
       {/* List / Tabular View */}
-      <div className="bg-white rounded-3xl border border-slate-200 shadow-sm flex flex-col overflow-hidden">
+      <div className="admin-compact-card flex flex-col overflow-hidden">
+        <div className="flex items-center justify-between gap-3 border-b border-slate-200 px-4 py-2.5">
+          <div className="relative flex-1 max-w-xs">
+            <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-slate-400" />
+            <input
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              placeholder="Search sections..."
+              className="w-full bg-slate-50 rounded-md pl-8 pr-3 py-1.5 text-xs font-medium outline-none border border-transparent focus:border-[#4B2A63]/30 focus:bg-white transition-colors"
+            />
+          </div>
+          <span className="text-[11px] text-slate-400 font-medium shrink-0">{filteredTemplates.length} sections</span>
+        </div>
         <div className="w-full overflow-x-auto">
           <table className="w-full text-left text-sm">
             <thead className="bg-slate-50/60 border-b border-slate-200">
               <tr>
-                <th className="px-6 py-4 font-semibold text-slate-500 whitespace-nowrap w-[80px]">S.No</th>
-                <th className="px-6 py-4 font-semibold text-slate-500 whitespace-nowrap">Template Name</th>
-                <th className="px-6 py-4 font-semibold text-slate-500 whitespace-nowrap">System Type</th>
-                <th className="px-6 py-4 font-semibold text-slate-500 whitespace-nowrap">Description</th>
-                <th className="px-6 py-4 font-semibold text-slate-500 text-right whitespace-nowrap w-[120px]">Actions</th>
+                <th className="px-4 font-semibold text-slate-500 whitespace-nowrap w-[60px]">S.No</th>
+                <th className="px-4 font-semibold text-slate-500 whitespace-nowrap">Section</th>
+                <th className="px-4 font-semibold text-slate-500 whitespace-nowrap">System Type</th>
+                <th className="px-4 font-semibold text-slate-500 whitespace-nowrap">Description</th>
+                <th className="px-4 font-semibold text-slate-500 text-right whitespace-nowrap w-[90px]">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100">
               {currentItems.length === 0 ? (
                 <tr>
-                  <td colSpan={5} className="px-6 py-10 text-center text-slate-400">
-                    No templates found matching your search.
+                  <td colSpan={5} className="px-4 py-8 text-center text-xs text-slate-400">
+                    No sections found matching your search.
                   </td>
                 </tr>
               ) : (
@@ -88,43 +83,33 @@ export default function SectionsLibraryModule() {
                   const globalIdx = (currentPage - 1) * itemsPerPage + idx + 1;
                   return (
                     <tr key={template.type} className="hover:bg-slate-50/50 transition-colors">
-                      {/* S.No */}
-                      <td className="px-6 py-4 text-slate-400 font-semibold">{globalIdx}</td>
-
-                      {/* Template Name */}
-                      <td className="px-6 py-4">
-                        <div className="flex items-center gap-3">
+                      <td className="px-4 text-[11px] text-slate-400 font-medium">{globalIdx}</td>
+                      <td className="px-4">
+                        <div className="flex items-center gap-2.5">
                           <div
-                            className={cn('w-9 h-9 rounded-xl flex items-center justify-center text-white shrink-0', template.color || 'bg-slate-50')}
+                            className={cn('w-6 h-6 rounded-md flex items-center justify-center text-white shrink-0', template.color || 'bg-slate-50')}
                           >
-                            <Icon className="w-4 h-4" />
+                            <Icon className="w-3 h-3" />
                           </div>
-                          <span className="font-semibold text-slate-900">{template.label}</span>
+                          <span className="text-xs font-semibold text-slate-900">{template.label}</span>
                         </div>
                       </td>
-
-                      {/* System Type */}
-                      <td className="px-6 py-4">
-                        <span className="px-2 py-0.5 rounded-full text-[11px] font-mono font-bold bg-slate-100 text-slate-500">
+                      <td className="px-4">
+                        <span className="px-1.5 py-0.5 rounded text-[10px] font-mono font-semibold bg-slate-100 text-slate-500">
                           {template.type}
                         </span>
                       </td>
-
-                      {/* Description */}
-                      <td className="px-6 py-4 text-slate-500 text-xs max-w-sm truncate">
+                      <td className="px-4 text-slate-500 text-[11px] max-w-sm truncate">
                         {template.description}
                       </td>
-
-                      {/* Actions */}
-                      <td className="px-6 py-4 text-right">
+                      <td className="px-4 text-right">
                         <Button
-                          variant="ghost"
-                          size="icon"
+                          variant="outline"
+                          size="xs"
                           onClick={() => setPreviewSectionType(template.type)}
-                          className="rounded-xl w-9 h-9 text-slate-400 hover:text-[#4B2A63] hover:bg-slate-100 inline-flex items-center justify-center cursor-pointer"
                           title="Preview"
                         >
-                          <Eye className="w-4 h-4" />
+                          <Eye /> Preview
                         </Button>
                       </td>
                     </tr>
@@ -137,31 +122,29 @@ export default function SectionsLibraryModule() {
 
         {/* Pagination Controls */}
         {filteredTemplates.length > 0 && (
-          <div className="border-t border-slate-200 px-6 py-4 flex items-center justify-between bg-slate-50/20">
-            <p className="text-sm text-slate-500 font-medium">
-              Showing <span className="font-semibold text-slate-900">{(currentPage - 1) * itemsPerPage + 1}</span> to <span className="font-semibold text-slate-900">{Math.min(currentPage * itemsPerPage, filteredTemplates.length)}</span> of <span className="font-semibold text-slate-900">{filteredTemplates.length}</span> templates
+          <div className="border-t border-slate-200 px-4 py-2.5 flex items-center justify-between">
+            <p className="text-[11px] text-slate-500">
+              Showing <span className="font-semibold text-slate-900">{(currentPage - 1) * itemsPerPage + 1}</span> to <span className="font-semibold text-slate-900">{Math.min(currentPage * itemsPerPage, filteredTemplates.length)}</span> of <span className="font-semibold text-slate-900">{filteredTemplates.length}</span>
             </p>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-1.5">
               <Button
                 variant="outline"
+                size="xs"
                 onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
                 disabled={currentPage === 1}
-                className="h-9 px-4 rounded-xl flex items-center gap-1.5 text-xs font-semibold cursor-pointer"
               >
-                <ChevronLeft className="w-4 h-4" />
-                <span>Previous</span>
+                <ChevronLeft /> Previous
               </Button>
-              <span className="text-sm font-semibold text-slate-700 px-2">
+              <span className="text-[11px] font-semibold text-slate-700 px-1.5">
                 Page {currentPage} of {totalPages || 1}
               </span>
               <Button
                 variant="outline"
+                size="xs"
                 onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
                 disabled={currentPage === totalPages || totalPages === 0}
-                className="h-9 px-4 rounded-xl flex items-center gap-1.5 text-xs font-semibold cursor-pointer"
               >
-                <span>Next</span>
-                <ChevronRight className="w-4 h-4" />
+                Next <ChevronRight />
               </Button>
             </div>
           </div>
