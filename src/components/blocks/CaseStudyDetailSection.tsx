@@ -5,12 +5,14 @@ import { motion } from 'framer-motion';
 import { ArrowLeft, ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { type CaseStudyPost, defaultCaseStudies } from '@/lib/case-studies-data';
+import { useInternalNavigate } from '@/hooks/useInternalNavigate';
 
 interface CaseStudyDetailSectionProps {
   content?: any;
 }
 
 export function CaseStudyDetailSection({ content }: CaseStudyDetailSectionProps) {
+  const navigate = useInternalNavigate();
   // We receive content which should match the structure of CaseStudyPost
   const cs = content as CaseStudyPost;
 
@@ -281,7 +283,7 @@ export function CaseStudyDetailSection({ content }: CaseStudyDetailSectionProps)
         <div className="max-w-7xl mx-auto">
           <div className="flex items-center justify-between mb-12">
             <h2 className="text-3xl lg:text-4xl font-black text-[#1a1a1a]">More Stories</h2>
-            <Button variant="outline" className="rounded-full border-slate-200 text-slate-700 hover:bg-[#4a2c5a]/5 hover:text-[#4a2c5a]" onClick={() => window.location.href = '/case-studies'}>
+            <Button variant="outline" className="rounded-full border-slate-200 text-slate-700 hover:bg-[#4a2c5a]/5 hover:text-[#4a2c5a]" onClick={() => navigate('/case-studies')}>
               View All Stories <ArrowRight className="w-4 h-4 ml-2" />
             </Button>
           </div>
@@ -297,7 +299,7 @@ export function CaseStudyDetailSection({ content }: CaseStudyDetailSectionProps)
                   viewport={{ once: true }}
                   transition={{ delay: idx * 0.1 }}
                   className="flex flex-col group cursor-pointer bg-white border border-[#4a2c5a]/20 rounded-[24px] overflow-hidden shadow-sm hover:shadow-md transition-all p-3"
-                  onClick={() => window.location.href = detailLink}
+                  onClick={() => navigate(detailLink)}
                 >
                   {/* Image */}
                   <div className="relative aspect-[4/3] overflow-hidden rounded-xl">

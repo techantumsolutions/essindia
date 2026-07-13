@@ -1,5 +1,4 @@
 import { CaseStudyListSection } from '@/components/blocks/CaseStudyListSection';
-import { MainLayout } from '@/components/layout/MainLayout';
 import { pageRepository } from '@/repositories/page.repository';
 import { SectionRenderer } from '@/components/cms/SectionRenderer';
 
@@ -13,17 +12,13 @@ export default async function CaseStudiesPage() {
   
   if (page && page.sections && page.sections.length > 0) {
     return (
-      <MainLayout>
+      <>
         {page.sections.map((section: any) => (
           <SectionRenderer key={section.id} section={section} />
         ))}
-      </MainLayout>
+      </>
     );
   }
 
-  return (
-    <MainLayout>
-      <CaseStudyListSection />
-    </MainLayout>
-  );
+  return <CaseStudyListSection />;
 }

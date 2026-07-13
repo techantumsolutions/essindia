@@ -1,4 +1,3 @@
-import { MainLayout } from '@/components/layout/MainLayout';
 import { SectionRenderer } from '@/components/cms/SectionRenderer';
 import { pageRepository } from '@/repositories/page.repository';
 import { TrustedBrands } from '@/components/blocks/TrustedBrands';
@@ -22,23 +21,21 @@ export default async function Home() {
     </>
   );
 
+  if (page && page.sections && page.sections.length > 0) {
+    return (
+      <>
+        {page.sections.map((section: any) => (
+          <SectionRenderer key={section.id} section={section} />
+        ))}
+        {page.sections.every((s: { type: string }) => s.type !== 'services') && <IntroSection />}
+      </>
+    );
+  }
+
   return (
-    <MainLayout>
-      {page && page.sections && page.sections.length > 0 ? (
-        <>
-          {page.sections.map((section: any) => (
-            <SectionRenderer key={section.id} section={section} />
-          ))}
-          {/* Append fallbacks if they aren't in CMS yet */}
-          {page.sections.every((s: { type: string }) => s.type !== 'services') && <IntroSection />}
-        </>
-      ) : (
-        <>
-          {/* Fallback to hardcoded if DB is empty (shouldn't happen after seeding) */}
-          <SectionRenderer section={{ id: 'default-hero', type: 'hero', content: {} }} />
-          {fallbackSections}
-        </>
-      )}
-    </MainLayout>
+    <>
+      <SectionRenderer section={{ id: 'default-hero', type: 'hero', content: {} }} />
+      {fallbackSections}
+    </>
   );
 }

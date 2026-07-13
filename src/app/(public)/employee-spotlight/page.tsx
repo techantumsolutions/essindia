@@ -1,4 +1,3 @@
-import { MainLayout } from '@/components/layout/MainLayout';
 import { EmployeeSpotlightHero } from '@/components/blocks/EmployeeSpotlightHero';
 import { EmployeeSpotlightCards } from '@/components/blocks/EmployeeSpotlightCards';
 
@@ -9,9 +8,9 @@ export const metadata = {
 
 export default function EmployeeSpotlightPage() {
   return (
-    <MainLayout>
+    <>
       <EmployeeSpotlightHero />
       <EmployeeSpotlightCards />
-    </MainLayout>
+    </>
   );
 }

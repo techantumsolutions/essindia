@@ -4,6 +4,7 @@ import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { TextReveal } from '@/components/animations/TextReveal';
 import { MotionSection } from '@/components/animations/MotionSection';
+import { useInternalNavigate } from '@/hooks/useInternalNavigate';
 
 interface IntroContent {
   heading?: string;
@@ -16,6 +17,7 @@ interface IntroSectionProps {
 }
 
 export function IntroSection({ content }: IntroSectionProps) {
+  const navigate = useInternalNavigate();
   const heading = content?.heading || "We help organizations run, scale, and transform with digital solutions built for real business needs.";
   const subheading = content?.subheading || "Smarter Operations | AI-driven Growth | Stronger Solutions";
   const cta = content?.cta || { label: "Explore More", url: "/about" };
@@ -38,7 +40,7 @@ export function IntroSection({ content }: IntroSectionProps) {
 
         <MotionSection variant="fadeUp" delay={0.6} className="mt-12">
           <Button 
-            onClick={() => window.location.href = cta.url}
+            onClick={() => navigate(cta.url)}
             className="bg-[#4B2A63] hover:bg-[#3B198F] text-white rounded-full px-12 h-[54px] text-[16px] font-semibold transition-all duration-300 hover:shadow-[0_20px_40px_-10px_rgba(75,42,99,0.3)] hover:-translate-y-1 active:scale-95 cursor-pointer"
           >
             {cta.label}

@@ -372,12 +372,6 @@ export class NavigationTreeRepository {
     const topLevelItems =
       mode === 'public' ? items.filter((item) => !item.parentId) : items;
 
-    for (const item of topLevelItems) {
-      if (item.megaMenuEnabled) {
-        await ensureNavPagesSyncedToMegaMenu(item.id);
-      }
-    }
-
     const navItemIds = topLevelItems.map((item) => item.id);
     const pagesByNavItem = await this.loadPagesGroupedByNavItem(navItemIds);
 

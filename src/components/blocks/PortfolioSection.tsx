@@ -8,6 +8,7 @@ import { TextReveal } from '@/components/animations/TextReveal';
 import { MotionSection, StaggerContainer } from '@/components/animations/MotionSection';
 import { cn } from '@/lib/utils';
 import { useCtaAction, type CtaFormType } from '@/hooks/useCtaAction';
+import { useInternalNavigate } from '@/hooks/useInternalNavigate';
 
 interface Project {
   title: string;
@@ -54,6 +55,7 @@ const defaultPortfolios = [
 ];
 
 export function PortfolioSection({ content }: PortfolioSectionProps) {
+  const navigate = useInternalNavigate();
   const ctaUrl = (content as any)?.ctaUrl || '';
   const ctaFormType = ((content as any)?.ctaFormType || '') as CtaFormType;
   const { handleClick: handleCtaClick, modalNode } = useCtaAction(ctaUrl, ctaFormType);
@@ -202,7 +204,7 @@ export function PortfolioSection({ content }: PortfolioSectionProps) {
         {/* View All Button */}
         <MotionSection variant="fadeUp" delay={0.6} className="mt-20 text-center">
           <Button 
-            onClick={() => window.location.href = viewAllCta.url}
+            onClick={() => navigate(viewAllCta.url)}
             className="bg-[#4B2A63] hover:bg-[#3B198F] text-white rounded-full px-12 h-[54px] text-[16px] font-bold shadow-xl transition-all duration-300 hover:shadow-2xl hover:-translate-y-1 active:scale-95 cursor-pointer"
           >
             {viewAllCta.label}

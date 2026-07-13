@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronDown, ChevronUp, Search, Calendar, User, SlidersHorizontal, ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { usePathname } from 'next/navigation';
+import { useInternalNavigate } from '@/hooks/useInternalNavigate';
 
 import { defaultBlogs, type BlogPost } from '@/lib/blogs-data';
 
@@ -41,6 +42,7 @@ const INDUSTRIES = [
 ];
 
 export function BlogListSection({ content }: BlogListSectionProps) {
+  const navigate = useInternalNavigate();
   const badge = content?.badgeText || 'Latest Blogs';
   const heading = content?.headingText || 'Press & Media Resources';
   const subheading = content?.subheadingText || 'Everything journalists, analysts, and partners need to cover ESS — from brand assets to company facts. Everything journalists, analysts, and partners need to cover ESS— from brand assets to company facts.';
@@ -325,7 +327,7 @@ export function BlogListSection({ content }: BlogListSectionProps) {
                           transition={{ duration: 0.5, delay: idx * 0.05 }}
                           whileHover={{ y: -8, transition: { duration: 0.3 } }}
                           className="flex flex-col group cursor-pointer bg-white border border-slate-100 rounded-[28px] overflow-hidden shadow-sm hover:shadow-xl transition-all"
-                          onClick={() => window.location.href = detailLink}
+                          onClick={() => navigate(detailLink)}
                         >
                           {/* Image */}
                           <div className="relative aspect-[16/10] bg-slate-100 overflow-hidden">

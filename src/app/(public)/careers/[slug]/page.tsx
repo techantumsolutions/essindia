@@ -1,12 +1,11 @@
 import React from 'react';
 import { notFound } from 'next/navigation';
-import { MainLayout } from '@/components/layout/MainLayout';
 import { db } from '@/lib/db';
 import { eq } from 'drizzle-orm';
 import { careers } from '@/lib/db/schema';
 import CareerDetailClient from './CareerDetailClient';
 
-export const dynamic = 'force-dynamic';
+export const revalidate = 60;
 
 interface Props {
   params: Promise<{ slug: string }>;
@@ -52,7 +51,6 @@ export default async function CareerDetailPage({ params }: Props) {
     return notFound();
   }
 
-  // Format array fields for type safety
   const formattedJob = {
     id: job.id,
     title: job.title,
@@ -72,9 +70,5 @@ export default async function CareerDetailPage({ params }: Props) {
     budgetRange: job.budgetRange || null,
   };
 
-  return (
-    <MainLayout>
-      <CareerDetailClient job={formattedJob} />
-    </MainLayout>
-  );
+  return <CareerDetailClient job={formattedJob} />;
 }

@@ -4,6 +4,7 @@ import * as React from 'react';
 import { motion } from 'framer-motion';
 import { Calendar, User, ArrowLeft, ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { useInternalNavigate } from '@/hooks/useInternalNavigate';
 
 interface HighlightPanel {
   title: string;
@@ -104,6 +105,7 @@ const defaultRelatedBlogs: BlogPost[] = [
 ];
 
 export function BlogDetailSection({ content }: BlogDetailSectionProps) {
+  const navigate = useInternalNavigate();
   // Read fields with mockup defaults
   const badge = content?.badgeText || 'Latest Blogs';
   const heroHeading = content?.headingText || 'Explore our knowledge hub';
@@ -216,7 +218,7 @@ export function BlogDetailSection({ content }: BlogDetailSectionProps) {
         <div className="relative max-w-4xl mx-auto flex flex-col items-center">
           <motion.button
             whileHover={{ scale: 1.05 }}
-            onClick={() => window.location.href = '/blog'}
+            onClick={() => navigate('/blog')}
             className="px-5 py-1.5 rounded-full bg-white text-[#0A2E2A] text-xs font-bold shadow-md uppercase tracking-wider  border border-slate-100 flex items-center gap-2 cursor-pointer hover:bg-slate-50 transition-colors"
           >
             <ArrowLeft className="w-3 h-3" />
@@ -372,7 +374,7 @@ export function BlogDetailSection({ content }: BlogDetailSectionProps) {
           <div className="flex items-center justify-between">
             <h3 className="text-xl font-black text-slate-800 uppercase tracking-wider">Latest Blog</h3>
             <button
-              onClick={() => window.location.href = '/blogs'}
+              onClick={() => navigate('/blog')}
               className="text-[#103D38] hover:text-[#0A2E2A] text-xs font-black uppercase tracking-wider flex items-center gap-1.5 cursor-pointer group hover:underline"
             >
               View Portfolio
@@ -386,7 +388,7 @@ export function BlogDetailSection({ content }: BlogDetailSectionProps) {
                 <div
                   key={blog.slug}
                   className="flex flex-col group cursor-pointer bg-white border border-slate-100 rounded-3xl overflow-hidden shadow-sm hover:shadow-lg transition-all"
-                  onClick={() => window.location.href = `/blog/${blog.slug}`}
+                  onClick={() => navigate(`/blog/${blog.slug}`)}
                 >
                   <div className="aspect-[16/10] overflow-hidden bg-slate-100">
                     <img

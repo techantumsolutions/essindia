@@ -4,6 +4,7 @@ import * as React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronDown, ChevronUp, Search, Calendar, User, SlidersHorizontal, ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { useInternalNavigate } from '@/hooks/useInternalNavigate';
 
 import { defaultCaseStudies, type CaseStudyPost } from '@/lib/case-studies-data';
 
@@ -38,6 +39,7 @@ const INDUSTRIES = [
 ];
 
 export function CaseStudyListSection({ content }: CaseStudyListSectionProps) {
+  const navigate = useInternalNavigate();
   const badge = content?.badgeText || 'Case Studies';
   const heading = content?.headingText || 'Explore our knowledge hub';
   const subheading = content?.subheadingText || 'Explore how Maathra has helped enterprises worldwide transform their operations with Oracle APEX and Cloud solutions.';
@@ -312,7 +314,7 @@ export function CaseStudyListSection({ content }: CaseStudyListSectionProps) {
                           transition={{ duration: 0.5, delay: idx * 0.05 }}
                           whileHover={{ y: -8, transition: { duration: 0.3 } }}
                           className="flex flex-col group cursor-pointer bg-white border border-[#4a2c5a]/20 rounded-[24px] overflow-hidden shadow-sm hover:shadow-md transition-all p-3"
-                          onClick={() => window.location.href = detailLink}
+                          onClick={() => navigate(detailLink)}
                         >
                           {/* Image */}
                           <div className="relative aspect-[4/3] overflow-hidden rounded-xl">

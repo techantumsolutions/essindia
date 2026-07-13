@@ -4,6 +4,7 @@ import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { TextReveal } from '@/components/animations/TextReveal';
 import { MotionSection, StaggerContainer } from '@/components/animations/MotionSection';
+import { useInternalNavigate } from '@/hooks/useInternalNavigate';
 
 interface Industry {
   name: string;
@@ -47,6 +48,7 @@ const defaultIndustries = [
 ];
 
 export function IndustrySection({ content }: IndustrySectionProps) {
+  const navigate = useInternalNavigate();
   const heading = content?.heading || "Choose the Industry Expert";
   const subheading = content?.subheading || "Designed for the way your industry works.";
   const description = content?.description || "From manufacturing to services, ESS understands the workflows behind real business operations. We infuse our extensive industry expertise into every solution, tailoring our approach to the specific realities of each industry rather than relying on generic software thinking.";
@@ -122,7 +124,7 @@ export function IndustrySection({ content }: IndustrySectionProps) {
         {/* View All Button */}
         <MotionSection variant="fadeUp" delay={0.5} className="mt-16 text-center">
           <Button 
-            onClick={() => window.location.href = viewAllCta.url}
+            onClick={() => navigate(viewAllCta.url)}
             className="bg-white hover:bg-slate-50 text-[#462885] rounded-full px-12 h-[54px] text-[15px] font-bold tracking-wider shadow-2xl transition-all duration-300 hover:shadow-white/20 hover:-translate-y-1 active:scale-95 cursor-pointer"
           >
             {viewAllCta.label}

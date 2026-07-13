@@ -4,6 +4,7 @@ import * as React from 'react';
 import { motion } from 'framer-motion';
 import { CheckCircle2, ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { useInternalNavigate } from '@/hooks/useInternalNavigate';
 
 interface Author {
   name: string;
@@ -60,6 +61,7 @@ interface CaseStudyDetailBlockProps {
 }
 
 export function CaseStudyDetailBlock({ content }: CaseStudyDetailBlockProps) {
+  const navigate = useInternalNavigate();
   // Default values based on the screenshot
   const badge = content?.badge || 'ebizframe';
   const date = content?.date || 'December 10, 2025';
@@ -266,7 +268,7 @@ export function CaseStudyDetailBlock({ content }: CaseStudyDetailBlockProps) {
             {moreStories.length > 0 ? moreStories.map((story) => (
               <div 
                 key={story.slug}
-                onClick={() => window.location.href = story.fullPath}
+                onClick={() => navigate(story.fullPath)}
                 className="group cursor-pointer bg-white border border-slate-200 rounded-[28px] overflow-hidden shadow-sm hover:shadow-xl transition-all"
               >
                 <div className="relative aspect-[16/10] bg-slate-100 overflow-hidden">

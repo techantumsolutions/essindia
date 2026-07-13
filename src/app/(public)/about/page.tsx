@@ -1,4 +1,3 @@
-import { MainLayout } from '@/components/layout/MainLayout';
 import { AboutUsHero } from '@/components/blocks/AboutUsHero';
 import { AboutUsCompanyIntro } from '@/components/blocks/AboutUsCompanyIntro';
 import { AboutUsMissionVision } from '@/components/blocks/AboutUsMissionVision';
@@ -14,7 +13,7 @@ export const metadata = {
 
 export default function AboutPage() {
   return (
-    <MainLayout>
+    <>
       <AboutUsHero />
       <AboutUsCompanyIntro />
       <AboutUsMissionVision />
@@ -22,6 +21,6 @@ export default function AboutPage() {
       <AboutUsTransformationSection />
       <AboutUsWhyEss />
       <AboutUsCta />
-    </MainLayout>
+    </>
   );
 }
