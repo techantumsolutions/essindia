@@ -100,9 +100,9 @@ export default function AdminDashboard() {
           <Button variant="outline" size="sm" onClick={() => window.open('/', '_blank')}>
             <Eye /> View site
           </Button>
-          <Button size="sm" onClick={() => router.push('/admin/pages?createPage=true')}>
+          {/* <Button size="sm" onClick={() => router.push('/admin/pages?createPage=true')}>
             <FilePlus2 /> New page
-          </Button>
+          </Button> */}
         </div>
       </div>
 
@@ -166,9 +166,9 @@ export default function AdminDashboard() {
                   >
                     <Eye /> Preview
                   </Button>
-                  <Button size="xs" onClick={() => router.push(`/admin/templates/${template.id}`)}>
+                  {/* <Button size="xs" onClick={() => router.push(`/admin/templates/${template.id}`)}>
                     <Pencil /> Manage
-                  </Button>
+                  </Button> */}
                 </div>
               </div>
             )) : (
