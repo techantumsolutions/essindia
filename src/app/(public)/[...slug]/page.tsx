@@ -19,6 +19,7 @@ function isSystemRoute(slugArray: string[]) {
   const EXCLUDED_ROUTES = [
     'admin',
     'api',
+    'uploads',
     '_next',
     'favicon.ico',
     'robots.txt',

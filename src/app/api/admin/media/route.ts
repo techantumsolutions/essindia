@@ -27,7 +27,7 @@ export async function POST(request: Request) {
     const formData = await request.formData();
     const file = formData.get('file') as File | null;
     const altText = (formData.get('altText') as string) || '';
-    const folder = (formData.get('folder') as string) || 'uploads';
+    const folder = (formData.get('folder') as string) || 'media';
 
     if (!file) {
       return NextResponse.json({ error: 'No file provided' }, { status: 400 });
