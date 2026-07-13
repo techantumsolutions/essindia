@@ -66,7 +66,13 @@ export default function AdminDashboard() {
     {
       label: 'Total pages',
       value: data.pages.total,
-      detail: `${data.pages.published} published · ${data.pages.draft} drafts`,
+      detail: (
+        <>
+          <span className="text-emerald-600 font-medium">{data.pages.published} published</span>
+          {' · '}
+          <span className="text-rose-600 font-medium">{data.pages.draft} drafts</span>
+        </>
+      ),
       icon: FileText,
     },
     {
@@ -146,14 +152,14 @@ export default function AdminDashboard() {
           <div className="divide-y divide-slate-100">
             {data?.topTemplates?.length ? data.topTemplates.slice(0, 7).map((template) => (
               <div key={template.id} className="flex items-center gap-3 px-4 py-2.5 hover:bg-slate-50/80">
-                <div className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-slate-100 text-[#4B2A63]">
+                {/* <div className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-slate-100 text-[#4B2A63]">
                   <LayoutTemplate className="size-4" />
-                </div>
+                </div> */}
                 <div className="min-w-0 flex-1">
                   <p className="truncate text-xs font-semibold text-slate-900">{template.name}</p>
-                  <p className="truncate text-[11px] text-slate-500">
+                  {/* <p className="truncate text-[11px] text-slate-500">
                     {template.description || 'Reusable page template'}
-                  </p>
+                  </p> */}
                 </div>
                 <span className="hidden rounded-full bg-emerald-50 px-2 py-0.5 text-[9px] font-semibold uppercase text-emerald-700 sm:inline">
                   {template.status || 'active'}
