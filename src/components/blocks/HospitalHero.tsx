@@ -1,8 +1,12 @@
 import React from 'react';
+import { getHeroBackgroundStyles } from '@/lib/utils';
 import Image from 'next/image';
 import Link from 'next/link';
 
 interface HospitalHeroContent {
+  gradientColor1?: string;
+  gradientColor2?: string;
+  gradientColor3?: string;
   bgColor?: string;
   badgeBgColor?: string;
   badgeText?: string;
@@ -45,8 +49,15 @@ export function HospitalHero({ content }: HospitalHeroProps) {
   const secondaryButtonTextColor = content?.secondaryButtonTextColor || '#ffffff';
   const image = content?.image || '/Hospital Management/Rectangle 197.png';
 
+  
+  const bgStyles = getHeroBackgroundStyles({
+    gradientColor1: content?.gradientColor1,
+    gradientColor2: content?.gradientColor2,
+    gradientColor3: content?.gradientColor3,
+  }, { backgroundColor: bgColor });
+
   return (
-    <section className="relative min-h-[80vh] flex items-center pt-40 pb-16 px-6 overflow-hidden" style={{ backgroundColor: bgColor }}>
+    <section className="relative min-h-[80vh] flex items-center pt-40 pb-16 px-6 overflow-hidden" style={bgStyles}>
       <div className="container mx-auto max-w-7xl relative z-10">
         <div className="flex flex-col lg:flex-row items-center justify-between gap-12">
           {/* Content */}

@@ -1,12 +1,16 @@
 'use client';
 
 import React from 'react';
+import { getHeroBackgroundStyles } from '@/lib/utils';
 import { motion } from 'framer-motion';
 import { ArrowRight } from 'lucide-react';
 import Link from 'next/link';
 import { useCtaAction, type CtaFormType } from '@/hooks/useCtaAction';
 
 export interface RetailHeroContent {
+  gradientColor1?: string;
+  gradientColor2?: string;
+  gradientColor3?: string;
   bgColor?: string;
   badgeBgColor?: string;
   badgeText?: string;
@@ -39,8 +43,15 @@ export function RetailHero({ content }: { content: RetailHeroContent }) {
   const buttonTextColor = content?.buttonTextColor || '#472393';
   const image = content?.image || '/industry-solution-Retail/banner-image.png';
 
+  
+  const bgStyles = getHeroBackgroundStyles({
+    gradientColor1: content?.gradientColor1,
+    gradientColor2: content?.gradientColor2,
+    gradientColor3: content?.gradientColor3,
+  }, { backgroundColor: bgColor });
+
   return (
-    <section className="relative w-full min-h-[80vh] flex items-center pt-40 pb-16 overflow-hidden" style={{ backgroundColor: bgColor }}>
+    <section className="relative w-full min-h-[80vh] flex items-center pt-40 pb-16 overflow-hidden" style={bgStyles}>
       <div className="container mx-auto px-4 md:px-8 max-w-7xl">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
 

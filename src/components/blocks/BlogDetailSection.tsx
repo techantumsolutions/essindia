@@ -218,7 +218,7 @@ export function BlogDetailSection({ content }: BlogDetailSectionProps) {
         <div className="relative max-w-4xl mx-auto flex flex-col items-center">
           <motion.button
             whileHover={{ scale: 1.05 }}
-            onClick={() => navigate('/blog')}
+            onClick={() => navigate('/blogs')}
             className="px-5 py-1.5 rounded-full bg-white text-[#0A2E2A] text-xs font-bold shadow-md uppercase tracking-wider  border border-slate-100 flex items-center gap-2 cursor-pointer hover:bg-slate-50 transition-colors"
           >
             <ArrowLeft className="w-3 h-3" />
@@ -374,7 +374,7 @@ export function BlogDetailSection({ content }: BlogDetailSectionProps) {
           <div className="flex items-center justify-between">
             <h3 className="text-xl font-black text-slate-800 uppercase tracking-wider">Latest Blog</h3>
             <button
-              onClick={() => navigate('/blog')}
+              onClick={() => navigate('/blogs')}
               className="text-[#103D38] hover:text-[#0A2E2A] text-xs font-black uppercase tracking-wider flex items-center gap-1.5 cursor-pointer group hover:underline"
             >
               View Portfolio

@@ -1,11 +1,15 @@
 'use client';
 
 import React from 'react';
+import { getHeroBackgroundStyles } from '@/lib/utils';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useCtaAction, type CtaFormType } from '@/hooks/useCtaAction';
 
 interface StaffingHeroContent {
+  gradientColor1?: string;
+  gradientColor2?: string;
+  gradientColor3?: string;
   bgColor?: string;
   badgeBgColor?: string;
   badgeBorderColor?: string;
@@ -42,8 +46,15 @@ export function StaffingHero({ content }: StaffingHeroProps) {
   const buttonUrl = content?.buttonUrl || '#contact';
   const image = content?.image || '/Staffing Services/image 54.png';
 
+  
+  const bgStyles = getHeroBackgroundStyles({
+    gradientColor1: content?.gradientColor1,
+    gradientColor2: content?.gradientColor2,
+    gradientColor3: content?.gradientColor3,
+  }, { backgroundColor: bgColor });
+
   return (
-    <section className="relative min-h-[80vh] flex items-center pt-40 pb-16 px-6" style={{ backgroundColor: bgColor }}>
+    <section className="relative min-h-[80vh] flex items-center pt-40 pb-16 px-6" style={bgStyles}>
       <div className="container mx-auto max-w-7xl">
         <div className="flex flex-col lg:flex-row items-center gap-12 lg:gap-20">
 

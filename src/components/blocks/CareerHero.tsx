@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import { getHeroBackgroundStyles } from '@/lib/utils';
 import { motion } from 'framer-motion';
 
 export default function CareerHero({ content }: { content?: any }) {
@@ -11,15 +12,24 @@ export default function CareerHero({ content }: { content?: any }) {
     bgImage = '/Career-Page/Career.png'
   } = content || {};
 
+  
+  const bgStyles = getHeroBackgroundStyles({
+    gradientColor1: content?.gradientColor1,
+    gradientColor2: content?.gradientColor2,
+    gradientColor3: content?.gradientColor3,
+  }, undefined);
+
   return (
-    <section className="relative min-h-[80vh] flex items-center justify-center overflow-hidden px-6 pt-40 pb-16">
+    <section className="relative min-h-[80vh] flex items-center justify-center overflow-hidden px-6 pt-40 pb-16" style={bgStyles}>
       {/* Background Image */}
-      <div
-        className="absolute inset-0 z-0 bg-cover bg-center bg-no-repeat"
-        style={{ backgroundImage: `url("${bgImage}")` }}
-      >
-        <div className="absolute inset-0 bg-black/40" /> {/* Optional overlay for text readability */}
-      </div>
+      {!(content?.gradientColor1 || content?.gradientColor2 || content?.gradientColor3) && (
+        <div
+          className="absolute inset-0 z-0 bg-cover bg-center bg-no-repeat"
+          style={{ backgroundImage: `url("${bgImage}")` }}
+        >
+          <div className="absolute inset-0 bg-black/40" />
+        </div>
+      )}
 
       <div className="container mx-auto px-4 relative z-10 flex flex-col items-center text-center mt-20">
         <motion.div

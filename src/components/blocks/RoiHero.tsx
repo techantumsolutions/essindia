@@ -1,12 +1,16 @@
 'use client';
 
 import React from 'react';
+import { getHeroBackgroundStyles } from '@/lib/utils';
 import Image from 'next/image';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { useCtaAction, type CtaFormType } from '@/hooks/useCtaAction';
 
 interface RoiHeroContent {
+  gradientColor1?: string;
+  gradientColor2?: string;
+  gradientColor3?: string;
   bgColor?: string;
   badgeBgColor?: string;
   badgeBorderColor?: string;
@@ -64,9 +68,11 @@ export function RoiHero({ content }: { content?: RoiHeroContent }) {
   const rightImage = content?.image || '/BI-ROI caluculator/image 123.png';
 
   const hasCustomBg = content?.bgColor && content.bgColor !== '#13444f';
-  const bgStyles = hasCustomBg
-    ? { backgroundColor: bgColor }
-    : { backgroundImage: 'linear-gradient(135deg, #13444f 0%, #0e3038 100%)' };
+  const bgStyles = getHeroBackgroundStyles({
+    gradientColor1: content?.gradientColor1,
+    gradientColor2: content?.gradientColor2,
+    gradientColor3: content?.gradientColor3,
+  }, hasCustomBg ? { backgroundColor: bgColor } : { backgroundImage: 'linear-gradient(135deg, #13444f 0%, #0e3038 100%)' });
 
   return (
     <section

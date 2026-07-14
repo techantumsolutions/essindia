@@ -1,9 +1,13 @@
 'use client';
 
 import React from 'react';
+import { getHeroBackgroundStyles } from '@/lib/utils';
 import { motion } from 'framer-motion';
 
 interface QualityHeroContent {
+  gradientColor1?: string;
+  gradientColor2?: string;
+  gradientColor3?: string;
   badge?: string;
   title?: string;
   subtitle?: string;
@@ -20,12 +24,17 @@ export function QualityHero({ content }: QualityHeroProps) {
   const subtitle = content?.subtitle || 'Since beginning our quality journey in 1998, ESS has continuously evolved its systems, processes, and delivery standards to build a strong culture of excellence and innovation.';
   const bgImage = content?.bgImage || '/QualityPolicy/BgGradient.png';
 
+  
+  const bgStyles = getHeroBackgroundStyles({
+    gradientColor1: content?.gradientColor1,
+    gradientColor2: content?.gradientColor2,
+    gradientColor3: content?.gradientColor3,
+  }, { background: `url('${bgImage}') no-repeat center center / cover` });
+
   return (
     <section 
       className="relative w-full min-h-[80vh] flex flex-col items-center justify-center pt-40 pb-16 overflow-hidden text-center"
-      style={{
-        background: `url('${bgImage}') no-repeat center center / cover`
-      }}
+      style={bgStyles}
     >
       {/* Decorative subtle ambient lights */}
       <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-white/10 to-transparent pointer-events-none" />

@@ -6,6 +6,7 @@ import { TextReveal } from '@/components/animations/TextReveal';
 import { MotionSection } from '@/components/animations/MotionSection';
 
 import { useCtaAction, type CtaFormType } from '@/hooks/useCtaAction';
+import { getHeroBackgroundStyles } from '@/lib/utils';
 
 interface HeroCta {
   label: string;
@@ -19,6 +20,10 @@ interface HeroContent {
   primaryCta?: HeroCta;
   secondaryCta?: HeroCta;
   image?: string;
+  bgColor?: string;
+  gradientColor1?: string;
+  gradientColor2?: string;
+  gradientColor3?: string;
 }
 
 interface HeroSectionProps {
@@ -36,8 +41,18 @@ export function HeroSection({ content }: HeroSectionProps) {
   const { handleClick: handlePrimaryClick, modalNode: primaryModal } = useCtaAction(primaryCta.url, primaryCta.formType as CtaFormType);
   const { handleClick: handleSecondaryClick, modalNode: secondaryModal } = useCtaAction(secondaryCta.url, secondaryCta.formType as CtaFormType);
 
+  const hasBg = content?.bgColor || content?.gradientColor1 || content?.gradientColor2 || content?.gradientColor3;
+  const bgStyles = getHeroBackgroundStyles({
+    gradientColor1: content?.gradientColor1,
+    gradientColor2: content?.gradientColor2,
+    gradientColor3: content?.gradientColor3,
+  }, content?.bgColor ? { backgroundColor: content.bgColor } : undefined);
+
   return (
-    <section className="relative min-h-[80vh] flex items-center pt-40 pb-16 overflow-hidden bg-white border-b border-gray-200">
+    <section 
+      className="relative min-h-[80vh] flex items-center pt-40 pb-16 overflow-hidden bg-white border-b border-gray-200"
+      style={hasBg ? bgStyles : undefined}
+    >
       {/* Background Dotted Pattern */}
       <div 
         className="absolute inset-0 z-0 opacity-20" 

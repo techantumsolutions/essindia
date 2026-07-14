@@ -1,11 +1,15 @@
 'use client';
 
 import React from 'react';
+import { getHeroBackgroundStyles } from '@/lib/utils';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useCtaAction, type CtaFormType } from '@/hooks/useCtaAction';
 
 interface FmcgHeroContent {
+  gradientColor1?: string;
+  gradientColor2?: string;
+  gradientColor3?: string;
   bgColor?: string;
   badgeBgColor?: string;
   badgeBorderColor?: string;
