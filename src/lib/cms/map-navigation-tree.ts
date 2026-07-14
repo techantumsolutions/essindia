@@ -30,6 +30,7 @@ export function mapNavigationTreeToNavItems(
         url: item.url,
         megaMenuEnabled: item.megaMenuEnabled,
         megaMenu,
+        megaMenuConfig: item.megaMenuConfig,
         children,
       };
     });

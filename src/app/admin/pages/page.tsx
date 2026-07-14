@@ -9,7 +9,6 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
 import type { PageRegistryRow } from '@/lib/cms/types';
-import { PageCreateWizard, type PageCreateFormData } from './PageCreateWizard';
 
 function PagesModuleContent() {
   const router = useRouter();
@@ -20,7 +19,6 @@ function PagesModuleContent() {
     Array<{ id: string; name: string; templateSections?: unknown[] }>
   >([]);
   const [isLoading, setIsLoading] = React.useState(true);
-  const [isModalOpen, setIsModalOpen] = React.useState(false);
   const [searchQuery, setSearchQuery] = React.useState('');
   const [currentPage, setCurrentPage] = React.useState(1);
   const itemsPerPage = 10;
@@ -43,9 +41,9 @@ function PagesModuleContent() {
 
   React.useEffect(() => {
     if (searchParams.get('createPage') === 'true') {
-      setIsModalOpen(true);
+      router.push('/admin/pages/new');
     }
-  }, [searchParams]);
+  }, [searchParams, router]);
   const fetchData = React.useCallback(async (signal?: AbortSignal) => {
     setIsLoading(true);
     const requestInit: RequestInit = { credentials: 'same-origin', signal };
@@ -83,31 +81,7 @@ function PagesModuleContent() {
     return () => controller.abort();
   }, [fetchData]);
 
-  const handleCreate = async (form: PageCreateFormData) => {
-    try {
-      const res = await fetch('/api/admin/pages', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          title: form.title,
-          slug: form.slug || undefined,
-          status: 'draft',
-          templateId: form.templateId || null,
-          navigationItemId: form.navigationItemId || null,
-          categoryId: form.categoryId || null,
-          megaMenuCategoryId: form.megaMenuCategoryId || null,
-          megaMenuSubCategoryId: form.megaMenuSubCategoryId || null,
-          megaMenuSubSubCategoryId: form.megaMenuSubSubCategoryId || null,
-        }),
-      });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error || 'Failed to create page');
-      toast.success('Page created as draft');
-      router.push(`/admin/pages/${data.id}`);
-    } catch (e: unknown) {
-      toast.error(e instanceof Error ? e.message : 'Failed to create page');
-    }
-  };
+
 
   const handleSyncRegistry = async () => {
     setIsSyncing(true);
@@ -163,9 +137,11 @@ function PagesModuleContent() {
           <p className="text-slate-500">Manage your website hierarchy and content structure.</p>
         </div>
         <div className="flex gap-2">
-          <Button size="sm" onClick={() => setIsModalOpen(true)}>
-            <Plus /> New page
-          </Button>
+          <Link href="/admin/pages/new">
+            <Button size="sm">
+              <Plus /> New page
+            </Button>
+          </Link>
         </div>
       </div>
 
@@ -237,12 +213,6 @@ function PagesModuleContent() {
         </div>
       </div>
 
-      <PageCreateWizard
-        open={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-        templates={templates}
-        onSubmit={handleCreate}
-      />
     </motion.div>
   );
 }

@@ -6,6 +6,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { ALL_COUNTRIES_LIST } from '@/lib/countries';
 import countryCodesList from 'country-codes-list';
 import { toast } from 'sonner';
+import { validatePhoneNumber } from '@/lib/phone-validation';
 
 const DIAL_CODES = (countryCodesList.customArray({
   name: '{countryNameEn}',
@@ -87,7 +88,18 @@ export function ContactFormFaq({ content }: { content?: ContactFormFaqContent })
       toast.error('Please accept the privacy policy to continue.');
       return;
     }
-    
+
+    if (!selectedCountry) {
+      toast.error('Please select a country.');
+      return;
+    }
+
+    const validation = validatePhoneNumber(formData.phone, selectedDialCode);
+    if (!validation.isValid) {
+      toast.error(validation.message);
+      return;
+    }
+
     setIsSubmitting(true);
     try {
       const dialInfo = DIAL_CODES.find((c) => c.code === selectedDialCode);

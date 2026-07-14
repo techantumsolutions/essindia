@@ -60,6 +60,12 @@ export default function CareerDetailClient({ job }: CareerDetailClientProps) {
       return;
     }
 
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      toast.error('Please enter a valid email address.');
+      return;
+    }
+
     setIsSubmitting(true);
     try {
       const formData = new FormData();

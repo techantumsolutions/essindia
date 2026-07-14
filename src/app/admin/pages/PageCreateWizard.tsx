@@ -24,10 +24,11 @@ export type PageCreateFormData = {
 };
 
 type Props = {
-  open: boolean;
-  onClose: () => void;
+  open?: boolean;
+  onClose?: () => void;
   templates: Array<{ id: string; name: string; templateSections?: unknown[] }>;
   onSubmit: (data: PageCreateFormData) => Promise<void>;
+  fullPage?: boolean;
 };
 
 const emptyForm: PageCreateFormData = {
@@ -73,7 +74,7 @@ function NativeSelect({
       onMouseDown={(e) => e.stopPropagation()}
       onClick={(e) => e.stopPropagation()}
       className={cn(
-        'w-full bg-slate-50 rounded-2xl px-6 py-4 font-bold outline-none focus:ring-4 focus:ring-[#4B2A63]/10 disabled:opacity-50 disabled:cursor-not-allowed',
+        'w-full bg-slate-50 rounded-2xl px-6 py-4 font-bold outline-none border border-slate-200 focus:border-[#4B2A63]/30 focus:ring-4 focus:ring-[#4B2A63]/10 disabled:opacity-50 disabled:cursor-not-allowed',
         className
       )}
     >
@@ -82,7 +83,7 @@ function NativeSelect({
   );
 }
 
-export function PageCreateWizard({ open, onClose, templates, onSubmit }: Props) {
+export function PageCreateWizard({ open, onClose, templates, onSubmit, fullPage = false }: Props) {
   const searchParams = useSearchParams();
   const templateIdParam = searchParams.get('templateId') || '';
   const [form, setForm] = React.useState<PageCreateFormData>(emptyForm);
@@ -95,7 +96,7 @@ export function PageCreateWizard({ open, onClose, templates, onSubmit }: Props) 
   const [loadError, setLoadError] = React.useState<string | null>(null);
 
   React.useEffect(() => {
-    if (!open) return;
+    if (!open && !fullPage) return;
 
     setForm({
       ...emptyForm,
@@ -122,7 +123,7 @@ export function PageCreateWizard({ open, onClose, templates, onSubmit }: Props) 
         toast.error(message);
       })
       .finally(() => setLoading(false));
-  }, [open]);
+  }, [open, fullPage, templateIdParam]);
 
   // Fetch mega menu when nav item changes
   React.useEffect(() => {
@@ -199,11 +200,220 @@ export function PageCreateWizard({ open, onClose, templates, onSubmit }: Props) 
     setSubmitting(true);
     try {
       await onSubmit(form);
-      onClose();
+      if (onClose) onClose();
     } finally {
       setSubmitting(false);
     }
   };
+
+  if (fullPage) {
+    return (
+      <div className="w-full space-y-6">
+        <div className="flex items-center justify-between pb-2 border-b border-slate-100">
+          <div>
+            <h1 className="font-semibold text-slate-900 text-2xl">Create New Page</h1>
+            <p className="text-sm text-slate-500">Place the page directly in your website Navigation hierarchy</p>
+          </div>
+        </div>
+
+        <div className="bg-white rounded-[32px] border border-slate-100 p-8 md:p-10 shadow-[0_20px_50px_-15px_rgba(0,0,0,0.03)] flex flex-col space-y-8">
+          {loading ? (
+            <p className="text-slate-400 text-center py-8">Loading…</p>
+          ) : loadError ? (
+            <p className="text-amber-600 text-center py-8 text-sm">{loadError}</p>
+          ) : (
+            <>
+              {/* Placement & Details */}
+              <section className="space-y-4">
+                <h3 className="text-sm font-bold text-slate-700">Navigation placement</h3>
+
+                <div>
+                  <FieldLabel>Menu item (Nav Bar)</FieldLabel>
+                  <NativeSelect
+                    value={form.navigationItemId}
+                    onChange={(navigationItemId) => setForm({ ...form, navigationItemId })}
+                  >
+                    <option value="">None — unlinked page</option>
+                    {navItems.map((n) => (
+                      <option key={n.id} value={n.id}>
+                        {n.label} {n.megaMenuEnabled ? '(Mega Menu)' : ''}
+                      </option>
+                    ))}
+                  </NativeSelect>
+                </div>
+
+                {megaMenuLoading ? (
+                  <p className="text-xs text-slate-400 animate-pulse pl-2">Loading Mega Menu structure...</p>
+                ) : megaMenu ? (
+                  <div className="space-y-3 pt-4 border-t border-slate-50">
+                    <div>
+                      <h4 className="text-sm font-bold text-slate-900 flex items-center gap-2">
+                        <Layers className="w-4 h-4 text-[#4B2A63]" />
+                        Mega Menu Linking (Optional)
+                      </h4>
+                      <p className="text-xs text-slate-500 mt-1">
+                        Select the parent item. This page will be added as a new link underneath it.
+                      </p>
+                    </div>
+
+                    <div className="space-y-3 pl-4 border-l-2 border-slate-100">
+                      <div>
+                        <FieldLabel>Category (Tab)</FieldLabel>
+                        <NativeSelect
+                          value={form.megaMenuCategoryId}
+                          onChange={(val) => {
+                            const c = megaMenu.categories.find(x => x.id === val);
+                            setForm({ 
+                              ...form, 
+                              megaMenuCategoryId: val,
+                              megaMenuSubCategoryId: '',
+                              megaMenuSubSubCategoryId: '',
+                              title: c ? c.name : form.title
+                            });
+                          }}
+                        >
+                          <option value="">None — do not link in Mega Menu</option>
+                          {megaMenu.categories.map((c) => (
+                            <option key={c.id} value={c.id}>{c.name}</option>
+                          ))}
+                        </NativeSelect>
+                      </div>
+
+                      {form.megaMenuCategoryId && activeCategory && activeCategory.subCategories.length > 0 && (
+                        <div>
+                          <FieldLabel>Sub Category (Panel)</FieldLabel>
+                          <NativeSelect
+                            value={form.megaMenuSubCategoryId}
+                            onChange={(val) => {
+                              const s = activeCategory?.subCategories.find(x => x.id === val);
+                              setForm({ 
+                                ...form, 
+                                megaMenuSubCategoryId: val,
+                                megaMenuSubSubCategoryId: '',
+                                title: s ? s.name : form.title
+                              });
+                            }}
+                          >
+                            <option value="">None — create as a Sub Category Panel instead</option>
+                            {activeCategory.subCategories.map((s) => (
+                              <option key={s.id} value={s.id}>{s.name}</option>
+                            ))}
+                          </NativeSelect>
+                        </div>
+                      )}
+
+                      {form.megaMenuSubCategoryId && activeSubCategory && activeSubCategory.subSubCategories.length > 0 && (
+                        <div>
+                          <FieldLabel>Leaf Link (Grid Link)</FieldLabel>
+                          <NativeSelect
+                            value={form.megaMenuSubSubCategoryId}
+                            onChange={(val) => {
+                              const l = activeSubCategory?.subSubCategories.find(x => x.id === val);
+                              setForm({ 
+                                ...form, 
+                                megaMenuSubSubCategoryId: val,
+                                title: l ? l.name : form.title
+                              });
+                            }}
+                          >
+                            <option value="">None — create as a Leaf Link instead</option>
+                            {activeSubCategory.subSubCategories.map((l) => (
+                              <option key={l.id} value={l.id}>{l.name}</option>
+                            ))}
+                          </NativeSelect>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                ) : null}
+              </section>
+
+              <section className="space-y-4">
+                <h3 className="text-sm font-bold text-slate-700">Page details</h3>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <FieldLabel>Title</FieldLabel>
+                    <input
+                      placeholder="Page title"
+                      value={form.title}
+                      onChange={(e) => setForm({ ...form, title: e.target.value })}
+                      disabled={!!form.megaMenuCategoryId}
+                      className="w-full bg-slate-50 border border-slate-200 focus:border-[#4B2A63]/30 rounded-2xl px-6 py-4 font-bold outline-none focus:ring-4 focus:ring-[#4B2A63]/10 disabled:opacity-50 disabled:cursor-not-allowed"
+                    />
+                  </div>
+                  <div>
+                    <FieldLabel>URL slug</FieldLabel>
+                    <input
+                      placeholder="auto-generated from title"
+                      value={form.slug}
+                      onChange={(e) => setForm({ ...form, slug: e.target.value })}
+                      className="w-full bg-slate-50 border border-slate-200 focus:border-[#4B2A63]/30 rounded-2xl px-6 py-4 font-bold outline-none focus:ring-4 focus:ring-[#4B2A63]/10"
+                    />
+                  </div>
+                </div>
+
+                {routePreview && (
+                  <div className="rounded-2xl bg-[#4B2A63]/5 border border-[#4B2A63]/10 px-5 py-4">
+                    <p className="text-[10px] font-black text-[#4B2A63] uppercase tracking-widest mb-1">
+                      Route preview
+                    </p>
+                    <p className="font-mono text-sm text-slate-700">{routePreview}</p>
+                  </div>
+                )}
+
+                <div>
+                  <FieldLabel>Template (optional)</FieldLabel>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                    <button
+                      type="button"
+                      onClick={() => setForm({ ...form, templateId: '' })}
+                      className={cn(
+                        'p-4 rounded-2xl border-2 text-left font-bold text-sm transition-all',
+                        !form.templateId
+                          ? 'border-[#4B2A63] bg-[#4B2A63] text-white'
+                          : 'border-slate-100 hover:border-slate-200'
+                      )}
+                    >
+                      Blank Page
+                    </button>
+                    {templates.map((t) => (
+                      <button
+                        key={t.id}
+                        type="button"
+                        onClick={() => setForm({ ...form, templateId: t.id })}
+                        className={cn(
+                          'p-4 rounded-2xl border-2 text-left font-bold text-sm transition-all',
+                          form.templateId === t.id
+                            ? 'border-[#4B2A63] bg-[#4B2A63] text-white'
+                            : 'border-slate-100 hover:border-slate-200'
+                        )}
+                      >
+                        {t.name}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              </section>
+
+              <div className="pt-6 border-t border-slate-100 flex justify-between items-center gap-3">
+                <Button variant="ghost" onClick={() => window.history.back()} className="rounded-full px-8" disabled={submitting}>
+                  Cancel
+                </Button>
+                <Button
+                  type="button"
+                  onClick={submit}
+                  disabled={loading || submitting || !form.title.trim()}
+                  className="bg-[#4B2A63] hover:bg-[#3B198F] text-white rounded-full px-10 h-12 font-bold"
+                >
+                  {submitting ? 'Creating…' : 'Create Page'}
+                </Button>
+              </div>
+            </>
+          )}
+        </div>
+      </div>
+    );
+  }
 
   if (!open) return null;
 
@@ -356,7 +566,7 @@ export function PageCreateWizard({ open, onClose, templates, onSubmit }: Props) 
                         onChange={(e) => setForm({ ...form, title: e.target.value })}
                         disabled={!!form.megaMenuCategoryId}
                         onMouseDown={(e) => e.stopPropagation()}
-                        className="w-full bg-slate-50 rounded-2xl px-6 py-4 font-bold outline-none focus:ring-4 focus:ring-[#4B2A63]/10 disabled:opacity-50 disabled:cursor-not-allowed"
+                        className="w-full bg-slate-50 border border-slate-200 focus:border-[#4B2A63]/30 rounded-2xl px-6 py-4 font-bold outline-none focus:ring-4 focus:ring-[#4B2A63]/10 disabled:opacity-50 disabled:cursor-not-allowed"
                       />
                     </div>
                     <div>
@@ -366,7 +576,7 @@ export function PageCreateWizard({ open, onClose, templates, onSubmit }: Props) 
                         value={form.slug}
                         onChange={(e) => setForm({ ...form, slug: e.target.value })}
                         onMouseDown={(e) => e.stopPropagation()}
-                        className="w-full bg-slate-50 rounded-2xl px-6 py-4 font-bold outline-none focus:ring-4 focus:ring-[#4B2A63]/10"
+                        className="w-full bg-slate-50 border border-slate-200 focus:border-[#4B2A63]/30 rounded-2xl px-6 py-4 font-bold outline-none focus:ring-4 focus:ring-[#4B2A63]/10"
                       />
                     </div>
                   </div>
