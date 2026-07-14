@@ -59,7 +59,7 @@ const navGroups = [
     label: 'Marketing & SEO',
     items: [
       { icon: Shield, label: 'SEO Settings', href: '/admin/seo' },
-      { icon: MessageSquare, label: 'Forms & Leads', href: '/admin/forms' },
+      { icon: MessageSquare, label: 'Forms', href: '/admin/forms' },
       // { icon: BarChart3, label: 'Analytics', href: '/admin/analytics' },
     ]
   },
@@ -104,13 +104,16 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         className="fixed inset-y-0 left-0 bg-[#172033] text-white z-50 flex flex-col border-r border-white/5"
       >
         {/* Brand Header */}
-        <div 
+        <div
           onClick={() => setIsSidebarOpen(!isSidebarOpen)}
           className="h-16 flex items-center px-4 border-b border-white/10 shrink-0 cursor-pointer hover:bg-white/5 transition-colors"
         >
-          <div className="w-9 h-9 rounded-lg bg-white flex items-center justify-center shrink-0 overflow-hidden border border-white/10">
+          <div className={cn(
+            "rounded-lg bg-white flex items-center justify-center shrink-0 overflow-hidden border border-white/10 transition-all duration-300",
+            isSidebarOpen ? "w-full h-12 p-1" : "w-9 h-9 p-0.5"
+          )}>
             {logoUrl ? (
-              <img src={logoUrl} alt="Website logo" className="h-full w-full object-contain p-1" />
+              <img src={logoUrl} alt="Website logo" className="h-full w-full object-contain" />
             ) : (
               <Monitor className="w-4 h-4 text-[#4B2A63]" />
             )}
@@ -123,8 +126,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                 exit={{ opacity: 0, x: -10 }}
                 className="ml-3 overflow-hidden whitespace-nowrap"
               >
-                <span className="block text-sm font-semibold">Content Manager</span>
-                <span className="block text-[10px] text-white/45 font-medium">Administration</span>
+
               </motion.div>
             )}
           </AnimatePresence>
