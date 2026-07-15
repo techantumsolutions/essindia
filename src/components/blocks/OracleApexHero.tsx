@@ -4,8 +4,12 @@ import React from 'react';
 import Image from 'next/image';
 import { motion } from 'framer-motion';
 import { useCtaAction, type CtaFormType } from '@/hooks/useCtaAction';
+import { getHeroBackgroundStyles } from '@/lib/utils';
 
 interface OracleApexHeroContent {
+  gradientColor1?: string;
+  gradientColor2?: string;
+  gradientColor3?: string;
   bgColor?: string;
   badgeBgColor?: string;
   badgeBorderColor?: string;
@@ -63,10 +67,16 @@ export function OracleApexHero({ content }: { content?: OracleApexHeroContent })
 
   const isGradient = bgColor.includes('gradient') || bgColor.includes('rgba') || bgColor.startsWith('linear') || bgColor.startsWith('radial');
 
+  const bgStyles = getHeroBackgroundStyles({
+    gradientColor1: content?.gradientColor1,
+    gradientColor2: content?.gradientColor2,
+    gradientColor3: content?.gradientColor3,
+  }, isGradient ? { backgroundImage: bgColor } : { backgroundColor: bgColor });
+
   return (
     <section
       className="relative min-h-[80vh] flex items-center pt-40 pb-16 overflow-hidden font-sans"
-      style={isGradient ? { backgroundImage: bgColor } : { backgroundColor: bgColor }}
+      style={bgStyles}
     >
       {/* Background Subtle Pattern */}
       <div className="absolute inset-0 opacity-5 mix-blend-overlay pointer-events-none bg-[radial-gradient(#fff_1.2px,transparent_1.2px)] [background-size:24px_24px]" />

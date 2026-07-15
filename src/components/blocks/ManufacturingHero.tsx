@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import { getHeroBackgroundStyles } from '@/lib/utils';
 import { motion } from 'framer-motion';
 
 export default function ManufacturingHero({ content }: { content?: any }) {
@@ -22,8 +23,15 @@ export default function ManufacturingHero({ content }: { content?: any }) {
   const secondaryButtonUrl = content?.secondaryButtonUrl || '/contact';
   const image = content?.image || '/Modules-manufacturing/Banner-image.png';
 
+  
+  const bgStyles = getHeroBackgroundStyles({
+    gradientColor1: content?.gradientColor1,
+    gradientColor2: content?.gradientColor2,
+    gradientColor3: content?.gradientColor3,
+  }, { backgroundColor: bgColor });
+
   return (
-    <section className="relative min-h-[80vh] flex items-center pt-40 pb-16 px-6 overflow-hidden" style={{ backgroundColor: bgColor }}>
+    <section className="relative min-h-[80vh] flex items-center pt-40 pb-16 px-6 overflow-hidden" style={bgStyles}>
       <div className="container mx-auto max-w-7xl relative z-10">
         <div className="grid lg:grid-cols-2 gap-12 lg:gap-8 items-center">
 

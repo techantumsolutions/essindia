@@ -31,6 +31,18 @@ export const SECTION_REGISTRY: SectionTypeDefinition[] = [
     color: 'bg-blue-50 text-blue-600',
     defaultVariant: 'default',
     supportsVariants: true,
+  
+    fieldOrder: [
+      'bgColor',
+      'gradientColor1',
+      'gradientColor2',
+      'gradientColor3',
+      'title',
+      'subtitle',
+      'primaryCta',
+      'secondaryCta',
+      'image'
+    ],
   },
   {
     type: 'trusted-brands',
@@ -124,6 +136,9 @@ export const SECTION_REGISTRY: SectionTypeDefinition[] = [
     supportsVariants: false,
     fieldOrder: [
       'bgColor',
+      'gradientColor1',
+      'gradientColor2',
+      'gradientColor3',
       'badgeBgColor',
       'badgeText',
       'badgeColor',
@@ -203,6 +218,9 @@ export const SECTION_REGISTRY: SectionTypeDefinition[] = [
     supportsVariants: false,
     fieldOrder: [
       'bgColor',
+      'gradientColor1',
+      'gradientColor2',
+      'gradientColor3',
       'badgeBgColor',
       'badgeText',
       'badgeTextColor',
@@ -290,6 +308,9 @@ export const SECTION_REGISTRY: SectionTypeDefinition[] = [
     supportsVariants: false,
     fieldOrder: [
       'bgColor',
+      'gradientColor1',
+      'gradientColor2',
+      'gradientColor3',
       'badgeBgColor',
       'badgeText',
       'badgeTextColor',
@@ -366,7 +387,11 @@ export const SECTION_REGISTRY: SectionTypeDefinition[] = [
     color: 'bg-indigo-50 text-indigo-600',
     defaultVariant: 'default',
     supportsVariants: false,
-    fieldOrder: ['badge', 'title', 'description', 'image'],
+    fieldOrder: [
+      'bgColor',
+      'gradientColor1',
+      'gradientColor2',
+      'gradientColor3','badge', 'title', 'description', 'image'],
   },
   {
     type: 'employee-spotlight-cards',
@@ -386,7 +411,11 @@ export const SECTION_REGISTRY: SectionTypeDefinition[] = [
     color: 'bg-indigo-50 text-indigo-600',
     defaultVariant: 'default',
     supportsVariants: false,
-    fieldOrder: ['bgImage', 'ctaText', 'title', 'description'],
+    fieldOrder: ['bgColor',
+      'gradientColor1',
+      'gradientColor2',
+      'gradientColor3',
+      'bgImage', 'ctaText', 'title', 'description'],
   },
   {
     type: 'career-why-join',
@@ -509,6 +538,16 @@ export const SECTION_REGISTRY: SectionTypeDefinition[] = [
     color: 'bg-indigo-50 text-indigo-600',
     defaultVariant: 'default',
     supportsVariants: false,
+  
+    fieldOrder: [
+      'bgColor',
+      'gradientColor1',
+      'gradientColor2',
+      'gradientColor3',
+      'title',
+      'description',
+      'image'
+    ],
   },
   {
     type: 'quality-content',
@@ -547,6 +586,9 @@ export const SECTION_REGISTRY: SectionTypeDefinition[] = [
     supportsVariants: false,
     fieldOrder: [
       'bgColor',
+      'gradientColor1',
+      'gradientColor2',
+      'gradientColor3',
       'badgeBgColor',
       'badgeText',
       'badgeTextColor',
@@ -615,6 +657,9 @@ export const SECTION_REGISTRY: SectionTypeDefinition[] = [
     supportsVariants: false,
     fieldOrder: [
       'bgColor',
+      'gradientColor1',
+      'gradientColor2',
+      'gradientColor3',
       'badgeBgColor',
       'badgeBorderColor',
       'badgeText',
@@ -678,7 +723,11 @@ export const SECTION_REGISTRY: SectionTypeDefinition[] = [
     color: 'bg-emerald-50 text-emerald-600',
     defaultVariant: 'default',
     supportsVariants: false,
-    fieldOrder: ['subtitle', 'bgImage', 'title', 'description', 'items'],
+    fieldOrder: ['subtitle', 'bgColor',
+      'gradientColor1',
+      'gradientColor2',
+      'gradientColor3',
+      'bgImage', 'title', 'description', 'items'],
   },
   {
     type: 'about-us-company-intro',
@@ -749,6 +798,9 @@ export const SECTION_REGISTRY: SectionTypeDefinition[] = [
     supportsVariants: false,
     fieldOrder: [
       'bgColor',
+      'gradientColor1',
+      'gradientColor2',
+      'gradientColor3',
       'badgeBgColor',
       'badgeText',
       'badgeTextColor',
@@ -800,6 +852,9 @@ export const SECTION_REGISTRY: SectionTypeDefinition[] = [
     supportsVariants: false,
     fieldOrder: [
       'bgColor',
+      'gradientColor1',
+      'gradientColor2',
+      'gradientColor3',
       'buttonText',
       'buttonTextColor',
       'buttonArrowColor',
@@ -824,6 +879,9 @@ export const SECTION_REGISTRY: SectionTypeDefinition[] = [
     supportsVariants: false,
     fieldOrder: [
       'bgColor',
+      'gradientColor1',
+      'gradientColor2',
+      'gradientColor3',
       'badgeBgColor',
       'badgeText',
       'badgeTextColor',
@@ -877,6 +935,9 @@ export const SECTION_REGISTRY: SectionTypeDefinition[] = [
     supportsVariants: false,
     fieldOrder: [
       'bgColor',
+      'gradientColor1',
+      'gradientColor2',
+      'gradientColor3',
       'badgeBgColor',
       'badgeBorderColor',
       'badgeText',
@@ -1082,6 +1143,9 @@ export const SECTION_REGISTRY: SectionTypeDefinition[] = [
     supportsVariants: false,
     fieldOrder: [
       'bgColor',
+      'gradientColor1',
+      'gradientColor2',
+      'gradientColor3',
       'badgeBgColor',
       'badgeBorderColor',
       'badgeText',
@@ -1218,6 +1282,9 @@ export const SECTION_REGISTRY: SectionTypeDefinition[] = [
     supportsVariants: false,
     fieldOrder: [
       'bgColor',
+      'gradientColor1',
+      'gradientColor2',
+      'gradientColor3',
       'badgeBgColor',
       'badgeBorderColor',
       'badgeText',
@@ -1288,6 +1355,9 @@ export const SECTION_REGISTRY: SectionTypeDefinition[] = [
     supportsVariants: false,
     fieldOrder: [
       'bgColor',
+      'gradientColor1',
+      'gradientColor2',
+      'gradientColor3',
       'badgeBgColor',
       'badgeBorderColor',
       'badgeText',
@@ -1376,6 +1446,9 @@ export const SECTION_REGISTRY: SectionTypeDefinition[] = [
     supportsVariants: false,
     fieldOrder: [
       'bgColor',
+      'gradientColor1',
+      'gradientColor2',
+      'gradientColor3',
       'badgeBgColor',
       'badgeBorderColor',
       'badgeText',
@@ -1497,6 +1570,9 @@ export const SECTION_REGISTRY: SectionTypeDefinition[] = [
     supportsVariants: false,
     fieldOrder: [
       'bgColor',
+      'gradientColor1',
+      'gradientColor2',
+      'gradientColor3',
       'badgeBgColor',
       'badgeText',
       'badgeTextColor',
@@ -1606,6 +1682,9 @@ export const SECTION_REGISTRY: SectionTypeDefinition[] = [
     supportsVariants: false,
     fieldOrder: [
       'bgColor',
+      'gradientColor1',
+      'gradientColor2',
+      'gradientColor3',
       'badgeText',
       'badgeBgColor',
       'badgeBorderColor',
@@ -1686,6 +1765,10 @@ export const SECTION_REGISTRY: SectionTypeDefinition[] = [
     defaultVariant: 'default',
     supportsVariants: false,
     fieldOrder: [
+      'bgColor',
+      'gradientColor1',
+      'gradientColor2',
+      'gradientColor3',
       'backgroundGradient',
       'badgeBorderColor', 'badgeBgColor', 'badgeText', 'badgeTextColor',
       'title', 'titleColor', 'description', 'descriptionColor',
@@ -1804,6 +1887,10 @@ export const SECTION_REGISTRY: SectionTypeDefinition[] = [
     defaultVariant: 'default',
     supportsVariants: false,
     fieldOrder: [
+      'bgColor',
+      'gradientColor1',
+      'gradientColor2',
+      'gradientColor3',
       'backgroundGradient',
       'badgeBorderColor', 'badgeBgColor', 'badgeText', 'badgeTextColor',
       'title', 'titleColor',

@@ -167,10 +167,10 @@ export function BlogDetailSection({ content }: BlogDetailSectionProps) {
 
   const conclusionHtml = content?.conclusionHtml || `
     <h3 class="text-xl font-bold text-slate-800 mb-4 mt-8">Conclusion</h3>
-    <p class="text-slate-600 leading-relaxed mb-6">
+    <p class="text-[#314158] leading-relaxed mb-6">
       Managing multi-system data flows requires smart tooling. By leveraging Power BI's robust modeling and integration layers, companies can eliminate data discrepancies, streamline reporting, and make decisions with absolute confidence.
     </p>
-    <p class="text-slate-600 leading-relaxed">
+    <p class="text-[#314158] leading-relaxed">
       If you are ready to resolve your data mismatches and establish a single source of truth, reach out to our team of Business Intelligence experts today.
     </p>
   `;
@@ -218,7 +218,7 @@ export function BlogDetailSection({ content }: BlogDetailSectionProps) {
         <div className="relative max-w-4xl mx-auto flex flex-col items-center">
           <motion.button
             whileHover={{ scale: 1.05 }}
-            onClick={() => navigate('/blog')}
+            onClick={() => navigate('/blogs')}
             className="px-5 py-1.5 rounded-full bg-white text-[#0A2E2A] text-xs font-bold shadow-md uppercase tracking-wider  border border-slate-100 flex items-center gap-2 cursor-pointer hover:bg-slate-50 transition-colors"
           >
             <ArrowLeft className="w-3 h-3" />
@@ -244,7 +244,7 @@ export function BlogDetailSection({ content }: BlogDetailSectionProps) {
       </div>
 
       {/* Article Container */}
-      <div className="max-w-7xl mx-auto px-6 mt-6  pb-6">
+      <div className="max-w-7xl mx-auto px-6 py-16">
         <article className="space-y-10">
 
           {hasImage && image ? (
@@ -287,7 +287,7 @@ export function BlogDetailSection({ content }: BlogDetailSectionProps) {
                 </div>
 
                 {/* Intro Description */}
-                <div className="prose prose-slate max-w-none">
+                <div className="prose prose-slate max-w-none [&_p]:text-slate-700">
                   <div dangerouslySetInnerHTML={{ __html: contentHtml }} />
                 </div>
               </div>
@@ -318,7 +318,7 @@ export function BlogDetailSection({ content }: BlogDetailSectionProps) {
               </div>
 
               {/* Intro Description */}
-              <div className="prose prose-slate max-w-none">
+              <div className="prose prose-slate max-w-none [&_p]:text-slate-700">
                 <div dangerouslySetInnerHTML={{ __html: contentHtml }} />
               </div>
             </>
@@ -338,7 +338,7 @@ export function BlogDetailSection({ content }: BlogDetailSectionProps) {
                     <h3 className="text-xl md:text-2xl font-black text-slate-800 leading-tight">
                       {panel.title}
                     </h3>
-                    <p className="text-slate-600 leading-relaxed text-sm whitespace-pre-line">
+                    <p className="text-slate-700 leading-relaxed text-sm whitespace-pre-line">
                       {panel.description}
                     </p>
                   </div>
@@ -360,67 +360,71 @@ export function BlogDetailSection({ content }: BlogDetailSectionProps) {
           </div>
 
           {/* Conclusion */}
-          <div className="prose prose-slate max-w-none">
-            <div dangerouslySetInnerHTML={{ __html: conclusionHtml }} />
+          <div className="prose prose-slate max-w-none" style={{ color: '#314158' }}>
+            <div className="[&_p]:!text-[#314158]" dangerouslySetInnerHTML={{ __html: conclusionHtml }} />
           </div>
 
         </article>
 
         {/* Divider */}
-        <div className="my-20 border-t border-slate-100" />
+        {relatedBlogs.length > 0 && (
+          <>
+            <div className="my-20 border-t border-slate-100" />
 
-        {/* Latest Blogs Footer Grid */}
-        <div className="space-y-8">
-          <div className="flex items-center justify-between">
-            <h3 className="text-xl font-black text-slate-800 uppercase tracking-wider">Latest Blog</h3>
-            <button
-              onClick={() => navigate('/blog')}
-              className="text-[#103D38] hover:text-[#0A2E2A] text-xs font-black uppercase tracking-wider flex items-center gap-1.5 cursor-pointer group hover:underline"
-            >
-              View Portfolio
-              <ArrowRight className="w-3.5 h-3.5 transform group-hover:translate-x-1 transition-transform" />
-            </button>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {relatedBlogs.map(blog => {
-              return (
-                <div
-                  key={blog.slug}
-                  className="flex flex-col group cursor-pointer bg-white border border-slate-100 rounded-3xl overflow-hidden shadow-sm hover:shadow-lg transition-all"
-                  onClick={() => navigate(`/blog/${blog.slug}`)}
+            {/* Latest Blogs Footer Grid */}
+            <div className="space-y-8">
+              <div className="flex items-center justify-between">
+                <h3 className="text-xl font-black text-slate-800 uppercase tracking-wider">Latest Blog</h3>
+                <button
+                  onClick={() => navigate('/blogs')}
+                  className="text-[#103D38] hover:text-[#0A2E2A] text-xs font-black uppercase tracking-wider flex items-center gap-1.5 cursor-pointer group hover:underline"
                 >
-                  <div className="aspect-[16/10] overflow-hidden bg-slate-100">
-                    <img
-                      src={blog.image}
-                      alt={blog.title}
-                      className="w-full h-full object-cover group-hover:scale-103 transition-transform duration-500"
-                      onError={(e) => {
-                        (e.target as HTMLImageElement).src = '/blog-1.png';
-                      }}
-                    />
-                  </div>
-                  <div className="p-5 flex-1 flex flex-col justify-between space-y-4">
-                    <h4 className="text-sm font-black text-slate-800 leading-snug group-hover:text-[#103D38] transition-colors line-clamp-2">
-                      {blog.title}
-                    </h4>
-                    <div className="flex items-center gap-3">
-                      <img
-                        src={blog.author.avatar}
-                        alt={blog.author.name}
-                        className="w-6 h-6 rounded-full bg-slate-50"
-                      />
-                      <div>
-                        <p className="text-[10px] font-black text-slate-700">{blog.author.name}</p>
-                        <p className="text-[8px] text-slate-400">{blog.date}</p>
+                  View Portfolio
+                  <ArrowRight className="w-3.5 h-3.5 transform group-hover:translate-x-1 transition-transform" />
+                </button>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                {relatedBlogs.map(blog => {
+                  return (
+                    <div
+                      key={blog.slug}
+                      className="flex flex-col group cursor-pointer bg-white border border-slate-100 rounded-3xl overflow-hidden shadow-sm hover:shadow-lg transition-all"
+                      onClick={() => navigate(`/blog/${blog.slug}`)}
+                    >
+                      <div className="aspect-[16/10] overflow-hidden bg-slate-100">
+                        <img
+                          src={blog.image}
+                          alt={blog.title}
+                          className="w-full h-full object-cover group-hover:scale-103 transition-transform duration-500"
+                          onError={(e) => {
+                            (e.target as HTMLImageElement).src = '/blog-1.png';
+                          }}
+                        />
+                      </div>
+                      <div className="p-5 flex-1 flex flex-col justify-between space-y-4">
+                        <h4 className="text-sm font-black text-slate-800 leading-snug group-hover:text-[#103D38] transition-colors line-clamp-2">
+                          {blog.title}
+                        </h4>
+                        <div className="flex items-center gap-3">
+                          <img
+                            src={blog.author.avatar}
+                            alt={blog.author.name}
+                            className="w-6 h-6 rounded-full bg-slate-50"
+                          />
+                          <div>
+                            <p className="text-[10px] font-black text-slate-700">{blog.author.name}</p>
+                            <p className="text-[8px] text-slate-400">{blog.date}</p>
+                          </div>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        </div>
+                  );
+                })}
+              </div>
+            </div>
+          </>
+        )}
 
       </div>
     </section>

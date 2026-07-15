@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import { getHeroBackgroundStyles } from '@/lib/utils';
 import { motion } from 'framer-motion';
 
 export function EmployeeSpotlightHero({ content }: { content?: any }) {
@@ -9,15 +10,24 @@ export function EmployeeSpotlightHero({ content }: { content?: any }) {
   const description = content?.description || 'At ESS, sustainability isn\'t just a choice—it\'s a lifestyle. Meet the trailblazers among us who are leading the charge for a cleaner planet. From daily cycles to inspiring runs, discover how our team is turning eco-conscious choices into habits that matter.';
   const image = content?.image || '/About-employee spot light/banner.png';
 
+  
+  const bgStyles = getHeroBackgroundStyles({
+    gradientColor1: content?.gradientColor1,
+    gradientColor2: content?.gradientColor2,
+    gradientColor3: content?.gradientColor3,
+  }, undefined);
+
   return (
-    <section className="relative min-h-[80vh] flex items-center justify-center overflow-hidden px-6 pb-16 pt-40">
+    <section className="relative min-h-[80vh] flex items-center justify-center overflow-hidden px-6 pb-16 pt-40" style={bgStyles}>
       {/* Background Image */}
-      <div
-        className="absolute inset-0 z-0 bg-cover bg-center bg-no-repeat"
-        style={{ backgroundImage: `url("${image}")` }}
-      >
-        <div className="absolute inset-0 bg-black/20" />
-      </div>
+      {!(content?.gradientColor1 || content?.gradientColor2 || content?.gradientColor3) && (
+        <div
+          className="absolute inset-0 z-0 bg-cover bg-center bg-no-repeat"
+          style={{ backgroundImage: `url("${image}")` }}
+        >
+          <div className="absolute inset-0 bg-black/20" />
+        </div>
+      )}
 
       <div className="container mx-auto px-4 relative z-10 flex flex-col items-center text-center mt-10">
         <motion.div

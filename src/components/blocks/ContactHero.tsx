@@ -1,4 +1,8 @@
+import { getHeroBackgroundStyles } from '@/lib/utils';
 export interface ContactHeroContent {
+  gradientColor1?: string;
+  gradientColor2?: string;
+  gradientColor3?: string;
   badgeTitle?: string;
   badgeText?: string;
   badgeBgColor?: string;
@@ -23,12 +27,19 @@ export function ContactHero({ content }: { content?: ContactHeroContent }) {
   const bgColor = content?.bgColor || "#000000";
   const backgroundImageUrl = content?.backgroundImageUrl || "/Contact us/banner.png";
 
+  
+  const bgStyles = getHeroBackgroundStyles({
+    gradientColor1: content?.gradientColor1,
+    gradientColor2: content?.gradientColor2,
+    gradientColor3: content?.gradientColor3,
+  }, { backgroundColor: bgColor });
+
   return (
     <div className="w-full flex flex-col">
       {/* Dark Banner */}
       <div 
         className="relative w-full min-h-[80vh] flex flex-col items-center justify-center pt-40 pb-16"
-        style={{ backgroundColor: bgColor }}
+        style={bgStyles}
       >
         {/* Background Image Overlay */}
         <div

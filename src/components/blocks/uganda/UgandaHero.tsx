@@ -1,11 +1,15 @@
 'use client';
 
 import React from 'react';
+import { getHeroBackgroundStyles } from '@/lib/utils';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { useCtaAction, type CtaFormType } from '@/hooks/useCtaAction';
 
 export interface UgandaHeroContent {
+  gradientColor1?: string;
+  gradientColor2?: string;
+  gradientColor3?: string;
   backgroundGradient?: string;
   badgeBorderColor?: string;
   badgeBgColor?: string;
@@ -59,10 +63,17 @@ export function UgandaHero({ content }: { content?: UgandaHeroContent }) {
   const { handleClick: handlePrimaryClick, modalNode: primaryModal } = useCtaAction(primaryButtonUrl, primaryButtonFormType, content?.primaryButtonPdfUrl);
   const { handleClick: handleSecondaryClick, modalNode: secondaryModal } = useCtaAction(secondaryButtonUrl, secondaryButtonFormType, content?.secondaryButtonPdfUrl);
 
+  
+  const bgStyles = getHeroBackgroundStyles({
+    gradientColor1: content?.gradientColor1,
+    gradientColor2: content?.gradientColor2,
+    gradientColor3: content?.gradientColor3,
+  }, { backgroundColor: backgroundGradient });
+
   return (
     <section 
       className="relative w-full pt-40 pb-14 flex items-center justify-center overflow-hidden"
-      style={{ backgroundColor: backgroundGradient }}
+      style={bgStyles}
     >
       <div className="relative z-10 container mx-auto px-4 md:px-8 max-w-7xl text-center">
         <motion.div

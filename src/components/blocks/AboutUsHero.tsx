@@ -1,6 +1,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
+import { getHeroBackgroundStyles } from '@/lib/utils';
 import { MotionSection } from '@/components/animations/MotionSection';
 
 interface StatItem {
@@ -9,6 +10,9 @@ interface StatItem {
 }
 
 interface AboutUsHeroContent {
+  gradientColor1?: string;
+  gradientColor2?: string;
+  gradientColor3?: string;
   subtitle?: string; // used for the badge
   title?: string;
   description?: string;
@@ -34,13 +38,22 @@ export function AboutUsHero({ content }: AboutUsHeroProps) {
   const stats = content?.items || defaultStats;
   const bgImage = content?.bgImage || "/about-us/banner.png";
 
+  
+  const bgStyles = getHeroBackgroundStyles({
+    gradientColor1: content?.gradientColor1,
+    gradientColor2: content?.gradientColor2,
+    gradientColor3: content?.gradientColor3,
+  }, { background: 'linear-gradient(to b, #1C2D4E, #111B2D)' });
+
   return (
-    <section className="relative min-h-[80vh] flex flex-col justify-between pt-40 pb-16 overflow-hidden bg-gradient-to-b from-[#1C2D4E] to-[#111B2D] text-white">
+    <section className="relative min-h-[80vh] flex flex-col justify-between pt-40 pb-16 overflow-hidden bg-gradient-to-b from-[#1C2D4E] to-[#111B2D] text-white" style={bgStyles}>
       {/* Background Image */}
-      <div
-        className="absolute inset-0 bg-cover bg-center"
-        style={{ backgroundImage: `url('${bgImage}')` }}
-      />
+      {!(content?.gradientColor1 || content?.gradientColor2 || content?.gradientColor3) && (
+        <div
+          className="absolute inset-0 bg-cover bg-center"
+          style={{ backgroundImage: `url('${bgImage}')` }}
+        />
+      )}
       <div className="container relative z-10 mx-auto px-4 md:px-8 max-w-7xl flex-grow flex flex-col justify-center items-center text-center">
 
         {/* Badge */}

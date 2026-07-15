@@ -59,7 +59,7 @@ export function BlogSection({ content }: BlogSectionProps) {
   const { handleClick: handleCtaClick, modalNode } = useCtaAction(ctaUrl, ctaFormType);
   const heading = content?.heading || "News, Launches & Product Thinking";
   const subheading = content?.subheading || "Stay updated on what we're building, learning, and launching.";
-  const viewAllCta = content?.viewAllCta || { label: "Explore More", url: "/blog" };
+  const viewAllCta = content?.viewAllCta || { label: "Explore More", url: "/blogs" };
 
   const [blogs, setBlogs] = useState<Blog[]>(content?.blogs || defaultBlogs);
 

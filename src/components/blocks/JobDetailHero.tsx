@@ -1,11 +1,15 @@
 'use client';
 
 import React from 'react';
+import { getHeroBackgroundStyles } from '@/lib/utils';
 import { motion } from 'framer-motion';
 import { ArrowLeft, MapPin, Clock, Briefcase, Building, Coins } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 
 export interface JobDetailHeroContent {
+  gradientColor1?: string;
+  gradientColor2?: string;
+  gradientColor3?: string;
   bgColor?: string;
   buttonText?: string;
   buttonTextColor?: string;
@@ -80,10 +84,17 @@ export default function JobDetailHero({ content }: { content?: JobDetailHeroCont
     }
   };
 
+  
+  const bgStyles = getHeroBackgroundStyles({
+    gradientColor1: content?.gradientColor1,
+    gradientColor2: content?.gradientColor2,
+    gradientColor3: content?.gradientColor3,
+  }, undefined);
+
   return (
     <section 
       className="relative min-h-[80vh] flex items-center pt-40 pb-16 px-6 lg:px-8"
-      style={{ backgroundColor: bgColor }}
+      style={bgStyles}
     >
       <div className="container mx-auto max-w-7xl">
         <motion.div

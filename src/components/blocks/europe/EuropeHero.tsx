@@ -4,12 +4,15 @@ import React from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
-import { cn } from '@/lib/utils';
+import { cn, getHeroBackgroundStyles } from '@/lib/utils';
 import { EuropeCommonSettings, EuropeSectionShell } from './EuropeSectionShell';
 
 import { useCtaAction, type CtaFormType } from '@/hooks/useCtaAction';
 
 export interface EuropeHeroContent extends EuropeCommonSettings {
+  gradientColor1?: string;
+  gradientColor2?: string;
+  gradientColor3?: string;
   badgeBgColor?: string;
   badgeBorderColor?: string;
   badgeText?: string;
@@ -85,6 +88,12 @@ export function EuropeHero({ content }: { content?: EuropeHeroContent }) {
     ? { initial: { opacity: 0, y: 20 }, animate: { opacity: 1, y: 0 }, transition: { duration: 0.5 } }
     : {};
 
+  const bgStyles = getHeroBackgroundStyles({
+    gradientColor1: content?.gradientColor1,
+    gradientColor2: content?.gradientColor2,
+    gradientColor3: content?.gradientColor3,
+  }, { background: backgroundGradient });
+
   return (
     <EuropeSectionShell
       content={{
@@ -93,7 +102,7 @@ export function EuropeHero({ content }: { content?: EuropeHeroContent }) {
         sectionPaddingBottom: content?.sectionPaddingBottom || 'pb-20',
       }}
       className="min-h-[560px] flex items-center relative overflow-hidden border-b border-slate-200"
-      style={{ background: backgroundGradient }}
+      style={bgStyles}
     >
       {/* Soft background pattern overlays */}
       <div
