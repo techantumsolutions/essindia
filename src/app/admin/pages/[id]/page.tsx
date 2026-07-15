@@ -1541,6 +1541,15 @@ export default function PageEditor() {
     ogImage: '',
     canonicalUrl: '',
     noIndex: false,
+    ogTitle: '',
+    ogDescription: '',
+    twitterCard: 'summary_large_image',
+    twitterTitle: '',
+    twitterDescription: '',
+    twitterImage: '',
+    headerScripts: '',
+    footerScripts: '',
+    headingH1: '',
   });
   const [savedSeoSnapshot, setSavedSeoSnapshot] = React.useState('');
   const [dirtySections, setDirtySections] = React.useState<Set<string>>(new Set());
@@ -1589,6 +1598,15 @@ export default function PageEditor() {
         ogImage: data.seo?.ogImage || '',
         canonicalUrl: data.seo?.canonicalUrl || '',
         noIndex: data.seo?.noIndex || false,
+        ogTitle: data.seo?.ogTitle || '',
+        ogDescription: data.seo?.ogDescription || '',
+        twitterCard: data.seo?.twitterCard || 'summary_large_image',
+        twitterTitle: data.seo?.twitterTitle || '',
+        twitterDescription: data.seo?.twitterDescription || '',
+        twitterImage: data.seo?.twitterImage || '',
+        headerScripts: data.seo?.headerScripts || '',
+        footerScripts: data.seo?.footerScripts || '',
+        headingH1: data.seo?.headingH1 || '',
       };
       setSeoForm(seo);
       setSavedSeoSnapshot(JSON.stringify(seo));
@@ -2182,6 +2200,89 @@ export default function PageEditor() {
                 />
               </button>
             </label>
+
+            <div className="space-y-1.5 pt-2 border-t border-slate-100">
+              <label className="admin-label">Page H1 (optional)</label>
+              <input
+                placeholder="Overrides default page heading when used by templates"
+                value={seoForm.headingH1}
+                onChange={(e) => setSeoForm({ ...seoForm, headingH1: e.target.value })}
+                className="w-full bg-slate-50 rounded-xl px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-[#4B2A63]/10 border border-transparent focus:border-[#4B2A63]/20"
+              />
+            </div>
+            <div className="space-y-1.5">
+              <label className="admin-label">OG Title</label>
+              <input
+                placeholder="Defaults to meta title"
+                value={seoForm.ogTitle}
+                onChange={(e) => setSeoForm({ ...seoForm, ogTitle: e.target.value })}
+                className="w-full bg-slate-50 rounded-xl px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-[#4B2A63]/10 border border-transparent focus:border-[#4B2A63]/20"
+              />
+            </div>
+            <div className="space-y-1.5">
+              <label className="admin-label">OG Description</label>
+              <textarea
+                placeholder="Defaults to meta description"
+                value={seoForm.ogDescription}
+                onChange={(e) => setSeoForm({ ...seoForm, ogDescription: e.target.value })}
+                className="w-full bg-slate-50 rounded-xl px-4 py-3 text-sm outline-none min-h-[80px] focus:ring-2 focus:ring-[#4B2A63]/10 resize-y border border-transparent focus:border-[#4B2A63]/20"
+              />
+            </div>
+            <div className="space-y-1.5">
+              <label className="admin-label">Twitter Card</label>
+              <select
+                value={seoForm.twitterCard}
+                onChange={(e) => setSeoForm({ ...seoForm, twitterCard: e.target.value })}
+                className="w-full bg-slate-50 rounded-xl px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-[#4B2A63]/10 border border-transparent focus:border-[#4B2A63]/20"
+              >
+                <option value="summary_large_image">summary_large_image</option>
+                <option value="summary">summary</option>
+              </select>
+            </div>
+            <div className="space-y-1.5">
+              <label className="admin-label">Twitter Title</label>
+              <input
+                placeholder="Defaults to OG/meta title"
+                value={seoForm.twitterTitle}
+                onChange={(e) => setSeoForm({ ...seoForm, twitterTitle: e.target.value })}
+                className="w-full bg-slate-50 rounded-xl px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-[#4B2A63]/10 border border-transparent focus:border-[#4B2A63]/20"
+              />
+            </div>
+            <div className="space-y-1.5">
+              <label className="admin-label">Twitter Description</label>
+              <textarea
+                placeholder="Defaults to OG/meta description"
+                value={seoForm.twitterDescription}
+                onChange={(e) => setSeoForm({ ...seoForm, twitterDescription: e.target.value })}
+                className="w-full bg-slate-50 rounded-xl px-4 py-3 text-sm outline-none min-h-[80px] focus:ring-2 focus:ring-[#4B2A63]/10 resize-y border border-transparent focus:border-[#4B2A63]/20"
+              />
+            </div>
+            <div className="space-y-1.5">
+              <label className="admin-label">Twitter Image</label>
+              <MediaField
+                fieldKey="seo-twitter-image"
+                value={seoForm.twitterImage}
+                onChange={(val) => setSeoForm({ ...seoForm, twitterImage: val })}
+              />
+            </div>
+            <div className="space-y-1.5">
+              <label className="admin-label">Page Header Scripts</label>
+              <textarea
+                placeholder="Optional JS for this page only (afterInteractive)"
+                value={seoForm.headerScripts}
+                onChange={(e) => setSeoForm({ ...seoForm, headerScripts: e.target.value })}
+                className="w-full bg-slate-50 rounded-xl px-4 py-3 text-xs font-mono outline-none min-h-[80px] focus:ring-2 focus:ring-[#4B2A63]/10 resize-y border border-transparent focus:border-[#4B2A63]/20"
+              />
+            </div>
+            <div className="space-y-1.5">
+              <label className="admin-label">Page Footer Scripts</label>
+              <textarea
+                placeholder="Optional JS for this page only (lazyOnload)"
+                value={seoForm.footerScripts}
+                onChange={(e) => setSeoForm({ ...seoForm, footerScripts: e.target.value })}
+                className="w-full bg-slate-50 rounded-xl px-4 py-3 text-xs font-mono outline-none min-h-[80px] focus:ring-2 focus:ring-[#4B2A63]/10 resize-y border border-transparent focus:border-[#4B2A63]/20"
+              />
+            </div>
           </div>
         </div>
       </div>

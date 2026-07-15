@@ -5,14 +5,15 @@ import { humanLabel } from './field-utils';
 
 interface ColorPickerFieldProps {
   fieldKey: string;
+  label?: string;
   value: string;
   onChange: (value: string) => void;
 }
 
-export function ColorPickerField({ fieldKey, value, onChange }: ColorPickerFieldProps) {
+export function ColorPickerField({ fieldKey, label, value, onChange }: ColorPickerFieldProps) {
   return (
     <div className="space-y-1.5">
-      <label className="text-xs font-semibold text-slate-500">{humanLabel(fieldKey)}</label>
+      <label className="text-xs font-semibold text-slate-500">{label || humanLabel(fieldKey)}</label>
       <div className="flex items-center gap-3">
         <div className="relative">
           <input

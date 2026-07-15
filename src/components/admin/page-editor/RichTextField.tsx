@@ -27,6 +27,7 @@ import { humanLabel } from './field-utils';
 
 interface RichTextFieldProps {
   fieldKey: string;
+  label?: string;
   value: string;
   onChange: (value: string) => void;
   placeholder?: string;
@@ -60,7 +61,7 @@ function ToolbarButton({
   );
 }
 
-export function RichTextField({ fieldKey, value, onChange, placeholder }: RichTextFieldProps) {
+export function RichTextField({ fieldKey, label, value, onChange, placeholder }: RichTextFieldProps) {
   const isHtml = value.includes('<') && value.includes('>');
 
   const editor = useEditor({
@@ -106,7 +107,7 @@ export function RichTextField({ fieldKey, value, onChange, placeholder }: RichTe
 
   return (
     <div className="space-y-1.5">
-      <label className="text-xs font-semibold text-slate-500">{humanLabel(fieldKey)}</label>
+      <label className="text-xs font-semibold text-slate-500">{label || humanLabel(fieldKey)}</label>
       <div className="rounded-xl border border-slate-200 bg-white overflow-hidden focus-within:ring-2 focus-within:ring-[#4B2A63]/10 focus-within:border-[#4B2A63]/20">
         <div className="flex items-center gap-0.5 px-2 py-1.5 border-b border-slate-100 bg-slate-50/50 flex-wrap">
           <ToolbarButton

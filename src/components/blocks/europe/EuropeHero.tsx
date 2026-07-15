@@ -6,7 +6,7 @@ import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { cn, getHeroBackgroundStyles } from '@/lib/utils';
 import { EuropeCommonSettings, EuropeSectionShell } from './EuropeSectionShell';
-
+import { CmsHeading } from '@/components/cms/CmsHeading';
 import { useCtaAction, type CtaFormType } from '@/hooks/useCtaAction';
 
 export interface EuropeHeroContent extends EuropeCommonSettings {
@@ -39,6 +39,7 @@ export interface EuropeHeroContent extends EuropeCommonSettings {
   heroIllustration?: string;
   enableIllustration?: boolean;
   enableAnimation?: boolean;
+  headingTag?: string;
 }
 
 export function EuropeHero({ content }: { content?: EuropeHeroContent }) {
@@ -129,12 +130,14 @@ export function EuropeHero({ content }: { content?: EuropeHeroContent }) {
           )}
 
           {title && (
-            <h1
+            <CmsHeading
+              tag={undefined}
+              fallback="h1"
               className="text-4xl sm:text-5xl lg:text-[64px] font-thin tracking-tight leading-[1.15] whitespace-pre-line"
               style={{ color: titleColor }}
             >
               {title}
-            </h1>
+            </CmsHeading>
           )}
 
           {description && (

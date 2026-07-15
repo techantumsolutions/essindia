@@ -1970,7 +1970,47 @@ export const SECTION_REGISTRY: SectionTypeDefinition[] = [
     fieldOrder: [
       'tag', 'title', 'description', 'tabs',
     ],
-  }
+  },
+  {
+    type: 'not-found-hero',
+    label: '404 Hero',
+    description: 'Main 404 message with code, title, description, and dual CTAs',
+    icon: Layout,
+    color: 'bg-slate-50 text-slate-700',
+    defaultVariant: 'default',
+    supportsVariants: false,
+    fieldOrder: [
+      'bgColor', 'badgeText', 'badgeBgColor', 'badgeTextColor', 'codeText',
+      'title', 'titleColor', 'description', 'descriptionColor',
+      'primaryButtonText', 'primaryButtonUrl', 'primaryButtonBgColor', 'primaryButtonTextColor',
+      'secondaryButtonText', 'secondaryButtonUrl', 'secondaryButtonBgColor', 'secondaryButtonTextColor',
+    ],
+  },
+  {
+    type: 'not-found-links',
+    label: '404 Helpful Links',
+    description: 'Grid of helpful links shown on the custom 404 page',
+    icon: Grid,
+    color: 'bg-slate-50 text-slate-700',
+    defaultVariant: 'default',
+    supportsVariants: false,
+    fieldOrder: ['bgColor', 'title', 'titleColor', 'description', 'descriptionColor', 'links'],
+  },
+  {
+    type: 'thank-you-hero',
+    label: 'Thank You Hero',
+    description: 'Confirmation message shown after form submission, with delayed PDF open support',
+    icon: Layout,
+    color: 'bg-emerald-50 text-emerald-700',
+    defaultVariant: 'default',
+    supportsVariants: false,
+    fieldOrder: [
+      'bgColor', 'badgeText', 'badgeBgColor', 'badgeTextColor',
+      'title', 'titleColor', 'description', 'descriptionColor', 'pdfNotice',
+      'primaryButtonText', 'primaryButtonUrl', 'primaryButtonBgColor', 'primaryButtonTextColor',
+      'secondaryButtonText', 'secondaryButtonUrl',
+    ],
+  },
 ];
 
 

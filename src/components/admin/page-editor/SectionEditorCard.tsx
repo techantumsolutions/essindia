@@ -16,7 +16,7 @@ import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { getSectionDefinition } from '@/lib/cms/section-registry';
 import { DynamicFieldRenderer } from './DynamicFieldRenderer';
-import { mergeSchemaWithContent } from './field-utils';
+import { mergeSchemaWithContent, isHiddenCmsField } from './field-utils';
 import type { JsonValue } from './field-utils';
 
 export interface PageSection {
@@ -1910,8 +1910,59 @@ Implementing an ERP system for finance and accounting offers several key benefit
   ],
 };
 
+const DEFAULT_NOT_FOUND_HERO_CONTENT: Record<string, any> = {
+  badgeText: 'Page not found',
+  badgeBgColor: '#ede9fe',
+  badgeTextColor: '#4B2A63',
+  codeText: '404',
+  title: "We can't find that page",
+  titleColor: '#0f172a',
+  description:
+    'The page you requested may have been moved, renamed, or no longer exists. Try heading home or exploring our solutions.',
+  descriptionColor: '#64748b',
+  primaryButtonText: 'Back to Home',
+  primaryButtonUrl: '/',
+  primaryButtonBgColor: '#4B2A63',
+  primaryButtonTextColor: '#ffffff',
+  secondaryButtonText: 'Contact Us',
+  secondaryButtonUrl: '/contact-us',
+  secondaryButtonBgColor: '#f1f5f9',
+  secondaryButtonTextColor: '#0f172a',
+  bgColor: '#ffffff',
+};
 
+const DEFAULT_NOT_FOUND_LINKS_CONTENT: Record<string, any> = {
+  title: 'Helpful links',
+  titleColor: '#0f172a',
+  description: 'These popular pages may help you find what you need.',
+  descriptionColor: '#64748b',
+  bgColor: '#f8fafc',
+  links: [
+    { title: 'Home', description: 'Return to the ESS India homepage', url: '/' },
+    { title: 'Solutions', description: 'Explore ERP, BI, and digital transformation solutions', url: '/solutions' },
+    { title: 'Careers', description: 'See open roles and join our team', url: '/careers' },
+    { title: 'Contact', description: 'Get in touch with our experts', url: '/contact-us' },
+  ],
+};
 
+const DEFAULT_THANK_YOU_HERO_CONTENT: Record<string, any> = {
+  badgeText: 'Success',
+  badgeBgColor: '#dcfce7',
+  badgeTextColor: '#166534',
+  title: 'Thank you for reaching out',
+  titleColor: '#0f172a',
+  description:
+    'We have received your details. Our team will get back to you shortly.',
+  descriptionColor: '#64748b',
+  pdfNotice: 'If a document was requested, it will open in a new tab in a few seconds.',
+  primaryButtonText: 'Back to Home',
+  primaryButtonUrl: '/',
+  primaryButtonBgColor: '#4B2A63',
+  primaryButtonTextColor: '#ffffff',
+  secondaryButtonText: 'Explore Solutions',
+  secondaryButtonUrl: '/solutions',
+  bgColor: '#ffffff',
+};
 
 interface SectionEditorCardProps {
   section: PageSection;
@@ -2103,6 +2154,12 @@ export function SectionEditorCard({
         baseSchema = DEFAULT_UGANDA_INDUSTRIES_CONTENT as Record<string, JsonValue>;
       } else if (section.type === 'uganda-insights') {
         baseSchema = DEFAULT_UGANDA_INSIGHTS_CONTENT as Record<string, JsonValue>;
+      } else if (section.type === 'not-found-hero') {
+        baseSchema = DEFAULT_NOT_FOUND_HERO_CONTENT as Record<string, JsonValue>;
+      } else if (section.type === 'not-found-links') {
+        baseSchema = DEFAULT_NOT_FOUND_LINKS_CONTENT as Record<string, JsonValue>;
+      } else if (section.type === 'thank-you-hero') {
+        baseSchema = DEFAULT_THANK_YOU_HERO_CONTENT as Record<string, JsonValue>;
       }
     }
 
@@ -2116,7 +2173,7 @@ export function SectionEditorCard({
       meta.fieldOrder.forEach((key) => {
         if (!(key in finalMerged)) {
           // Default arrays/booleans for known list fields
-          if (['items', 'processes', 'features', 'faqs', 'cards', 'values', 'modules', 'paragraphs', 'leftItems', 'rightItems', 'steps', 'logos', 'stats', 'statistics', 'slides', 'categories', 'tabs', 'benefits', 'industries', 'solutions', 'points', 'topics'].includes(key)) {
+          if (['items', 'processes', 'features', 'faqs', 'cards', 'values', 'modules', 'paragraphs', 'leftItems', 'rightItems', 'steps', 'logos', 'stats', 'statistics', 'slides', 'categories', 'tabs', 'benefits', 'industries', 'solutions', 'points', 'topics', 'links'].includes(key)) {
             finalMerged[key] = [];
           } else if (['autoScroll', 'isActive', 'supportsVariants'].includes(key)) {
             finalMerged[key] = true;
@@ -2228,7 +2285,7 @@ export function SectionEditorCard({
       }
     });
 
-    return orderedKeys;
+    return orderedKeys.filter((k) => !isHiddenCmsField(k));
   }, [mergedContent, meta, section.type]);
 
   const handleSave = async () => {

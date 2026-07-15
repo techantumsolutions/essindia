@@ -23,7 +23,8 @@ import {
   Globe,
   Briefcase,
   Monitor,
-  ClipboardList
+  ClipboardList,
+  ArrowRightLeft,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
@@ -59,6 +60,7 @@ const navGroups = [
     label: 'Marketing & SEO',
     items: [
       { icon: Shield, label: 'SEO Settings', href: '/admin/seo' },
+      { icon: ArrowRightLeft, label: 'Redirects', href: '/admin/redirects' },
       { icon: MessageSquare, label: 'Forms', href: '/admin/forms' },
       // { icon: BarChart3, label: 'Analytics', href: '/admin/analytics' },
     ]

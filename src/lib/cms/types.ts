@@ -115,6 +115,15 @@ export interface PageEditorData {
     canonicalUrl: string | null;
     noIndex: boolean;
     schemaMarkup: Record<string, unknown>;
+    ogTitle?: string | null;
+    ogDescription?: string | null;
+    twitterCard?: string | null;
+    twitterTitle?: string | null;
+    twitterDescription?: string | null;
+    twitterImage?: string | null;
+    headerScripts?: string | null;
+    footerScripts?: string | null;
+    headingH1?: string | null;
   } | null;
   sections: Array<{
     id: string;

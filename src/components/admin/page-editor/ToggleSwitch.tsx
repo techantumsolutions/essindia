@@ -5,15 +5,16 @@ import { humanLabel } from './field-utils';
 
 interface ToggleSwitchProps {
   fieldKey: string;
+  label?: string;
   value: boolean;
   onChange: (value: boolean) => void;
 }
 
-export function ToggleSwitch({ fieldKey, value, onChange }: ToggleSwitchProps) {
+export function ToggleSwitch({ fieldKey, label, value, onChange }: ToggleSwitchProps) {
   return (
     <label className="flex items-center justify-between py-2 px-1 cursor-pointer group">
       <span className="text-sm font-medium text-slate-700 group-hover:text-slate-900 transition-colors">
-        {humanLabel(fieldKey)}
+        {label || humanLabel(fieldKey)}
       </span>
       <button
         type="button"

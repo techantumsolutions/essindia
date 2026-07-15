@@ -8,13 +8,14 @@ import { MediaPickerModal, type TabType } from './MediaPickerModal';
 
 interface MediaFieldProps {
   fieldKey: string;
+  label?: string;
   value: string;
   onChange: (value: string) => void;
   hint?: string;
   sectionType?: string;
 }
 
-export function MediaField({ fieldKey, value, onChange, hint, sectionType }: MediaFieldProps) {
+export function MediaField({ fieldKey, label, value, onChange, hint, sectionType }: MediaFieldProps) {
   const [showPreview, setShowPreview] = React.useState(true);
   const [isUploading, setIsUploading] = React.useState(false);
   const [isPickerOpen, setIsPickerOpen] = React.useState(false);
@@ -81,7 +82,7 @@ export function MediaField({ fieldKey, value, onChange, hint, sectionType }: Med
 
   return (
     <div className="space-y-2">
-      <label className="text-xs font-semibold text-slate-500">{humanLabel(fieldKey)}</label>
+      <label className="text-xs font-semibold text-slate-500">{label || humanLabel(fieldKey)}</label>
       <div className="flex items-start gap-3">
         {value && showPreview ? (
           <div className="relative group shrink-0">

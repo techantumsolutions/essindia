@@ -11,6 +11,7 @@ import { validatePhoneNumber } from '@/lib/phone-validation';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { ALL_COUNTRIES_LIST } from '@/lib/countries';
 import countryCodesList from 'country-codes-list';
+import { completeFormSuccess } from '@/lib/forms/form-success';
 
 const DIAL_CODES = (countryCodesList.customArray({
   name: '{countryNameEn}',
@@ -96,8 +97,6 @@ export function ContactLeadModal({ isOpen, onClose, pageName }: ContactLeadModal
       }
 
       toast.success('Inquiry submitted successfully!');
-      
-      // reset form
       setFormData({
         name: '',
         email: '',
@@ -107,8 +106,8 @@ export function ContactLeadModal({ isOpen, onClose, pageName }: ContactLeadModal
       });
       setSelectedCountry('');
       setAcceptedPrivacy(false);
-      
       onClose();
+      await completeFormSuccess('contact');
     } catch (err: any) {
       toast.error(err.message || 'Something went wrong. Please try again.');
     } finally {

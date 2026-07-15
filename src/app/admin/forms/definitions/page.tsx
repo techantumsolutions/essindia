@@ -2,9 +2,10 @@
 
 import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Loader2, Mail, FileText, Eye, X, ClipboardList, ChevronRight } from 'lucide-react';
+import { Loader2, Mail, FileText, Eye, X, ClipboardList, ChevronRight, Link2, Save, Check } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
+import { toast } from 'sonner';
 
 /* ──────────────────────────────────────────────
    FORM DEFINITIONS (static – matches actual modals)
@@ -20,7 +21,7 @@ interface FieldDef {
 interface FormDef {
   id: string;
   name: string;
-  formType: string;
+  formType: 'contact' | 'cta';
   usedIn: string;
   description: string;
   fields: FieldDef[];
@@ -186,6 +187,12 @@ export default function FormDefinitionsPage() {
   const [counts, setCounts] = React.useState<Record<string, number>>({});
   const [isLoading, setIsLoading] = React.useState(true);
   const [previewForm, setPreviewForm] = React.useState<FormDef | null>(null);
+  const [thankYouUrls, setThankYouUrls] = React.useState<Record<string, string>>({
+    contact: '/thank-you',
+    cta: '/thank-you',
+  });
+  const [savingType, setSavingType] = React.useState<string | null>(null);
+  const [savedType, setSavedType] = React.useState<string | null>(null);
 
   React.useEffect(() => {
     async function fetchCounts() {
@@ -205,8 +212,54 @@ export default function FormDefinitionsPage() {
         setIsLoading(false);
       }
     }
+
+    async function fetchSettings() {
+      try {
+        const res = await fetch('/api/admin/forms/settings');
+        if (!res.ok) return;
+        const data = await res.json();
+        setThankYouUrls({
+          contact: data?.contact?.thankYouUrl || '/thank-you',
+          cta: data?.cta?.thankYouUrl || '/thank-you',
+        });
+      } catch {
+        // silent
+      }
+    }
+
     fetchCounts();
+    fetchSettings();
   }, []);
+
+  async function saveThankYouUrl(formType: 'contact' | 'cta') {
+    setSavingType(formType);
+    setSavedType(null);
+    try {
+      const res = await fetch('/api/admin/forms/settings', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          [formType]: { thankYouUrl: thankYouUrls[formType] || '' },
+        }),
+      });
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        throw new Error(data.error || 'Failed to save');
+      }
+      const data = await res.json();
+      setThankYouUrls({
+        contact: data?.contact?.thankYouUrl || '/thank-you',
+        cta: data?.cta?.thankYouUrl || '/thank-you',
+      });
+      setSavedType(formType);
+      toast.success('Thank you page link saved');
+      window.setTimeout(() => setSavedType(null), 2000);
+    } catch (err: any) {
+      toast.error(err.message || 'Could not save thank you link');
+    } finally {
+      setSavingType(null);
+    }
+  }
 
   return (
     <motion.div
@@ -219,7 +272,7 @@ export default function FormDefinitionsPage() {
         <div>
           <h1 className="text-3xl font-bold text-slate-900 tracking-tight mb-2">Forms</h1>
           <p className="text-slate-500 font-medium">
-            All active forms on the website. Click the eye icon to preview the form.
+            All active forms on the website. Set a thank-you page link per form to redirect after submission.
           </p>
         </div>
         <button
@@ -240,6 +293,7 @@ export default function FormDefinitionsPage() {
               <th className="px-6 py-4 font-semibold text-slate-500 whitespace-nowrap">Form Name</th>
               <th className="px-6 py-4 font-semibold text-slate-500 whitespace-nowrap">Type</th>
               <th className="px-6 py-4 font-semibold text-slate-500 whitespace-nowrap">Fields</th>
+              <th className="px-6 py-4 font-semibold text-slate-500 whitespace-nowrap">Thank You Page</th>
               <th className="px-6 py-4 font-semibold text-slate-500 whitespace-nowrap">Submissions</th>
               <th className="px-6 py-4 font-semibold text-slate-500 text-right whitespace-nowrap">Actions</th>
             </tr>
@@ -275,7 +329,6 @@ export default function FormDefinitionsPage() {
                   </span>
                 </td>
 
-
                 {/* Field count + pills */}
                 <td className="px-6 py-5">
                   <div className="flex flex-wrap gap-1.5 max-w-[220px]">
@@ -288,6 +341,45 @@ export default function FormDefinitionsPage() {
                       </span>
                     ))}
                   </div>
+                </td>
+
+                {/* Thank you URL */}
+                <td className="px-6 py-5 min-w-[280px]">
+                  <div className="flex items-center gap-2">
+                    <div className="relative flex-1">
+                      <Link2 className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-slate-400" />
+                      <input
+                        type="text"
+                        value={thankYouUrls[form.formType] ?? ''}
+                        onChange={(e) =>
+                          setThankYouUrls((prev) => ({
+                            ...prev,
+                            [form.formType]: e.target.value,
+                          }))
+                        }
+                        placeholder="/thank-you"
+                        className="w-full pl-8 pr-3 py-2 text-xs rounded-lg border border-slate-200 bg-white focus:outline-none focus:ring-2 focus:ring-[#4B2A63]/30 focus:border-[#4B2A63]"
+                      />
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => saveThankYouUrl(form.formType)}
+                      disabled={savingType === form.formType}
+                      title="Save thank you page link"
+                      className="inline-flex items-center justify-center w-9 h-9 rounded-xl bg-[#4B2A63] text-white hover:bg-[#3A1F4D] transition-colors cursor-pointer disabled:opacity-60"
+                    >
+                      {savingType === form.formType ? (
+                        <Loader2 className="w-4 h-4 animate-spin" />
+                      ) : savedType === form.formType ? (
+                        <Check className="w-4 h-4" />
+                      ) : (
+                        <Save className="w-4 h-4" />
+                      )}
+                    </button>
+                  </div>
+                  <p className="text-[10px] text-slate-400 mt-1.5">
+                    After submit, redirect here. PDF opens after 5s if attached.
+                  </p>
                 </td>
 
                 {/* Submissions */}
