@@ -7,7 +7,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { EuropeCommonSettings, EuropeSectionShell } from './EuropeSectionShell';
-
+import { CmsHeading } from '@/components/cms/CmsHeading';
 import { useCtaAction, type CtaFormType } from '@/hooks/useCtaAction';
 
 interface SlideImage {
@@ -20,6 +20,7 @@ export interface EuropeDarkShowcaseContent extends EuropeCommonSettings {
   badgeBgColor?: string;
   badgeTextColor?: string;
   title?: string;
+  headingTag?: string;
   titleColor?: string;
   description?: string;
   descriptionColor?: string;
@@ -125,9 +126,14 @@ export function EuropeDarkShowcase({ content }: { content?: EuropeDarkShowcaseCo
           </span>
         )}
         {title && (
-          <h2 className="text-4xl sm:text-5xl lg:text-[60px] font-bold tracking-tight leading-[1.15] whitespace-pre-line" style={{ color: titleColor }}>
+          <CmsHeading
+            tag={undefined}
+            fallback="h2"
+            className="text-4xl sm:text-5xl lg:text-[60px] font-bold tracking-tight leading-[1.15] whitespace-pre-line"
+            style={{ color: titleColor }}
+          >
             {title}
-          </h2>
+          </CmsHeading>
         )}
         {description && (
           <p className="text-sm sm:text-base leading-relaxed max-w-3xl mx-auto" style={{ color: descriptionColor }}>

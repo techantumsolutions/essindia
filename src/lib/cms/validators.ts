@@ -66,6 +66,15 @@ export const seoSchema = z.object({
   canonicalUrl: z.string().optional(),
   noIndex: z.boolean().optional(),
   schemaMarkup: z.record(z.string(), z.unknown()).optional(),
+  ogTitle: z.string().max(255).optional(),
+  ogDescription: z.string().optional(),
+  twitterCard: z.string().max(50).optional(),
+  twitterTitle: z.string().max(255).optional(),
+  twitterDescription: z.string().optional(),
+  twitterImage: z.string().optional(),
+  headerScripts: z.string().optional(),
+  footerScripts: z.string().optional(),
+  headingH1: z.string().max(500).optional(),
 });
 
 export const pageSectionSchema = z.object({

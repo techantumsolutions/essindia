@@ -2,6 +2,9 @@ import { pageRepository } from '@/repositories/page.repository';
 import { SectionRenderer } from '@/components/cms/SectionRenderer';
 import { notFound } from 'next/navigation';
 import { Metadata } from 'next';
+import { buildPageMetadata } from '@/lib/seo/build-page-metadata';
+import { PageScripts } from '@/components/seo/PageScripts';
+import { applyCmsRedirect } from '@/lib/seo/apply-cms-redirect';
 
 export const revalidate = 60;
 
@@ -25,7 +28,7 @@ function isSystemRoute(slugArray: string[]) {
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { slug } = await params;
-  
+
   if (isSystemRoute(slug)) return {};
 
   const fullPath = `/${slug.join('/')}`;
@@ -33,27 +36,22 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
   if (!page) return { title: 'Page Not Found' };
 
-  return {
-    title: page.seo?.title || page.title,
+  return buildPageMetadata({
+    title: page.seo?.title,
+    pageTitle: page.title,
     description: page.seo?.description,
-    robots: page.seo?.noIndex ? { index: false, follow: false } : undefined,
-    openGraph: {
-      images: page.seo?.ogImage ? [page.seo.ogImage] : [],
-    },
-    alternates: {
-      canonical: page.seo?.canonicalUrl,
-    },
-    ...(page.seo?.schemaMarkup &&
-    typeof page.seo.schemaMarkup === 'object' &&
-    page.seo.schemaMarkup !== null &&
-    Object.keys(page.seo.schemaMarkup).length > 0
-      ? {
-          other: {
-            'script:ld+json': JSON.stringify(page.seo.schemaMarkup),
-          },
-        }
-      : {}),
-  };
+    ogImage: page.seo?.ogImage,
+    canonicalUrl: page.seo?.canonicalUrl,
+    noIndex: page.seo?.noIndex,
+    ogTitle: (page.seo as any)?.ogTitle,
+    ogDescription: (page.seo as any)?.ogDescription,
+    twitterCard: (page.seo as any)?.twitterCard,
+    twitterTitle: (page.seo as any)?.twitterTitle,
+    twitterDescription: (page.seo as any)?.twitterDescription,
+    twitterImage: (page.seo as any)?.twitterImage,
+    schemaMarkup: page.seo?.schemaMarkup as Record<string, unknown> | null,
+    fullPath: page.fullPath,
+  });
 }
 
 export default async function DynamicPage({ params }: PageProps) {
@@ -64,15 +62,23 @@ export default async function DynamicPage({ params }: PageProps) {
   }
 
   const fullPath = `/${slug.join('/')}`;
+  await applyCmsRedirect(fullPath);
+
   const page = await pageRepository.getPageByPath(fullPath);
 
   if (!page) {
     return notFound();
   }
 
+  const seo = page.seo as any;
+
   if (page.sections && page.sections.length > 0) {
     return (
       <>
+        <PageScripts
+          headerScripts={seo?.headerScripts}
+          footerScripts={seo?.footerScripts}
+        />
         {page.sections.map((section: any) => (
           <SectionRenderer key={section.id} section={section} />
         ))}
@@ -81,12 +87,15 @@ export default async function DynamicPage({ params }: PageProps) {
   }
 
   return (
-    <div className="py-32 text-center bg-white min-h-[60vh] flex flex-col items-center justify-center">
-      <h1 className="text-4xl font-bold text-slate-900 mb-4">{page.title}</h1>
-      <p className="text-slate-500 max-w-md mx-auto">
-        This page has been created but no content sections have been added yet. 
-        Add sections in the admin portal to build your page.
-      </p>
-    </div>
+    <>
+      <PageScripts
+        headerScripts={seo?.headerScripts}
+        footerScripts={seo?.footerScripts}
+      />
+      <div className="container mx-auto py-20 px-6">
+        <h1 className="text-4xl font-bold mb-6">{page.title}</h1>
+        <p className="text-slate-600">This page has no content sections yet.</p>
+      </div>
+    </>
   );
 }

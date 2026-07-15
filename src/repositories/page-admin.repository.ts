@@ -444,6 +444,15 @@ export class PageAdminRepository {
     canonicalUrl?: string;
     noIndex?: boolean;
     schemaMarkup?: Record<string, unknown>;
+    ogTitle?: string;
+    ogDescription?: string;
+    twitterCard?: string;
+    twitterTitle?: string;
+    twitterDescription?: string;
+    twitterImage?: string;
+    headerScripts?: string;
+    footerScripts?: string;
+    headingH1?: string;
   }) {
     const page = await this.getById(pageId);
     if (!page) return null;
@@ -1023,7 +1032,7 @@ export class PageAdminRepository {
   private async invalidateCache(fullPath: string) {
     const keys = await safeRedisKeys('page:*');
     if (keys.length > 0) await safeRedisDel(...keys);
-    await safeRedisDel(`page:${fullPath}`, 'page_paths');
+    await safeRedisDel(`page:${fullPath}`, 'page_paths', 'page_paths_sitemap_v2');
   }
 }
 

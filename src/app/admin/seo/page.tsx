@@ -30,6 +30,12 @@ export default function SeoManagerPage() {
     canonicalUrl: '',
     noIndex: false,
   });
+  const [globals, setGlobals] = React.useState({
+    headerScripts: '',
+    footerScripts: '',
+    robotsExtraDisallow: '' as string,
+  });
+  const [savingGlobals, setSavingGlobals] = React.useState(false);
 
   React.useEffect(() => {
     fetch('/api/admin/seo')
@@ -38,6 +44,21 @@ export default function SeoManagerPage() {
         if (Array.isArray(data)) setRows(data);
       })
       .finally(() => setIsLoading(false));
+
+    fetch('/api/admin/site-settings')
+      .then((r) => (r.ok ? r.json() : null))
+      .then((data) => {
+        if (data) {
+          setGlobals({
+            headerScripts: data.headerScripts || '',
+            footerScripts: data.footerScripts || '',
+            robotsExtraDisallow: Array.isArray(data.robotsExtraDisallow)
+              ? data.robotsExtraDisallow.join('\n')
+              : '',
+          });
+        }
+      })
+      .catch(() => {});
   }, []);
 
   const startEdit = (row: SeoRow) => {
@@ -64,6 +85,28 @@ export default function SeoManagerPage() {
       if (Array.isArray(data)) setRows(data);
     } else {
       toast.error('Failed to save SEO');
+    }
+  };
+
+  const saveGlobals = async () => {
+    setSavingGlobals(true);
+    try {
+      const res = await fetch('/api/admin/site-settings', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          headerScripts: globals.headerScripts,
+          footerScripts: globals.footerScripts,
+          robotsExtraDisallow: globals.robotsExtraDisallow
+            .split('\n')
+            .map((s) => s.trim())
+            .filter(Boolean),
+        }),
+      });
+      if (res.ok) toast.success('Global SEO settings saved');
+      else toast.error('Failed to save global settings');
+    } finally {
+      setSavingGlobals(false);
     }
   };
 
@@ -141,6 +184,38 @@ export default function SeoManagerPage() {
             ))}
           </div>
         )}
+      </div>
+
+      <div className="admin-compact-card p-4 space-y-3">
+        <div className="flex items-center justify-between gap-2">
+          <div>
+            <p className="text-xs font-semibold text-slate-700">Global Scripts & Robots</p>
+            <p className="text-[11px] text-slate-400">
+              Apply site-wide header/footer scripts and extra robots.txt disallow paths.
+            </p>
+          </div>
+          <Button size="xs" onClick={saveGlobals} disabled={savingGlobals}>
+            <Save className="w-3.5 h-3.5" /> {savingGlobals ? 'Saving…' : 'Save Globals'}
+          </Button>
+        </div>
+        <textarea
+          className="w-full bg-slate-50 rounded-md px-2.5 py-2 text-xs font-mono border border-slate-200 outline-none min-h-[72px]"
+          placeholder="Global header scripts"
+          value={globals.headerScripts}
+          onChange={(e) => setGlobals({ ...globals, headerScripts: e.target.value })}
+        />
+        <textarea
+          className="w-full bg-slate-50 rounded-md px-2.5 py-2 text-xs font-mono border border-slate-200 outline-none min-h-[72px]"
+          placeholder="Global footer scripts"
+          value={globals.footerScripts}
+          onChange={(e) => setGlobals({ ...globals, footerScripts: e.target.value })}
+        />
+        <textarea
+          className="w-full bg-slate-50 rounded-md px-2.5 py-2 text-xs font-mono border border-slate-200 outline-none min-h-[56px]"
+          placeholder="Extra robots disallow paths (one per line), e.g. /private/"
+          value={globals.robotsExtraDisallow}
+          onChange={(e) => setGlobals({ ...globals, robotsExtraDisallow: e.target.value })}
+        />
       </div>
     </motion.div>
   );

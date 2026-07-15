@@ -5,6 +5,8 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { EuropeCommonSettings, EuropeSectionShell } from './EuropeSectionShell';
+import { CmsHeading } from '@/components/cms/CmsHeading';
+import { FileText } from 'lucide-react';
 
 interface ReportCard {
   image?: string;
@@ -16,10 +18,9 @@ interface ReportCard {
 export interface EuropeReportsContent extends EuropeCommonSettings {
   sectionTitle?: string;
   sectionTitleColor?: string;
+  headingTag?: string;
   cards?: ReportCard[];
 }
-
-import { FileText } from 'lucide-react';
 
 const DEFAULT_CARDS: ReportCard[] = [
   {
@@ -44,12 +45,14 @@ export function EuropeReports({ content }: { content?: EuropeReportsContent }) {
   return (
     <EuropeSectionShell content={{ ...content, backgroundColor: '#ffffff' }}>
       {sectionTitle && (
-        <h2
+        <CmsHeading
+          tag={undefined}
+          fallback="h2"
           className="text-3xl sm:text-[38px] font-bold text-center mb-12 tracking-tight"
           style={{ color: sectionTitleColor }}
         >
           {sectionTitle}
-        </h2>
+        </CmsHeading>
       )}
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">

@@ -6,12 +6,14 @@ import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { ArrowRight } from 'lucide-react';
 import { EuropeCommonSettings, EuropeSectionShell } from './EuropeSectionShell';
+import { CmsHeading } from '@/components/cms/CmsHeading';
 import { useCtaAction, type CtaFormType } from '@/hooks/useCtaAction';
 
 export interface EuropePromoCtaContent extends EuropeCommonSettings {
   image?: string;
   smallTitle?: string;
   title?: string;
+  headingTag?: string;
   description?: string;
   buttonText?: string;
   buttonUrl?: string;
@@ -41,9 +43,9 @@ export function EuropePromoCta({ content }: { content?: EuropePromoCtaContent })
             </span>
           )}
           {title && (
-            <h2 className="text-3xl sm:text-[40px] leading-[1.15] font-bold text-[#111827]">
+            <CmsHeading tag={undefined} fallback="h2" className="text-3xl sm:text-[40px] leading-[1.15] font-bold text-[#111827]">
               {title}
-            </h2>
+            </CmsHeading>
           )}
           {description && (
             <p className="text-sm sm:text-base text-slate-500 leading-relaxed max-w-xl">

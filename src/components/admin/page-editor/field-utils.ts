@@ -18,7 +18,114 @@ export type FieldType =
   | 'formSelect'
   | 'null';
 
-export function humanLabel(key: string): string {
+/** Fields editors should not change — heading level is fixed in the component. */
+export function isHiddenCmsField(key: string): boolean {
+  const lower = key.toLowerCase();
+  return lower === 'headingtag' || lower === 'titletag';
+}
+
+/**
+ * Semantic HTML tag used on the frontend for this text field (informational label only).
+ */
+export function getHeadingTagForField(
+  key: string,
+  sectionType?: string,
+  keyPath?: string
+): string | null {
+  const lower = key.toLowerCase();
+  const path = (keyPath || key).toLowerCase();
+
+  if (
+    lower.endsWith('color') ||
+    lower.endsWith('url') ||
+    lower.endsWith('link') ||
+    lower.endsWith('href') ||
+    lower.includes('image') ||
+    lower.includes('formtype') ||
+    lower === 'codetext' ||
+    (lower.includes('bg') && lower !== 'badge') ||
+    lower.includes('border')
+  ) {
+    return null;
+  }
+
+  const nestedInCard =
+    /\b(cards?|items?|features?|modules?|slides?|stats?|links?|tabs?|services?|points?|products?|operations?)\b/.test(
+      path
+    ) && /\.\d+\./.test(path);
+
+  if (
+    lower === 'badgetext' ||
+    lower === 'badge' ||
+    lower === 'tag' ||
+    lower === 'tagtext' ||
+    lower === 'tag1text' ||
+    lower === 'tag2text' ||
+    lower === 'smalltitle'
+  ) {
+    return 'SPAN';
+  }
+
+  if (lower === 'subtitle' || lower === 'subheading' || lower === 'resultssubtitle') {
+    return 'P';
+  }
+
+  if (
+    lower === 'description' ||
+    lower === 'descriptiontext' ||
+    lower.endsWith('description') ||
+    lower === 'abouttext'
+  ) {
+    return 'P';
+  }
+
+  const isHeroSection =
+    !!sectionType &&
+    (sectionType.includes('-hero') ||
+      sectionType === 'hero' ||
+      sectionType === 'not-found-hero' ||
+      sectionType.endsWith('hero'));
+
+  if (nestedInCard && (lower === 'title' || lower === 'name' || lower === 'label' || lower === 'heading')) {
+    return 'H3';
+  }
+
+  if (
+    lower === 'title' ||
+    lower === 'titletext' ||
+    lower === 'heading' ||
+    lower === 'headingtext' ||
+    lower === 'sectiontitle' ||
+    lower === 'overviewtitle' ||
+    lower === 'challengetitle' ||
+    lower === 'solutionstitle' ||
+    lower === 'resultstitle' ||
+    lower === 'abouttitle' ||
+    lower === 'whytitle' ||
+    lower === 'formheader'
+  ) {
+    return isHeroSection ? 'H1' : 'H2';
+  }
+
+  if (
+    lower === 'contenttitle' ||
+    lower === 'tabtitle' ||
+    lower === 'detailtitle' ||
+    lower === 'lefttitle' ||
+    lower === 'righttitle'
+  ) {
+    return 'H3';
+  }
+
+  if (lower === 'label' && !nestedInCard) {
+    return 'H3';
+  }
+
+  return null;
+}
+
+function baseHumanLabel(key: string): string {
+  if (key === 'headingH1') return 'Page H1';
   if (key === 'overviewTitle') return 'Title';
   if (key === 'overviewParagraphs') return 'Description';
   if (key === 'overviewImages') return 'Image Uploads';
@@ -55,11 +162,9 @@ export function humanLabel(key: string): string {
   if (key === 'tag2TextColor') return 'Tag 2 Text Color';
   if (key === 'tag2Text') return 'Tag 2 Text';
   if (key === 'buttonArrowColor') return 'Button Arrow Color';
-  if (key === 'titleText') return 'Title Text';
+  if (key === 'titleText') return 'Title';
   if (key === 'titleTextColor') return 'Title Text Color';
-  if (key === 'badgeBgColor') return 'Badge Background Color';
-  if (key === 'badgeBorderColor') return 'Badge Border Color';
-  if (key === 'badgeTextColor') return 'Badge Text Color';
+  if (key === 'badgeText') return 'Badge';
   if (key === 'descriptionTextColor') return 'Description Text Color';
   if (key === 'aboutTitle') return 'About Title';
   if (key === 'aboutText') return 'About Text';
@@ -92,20 +197,37 @@ export function humanLabel(key: string): string {
   if (key === 'button1FormType') return 'Button 1 Form Action';
   if (key === 'button2FormType') return 'Button 2 Form Action';
   if (key === 'ctaFormType') return 'CTA Form Action';
+  if (key === 'sectionTitle') return 'Section Title';
   if (key.toLowerCase().endsWith('pdfurl') || key.toLowerCase().endsWith('pdf')) {
     const prefix = key.replace(/PdfUrl$|pdfUrl$|Pdf$|pdf$/, '');
     if (!prefix || prefix.toLowerCase() === 'cta') return 'CTA PDF Upload';
-    return prefix
-      .replace(/([a-z])([A-Z])/g, '$1 $2')
-      .replace(/[_-]/g, ' ')
-      .replace(/\b\w/g, (c) => c.toUpperCase()) + ' PDF Upload';
+    return (
+      prefix
+        .replace(/([a-z])([A-Z])/g, '$1 $2')
+        .replace(/[_-]/g, ' ')
+        .replace(/\b\w/g, (c) => c.toUpperCase()) + ' PDF Upload'
+    );
   }
   if (key === 'tabTitle') return 'Tab Detail Title';
-  
+
   return key
     .replace(/([a-z])([A-Z])/g, '$1 $2')
     .replace(/[_-]/g, ' ')
     .replace(/\b\w/g, (c) => c.toUpperCase());
+}
+
+/**
+ * Human-readable field label. Appends fixed heading tag when applicable, e.g. "Title (H1)".
+ */
+export function humanLabel(
+  key: string,
+  options?: { sectionType?: string; keyPath?: string }
+): string {
+  const base = baseHumanLabel(key);
+  const tag = getHeadingTagForField(key, options?.sectionType, options?.keyPath);
+  if (!tag) return base;
+  if (base.includes(`(${tag})`)) return base;
+  return `${base} (${tag})`;
 }
 
 const IMAGE_PATTERNS = ['image', 'thumbnail', 'avatar', 'logo', 'ogimage', 'photo', 'banner', 'icon_url', 'icon_image', 'icon', 'media', 'video', 'pdf'];

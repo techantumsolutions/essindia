@@ -21,9 +21,40 @@ export const seoMetadata = pgTable('seo_metadata', {
   canonicalUrl: text('canonical_url'),
   noIndex: boolean('no_index').default(false).notNull(),
   schemaMarkup: jsonb('schema_markup').default('{}'),
+  ogTitle: varchar('og_title', { length: 255 }),
+  ogDescription: text('og_description'),
+  twitterCard: varchar('twitter_card', { length: 50 }).default('summary_large_image'),
+  twitterTitle: varchar('twitter_title', { length: 255 }),
+  twitterDescription: text('twitter_description'),
+  twitterImage: text('twitter_image'),
+  headerScripts: text('header_scripts'),
+  footerScripts: text('footer_scripts'),
+  headingH1: varchar('heading_h1', { length: 500 }),
   createdAt: timestamp('created_at').defaultNow().notNull(),
   updatedAt: timestamp('updated_at').defaultNow().notNull(),
 });
+
+/** Key/value site-level settings (global scripts, robots extras, etc.) */
+export const siteSettings = pgTable('site_settings', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  key: varchar('key', { length: 100 }).notNull().unique(),
+  value: jsonb('value').notNull().default({}),
+  updatedAt: timestamp('updated_at').defaultNow().notNull(),
+});
+
+/** CMS-managed 301/302 redirects */
+export const urlRedirects = pgTable('url_redirects', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  fromPath: varchar('from_path', { length: 500 }).notNull().unique(),
+  toPath: varchar('to_path', { length: 1000 }).notNull(),
+  statusCode: integer('status_code').notNull().default(301),
+  isEnabled: boolean('is_enabled').notNull().default(true),
+  notes: text('notes'),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+  updatedAt: timestamp('updated_at').defaultNow().notNull(),
+}, (table) => ({
+  idxUrlRedirectsEnabled: index('idx_url_redirects_enabled').on(table.isEnabled),
+}));
 
 // --- CATEGORY HIERARCHY ---
 export const categories = pgTable('categories', {

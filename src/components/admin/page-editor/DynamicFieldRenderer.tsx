@@ -3,7 +3,7 @@
 import React from 'react';
 import { ChevronDown, ChevronUp, Trash2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { detectFieldType, humanLabel } from './field-utils';
+import { detectFieldType, humanLabel, isHiddenCmsField } from './field-utils';
 import type { JsonValue, FieldType } from './field-utils';
 import { ToggleSwitch } from './ToggleSwitch';
 import { ColorPickerField } from './ColorPickerField';
@@ -32,6 +32,10 @@ export function DynamicFieldRenderer({
   depth = 0,
   sectionType,
 }: DynamicFieldRendererProps) {
+  if (isHiddenCmsField(fieldKey)) return null;
+
+  const fieldLabel = humanLabel(fieldKey, { sectionType, keyPath });
+
   let fieldType = detectFieldType(fieldKey, value, sectionType);
   if (fieldKey.toLowerCase().includes('pdf')) {
     fieldType = 'image';
@@ -42,7 +46,7 @@ export function DynamicFieldRenderer({
       return (
         <div className="flex items-center gap-3 py-1">
           <label className="admin-label w-36 shrink-0 truncate">
-            {humanLabel(fieldKey)}
+            {fieldLabel}
           </label>
           <span className="text-xs text-slate-300 italic">Empty</span>
         </div>
@@ -52,6 +56,7 @@ export function DynamicFieldRenderer({
       return (
         <ToggleSwitch
           fieldKey={fieldKey}
+          label={fieldLabel}
           value={value as boolean}
           onChange={(v) => onChange(keyPath, v)}
         />
@@ -61,6 +66,7 @@ export function DynamicFieldRenderer({
       return (
         <NumberField
           fieldKey={fieldKey}
+          label={fieldLabel}
           value={value as number}
           onChange={(v) => onChange(keyPath, v)}
         />
@@ -70,6 +76,7 @@ export function DynamicFieldRenderer({
       return (
         <ColorPickerField
           fieldKey={fieldKey}
+          label={fieldLabel}
           value={value as string}
           onChange={(v) => onChange(keyPath, v)}
         />
@@ -79,6 +86,7 @@ export function DynamicFieldRenderer({
       return (
         <MediaField
           fieldKey={fieldKey}
+          label={fieldLabel}
           value={String(value ?? '')}
           onChange={(v) => onChange(keyPath, v)}
           hint={sectionType ? getImageHint(sectionType, fieldKey) : undefined}
@@ -90,6 +98,7 @@ export function DynamicFieldRenderer({
       return (
         <UrlField
           fieldKey={fieldKey}
+          label={fieldLabel}
           value={value as string}
           onChange={(v) => onChange(keyPath, v)}
         />
@@ -99,6 +108,7 @@ export function DynamicFieldRenderer({
       return (
         <IconField
           fieldKey={fieldKey}
+          label={fieldLabel}
           value={value as string}
           onChange={(v) => onChange(keyPath, v)}
         />
@@ -108,6 +118,7 @@ export function DynamicFieldRenderer({
       return (
         <CountryCodeField
           fieldKey={fieldKey}
+          label={fieldLabel}
           value={value as string}
           onChange={(v) => onChange(keyPath, v)}
         />
@@ -117,6 +128,7 @@ export function DynamicFieldRenderer({
       return (
         <TopicSelectField
           fieldKey={fieldKey}
+          label={fieldLabel}
           value={value as string}
           onChange={(v) => onChange(keyPath, v)}
         />
@@ -126,6 +138,7 @@ export function DynamicFieldRenderer({
       return (
         <IndustrySelectField
           fieldKey={fieldKey}
+          label={fieldLabel}
           value={value as string}
           onChange={(v) => onChange(keyPath, v)}
         />
@@ -135,6 +148,7 @@ export function DynamicFieldRenderer({
       return (
         <RichTextField
           fieldKey={fieldKey}
+          label={fieldLabel}
           value={value as string}
           onChange={(v) => onChange(keyPath, v)}
         />
@@ -144,6 +158,7 @@ export function DynamicFieldRenderer({
       return (
         <TextareaField
           fieldKey={fieldKey}
+          label={fieldLabel}
           value={value as string}
           onChange={(v) => onChange(keyPath, v)}
         />
@@ -153,6 +168,7 @@ export function DynamicFieldRenderer({
       return (
         <TextField
           fieldKey={fieldKey}
+          label={fieldLabel}
           value={value as string}
           onChange={(v) => onChange(keyPath, v)}
         />
@@ -197,6 +213,7 @@ export function DynamicFieldRenderer({
       return (
         <FormSelectField
           fieldKey={fieldKey}
+          label={fieldLabel}
           value={value as string}
           onChange={(v) => onChange(keyPath, v)}
         />
@@ -209,21 +226,24 @@ export function DynamicFieldRenderer({
 
 function TextField({
   fieldKey,
+  label,
   value,
   onChange,
 }: {
   fieldKey: string;
+  label?: string;
   value: string;
   onChange: (value: string) => void;
 }) {
   const isTitleLike = /title|heading|name|label/i.test(fieldKey);
   const isTabDesc = fieldKey.toLowerCase() === 'tabdesc';
   const maxLength = isTabDesc ? 50 : undefined;
+  const displayLabel = label || humanLabel(fieldKey);
 
   return (
     <div className="space-y-1.5">
       <div className="flex justify-between items-center">
-        <label className="admin-label">{humanLabel(fieldKey)}</label>
+        <label className="admin-label">{displayLabel}</label>
         {maxLength && (
           <span className={cn(
             "text-[10px] font-medium",
@@ -249,16 +269,18 @@ function TextField({
 
 function TextareaField({
   fieldKey,
+  label,
   value,
   onChange,
 }: {
   fieldKey: string;
+  label?: string;
   value: string;
   onChange: (value: string) => void;
 }) {
   return (
     <div className="space-y-1.5">
-      <label className="admin-label">{humanLabel(fieldKey)}</label>
+      <label className="admin-label">{label || humanLabel(fieldKey)}</label>
       <textarea
         value={value}
         onChange={(e) => onChange(e.target.value)}
@@ -271,16 +293,18 @@ function TextareaField({
 
 function NumberField({
   fieldKey,
+  label,
   value,
   onChange,
 }: {
   fieldKey: string;
+  label?: string;
   value: number;
   onChange: (value: number) => void;
 }) {
   return (
     <div className="space-y-1.5">
-      <label className="admin-label">{humanLabel(fieldKey)}</label>
+      <label className="admin-label">{label || humanLabel(fieldKey)}</label>
       <input
         type="number"
         value={value}
@@ -293,16 +317,18 @@ function NumberField({
 
 function UrlField({
   fieldKey,
+  label,
   value,
   onChange,
 }: {
   fieldKey: string;
+  label?: string;
   value: string;
   onChange: (value: string) => void;
 }) {
   return (
     <div className="space-y-1.5">
-      <label className="admin-label">{humanLabel(fieldKey)}</label>
+      <label className="admin-label">{label || humanLabel(fieldKey)}</label>
       <div className="flex items-center gap-2">
         <input
           type="url"
@@ -334,16 +360,18 @@ const FORM_OPTIONS = [
 
 function FormSelectField({
   fieldKey,
+  label,
   value,
   onChange,
 }: {
   fieldKey: string;
+  label?: string;
   value: string;
   onChange: (value: string) => void;
 }) {
   return (
     <div className="space-y-2">
-      <label className="admin-label">{humanLabel(fieldKey)}</label>
+      <label className="admin-label">{label || humanLabel(fieldKey)}</label>
       <div className="grid grid-cols-3 gap-2">
         {FORM_OPTIONS.map((opt) => {
           const isActive = (value || '') === opt.value;
@@ -374,16 +402,18 @@ function FormSelectField({
 
 function IconField({
   fieldKey,
+  label,
   value,
   onChange,
 }: {
   fieldKey: string;
+  label?: string;
   value: string;
   onChange: (value: string) => void;
 }) {
   return (
     <div className="space-y-1.5">
-      <label className="admin-label">{humanLabel(fieldKey)}</label>
+      <label className="admin-label">{label || humanLabel(fieldKey)}</label>
       <div className="flex items-center gap-3">
         <div className="w-10 h-10 rounded-xl bg-[#4B2A63]/5 flex items-center justify-center text-sm font-bold text-[#4B2A63] shrink-0">
           {value ? value.charAt(0).toUpperCase() : '?'}
@@ -476,7 +506,7 @@ function ObjectField({
             isCtaLike ? 'text-violet-600' : isHeadingLike ? 'text-blue-600' : 'text-slate-600'
           )}
         >
-          {humanLabel(fieldKey)}
+          {humanLabel(fieldKey, { sectionType, keyPath })}
         </span>
         <span className="text-[10px] text-slate-400">{orderedKeys.length} fields</span>
       </button>
@@ -780,16 +810,18 @@ function ArrayField({
 
 function CountryCodeField({
   fieldKey,
+  label,
   value,
   onChange,
 }: {
   fieldKey: string;
+  label?: string;
   value: string;
   onChange: (value: string) => void;
 }) {
   return (
     <div className="space-y-1.5">
-      <label className="admin-label">{humanLabel(fieldKey)}</label>
+      <label className="admin-label">{label || humanLabel(fieldKey)}</label>
       <select
         value={value}
         onChange={(e) => onChange(e.target.value)}
@@ -818,16 +850,18 @@ const TOPIC_OPTIONS = [
 
 function TopicSelectField({
   fieldKey,
+  label,
   value,
   onChange,
 }: {
   fieldKey: string;
+  label?: string;
   value: string;
   onChange: (value: string) => void;
 }) {
   return (
     <div className="space-y-1.5 flex-1 min-w-[200px]">
-      <label className="admin-label">{humanLabel(fieldKey)}</label>
+      <label className="admin-label">{label || humanLabel(fieldKey)}</label>
       <select
         value={value}
         onChange={(e) => onChange(e.target.value)}
@@ -854,16 +888,18 @@ const INDUSTRY_OPTIONS = [
 
 function IndustrySelectField({
   fieldKey,
+  label,
   value,
   onChange,
 }: {
   fieldKey: string;
+  label?: string;
   value: string;
   onChange: (value: string) => void;
 }) {
   return (
     <div className="space-y-1.5 flex-1 min-w-[200px]">
-      <label className="admin-label">{humanLabel(fieldKey)}</label>
+      <label className="admin-label">{label || humanLabel(fieldKey)}</label>
       <select
         value={value}
         onChange={(e) => onChange(e.target.value)}

@@ -1,13 +1,25 @@
 import type { MetadataRoute } from 'next';
+import { getSiteUrl } from '@/lib/seo/site-url';
+import { siteSettingsRepository } from '@/repositories/site-settings.repository';
 
-const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://essindia.com';
+export default async function robots(): Promise<MetadataRoute.Robots> {
+  const BASE_URL = getSiteUrl();
+  let extraDisallow: string[] = [];
 
-export default function robots(): MetadataRoute.Robots {
+  try {
+    const globals = await siteSettingsRepository.getSeoGlobals();
+    extraDisallow = Array.isArray(globals.robotsExtraDisallow)
+      ? globals.robotsExtraDisallow.filter(Boolean)
+      : [];
+  } catch {
+    // keep defaults
+  }
+
   return {
     rules: {
       userAgent: '*',
       allow: '/',
-      disallow: ['/admin/', '/api/'],
+      disallow: ['/admin/', '/api/', ...extraDisallow],
     },
     sitemap: `${BASE_URL}/sitemap.xml`,
   };
