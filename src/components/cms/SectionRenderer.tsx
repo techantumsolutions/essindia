@@ -150,6 +150,7 @@ import { UgandaIndustries } from '@/components/blocks/uganda/UgandaIndustries';
 import { UgandaInsights } from '@/components/blocks/uganda/UgandaInsights';
 import { NotFoundHero } from '@/components/blocks/NotFoundHero';
 import { NotFoundLinks } from '@/components/blocks/NotFoundLinks';
+import { ThankYouHero } from '@/components/blocks/ThankYouHero';
 
 
 
@@ -477,6 +478,8 @@ export function SectionRenderer({ section }: SectionRendererProps) {
       return <NotFoundHero content={section.content} />;
     case 'not-found-links':
       return <NotFoundLinks content={section.content} />;
+    case 'thank-you-hero':
+      return <ThankYouHero content={section.content} />;
 
     default:
       if (process.env.NODE_ENV === 'development') {

@@ -27,6 +27,7 @@
     "db:seed-testimonials-template": "npx tsx scripts/create-testimonials-template.ts",
     "db:seed-europe-template": "npx tsx scripts/seed-europe-template.ts",
     "db:seed-404-template": "npx tsx scripts/seed-404-template.ts",
+    "db:seed-thank-you-template": "npx tsx scripts/seed-thank-you-template.ts",
     "db:apply-seo-extensions": "npx tsx scripts/apply-seo-extensions-migration.ts",
     "db:apply-registry": "npx tsx scripts/apply-page-registry-migration.ts",
     "db:apply-page-nav": "npx tsx scripts/apply-page-nav-migration.ts",

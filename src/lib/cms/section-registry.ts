@@ -1995,7 +1995,22 @@ export const SECTION_REGISTRY: SectionTypeDefinition[] = [
     defaultVariant: 'default',
     supportsVariants: false,
     fieldOrder: ['bgColor', 'title', 'titleColor', 'description', 'descriptionColor', 'links'],
-  }
+  },
+  {
+    type: 'thank-you-hero',
+    label: 'Thank You Hero',
+    description: 'Confirmation message shown after form submission, with delayed PDF open support',
+    icon: Layout,
+    color: 'bg-emerald-50 text-emerald-700',
+    defaultVariant: 'default',
+    supportsVariants: false,
+    fieldOrder: [
+      'bgColor', 'badgeText', 'badgeBgColor', 'badgeTextColor',
+      'title', 'titleColor', 'description', 'descriptionColor', 'pdfNotice',
+      'primaryButtonText', 'primaryButtonUrl', 'primaryButtonBgColor', 'primaryButtonTextColor',
+      'secondaryButtonText', 'secondaryButtonUrl',
+    ],
+  },
 ];
 
 

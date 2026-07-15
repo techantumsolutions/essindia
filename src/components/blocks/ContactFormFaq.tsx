@@ -7,6 +7,7 @@ import { ALL_COUNTRIES_LIST } from '@/lib/countries';
 import countryCodesList from 'country-codes-list';
 import { toast } from 'sonner';
 import { validatePhoneNumber } from '@/lib/phone-validation';
+import { completeFormSuccess } from '@/lib/forms/form-success';
 
 const DIAL_CODES = (countryCodesList.customArray({
   name: '{countryNameEn}',
@@ -116,6 +117,7 @@ export function ContactFormFaq({ content }: { content?: ContactFormFaqContent })
           company: formData.company,
           country: countryInfo ? countryInfo.name : selectedCountry,
           message: formData.message,
+          formType: 'contact',
         })
       });
 
@@ -128,6 +130,7 @@ export function ContactFormFaq({ content }: { content?: ContactFormFaqContent })
       setFormData({ firstName: '', lastName: '', email: '', phone: '', company: '', message: '' });
       setSelectedCountry('');
       setAcceptedPrivacy(false);
+      await completeFormSuccess('contact');
     } catch (err: any) {
       toast.error(err.message || 'Something went wrong');
     } finally {

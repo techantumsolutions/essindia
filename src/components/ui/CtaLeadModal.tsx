@@ -11,6 +11,7 @@ import { validatePhoneNumber } from '@/lib/phone-validation';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { ALL_COUNTRIES_LIST } from '@/lib/countries';
 import countryCodesList from 'country-codes-list';
+import { completeFormSuccess } from '@/lib/forms/form-success';
 
 const DIAL_CODES = (countryCodesList.customArray({
   name: '{countryNameEn}',
@@ -96,12 +97,8 @@ export function CtaLeadModal({ isOpen, onClose, pdfUrl, pageName }: CtaLeadModal
       }
 
       toast.success('Submitted successfully!');
-      
-      if (pdfUrl) {
-        window.open(pdfUrl, '_blank');
-      }
-      
       onClose();
+      await completeFormSuccess('cta', pdfUrl);
     } catch (err: any) {
       toast.error(err.message || 'Something went wrong. Please try again.');
     } finally {

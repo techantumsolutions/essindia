@@ -1945,6 +1945,25 @@ const DEFAULT_NOT_FOUND_LINKS_CONTENT: Record<string, any> = {
   ],
 };
 
+const DEFAULT_THANK_YOU_HERO_CONTENT: Record<string, any> = {
+  badgeText: 'Success',
+  badgeBgColor: '#dcfce7',
+  badgeTextColor: '#166534',
+  title: 'Thank you for reaching out',
+  titleColor: '#0f172a',
+  description:
+    'We have received your details. Our team will get back to you shortly.',
+  descriptionColor: '#64748b',
+  pdfNotice: 'If a document was requested, it will open in a new tab in a few seconds.',
+  primaryButtonText: 'Back to Home',
+  primaryButtonUrl: '/',
+  primaryButtonBgColor: '#4B2A63',
+  primaryButtonTextColor: '#ffffff',
+  secondaryButtonText: 'Explore Solutions',
+  secondaryButtonUrl: '/solutions',
+  bgColor: '#ffffff',
+};
+
 interface SectionEditorCardProps {
   section: PageSection;
   schema?: Record<string, unknown> | null;
@@ -2139,6 +2158,8 @@ export function SectionEditorCard({
         baseSchema = DEFAULT_NOT_FOUND_HERO_CONTENT as Record<string, JsonValue>;
       } else if (section.type === 'not-found-links') {
         baseSchema = DEFAULT_NOT_FOUND_LINKS_CONTENT as Record<string, JsonValue>;
+      } else if (section.type === 'thank-you-hero') {
+        baseSchema = DEFAULT_THANK_YOU_HERO_CONTENT as Record<string, JsonValue>;
       }
     }
 
