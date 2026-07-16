@@ -146,3 +146,23 @@
 .admin-input {
   @apply w-full px-4 py-2 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#5C2B6A] focus:border-transparent transition-all text-sm bg-white text-gray-900;
 }
+
+/* Global button styling overrides: 0px border-radius, py-2 px-6, text-xs size */
+[data-slot="button"],
+a.rounded-full[class*="px-"], button.rounded-full[class*="px-"],
+a.rounded-3xl[class*="px-"], button.rounded-3xl[class*="px-"],
+a.rounded-2xl[class*="px-"], button.rounded-2xl[class*="px-"],
+a.rounded-xl[class*="px-"], button.rounded-xl[class*="px-"],
+a.rounded-lg[class*="px-"], button.rounded-lg[class*="px-"],
+a.rounded-md[class*="px-"], button.rounded-md[class*="px-"],
+a.rounded-sm[class*="px-"], button.rounded-sm[class*="px-"],
+a.rounded[class*="px-"], button.rounded[class*="px-"] {
+  border-radius: 0px !important;
+  padding-left: 1.5rem !important; /* px-6 */
+  padding-right: 1.5rem !important; /* px-6 */
+  padding-top: 0.5rem !important; /* py-2 */
+  padding-bottom: 0.5rem !important; /* py-2 */
+  font-size: 12px !important; /* text-xs */
+  height: auto !important; /* override fixed heights like h-12 or h-14 */
+  min-height: 0px !important;
+}

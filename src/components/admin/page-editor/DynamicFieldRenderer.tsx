@@ -454,19 +454,32 @@ function ObjectField({
     mergedValue['formType'] = '';
   }
 
+  const showPdf = mergedValue['formType'] === 'cta';
+  if (showPdf && !('pdfUrl' in mergedValue)) {
+    mergedValue['pdfUrl'] = '';
+  }
+
   const keys = Object.keys(mergedValue);
   
-  // Sort keys so formType is directly under the url/href field
+  // Sort keys so formType is directly under the url/href field, and pdfUrl directly under formType
   const orderedKeys: string[] = [];
   keys.forEach(k => {
-    if (k === 'formType') return;
+    if (k === 'formType' || k === 'pdfUrl') return;
     orderedKeys.push(k);
-    if (/^(url|href)$/i.test(k) && keys.includes('formType')) {
-      orderedKeys.push('formType');
+    if (/^(url|href)$/i.test(k)) {
+      if (keys.includes('formType')) {
+        orderedKeys.push('formType');
+      }
+      if (showPdf && (keys.includes('pdfUrl') || 'pdfUrl' in mergedValue)) {
+        orderedKeys.push('pdfUrl');
+      }
     }
   });
   if (keys.includes('formType') && !orderedKeys.includes('formType')) {
     orderedKeys.push('formType');
+  }
+  if (showPdf && (keys.includes('pdfUrl') || 'pdfUrl' in mergedValue) && !orderedKeys.includes('pdfUrl')) {
+    orderedKeys.push('pdfUrl');
   }
 
   const isCtaLike = /cta|button|action|link/i.test(fieldKey);
