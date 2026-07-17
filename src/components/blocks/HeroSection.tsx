@@ -12,6 +12,7 @@ interface HeroCta {
   label: string;
   url: string;
   formType?: string;
+  pdfUrl?: string;
 }
 
 interface HeroContent {
@@ -38,8 +39,8 @@ export function HeroSection({ content }: HeroSectionProps) {
   const secondaryCta = content?.secondaryCta || { label: "View Solutions", url: "/solutions" };
   const image = content?.image || "/hero-right.png";
 
-  const { handleClick: handlePrimaryClick, modalNode: primaryModal } = useCtaAction(primaryCta.url, primaryCta.formType as CtaFormType);
-  const { handleClick: handleSecondaryClick, modalNode: secondaryModal } = useCtaAction(secondaryCta.url, secondaryCta.formType as CtaFormType);
+  const { handleClick: handlePrimaryClick, modalNode: primaryModal } = useCtaAction(primaryCta.url, primaryCta.formType as CtaFormType, primaryCta.pdfUrl);
+  const { handleClick: handleSecondaryClick, modalNode: secondaryModal } = useCtaAction(secondaryCta.url, secondaryCta.formType as CtaFormType, secondaryCta.pdfUrl);
 
   const hasBg = content?.bgColor || content?.gradientColor1 || content?.gradientColor2 || content?.gradientColor3;
   const bgStyles = getHeroBackgroundStyles({

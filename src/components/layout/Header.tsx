@@ -55,7 +55,7 @@ export function Header({
 
   return (
     <header className={cn(
-      "fixed inset-x-0 z-50 flex justify-center px-4 transition-all duration-500 ease-[0.22, 1, 0.36, 1]",
+      "fixed inset-x-0 z-50 transition-all duration-500 ease-[0.22, 1, 0.36, 1]",
       scrolled ? "top-4" : "top-8"
     )}>
       <motion.div
@@ -63,45 +63,47 @@ export function Header({
         animate={{ y: 0, opacity: 1 }}
         transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
         className={cn(
-          "flex w-full max-w-7xl items-center justify-between rounded-full px-4 md:px-8 transition-all duration-500 ease-[0.22, 1, 0.36, 1]",
+          "w-full transition-all duration-500 ease-[0.22, 1, 0.36, 1]",
           scrolled
-            ? "bg-white/80 backdrop-blur-xl py-2 shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-white/20"
-            : "bg-white py-3 shadow-[0_4px_25px_-5px_rgba(0,0,0,0.1)] border border-slate-200"
+            ? "bg-white/80 backdrop-blur-xl py-2 shadow-[0_8px_30px_rgb(0,0,0,0.04)] border-y border-slate-100"
+            : "bg-white py-3 shadow-[0_4px_25px_-5px_rgba(0,0,0,0.1)] border-y border-slate-200"
         )}
       >
+        <div className="mx-auto flex w-full max-w-7xl items-center justify-between px-6 md:px-8">
 
-        {/* Logo */}
-        <Link href="/" className="flex items-center group">
-          <div className="relative">
-            <img src={logoUrl} alt="Eastern Software Solutions Pvt.Ltd" className="h-10 w-[160px]" />
-            {/* <span className="font-bold text-lg text-[#4B2A63] transition-transform duration-500 group-hover:scale-105 inline-block">EASTERN</span> */}
-          </div>
-        </Link>
-
-        {/* Desktop Nav */}
-        <div className="hidden lg:flex flex-1 justify-center">
-          <DesktopNav items={navData} />
-        </div>
-
-        {/* Right Actions */}
-        <div className="hidden lg:flex items-center space-x-4">
-          <button className="text-slate-600 hover:text-slate-900 transition-colors p-2 hover:bg-slate-50 rounded-full cursor-pointer">
-            {/* <Search className="w-5 h-5" /> */}
-          </button>
-          <Link href={getStartedLink}>
-            <Button className="bg-[#111] hover:bg-black text-white rounded-full px-6 transition-all duration-300 hover:shadow-lg hover:-translate-y-0.5 active:scale-95 cursor-pointer">
-              {getStartedText}
-            </Button>
+          {/* Logo */}
+          <Link href="/" className="flex items-center group">
+            <div className="relative">
+              <img src={logoUrl} alt="Eastern Software Solutions Pvt.Ltd" className="h-10 w-[160px]" />
+              {/* <span className="font-bold text-lg text-[#4B2A63] transition-transform duration-500 group-hover:scale-105 inline-block">EASTERN</span> */}
+            </div>
           </Link>
-        </div>
 
-        {/* Mobile Toggle */}
-        <button
-          className="lg:hidden text-slate-700 p-2 hover:bg-slate-50 rounded-full transition-colors cursor-pointer"
-          onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-        >
-          {isMobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-        </button>
+          {/* Desktop Nav */}
+          <div className="hidden lg:flex flex-1 justify-center">
+            <DesktopNav items={navData} />
+          </div>
+
+          {/* Right Actions */}
+          <div className="hidden lg:flex items-center space-x-4">
+            <button className="text-slate-600 hover:text-slate-900 transition-colors p-2 hover:bg-slate-50 rounded-full cursor-pointer">
+              <Search className="w-5 h-5" />
+            </button>
+            <Link href={getStartedLink}>
+              <Button className="bg-[#111] hover:bg-black text-white rounded-none px-6 py-2 transition-all duration-300 hover:shadow-lg hover:-translate-y-0.5 active:scale-95 cursor-pointer">
+                {getStartedText}
+              </Button>
+            </Link>
+          </div>
+
+          {/* Mobile Toggle */}
+          <button
+            className="lg:hidden text-slate-700 p-2 hover:bg-slate-50 rounded-full transition-colors cursor-pointer"
+            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+          >
+            {isMobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+          </button>
+        </div>
       </motion.div>
 
       {/* Mobile Menu Dropdown */}
@@ -112,7 +114,7 @@ export function Header({
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 10, scale: 0.95 }}
             transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
-            className="absolute top-[80px] left-4 right-4 bg-white/95 backdrop-blur-2xl rounded-2xl shadow-2xl border border-slate-100 p-6 flex flex-col gap-6 lg:hidden z-50"
+            className="absolute top-[80px] left-4 right-4 bg-white/95 backdrop-blur-2xl rounded-none shadow-2xl border border-slate-100 p-6 flex flex-col gap-6 lg:hidden z-50"
           >
             <nav className="flex flex-col gap-4">
               {navData.map((item) => (
@@ -156,7 +158,7 @@ export function Header({
 
             <div className="pt-4 border-t border-slate-100">
               <Link href={getStartedLink} onClick={() => setIsMobileMenuOpen(false)} className="w-full block">
-                <Button className="w-full bg-[#111] hover:bg-black text-white rounded-full h-12 text-lg transition-all duration-300 hover:shadow-xl">
+                <Button className="w-full bg-[#111] hover:bg-black text-white rounded-none py-2 px-6 transition-all duration-300 hover:shadow-xl font-medium">
                   {getStartedText}
                 </Button>
               </Link>
