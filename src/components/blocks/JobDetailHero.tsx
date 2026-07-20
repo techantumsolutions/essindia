@@ -84,7 +84,7 @@ export default function JobDetailHero({ content }: { content?: JobDetailHeroCont
     }
   };
 
-  
+
   const bgStyles = getHeroBackgroundStyles({
     gradientColor1: content?.gradientColor1,
     gradientColor2: content?.gradientColor2,
@@ -92,8 +92,8 @@ export default function JobDetailHero({ content }: { content?: JobDetailHeroCont
   }, undefined);
 
   return (
-    <section 
-      className="relative min-h-[80vh] flex items-center pt-40 pb-16 px-6 lg:px-8"
+    <section
+      className="relative min-h-[45vh] flex items-center py-14 px-6 lg:px-8 border-b"
       style={bgStyles}
     >
       <div className="container mx-auto max-w-7xl">
@@ -115,7 +115,7 @@ export default function JobDetailHero({ content }: { content?: JobDetailHeroCont
           {/* Tags */}
           <div className="flex items-center gap-3 mb-6">
             {tag1Text && (
-              <span 
+              <span
                 className="inline-block text-[11px] font-semibold px-3 py-1 rounded-full uppercase tracking-wide"
                 style={{ backgroundColor: tag1BgColor, color: tag1TextColor }}
               >
@@ -123,7 +123,7 @@ export default function JobDetailHero({ content }: { content?: JobDetailHeroCont
               </span>
             )}
             {tag2Text && (
-              <span 
+              <span
                 className="inline-block text-[11px] font-semibold px-3 py-1 rounded-full uppercase tracking-wide"
                 style={{ backgroundColor: tag2BgColor, color: tag2TextColor }}
               >
@@ -133,7 +133,7 @@ export default function JobDetailHero({ content }: { content?: JobDetailHeroCont
           </div>
 
           {/* Job Title */}
-          <h1 
+          <h1
             className="text-4xl md:text-5xl lg:text-[56px] font-bold mb-8 tracking-tight"
             style={{ color: titleTextColor }}
           >

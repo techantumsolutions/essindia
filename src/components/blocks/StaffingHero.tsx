@@ -4,6 +4,7 @@ import React from 'react';
 import { getHeroBackgroundStyles } from '@/lib/utils';
 import Image from 'next/image';
 import Link from 'next/link';
+import { motion } from 'framer-motion';
 import { useCtaAction, type CtaFormType } from '@/hooks/useCtaAction';
 
 interface StaffingHeroContent {
@@ -54,7 +55,7 @@ export function StaffingHero({ content }: StaffingHeroProps) {
   }, { backgroundColor: bgColor });
 
   return (
-    <section className="relative min-h-[80vh] flex items-center pt-40 pb-16 px-6" style={bgStyles}>
+    <section className="relative min-h-[80vh] flex items-center py-14 px-6" style={bgStyles}>
       <div className="container mx-auto max-w-7xl">
         <div className="flex flex-col lg:flex-row items-center gap-12 lg:gap-20">
 
@@ -109,13 +110,19 @@ export function StaffingHero({ content }: StaffingHeroProps) {
           {/* Right Image */}
           <div className="lg:w-1/2 w-full flex justify-center lg:justify-end">
             <div className="relative w-full aspect-[4/3] max-w-[500px]">
-              <Image
-                src={image}
-                alt="Staffing Services Hero"
-                fill
-                className="object-contain"
-                priority
-              />
+              <motion.div
+                animate={{ y: [0, -12, 0] }}
+                transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
+                className="w-full h-full relative"
+              >
+                <Image
+                  src={image}
+                  alt="Staffing Services Hero"
+                  fill
+                  className="object-contain"
+                  priority
+                />
+              </motion.div>
             </div>
           </div>
 

@@ -12,9 +12,8 @@ export async function GlobalScripts({ position }: { position: 'header' | 'footer
     if (!raw?.trim()) return null;
 
     return (
-      <Script
-        id={`global-${position}-scripts`}
-        strategy={position === 'header' ? 'afterInteractive' : 'lazyOnload'}
+      <div
+        style={{ display: 'none' }}
         dangerouslySetInnerHTML={{ __html: raw }}
       />
     );

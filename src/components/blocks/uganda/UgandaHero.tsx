@@ -72,7 +72,7 @@ export function UgandaHero({ content }: { content?: UgandaHeroContent }) {
 
   return (
     <section 
-      className="relative w-full pt-40 pb-14 flex items-center justify-center overflow-hidden"
+      className="relative w-full py-14 flex items-center justify-center overflow-hidden"
       style={bgStyles}
     >
       <div className="relative z-10 container mx-auto px-4 md:px-8 max-w-7xl text-center">

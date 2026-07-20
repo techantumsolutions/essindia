@@ -9,6 +9,7 @@ import { MegaMenuContent } from './MegaMenuContent';
 import { MegaMenuMobile } from './MegaMenuMobile';
 import type { MegaMenuPayload } from '@/lib/cms/mega-menu-types';
 import { hasRenderableMegaMenu } from '@/lib/cms/mega-menu-sanitize';
+import { usePathname } from 'next/navigation';
 import {
   NavigationMenu,
   NavigationMenuContent,
@@ -44,6 +45,11 @@ export function Header({
 }) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = React.useState(false);
   const [scrolled, setScrolled] = React.useState(false);
+  const pathname = usePathname();
+
+  React.useEffect(() => {
+    setIsMobileMenuOpen(false);
+  }, [pathname]);
 
   React.useEffect(() => {
     const handleScroll = () => {
@@ -55,8 +61,7 @@ export function Header({
 
   return (
     <header className={cn(
-      "fixed inset-x-0 z-50 transition-all duration-500 ease-[0.22, 1, 0.36, 1]",
-      scrolled ? "top-4" : "top-8"
+      "fixed inset-x-0 z-50 transition-all duration-500 ease-[0.22, 1, 0.36, 1] top-0"
     )}>
       <motion.div
         initial={{ y: -20, opacity: 0 }}
@@ -64,9 +69,7 @@ export function Header({
         transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
         className={cn(
           "w-full transition-all duration-500 ease-[0.22, 1, 0.36, 1]",
-          scrolled
-            ? "bg-white/80 backdrop-blur-xl py-2 shadow-[0_8px_30px_rgb(0,0,0,0.04)] border-y border-slate-100"
-            : "bg-white py-3 shadow-[0_4px_25px_-5px_rgba(0,0,0,0.1)] border-y border-slate-200"
+          "bg-white py-3 shadow-[0_4px_25px_-5px_rgba(0,0,0,0.1)] border-b border-slate-200"
         )}
       >
         <div className="mx-auto flex w-full max-w-7xl items-center justify-between px-6 md:px-8">
@@ -171,15 +174,22 @@ export function Header({
 }
 
 function DesktopNav({ items = [] }: { items: NavItem[] }) {
+  const [value, setValue] = React.useState<string>("");
+  const pathname = usePathname();
+
+  React.useEffect(() => {
+    setValue("");
+  }, [pathname]);
+
   return (
-    <NavigationMenu align="center">
+    <NavigationMenu align="center" value={value} onValueChange={setValue}>
       <NavigationMenuList className="gap-2">
         {items.map((item) => {
           const isDropdown = item.megaMenuConfig?.displayType === 'dropdown';
           const simpleLinks = item.megaMenuConfig?.links || [];
 
           return (
-            <NavigationMenuItem key={item.id}>
+            <NavigationMenuItem key={item.id} value={item.id}>
               {hasRenderableMegaMenu(item.megaMenu) ? (
                 isDropdown ? (
                   <>

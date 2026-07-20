@@ -46,7 +46,7 @@ export function AboutUsHero({ content }: AboutUsHeroProps) {
   }, { background: 'linear-gradient(to b, #1C2D4E, #111B2D)' });
 
   return (
-    <section className="relative min-h-[80vh] flex flex-col justify-between pt-40 pb-16 overflow-hidden bg-gradient-to-b from-[#1C2D4E] to-[#111B2D] text-white" style={bgStyles}>
+    <section className="relative min-h-[80vh] flex flex-col justify-between py-14 overflow-hidden bg-gradient-to-b from-[#1C2D4E] to-[#111B2D] text-white" style={bgStyles}>
       {/* Background Image */}
       {!(content?.gradientColor1 || content?.gradientColor2 || content?.gradientColor3) && (
         <div

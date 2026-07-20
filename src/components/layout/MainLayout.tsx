@@ -14,7 +14,7 @@ export async function MainLayout({ children }: MainLayoutProps) {
       <Suspense fallback={<HeaderSkeleton />}>
         <HeaderShell />
       </Suspense>
-      <main className="flex-1">
+      <main className="flex-1 pt-16">
         {children}
       </main>
       <Suspense fallback={<FooterSkeleton />}>

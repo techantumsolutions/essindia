@@ -33,7 +33,7 @@ export function QualityHero({ content }: QualityHeroProps) {
 
   return (
     <section 
-      className="relative w-full min-h-[80vh] flex flex-col items-center justify-center pt-40 pb-16 overflow-hidden text-center"
+      className="relative w-full min-h-[45vh] flex flex-col items-center justify-center py-14 overflow-hidden text-center"
       style={bgStyles}
     >
       {/* Decorative subtle ambient lights */}

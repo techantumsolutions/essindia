@@ -31,7 +31,7 @@ export default function ManufacturingHero({ content }: { content?: any }) {
   }, { backgroundColor: bgColor });
 
   return (
-    <section className="relative min-h-[80vh] flex items-center pt-40 pb-16 px-6 overflow-hidden" style={bgStyles}>
+    <section className="relative min-h-[80vh] flex items-center py-14 px-6 overflow-hidden" style={bgStyles}>
       <div className="container mx-auto max-w-7xl relative z-10">
         <div className="grid lg:grid-cols-2 gap-12 lg:gap-8 items-center">
 
@@ -103,11 +103,17 @@ export default function ManufacturingHero({ content }: { content?: any }) {
             className="relative w-full flex items-center justify-center lg:justify-end mt-12 lg:mt-0 w-full"
           >
             <div className="relative w-full aspect-[4/3] max-w-[500px] rounded-2xl overflow-hidden shadow-2xl">
-              <img
-                src={image}
-                alt="Manufacturing ERP Automation"
-                className="w-full h-full object-contain"
-              />
+              <motion.div
+                animate={{ y: [0, -12, 0] }}
+                transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
+                className="w-full h-full"
+              >
+                <img
+                  src={image}
+                  alt="Manufacturing ERP Automation"
+                  className="w-full h-full object-contain"
+                />
+              </motion.div>
             </div>
           </motion.div>
         </div>

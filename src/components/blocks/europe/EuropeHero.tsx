@@ -99,8 +99,8 @@ export function EuropeHero({ content }: { content?: EuropeHeroContent }) {
     <EuropeSectionShell
       content={{
         ...content,
-        sectionPaddingTop: content?.sectionPaddingTop || 'pt-40',
-        sectionPaddingBottom: content?.sectionPaddingBottom || 'pb-20',
+        sectionPaddingTop: 'pt-14',
+        sectionPaddingBottom: 'pb-14',
       }}
       className="min-h-[560px] flex items-center relative overflow-hidden border-b border-slate-200"
       style={bgStyles}

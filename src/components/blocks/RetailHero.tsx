@@ -51,7 +51,7 @@ export function RetailHero({ content }: { content: RetailHeroContent }) {
   }, { backgroundColor: bgColor });
 
   return (
-    <section className="relative w-full min-h-[80vh] flex items-center pt-40 pb-16 overflow-hidden" style={bgStyles}>
+    <section className="relative w-full min-h-[80vh] flex items-center py-14 overflow-hidden" style={bgStyles}>
       <div className="container mx-auto px-4 md:px-8 max-w-7xl">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
 
@@ -112,11 +112,17 @@ export function RetailHero({ content }: { content: RetailHeroContent }) {
             className="relative flex justify-center items-center w-full"
           >
             <div className="relative w-full aspect-[4/3] max-w-[500px] rounded-2xl overflow-hidden shadow-2xl">
-              <img
-                src={image}
-                alt="Retail ERP Dashboard"
-                className="w-full h-full object-contain"
-              />
+              <motion.div
+                animate={{ y: [0, -12, 0] }}
+                transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
+                className="w-full h-full"
+              >
+                <img
+                  src={image}
+                  alt="Retail ERP Dashboard"
+                  className="w-full h-full object-contain"
+                />
+              </motion.div>
             </div>
           </motion.div>
 

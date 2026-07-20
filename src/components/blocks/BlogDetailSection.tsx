@@ -205,7 +205,7 @@ export function BlogDetailSection({ content }: BlogDetailSectionProps) {
     <section className="bg-white min-h-screen">
       {/* Premium Hero Banner */}
       <div
-        className="relative  pt-40 pb-20 text-center px-4 overflow-hidden"
+        className="relative py-14 text-center px-4 overflow-hidden"
         style={bgImage ? {
           backgroundImage: `url('${bgImage}')`,
           backgroundSize: 'cover',

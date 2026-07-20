@@ -74,7 +74,7 @@ export function ErpHero({ content }: ErpHeroProps) {
   };
 
   return (
-    <section className="relative w-full min-h-[80vh] flex items-center pt-40 pb-16 overflow-hidden" style={{ backgroundColor: bgColor }}>
+    <section className="relative w-full min-h-[80vh] flex items-center py-14 overflow-hidden" style={{ backgroundColor: bgColor }}>
       {/* Background Grid Pattern */}
       {/* <div className="absolute inset-0 bg-[linear-gradient(to_right,#e2e8f0_1px,transparent_1px),linear-gradient(to_bottom,#e2e8f0_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)] opacity-60 -z-10" /> */}
 
@@ -151,11 +151,17 @@ export function ErpHero({ content }: ErpHeroProps) {
               className="relative w-full aspect-[4/3] max-w-[500px] rounded-2xl overflow-hidden shadow-2xl border border-white/10"
             >
               {/* ERP Image */}
-              <img
-                src={image}
-                alt="ERP Dashboard"
-                className="w-full h-full object-contain"
-              />
+              <motion.div
+                animate={{ y: [0, -12, 0] }}
+                transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
+                className="w-full h-full"
+              >
+                <img
+                  src={image}
+                  alt="ERP Dashboard"
+                  className="w-full h-full object-contain"
+                />
+              </motion.div>
             </motion.div>
           </div>
 

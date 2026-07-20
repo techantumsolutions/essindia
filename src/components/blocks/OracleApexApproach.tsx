@@ -76,9 +76,17 @@ export function OracleApexApproach({ content }: { content?: OracleApexApproachCo
 
   React.useEffect(() => {
     if (tabsContainerRef.current) {
-      const activeEl = tabsContainerRef.current.querySelector('[data-active="true"]');
+      const activeEl = tabsContainerRef.current.querySelector('[data-active="true"]') as HTMLElement;
       if (activeEl) {
-        activeEl.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+        const container = tabsContainerRef.current;
+        const containerWidth = container.clientWidth;
+        const elementLeft = activeEl.offsetLeft;
+        const elementWidth = activeEl.clientWidth;
+        
+        container.scrollTo({
+          left: elementLeft - (containerWidth / 2) + (elementWidth / 2),
+          behavior: 'smooth'
+        });
       }
     }
   }, [activeTabIndex]);

@@ -4,6 +4,7 @@ import React from 'react';
 import { getHeroBackgroundStyles } from '@/lib/utils';
 import Image from 'next/image';
 import Link from 'next/link';
+import { motion } from 'framer-motion';
 import { useCtaAction, type CtaFormType } from '@/hooks/useCtaAction';
 
 interface FmcgHeroContent {
@@ -56,7 +57,7 @@ export function FmcgHero({ content }: { content?: FmcgHeroContent }) {
 
   return (
     <section
-      className="relative min-h-[80vh] flex items-center pt-40 pb-16 px-6 overflow-hidden text-white"
+      className="relative min-h-[80vh] flex items-center py-14 px-6 overflow-hidden text-white"
       style={bgStyles}
     >
       {/* Soft decorative background circles */}
@@ -115,7 +116,11 @@ export function FmcgHero({ content }: { content?: FmcgHeroContent }) {
           {/* Right Image Column */}
           {rightImage && (
             <div className="flex-1 w-full max-w-[500px] relative aspect-[4/3] rounded-2xl overflow-hidden shadow-2xl border border-white/10 flex justify-center items-center">
-              <div className="w-full h-full relative">
+              <motion.div
+                animate={{ y: [0, -12, 0] }}
+                transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
+                className="w-full h-full relative"
+              >
                 <Image
                   src={rightImage}
                   alt={title.replace('\n', ' ')}
@@ -123,7 +128,7 @@ export function FmcgHero({ content }: { content?: FmcgHeroContent }) {
                   className="object-contain"
                   priority
                 />
-              </div>
+              </motion.div>
             </div>
           )}
 
