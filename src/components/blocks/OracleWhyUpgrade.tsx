@@ -3,6 +3,7 @@
 import React from 'react';
 import Image from 'next/image';
 import { motion } from 'framer-motion';
+import { Check } from 'lucide-react';
 
 interface OracleWhyUpgradeContent {
   image?: string;
@@ -22,8 +23,6 @@ export function OracleWhyUpgrade({ content }: { content?: OracleWhyUpgradeConten
     'Compliance mandates for enterprise database systems',
     'Compatibility requirements for cloud infrastructure and modern platforms'
   ];
-
-  const checkIcon = '/migration-orcl datebase upgrade and optimization/Span+BackgroundColor.png';
 
   return (
     <section className="py-14 bg-white border-b">
@@ -77,15 +76,8 @@ export function OracleWhyUpgrade({ content }: { content?: OracleWhyUpgradeConten
                   transition={{ duration: 0.4, delay: index * 0.08 }}
                   className="flex items-center gap-4 p-4 rounded-xl border border-[#eceff1]/60 bg-[#f8fafc]/50 hover:bg-white hover:shadow-md hover:border-[#2e2a72]/10 transition-all duration-300"
                 >
-                  <div className="relative h-6 w-6 shrink-0 flex items-center justify-center">
-                    <Image
-                      src={checkIcon}
-                      alt="Check"
-                      width={20}
-                      height={20}
-                      className="object-contain"
-                      unoptimized
-                    />
+                  <div className="h-6 w-6 shrink-0 flex items-center justify-center bg-green-50 rounded-full">
+                    <Check className="w-3.5 h-3.5 text-green-600" strokeWidth={3} />
                   </div>
                   <span className="text-sm font-medium text-[#2e2a72]/90">
                     {point}
