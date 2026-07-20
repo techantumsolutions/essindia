@@ -75,7 +75,7 @@ export function AomHero({ content }: { content?: AomHeroContent }) {
 
   return (
     <section
-      className="relative min-h-[80vh] flex items-center pt-40 pb-16 px-6 overflow-hidden text-white"
+      className="relative min-h-[80vh] flex items-center py-14 px-6 overflow-hidden text-white"
       style={bgStyles}
     >
       {/* Decorative lights */}

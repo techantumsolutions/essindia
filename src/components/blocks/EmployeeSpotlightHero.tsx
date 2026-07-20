@@ -18,7 +18,7 @@ export function EmployeeSpotlightHero({ content }: { content?: any }) {
   }, undefined);
 
   return (
-    <section className="relative min-h-[80vh] flex items-center justify-center overflow-hidden px-6 pb-16 pt-40" style={bgStyles}>
+    <section className="relative min-h-[80vh] flex items-center justify-center overflow-hidden px-6 py-14" style={bgStyles}>
       {/* Background Image */}
       {!(content?.gradientColor1 || content?.gradientColor2 || content?.gradientColor3) && (
         <div

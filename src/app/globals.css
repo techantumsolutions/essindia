@@ -166,3 +166,22 @@ a.rounded[class*="px-"], button.rounded[class*="px-"] {
   height: auto !important; /* override fixed heights like h-12 or h-14 */
   min-height: 0px !important;
 }
+
+/* Complete removal of outline, border, and ring lines from navigation menu items and dropdowns */
+[data-slot="navigation-menu"],
+[data-slot="navigation-menu"] *,
+[data-slot="navigation-menu-trigger"],
+[data-slot="navigation-menu-trigger"] *,
+[data-slot="navigation-menu-content"],
+[data-slot="navigation-menu-content"] *,
+[data-slot="navigation-menu-link"],
+[data-slot="navigation-menu-link"] *,
+.group\/navigation-menu-trigger,
+.group\/navigation-menu-trigger * {
+  outline: none !important;
+  box-shadow: none !important;
+  border-bottom-width: 0px !important;
+  border-top-width: 0px !important;
+  border-left-width: 0px !important;
+  border-right-width: 0px !important;
+}

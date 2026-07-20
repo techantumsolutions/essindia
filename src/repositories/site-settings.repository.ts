@@ -97,7 +97,10 @@ export class SiteSettingsRepository {
     }
   }
 
-  async updateFormSettings(partial: Partial<FormSettings>): Promise<FormSettings> {
+  async updateFormSettings(partial: {
+    contact?: { thankYouUrl?: string };
+    cta?: { thankYouUrl?: string };
+  }): Promise<FormSettings> {
     const current = await this.getFormSettings();
     const next: FormSettings = {
       contact: {

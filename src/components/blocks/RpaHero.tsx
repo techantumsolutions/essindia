@@ -74,7 +74,7 @@ export function RpaHero({ content }: { content?: RpaHeroContent }) {
 
   return (
     <section
-      className="relative min-h-[80vh] flex items-center pt-40 pb-16 overflow-hidden font-sans border-b"
+      className="relative min-h-[80vh] flex items-center py-14 overflow-hidden font-sans border-b"
       style={bgStyles}
     >
       {/* Background Decorative Graphic Pattern */}
@@ -190,13 +190,19 @@ export function RpaHero({ content }: { content?: RpaHeroContent }) {
                 transition={{ duration: 0.5, delay: 0.2 }}
                 className="relative w-full aspect-[4/3] max-w-[500px] rounded-2xl overflow-hidden shadow-2xl border border-white/10"
               >
-                <Image
-                  src={image}
-                  alt={title || 'RPA Diagram'}
-                  fill
-                  priority
-                  className="object-contain"
-                />
+                <motion.div
+                  animate={{ y: [0, -12, 0] }}
+                  transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
+                  className="w-full h-full relative"
+                >
+                  <Image
+                    src={image}
+                    alt={title || 'RPA Diagram'}
+                    fill
+                    priority
+                    className="object-contain"
+                  />
+                </motion.div>
               </motion.div>
             )}
           </div>

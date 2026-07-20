@@ -1,7 +1,10 @@
+'use client';
+
 import React from 'react';
 import { getHeroBackgroundStyles } from '@/lib/utils';
 import Image from 'next/image';
 import Link from 'next/link';
+import { motion } from 'framer-motion';
 
 interface HospitalHeroContent {
   gradientColor1?: string;
@@ -57,7 +60,7 @@ export function HospitalHero({ content }: HospitalHeroProps) {
   }, { backgroundColor: bgColor });
 
   return (
-    <section className="relative min-h-[80vh] flex items-center pt-40 pb-16 px-6 overflow-hidden" style={bgStyles}>
+    <section className="relative min-h-[80vh] flex items-center py-14 px-6 overflow-hidden" style={bgStyles}>
       <div className="container mx-auto max-w-7xl relative z-10">
         <div className="flex flex-col lg:flex-row items-center justify-between gap-12">
           {/* Content */}
@@ -116,13 +119,19 @@ export function HospitalHero({ content }: HospitalHeroProps) {
           {/* Image */}
           <div className="lg:w-1/2 flex justify-end w-full">
             <div className="relative w-full aspect-[4/3] max-w-[500px] flex items-center justify-center rounded-2xl overflow-hidden shadow-2xl">
-              <Image
-                src={image}
-                alt="Hospital Management System Illustration"
-                fill
-                className="object-contain"
-                priority
-              />
+              <motion.div
+                animate={{ y: [0, -12, 0] }}
+                transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
+                className="w-full h-full relative"
+              >
+                <Image
+                  src={image}
+                  alt="Hospital Management System Illustration"
+                  fill
+                  className="object-contain"
+                  priority
+                />
+              </motion.div>
             </div>
           </div>
         </div>

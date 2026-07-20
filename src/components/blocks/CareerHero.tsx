@@ -20,7 +20,7 @@ export default function CareerHero({ content }: { content?: any }) {
   }, undefined);
 
   return (
-    <section className="relative min-h-[80vh] flex items-center justify-center overflow-hidden px-6 pt-40 pb-16" style={bgStyles}>
+    <section className="relative min-h-[45vh] flex items-center justify-center overflow-hidden px-6 py-14" style={bgStyles}>
       {/* Background Image */}
       {!(content?.gradientColor1 || content?.gradientColor2 || content?.gradientColor3) && (
         <div
@@ -31,7 +31,7 @@ export default function CareerHero({ content }: { content?: any }) {
         </div>
       )}
 
-      <div className="container mx-auto px-4 relative z-10 flex flex-col items-center text-center mt-20">
+      <div className="container mx-auto px-4 relative z-10 flex flex-col items-center text-center mt-6">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}

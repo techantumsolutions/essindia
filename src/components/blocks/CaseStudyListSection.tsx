@@ -127,7 +127,7 @@ export function CaseStudyListSection({ content }: CaseStudyListSectionProps) {
     >
       {/* Premium Hero Banner with header offset */}
       <div
-        className={`relative pt-40 pb-14 text-center px-4 overflow-hidden`}
+        className={`relative py-14 text-center px-4 overflow-hidden`}
         style={bgImage ? {
           backgroundImage: `url('${bgImage}')`,
           backgroundSize: 'cover',

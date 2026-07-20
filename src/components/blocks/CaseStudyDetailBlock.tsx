@@ -127,7 +127,7 @@ export function CaseStudyDetailBlock({ content }: CaseStudyDetailBlockProps) {
   return (
     <div className="bg-white min-h-screen">
       {/* Hero Section */}
-      <section className="relative pt-40 pb-28 text-left px-4 overflow-hidden bg-gradient-to-br from-[#0d1538] via-[#1a1e4a] to-[#2c2055]">
+      <section className="relative py-14 text-left px-4 overflow-hidden bg-gradient-to-br from-[#0d1538] via-[#1a1e4a] to-[#2c2055]">
         <div className="absolute inset-0 opacity-40 bg-[url('/Case-studies/banner.png')] bg-cover bg-center mix-blend-overlay"></div>
         <div className="absolute top-0 left-0 w-96 h-96 bg-purple-500/20 rounded-full blur-3xl -translate-x-1/2 -translate-y-1/2 pointer-events-none"></div>
         <div className="absolute bottom-0 right-0 w-[500px] h-[500px] bg-blue-500/20 rounded-full blur-3xl translate-x-1/3 translate-y-1/3 pointer-events-none"></div>

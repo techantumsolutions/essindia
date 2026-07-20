@@ -46,7 +46,7 @@ export function NotFoundHero({ content }: { content?: NotFoundHeroContent }) {
   const bgColor = content?.bgColor || '#ffffff';
 
   return (
-    <section className="relative overflow-hidden pt-40 pb-20" style={{ backgroundColor: bgColor }}>
+    <section className="relative overflow-hidden py-14" style={{ backgroundColor: bgColor }}>
       <div className="absolute top-24 left-10 w-72 h-72 bg-purple-100/40 rounded-full blur-3xl pointer-events-none" aria-hidden="true" />
       <div className="absolute bottom-10 right-10 w-80 h-80 bg-slate-100/60 rounded-full blur-3xl pointer-events-none" aria-hidden="true" />
 
