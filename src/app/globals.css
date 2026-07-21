@@ -185,3 +185,9 @@ a.rounded[class*="px-"], button.rounded[class*="px-"] {
   border-left-width: 0px !important;
   border-right-width: 0px !important;
 }
+
+/* Explicitly style and preserve the border and shadow on the desktop navigation dropdown popups */
+[data-slot="navigation-menu-popup"] {
+  border: 1px solid #e2e8f0 !important;
+  box-shadow: 0 10px 30px -10px rgba(0,0,0,0.12), 0 1px 3px rgba(0,0,0,0.05) !important;
+}

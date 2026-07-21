@@ -20,7 +20,7 @@ import {
   navigationMenuTriggerStyle,
 } from '@/components/ui/navigation-menu';
 import { Button } from '@/components/ui/button';
-import { Menu, X, Search } from 'lucide-react';
+import { Menu, X, Search, ChevronDown } from 'lucide-react';
 
 export type NavItem = {
   id: string;
@@ -44,11 +44,20 @@ export function Header({
   getStartedLink?: string;
 }) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = React.useState(false);
+  const [expandedMobileItems, setExpandedMobileItems] = React.useState<Record<string, boolean>>({});
   const [scrolled, setScrolled] = React.useState(false);
   const pathname = usePathname();
 
+  const toggleMobileItem = (itemId: string) => {
+    setExpandedMobileItems((prev) => ({
+      ...prev,
+      [itemId]: !prev[itemId],
+    }));
+  };
+
   React.useEffect(() => {
     setIsMobileMenuOpen(false);
+    setExpandedMobileItems({});
   }, [pathname]);
 
   React.useEffect(() => {
@@ -89,9 +98,9 @@ export function Header({
 
           {/* Right Actions */}
           <div className="hidden lg:flex items-center space-x-4">
-            <button className="text-slate-600 hover:text-slate-900 transition-colors p-2 hover:bg-slate-50 rounded-full cursor-pointer">
+            {/* <button className="text-slate-600 hover:text-slate-900 transition-colors p-2 hover:bg-slate-50 rounded-full cursor-pointer">
               <Search className="w-5 h-5" />
-            </button>
+            </button> */}
             <Link href={getStartedLink}>
               <Button className="bg-[#111] hover:bg-black text-white rounded-none px-6 py-2 transition-all duration-300 hover:shadow-lg hover:-translate-y-0.5 active:scale-95 cursor-pointer">
                 {getStartedText}
@@ -120,43 +129,85 @@ export function Header({
             className="absolute top-[80px] left-4 right-4 bg-white/95 backdrop-blur-2xl rounded-none shadow-2xl border border-slate-100 p-6 flex flex-col gap-6 lg:hidden z-50"
           >
             <nav className="flex flex-col gap-4">
-              {navData.map((item) => (
-                <motion.div key={item.id}>
-                  {hasRenderableMegaMenu(item.megaMenu) ? (
-                    <motion.div className="flex flex-col gap-2">
-                      <span className="text-lg font-medium text-[#4B2A63]">{item.label}</span>
-                      <MegaMenuMobile
-                        data={item.megaMenu!}
-                        onNavigate={() => setIsMobileMenuOpen(false)}
-                      />
-                    </motion.div>
-                  ) : item.children && item.children.length > 0 ? (
-                    <motion.div className="flex flex-col gap-2">
-                      <span className="text-lg font-medium text-[#4B2A63]">{item.label}</span>
-                      <motion.div className="pl-4 flex flex-col gap-2 border-l-2 border-slate-100">
-                        {item.children.map((child) => (
-                          <Link
-                            key={child.id}
-                            href={child.url || '#'}
-                            onClick={() => setIsMobileMenuOpen(false)}
-                            className="text-slate-600 hover:text-[#4B2A63] transition-colors"
-                          >
-                            {child.label}
-                          </Link>
-                        ))}
-                      </motion.div>
-                    </motion.div>
-                  ) : (
-                    <Link
-                      href={item.url || '#'}
-                      onClick={() => setIsMobileMenuOpen(false)}
-                      className="text-lg font-medium text-slate-800 hover:text-[#4B2A63] transition-colors"
-                    >
-                      {item.label}
-                    </Link>
-                  )}
-                </motion.div>
-              ))}
+              {navData.map((item) => {
+                const simpleLinks = item.megaMenuConfig?.links || [];
+                const hasSubmenu = hasRenderableMegaMenu(item.megaMenu) || simpleLinks.length > 0 || (item.children && item.children.length > 0);
+                const isExpanded = !!expandedMobileItems[item.id];
+
+                return (
+                  <motion.div key={item.id} className="w-full">
+                    {hasSubmenu ? (
+                      <div className="flex flex-col gap-2">
+                        <button
+                          type="button"
+                          onClick={() => toggleMobileItem(item.id)}
+                          className="flex items-center justify-between text-left text-lg font-medium text-slate-800 hover:text-[#4B2A63] w-full cursor-pointer"
+                        >
+                          <span>{item.label}</span>
+                          <ChevronDown
+                            className={cn(
+                              'w-5 h-5 transition-transform duration-300 text-slate-500',
+                              isExpanded && 'rotate-180'
+                            )}
+                          />
+                        </button>
+                        <AnimatePresence initial={false}>
+                          {isExpanded && (
+                            <motion.div
+                              initial={{ opacity: 0, height: 0 }}
+                              animate={{ opacity: 1, height: 'auto' }}
+                              exit={{ opacity: 0, height: 0 }}
+                              transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
+                              className="overflow-hidden"
+                            >
+                              {hasRenderableMegaMenu(item.megaMenu) ? (
+                                <MegaMenuMobile
+                                  data={item.megaMenu!}
+                                  onNavigate={() => setIsMobileMenuOpen(false)}
+                                />
+                              ) : simpleLinks.length > 0 ? (
+                                <div className="pl-4 flex flex-col gap-2 border-l-2 border-slate-100 mt-1">
+                                  {simpleLinks.map((link: any, idx: number) => (
+                                    <Link
+                                      key={idx}
+                                      href={link.url || '#'}
+                                      onClick={() => setIsMobileMenuOpen(false)}
+                                      className="text-slate-600 hover:text-[#4B2A63] transition-colors py-1 block text-base"
+                                    >
+                                      {link.label}
+                                    </Link>
+                                  ))}
+                                </div>
+                              ) : (
+                                <div className="pl-4 flex flex-col gap-2 border-l-2 border-slate-100 mt-1">
+                                  {item.children!.map((child) => (
+                                    <Link
+                                      key={child.id}
+                                      href={child.url || '#'}
+                                      onClick={() => setIsMobileMenuOpen(false)}
+                                      className="text-slate-600 hover:text-[#4B2A63] transition-colors py-1 block text-base"
+                                    >
+                                      {child.label}
+                                    </Link>
+                                  ))}
+                                </div>
+                              )}
+                            </motion.div>
+                          )}
+                        </AnimatePresence>
+                      </div>
+                    ) : (
+                      <Link
+                        href={item.url || '#'}
+                        onClick={() => setIsMobileMenuOpen(false)}
+                        className="text-lg font-medium text-slate-800 hover:text-[#4B2A63] transition-colors block py-0.5"
+                      >
+                        {item.label}
+                      </Link>
+                    )}
+                  </motion.div>
+                );
+              })}
             </nav>
 
             <div className="pt-4 border-t border-slate-100">
