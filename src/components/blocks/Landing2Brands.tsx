@@ -24,8 +24,11 @@ export function Landing2Brands({ content }: { content?: Landing2BrandsContent })
   const data = { ...DEFAULT_CONTENT, ...content };
   const logoList = data.logos && data.logos.length > 0 ? data.logos : DEFAULT_LOGOS;
 
+  // Duplicate logo array to create a seamless infinite loop marquee
+  const marqueeLogos = [...logoList, ...logoList, ...logoList];
+
   return (
-    <section className="py-14 bg-[#462294] font-sans select-none px-6 text-white text-center">
+    <section className="py-14 bg-[#462294] font-sans select-none px-6 text-white text-center overflow-hidden">
       <div className="container mx-auto max-w-6xl">
         {/* Title */}
         {data.title && (
@@ -34,20 +37,41 @@ export function Landing2Brands({ content }: { content?: Landing2BrandsContent })
           </h3>
         )}
 
-        {/* Logos Flex Row */}
-        <div className="flex flex-wrap items-center justify-center gap-8 md:gap-16 lg:gap-24">
-          {logoList.map((logoUrl, idx) => (
-            <div key={idx} className="relative h-10 md:h-12 w-36 md:w-44 flex items-center justify-center">
-              <Image
-                src={logoUrl}
-                alt={`Client Logo ${idx + 1}`}
-                fill
-                className="object-contain brightness-0 invert"
-              />
-            </div>
-          ))}
+        {/* Auto-scrolling marquee track */}
+        <div className="relative w-full overflow-hidden">
+          {/* Edge gradient overlays matching section background */}
+          <div className="absolute left-0 top-0 bottom-0 w-16 md:w-24 bg-gradient-to-r from-[#462294] to-transparent z-10 pointer-events-none" />
+          <div className="absolute right-0 top-0 bottom-0 w-16 md:w-24 bg-gradient-to-l from-[#462294] to-transparent z-10 pointer-events-none" />
+
+          <div className="flex items-center gap-12 md:gap-20 w-max animate-brands-marquee py-2 hover:[animation-play-state:paused]">
+            {marqueeLogos.map((logoUrl, idx) => (
+              <div key={idx} className="relative h-10 md:h-12 w-36 md:w-44 flex items-center justify-center shrink-0">
+                <Image
+                  src={logoUrl}
+                  alt={`Client Logo ${(idx % logoList.length) + 1}`}
+                  fill
+                  className="object-contain"
+                />
+              </div>
+            ))}
+          </div>
         </div>
       </div>
+
+      {/* Marquee Keyframes Animation */}
+      <style jsx global>{`
+        @keyframes brandsMarquee {
+          0% {
+            transform: translateX(0%);
+          }
+          100% {
+            transform: translateX(-33.333%);
+          }
+        }
+        .animate-brands-marquee {
+          animation: brandsMarquee 25s linear infinite;
+        }
+      `}</style>
     </section>
   );
 }

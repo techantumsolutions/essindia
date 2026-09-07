@@ -66,13 +66,7 @@ export function RoiUsage({ content }: { content?: RoiUsageContent }) {
             </h2>
             <div className="space-y-4 text-slate-600 text-sm sm:text-base leading-relaxed">
               {usageParagraphs.map((p, idx) => (
-                <p key={idx}>
-                  {typeof p === 'string' && (p.includes('<p>') || p.includes('<')) ? (
-                    <span dangerouslySetInnerHTML={{ __html: p }} />
-                  ) : (
-                    p
-                  )}
-                </p>
+                <FormattedText key={idx} content={p} />
               ))}
             </div>
           </motion.div>
@@ -111,9 +105,11 @@ export function RoiUsage({ content }: { content?: RoiUsageContent }) {
           </h2>
           
           {limitationsDescription && (
-            <p className="text-slate-700 text-sm sm:text-base font-medium">
-              {limitationsDescription}
-            </p>
+            <FormattedText
+              content={limitationsDescription}
+              as="p"
+              className="text-slate-700 text-sm sm:text-base font-medium"
+            />
           )}
 
           {limitations && limitations.length > 0 && (
@@ -132,9 +128,11 @@ export function RoiUsage({ content }: { content?: RoiUsageContent }) {
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M5 13l4 4L19 7" />
                     </svg>
                   </div>
-                  <span className="text-slate-600 text-sm sm:text-base leading-relaxed">
-                    {item.text}
-                  </span>
+                  <FormattedText
+                    content={item.text}
+                    as="span"
+                    className="text-slate-600 text-sm sm:text-base leading-relaxed"
+                  />
                 </motion.li>
               ))}
             </ul>

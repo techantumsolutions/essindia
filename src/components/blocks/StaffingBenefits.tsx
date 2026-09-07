@@ -54,24 +54,31 @@ export function StaffingBenefits({ content }: StaffingBenefitsProps) {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {cards.map((card, idx) => (
-            <div key={idx} className="flex flex-col group">
-              <div className="relative w-full aspect-[16/9] mb-6 rounded-2xl overflow-hidden">
-                <Image
-                  src={card.image}
-                  alt={card.title}
-                  fill
-                  className="object-cover group-hover:scale-105 transition-transform duration-500"
-                />
+          {cards.map((card, idx) => {
+            const defaultImg = defaultCards[idx % defaultCards.length]?.image || "/Staffing Services/Rectangle 196.png";
+            const imgSrc = card.image && card.image.trim() !== '' ? card.image : defaultImg;
+
+            return (
+              <div key={idx} className="flex flex-col group">
+                {imgSrc ? (
+                  <div className="relative w-full aspect-[16/9] mb-6 rounded-2xl overflow-hidden">
+                    <Image
+                      src={imgSrc}
+                      alt={card.title || "Benefit thumbnail"}
+                      fill
+                      className="object-cover group-hover:scale-105 transition-transform duration-500"
+                    />
+                  </div>
+                ) : null}
+                <h3 className="text-xl font-bold text-slate-900 mb-4">
+                  {card.title}
+                </h3>
+                <p className="text-gray-500 text-sm leading-relaxed">
+                  {card.description}
+                </p>
               </div>
-              <h3 className="text-xl font-bold text-slate-900 mb-4">
-                {card.title}
-              </h3>
-              <p className="text-gray-500 text-sm leading-relaxed">
-                {card.description}
-              </p>
-            </div>
-          ))}
+            );
+          })}
         </div>
       </div>
     </section>

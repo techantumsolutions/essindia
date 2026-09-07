@@ -66,6 +66,79 @@ export function isHiddenCmsField(key: string, sectionType?: string, keyPath?: st
     }
   }
 
+  if (sectionType === 'about-us-mission-vision' && (lower === 'items' || lower === 'tag' || key === 'items' || key === 'tag')) {
+    return true;
+  }
+
+  if (sectionType === 'about-us-services-overview' && keyPath?.includes('items') && (lower === 'description' || lower === 'desc')) {
+    return true;
+  }
+
+  if (sectionType === 'judicial-overview' && (keyPath?.includes('cards') || lower === 'contact' || key === 'contact')) {
+    if (lower === 'contact' || key === 'contact') return true;
+  }
+
+  if (sectionType === 'judicial-features') {
+    if (keyPath?.includes('features') && lower === 'image') return true;
+    if (lower === 'desc2' || key === 'desc2') return true;
+  }
+
+  if (sectionType === 'ass-intro' && (lower === 'paragraphs' || key === 'paragraphs')) {
+    return true;
+  }
+
+  if (sectionType === 'ass-functionalities' && keyPath && (keyPath.includes('items.') || keyPath.includes('items['))) {
+    if (lower === 'description' || lower === 'desc' || lower === 'image' || lower.includes('cta')) {
+      return true;
+    }
+  }
+
+  if (sectionType === 'ass-enterprise' && keyPath && (keyPath.includes('cards.') || keyPath.includes('cards['))) {
+    if (lower === 'description' || lower === 'desc' || lower === 'contact' || key === 'contact') {
+      return true;
+    }
+  }
+
+  if (sectionType === 'rpa-overview-metrics' && (keyPath?.includes('cards') || lower === 'contact' || key === 'contact')) {
+    if (lower === 'contact' || key === 'contact') return true;
+  }
+
+  if (sectionType === 'fmcg-logos' && (keyPath?.includes('logos') || lower === 'alt' || key === 'alt')) {
+    if (lower === 'alt' || key === 'alt') return true;
+  }
+
+  if (sectionType === 'fmcg-tabs' && lower === 'title') {
+    return true;
+  }
+
+  if (sectionType === 'europe-hero') {
+    const hiddenEuropeHeroFields = [
+      'backgroundgradient',
+      'heroillustration',
+      'enableillustration',
+      'enableanimation',
+      'hidesection',
+      'internalname',
+      'anchorid',
+      'backgroundcolor',
+      'backgroundimage',
+      'containerwidth',
+      'sectionpaddingtop',
+      'sectionpaddingbottom',
+      'theme',
+      'textalignment',
+      'customclasses',
+    ];
+    if (hiddenEuropeHeroFields.includes(lower)) return true;
+  }
+
+  if (sectionType === 'landing2-modules' && keyPath && (keyPath.includes('modules.') || keyPath.includes('modules['))) {
+    if (lower.includes('ctaurl') || lower.includes('cta_url')) return false;
+    if (lower === 'description' || lower === 'desc' || lower.includes('cta') || lower.includes('button')) {
+      return true;
+    }
+  }
+
   return false;
 }
 
@@ -350,6 +423,10 @@ export function humanLabel(
     if (key === 'image') return 'Industry Tile Image Upload';
   }
 
+  if (options?.sectionType === 'landing1-works' && key === 'category') {
+    return 'Category Name';
+  }
+
   if (options?.sectionType === 'landing2-testimonials' && options?.keyPath?.includes('testimonials.')) {
     if (key === 'mediaUrl' || key === 'image' || key === 'videoUrl') return 'Image / Video Upload';
     if (key === 'quote') return 'Quote';
@@ -384,6 +461,24 @@ export function humanLabel(
 
   if (options?.sectionType === 'retail-mobile-dashboard' && key === 'features') {
     return 'Points';
+  }
+
+  if (options?.sectionType === 'ass-functionalities') {
+    if (!options?.keyPath || options.keyPath === key) {
+      if (key === 'badgeIcon') return 'Badge Icon Upload';
+      if (key === 'badgeText') return 'Badge Text';
+      if (key === 'title') return 'Title';
+      if (key === 'image') return 'Right Image Upload';
+    }
+    if (options?.keyPath?.includes('items')) {
+      if (key === 'icon') return 'Icon Upload';
+      if (key === 'text' || key === 'title') return 'Item Title';
+    }
+  }
+
+  if (options?.sectionType === 'ass-enterprise' && options?.keyPath?.includes('cards')) {
+    if (key === 'icon') return 'Icon Upload';
+    if (key === 'title') return 'Title';
   }
 
   if (options?.sectionType === 'landing2-why-ess') {
@@ -426,6 +521,7 @@ export function detectFieldType(
   sectionType?: string,
   keyPath?: string
 ): FieldType {
+  if (key === 'specs' || key === 'columns' || key === 'pills' || key === 'badges' || key === 'process' || key === 'works') return 'array';
   if (key === 'enableCta' || key === 'enableTitleGradientAnimation' || (key.startsWith('enable') && key.toLowerCase().includes('animation'))) return 'boolean';
   if (value === null || value === undefined) return 'null';
   if (key.toLowerCase() === 'rating') return 'ratingSelect';
@@ -436,6 +532,10 @@ export function detectFieldType(
 
   if (typeof value === 'string') {
     const lower = key.toLowerCase();
+
+    if (lower.endsWith('formtype') || lower.includes('formtype')) {
+      return 'formSelect';
+    }
 
     if (lower.includes('color') || lower.includes('gradientstart') || lower.includes('gradientend') || lower.includes('gradientfrom') || lower.includes('gradientto')) {
       return 'color';
@@ -448,6 +548,16 @@ export function detectFieldType(
       return 'text';
     }
 
+    if (sectionType === 'ass-functionalities' && keyPath && (keyPath.includes('items.') || keyPath.includes('items['))) {
+      if (lower === 'text' || lower === 'title') {
+        return 'text';
+      }
+    }
+
+    if (sectionType === 'job-detail-hero') {
+      return 'text';
+    }
+
     if (sectionType === 'erp-hero' || sectionType === 'blog-list-block') {
       if (lower === 'title' || lower === 'titletext' || lower === 'heading' || lower === 'headingtext') return 'text';
       if (lower.includes('description') || lower.includes('desc')) return 'textarea';
@@ -457,7 +567,7 @@ export function detectFieldType(
       if (lower === 'description' && (!keyPath || !keyPath.includes('items'))) return 'textarea';
     }
 
-    if (sectionType === 'mfg-demand') {
+    if (sectionType === 'mfg-demand' || sectionType === 'fmcg-overview' || sectionType === 'roi-explanation' || sectionType === 'roi-formula') {
       if (lower === 'paragraph1' || lower === 'paragraph2' || lower.includes('paragraph')) return 'richtext';
     }
 
@@ -465,16 +575,68 @@ export function detectFieldType(
       return 'textarea';
     }
 
-    if ((sectionType === 'employee-spotlight-hero' || sectionType === 'mfg-hero' || sectionType === 'mfg-process' || sectionType === 'retail-hero' || sectionType === 'erp-value' || sectionType === 'erp-intro' || sectionType === 'erp-modules' || sectionType === 'erp-modules-grid' || sectionType === 'why-ess' || sectionType === 'sticky-card' || sectionType === 'sticky-floating-card' || sectionType?.includes('industr')) && (lower === 'description' || lower === 'desc' || lower.includes('description'))) {
+    if (sectionType === 'aom-workspace' && (lower === 'contenttitle' || lower === 'detailtitle' || lower === 'title')) {
+      if (keyPath && (keyPath.includes('tabs.') || keyPath.includes('tabs['))) {
+        return 'textarea';
+      }
+    }
+
+    if (sectionType === 'oracle-apex-deliverables' && lower === 'text') {
+      return 'text';
+    }
+
+    if (sectionType === 'uganda-insights') {
+      if (lower === 'contenttitle' || lower === 'detailtitle') return 'text';
+      if (lower === 'body1' || lower === 'body2') return 'textarea';
+    }
+
+    if (sectionType === 'not-found-hero' || sectionType === 'thank-you-hero') {
+      if (lower === 'title' || lower === 'badgetext' || lower === 'codetext') return 'text';
+      if (lower === 'description' || lower === 'desc') return 'textarea';
+    }
+
+    if (sectionType === 'not-found-links') {
+      if (lower === 'title' || lower === 'description' || lower === 'desc') return 'text';
+    }
+
+    if (sectionType === 'landing2-testimonials' && lower === 'quote') {
+      return 'text';
+    }
+
+    if (sectionType === 'oracle-partner' && (lower === 'text1' || lower === 'text3' || lower.startsWith('text'))) {
+      return 'textarea';
+    }
+
+    if ((sectionType === 'bi-insights-list' || sectionType === 'bi-insights' || sectionType === 'bi-highlight-strip') && lower === 'text') {
+      return 'textarea';
+    }
+
+    if ((sectionType === 'oracle-apex-intro' || sectionType?.startsWith('oracle-')) && (lower.includes('paragraph') || lower === 'paragraphs')) {
+      return 'textarea';
+    }
+
+    if (sectionType === 'roi-usage' && lower === 'text') {
+      return 'textarea';
+    }
+
+    if ((sectionType?.startsWith('europe-') || sectionType?.startsWith('uganda-') || sectionType?.startsWith('landing2-') || sectionType === 'bi-hero' || sectionType?.startsWith('bi-') || sectionType?.startsWith('oracle-') || sectionType === 'roi-hero' || sectionType?.startsWith('roi-') || sectionType === 'rpa-capabilities' || sectionType === 'employee-spotlight-hero' || sectionType === 'mfg-hero' || sectionType === 'mfg-process' || sectionType === 'retail-hero' || sectionType === 'erp-value' || sectionType === 'erp-intro' || sectionType === 'erp-modules' || sectionType === 'erp-modules-grid' || sectionType === 'why-ess' || sectionType === 'sticky-card' || sectionType === 'sticky-floating-card' || sectionType?.includes('industr') || sectionType === 'hospital-tech-specs' || sectionType?.startsWith('staffing-') || sectionType?.startsWith('about-us-') || sectionType?.startsWith('contact-') || sectionType?.startsWith('judicial-') || sectionType?.startsWith('ass-') || sectionType?.startsWith('aom-') || sectionType?.startsWith('fmcg-') || sectionType?.startsWith('rpa-')) && (lower === 'description' || lower === 'desc' || lower === 'desc2' || lower.includes('description') || lower.includes('desc'))) {
       return 'textarea';
     }
     if (sectionType === 'ass-features-grid' && (lower === 'description' || lower === 'desc')) {
       return 'textarea';
     }
+    if (sectionType === 'contact-form-faq' || lower === 'disclaimertext' || lower === 'disclaimer' || lower.includes('disclaimer')) {
+      if (lower === 'disclaimertext' || lower === 'disclaimer' || lower.includes('disclaimer') || lower === 'answer') {
+        return 'textarea';
+      }
+    }
+    if (sectionType === 'contact-form-faq' && lower === 'answer') {
+      return 'textarea';
+    }
     if (sectionType === 'landing1-testimonials' && lower === 'quote') {
       return 'textarea';
     }
-    if (lower === 'badge' || lower === 'badgetext' || lower.includes('badge')) {
+    if (lower !== 'badgeicon' && (lower === 'badge' || lower === 'badgetext' || lower.includes('badge') || lower === 'tagtext' || lower === 'tag1text' || lower === 'tag2text' || lower === 'tag')) {
       return 'text';
     }
     if (sectionType === 'oracle-hero' && (lower === 'badge' || lower === 'badgetext')) {
@@ -489,10 +651,10 @@ export function detectFieldType(
     if (sectionType?.startsWith('landing1-') && (lower === 'desc' || lower === 'description')) {
       return 'textarea';
     }
-    if (lower === 'topic' || lower === 'category') return 'topicSelect';
+    if ((lower === 'topic' || lower === 'category') && sectionType !== 'landing1-works') return 'topicSelect';
     if (lower === 'industry' || lower === 'industries') return 'industrySelect';
-    if (lower.endsWith('formtype')) return 'formSelect';
-    if (lower === 'icon' && (sectionType === 'landing1-cta' || sectionType === 'bi-business-impact' || sectionType === 'rpa-overview' || sectionType === 'rpa-capabilities' || sectionType === 'rpa-industries' || value.startsWith('/') || value.includes('.') || value.includes('://'))) return 'image';
+    if (lower === 'badgeicon' || (sectionType === 'ass-functionalities' && lower === 'icon')) return 'image';
+    if (lower === 'icon' && (sectionType === 'bi-highlight-strip' || sectionType === 'landing1-cta' || sectionType === 'bi-business-impact' || sectionType === 'rpa-overview' || sectionType === 'rpa-capabilities' || sectionType === 'rpa-industries' || value.startsWith('/') || value.includes('.') || value.includes('://'))) return 'image';
     if (IMAGE_PATTERNS.some((p) => lower.includes(p)) && !lower.endsWith('alt')) return 'image';
     if (lower === 'color' || lower.endsWith('color') || lower.startsWith('color') || lower.includes('accent') || lower.startsWith('gradient')) {
       return 'color';

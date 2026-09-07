@@ -35,16 +35,19 @@ export function AssProcess({ content }: { content?: AssProcessContent }) {
         {/* Process Flow */}
         <div className="relative">
           {/* Flow bar container (desktop only) */}
-          <div className="hidden lg:block relative w-full max-w-7xl mx-auto h-20 mb-6">
+          <div className="hidden lg:block relative w-full mx-auto h-20 mb-6">
             {/* Connecting Line */}
-            <div className="absolute top-1/2 left-[10%] right-[10%] h-[2px] bg-[#181263] -translate-y-1/2" />
+            <div className="absolute top-1/2 left-[5%] right-[5%] h-[2px] bg-[#181263] -translate-y-1/2" />
 
-            {/* Step numbers and intermediate connection dots */}
-            <div className="absolute inset-0 flex items-center justify-between px-[8%]">
+            {/* Step numbers aligned with grid columns */}
+            <div 
+              className="absolute inset-0 grid gap-6"
+              style={{ gridTemplateColumns: `repeat(${steps.length}, minmax(0, 1fr))` }}
+            >
               {steps.map((_, idx) => (
-                <React.Fragment key={idx}>
+                <div key={idx} className="relative flex items-center justify-center">
                   {/* Step number container */}
-                  <div className="relative z-10 flex items-center justify-center w-14 h-14">
+                  <div className="relative z-10 flex items-center justify-center w-14 h-14 bg-white rounded-full">
                     {/* Outer dashed circle */}
                     <div className="absolute inset-0 rounded-full border border-dashed border-[#27256b]/40" />
                     {/* Inner solid circle */}
@@ -53,17 +56,17 @@ export function AssProcess({ content }: { content?: AssProcessContent }) {
                     </div>
                   </div>
 
-                  {/* Intermediate connection dot */}
+                  {/* Intermediate connection dot on right side of column */}
                   {idx < steps.length - 1 && (
-                    <div className="w-3.5 h-3.5 rounded-full border-2 border-[#e28a1a] bg-white z-10 shadow-sm" />
+                    <div className="absolute right-[-12px] top-1/2 -translate-y-1/2 w-3.5 h-3.5 rounded-full border-2 border-[#e28a1a] bg-white z-10 shadow-sm" />
                   )}
-                </React.Fragment>
+                </div>
               ))}
             </div>
           </div>
 
           {/* Cards Grid */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-none gap-6" style={{ gridTemplateColumns: `repeat(${steps.length}, minmax(0, 1fr))` }}>
             {steps.map((step: ProcessStep, idx: number) => {
               const validImg = safeImageUrl(step.image);
               return (

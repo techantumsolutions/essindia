@@ -18,14 +18,18 @@ export function FormattedText({ content, as: Component = 'div', className, ...pr
 
   // Unescape HTML entities if DB content contains encoded tags (e.g. &lt;p&gt;, &lt;ul&gt;, &lt;li&gt;, &lt;strong&gt;)
   let rawStr = typeof content === 'string' ? content : '';
-  if (rawStr.includes('&lt;') || rawStr.includes('&gt;') || rawStr.includes('&amp;')) {
+  // Multi-pass unescape to handle single, double, or numeric HTML entity encoding
+  for (let i = 0; i < 3; i++) {
+    if (!rawStr.includes('&')) break;
     rawStr = rawStr
-      .replace(/&lt;/g, '<')
-      .replace(/&gt;/g, '>')
-      .replace(/&amp;/g, '&')
-      .replace(/&quot;/g, '"')
-      .replace(/&#39;/g, "'")
-      .replace(/&#x2F;/g, '/');
+      .replace(/&lt;/gi, '<')
+      .replace(/&gt;/gi, '>')
+      .replace(/&amp;/gi, '&')
+      .replace(/&quot;/gi, '"')
+      .replace(/&#39;/gi, "'")
+      .replace(/&#x2F;/gi, '/')
+      .replace(/&#60;/gi, '<')
+      .replace(/&#62;/gi, '>');
   }
 
   const isHtml = rawStr.includes('<') && rawStr.includes('>');

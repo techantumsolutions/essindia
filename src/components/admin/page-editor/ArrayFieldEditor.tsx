@@ -24,23 +24,24 @@ interface ArrayFieldEditorProps {
 
 export function ArrayFieldEditor({
   fieldKey,
-  value,
+  value = [],
   onChange,
   renderItem,
   keyPathPrefix,
   sectionType,
 }: ArrayFieldEditorProps) {
+  const safeValue = Array.isArray(value) ? value : [];
   const [collapsed, setCollapsed] = React.useState(false);
   const [collapsedItems, setCollapsedItems] = React.useState<Set<number>>(new Set());
 
   const updateItem = (index: number, newVal: JsonValue) => {
-    const copy = [...value];
+    const copy = [...safeValue];
     copy[index] = newVal;
     onChange(copy);
   };
 
   const removeItem = (index: number) => {
-    onChange(value.filter((_, i) => i !== index));
+    onChange(safeValue.filter((_, i) => i !== index));
     setCollapsedItems((prev) => {
       const next = new Set<number>();
       for (const i of prev) {
@@ -52,27 +53,29 @@ export function ArrayFieldEditor({
   };
 
   const duplicateItem = (index: number) => {
-    if (sectionType === 'landing1-process' && fieldKey === 'process' && value.length >= 7) return;
-    if (sectionType === 'landing2-testimonials' && fieldKey === 'testimonials' && value.length >= 2) return;
-    const copy = [...value];
-    copy.splice(index + 1, 0, structuredClone(value[index]));
+    if (sectionType === 'landing1-process' && fieldKey === 'process' && safeValue.length >= 7) return;
+    if (sectionType === 'landing2-testimonials' && fieldKey === 'testimonials' && safeValue.length >= 2) return;
+    if (sectionType === 'staffing-technologies' && fieldKey === 'columns' && safeValue.length >= 3) return;
+    const copy = [...safeValue];
+    copy.splice(index + 1, 0, structuredClone(safeValue[index]));
     onChange(copy);
   };
 
   const addItem = () => {
-    if (sectionType === 'landing1-process' && fieldKey === 'process' && value.length >= 7) return;
-    if (sectionType === 'landing2-testimonials' && fieldKey === 'testimonials' && value.length >= 2) return;
+    if (sectionType === 'landing1-process' && fieldKey === 'process' && safeValue.length >= 7) return;
+    if (sectionType === 'landing2-testimonials' && fieldKey === 'testimonials' && safeValue.length >= 2) return;
+    if (sectionType === 'staffing-technologies' && fieldKey === 'columns' && safeValue.length >= 3) return;
     if (fieldKey === 'challengePoints' || fieldKey === 'challengepoints') {
-      onChange([...value, { title: '', description: '' }]);
+      onChange([...safeValue, { title: '', description: '' }]);
       return;
     }
     if (sectionType === 'retail-mobile-dashboard' && fieldKey === 'features') {
-      onChange([...value, '']);
+      onChange([...safeValue, '']);
       return;
     }
-    if (value.length > 0) {
-      const template = createEmptyFromTemplate(value[0]);
-      onChange([...value, template]);
+    if (safeValue.length > 0) {
+      const template = createEmptyFromTemplate(safeValue[0]);
+      onChange([...safeValue, template]);
     } else {
       // Fallback schemas based on typical field keys when array is empty
       let defaultObj: any = '';
@@ -80,7 +83,7 @@ export function ArrayFieldEditor({
       
       if (lowerKey === 'features' || lowerKey === 'tabs') {
         if (sectionType === 'retail-mobile-dashboard') {
-          onChange([...value, '']);
+          onChange([...safeValue, '']);
           return;
         }
         defaultObj = { 
@@ -125,7 +128,9 @@ export function ArrayFieldEditor({
       } else if (lowerKey === 'processes') {
         defaultObj = { title: '', description: '' };
       } else if (lowerKey === 'cards') {
-        if (sectionType === 'fmcg-action') {
+        if (sectionType === 'staffing-benefits') {
+          defaultObj = { image: '', title: '', description: '' };
+        } else if (sectionType === 'fmcg-action') {
           defaultObj = { badge: '', image: '', title: '', description: '', badgeBorderColor: '', badgeTextColor: '', badgeBgColor: '' };
         } else if (sectionType === 'fmcg-impact' || sectionType === 'fmcg-integrations') {
           defaultObj = { image: '', title: '' };
@@ -143,6 +148,8 @@ export function ArrayFieldEditor({
       } else if (lowerKey === 'items') {
         if (sectionType === 'staffing-technologies') {
           defaultObj = { label: '' };
+        } else if (sectionType === 'about-us-services-overview') {
+          defaultObj = { image: '', title: '', subtitle: '' };
         } else if (sectionType === 'ass-features-grid') {
           defaultObj = { image: '', title: '', description: '', ctaText: '', ctaUrl: '', enableCta: true };
         } else {
@@ -186,16 +193,20 @@ export function ArrayFieldEditor({
         } else {
           defaultObj = '';
         }
+      } else if (lowerKey === 'specs' || lowerKey === 'pills') {
+        defaultObj = { label: '' };
+      } else if (lowerKey === 'columns') {
+        defaultObj = { iconImage: '', title: '', items: [] };
       }
       
-      onChange([...value, defaultObj]);
+      onChange([...safeValue, defaultObj]);
     }
   };
 
   const moveItem = (from: number, direction: 'up' | 'down') => {
     const to = direction === 'up' ? from - 1 : from + 1;
-    if (to < 0 || to >= value.length) return;
-    const copy = [...value];
+    if (to < 0 || to >= safeValue.length) return;
+    const copy = [...safeValue];
     [copy[from], copy[to]] = [copy[to], copy[from]];
     onChange(copy);
   };
@@ -209,7 +220,7 @@ export function ArrayFieldEditor({
     });
   };
 
-  const isPrimitive = value.length > 0 && typeof value[0] !== 'object';
+  const isPrimitive = safeValue.length > 0 && typeof safeValue[0] !== 'object';
   const singularLabel = humanLabel(fieldKey).replace(/s$/i, '');
   const isLocked = (sectionType === 'bi-highlight-strip') || 
                    (sectionType === 'bi-business-impact') ||
@@ -242,7 +253,7 @@ export function ArrayFieldEditor({
           {humanLabel(fieldKey)}
         </span>
         <span className="text-[10px] font-semibold text-slate-400 bg-white px-2 py-0.5 rounded-full border border-slate-100">
-          {value.length} {value.length === 1 ? 'item' : 'items'}
+          {safeValue.length} {safeValue.length === 1 ? 'item' : 'items'}
         </span>
       </button>
 
@@ -255,7 +266,7 @@ export function ArrayFieldEditor({
             transition={{ duration: 0.15 }}
           >
             <div className="px-4 pb-4 space-y-2">
-              {value.map((item, idx) => {
+              {safeValue.map((item, idx) => {
                 if (isPrimitive) {
                   return (
                     <div key={idx} className="flex items-center gap-2">
@@ -315,11 +326,11 @@ export function ArrayFieldEditor({
                           size="icon"
                           className="h-7 w-7"
                           onClick={() => moveItem(idx, 'down')}
-                          disabled={idx === value.length - 1}
+                          disabled={idx === safeValue.length - 1}
                         >
                           <ChevronDown className="w-3.5 h-3.5" />
                         </Button>
-                        {!isLocked && (
+                        {!isLocked && !(sectionType === 'staffing-technologies' && fieldKey === 'columns' && safeValue.length >= 3) && (
                           <>
                             <Button
                               variant="ghost"
@@ -359,7 +370,7 @@ export function ArrayFieldEditor({
                 );
               })}
 
-              {!isLocked && !(sectionType === 'portfolio' && fieldKey === 'projects') && !(sectionType === 'landing1-process' && fieldKey === 'process' && value.length >= 7) && !(sectionType === 'landing2-testimonials' && fieldKey === 'testimonials' && value.length >= 2) && (
+              {!isLocked && !(sectionType === 'portfolio' && fieldKey === 'projects') && !(sectionType === 'landing1-process' && fieldKey === 'process' && safeValue.length >= 7) && !(sectionType === 'landing2-testimonials' && fieldKey === 'testimonials' && safeValue.length >= 2) && !(sectionType === 'staffing-technologies' && fieldKey === 'columns' && safeValue.length >= 3) && (
                 <Button
                   variant="outline"
                   size="sm"
@@ -367,7 +378,7 @@ export function ArrayFieldEditor({
                   onClick={addItem}
                 >
                   <Plus className="w-3.5 h-3.5" />
-                  Add {singularLabel}
+                  Add {fieldKey.toLowerCase() === 'specs' || fieldKey.toLowerCase() === 'pills' ? humanLabel(fieldKey) : singularLabel}
                 </Button>
               )}
             </div>

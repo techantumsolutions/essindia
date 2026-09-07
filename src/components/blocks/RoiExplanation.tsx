@@ -4,6 +4,8 @@ import React from 'react';
 import Image from 'next/image';
 import { motion } from 'framer-motion';
 
+import { FormattedText } from '@/components/ui/FormattedText';
+
 interface CardItem {
   description: string;
 }
@@ -69,13 +71,7 @@ export function RoiExplanation({ content }: { content?: RoiExplanationContent })
 
             <div className="space-y-4 text-slate-600 text-sm sm:text-base leading-relaxed">
               {paragraphs.map((p, idx) => (
-                <p key={idx}>
-                  {typeof p === 'string' && (p.includes('<p>') || p.includes('<')) ? (
-                    <span dangerouslySetInnerHTML={{ __html: p }} />
-                  ) : (
-                    p
-                  )}
-                </p>
+                <FormattedText key={idx} content={p} />
               ))}
             </div>
 
@@ -93,7 +89,7 @@ export function RoiExplanation({ content }: { content?: RoiExplanationContent })
                     whileHover={{ scale: 1.01, x: 4 }}
                     className="p-4 px-6 rounded-xl bg-[#9ea2c6] text-white text-xs sm:text-sm font-light shadow-sm leading-relaxed"
                   >
-                    {card.description}
+                    <FormattedText content={card.description} />
                   </motion.div>
                 ))}
               </div>

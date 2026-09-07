@@ -111,7 +111,10 @@ export function BiInsights({ content }: { content?: BiInsightsContent }) {
               className="divide-y divide-slate-200"
             >
               {items.map((item, index) => {
-                const IconComponent = iconMap[item.icon?.toLowerCase() || ''] || HelpCircle;
+                const iconVal = item.icon?.trim() || '';
+                const isUploadedImage = iconVal.startsWith('/') || iconVal.startsWith('http') || iconVal.includes('.');
+                const IconComponent = iconMap[iconVal.toLowerCase()] || HelpCircle;
+
                 return (
                   <motion.div
                     key={index}
@@ -122,8 +125,17 @@ export function BiInsights({ content }: { content?: BiInsightsContent }) {
                     className="flex items-start gap-5 py-3 first:pt-0 last:pb-0 group"
                   >
                     {/* Rounded Icon Container */}
-                    <div className="flex-shrink-0 w-12 h-12 rounded-full flex items-center justify-center bg-[#eae8f5] text-[#5e35b1] group-hover:bg-[#5e35b1] group-hover:text-white transition-all duration-300 shadow-sm">
-                      <IconComponent className="w-5 h-5" />
+                    <div className="flex-shrink-0 w-12 h-12 rounded-full flex items-center justify-center bg-[#eae8f5] text-[#5e35b1] group-hover:bg-[#5e35b1] group-hover:text-white transition-all duration-300 shadow-sm overflow-hidden p-2.5">
+                      {isUploadedImage ? (
+                        /* eslint-disable-next-line @next/next/no-img-element */
+                        <img
+                          src={encodeURI(iconVal)}
+                          alt="Icon"
+                          className="w-full h-full object-contain"
+                        />
+                      ) : (
+                        <IconComponent className="w-5 h-5" />
+                      )}
                     </div>
 
                     <p className="text-[15px] sm:text-base text-slate-600 font-light leading-relaxed pt-1">

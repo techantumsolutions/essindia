@@ -2,11 +2,33 @@
 
 import React, { useState } from 'react';
 import { ChevronRight } from 'lucide-react';
-import { FormattedText } from '@/components/ui/FormattedText';
+
+function stripHtml(content?: string | null): string {
+  if (!content) return '';
+  let str = String(content);
+  // Unescape HTML entities first
+  for (let i = 0; i < 3; i++) {
+    if (!str.includes('&')) break;
+    str = str
+      .replace(/&lt;/gi, '<')
+      .replace(/&gt;/gi, '>')
+      .replace(/&amp;/gi, '&')
+      .replace(/&quot;/gi, '"')
+      .replace(/&#39;/gi, "'")
+      .replace(/&#x2F;/gi, '/')
+      .replace(/&#60;/gi, '<')
+      .replace(/&#62;/gi, '>');
+  }
+  // Remove HTML tags
+  return str.replace(/<[^>]*>/g, '').trim();
+}
 
 export interface FaqItem {
-  question: string;
+  question?: string;
+  quotation?: string;
+  qutation?: string;
   answer: string;
+  arrowIcon?: string;
 }
 
 export interface Landing1FaqContent {
@@ -69,20 +91,23 @@ export function Landing1Faq({ content }: { content?: Landing1FaqContent }) {
   return (
     <section className="py-20 md:py-28 bg-[#FAFAFC] relative overflow-hidden border-b border-slate-100">
       <div className="container mx-auto max-w-4xl px-4 relative z-10">
-        
-        {/* Header */}
+               {/* Header */}
         <div className="text-center space-y-4 mb-16">
           {data.badge && (
             <span className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full text-xs font-semibold tracking-wider text-indigo-600 bg-indigo-50 border border-indigo-100 uppercase">
               <span className="w-1.5 h-1.5 rounded-full bg-indigo-600 animate-pulse" />
-              <FormattedText content={data.badge} as="span" />
+              <span>{stripHtml(data.badge)}</span>
             </span>
           )}
           {data.title && (
-            <FormattedText content={data.title} as="h2" className="text-3xl md:text-[40px] font-extrabold tracking-tight text-slate-900 leading-tight" />
+            <h2 className="text-3xl md:text-[40px] font-extrabold tracking-tight text-slate-900 leading-tight">
+              {stripHtml(data.title)}
+            </h2>
           )}
           {data.description && (
-            <FormattedText content={data.description} className="text-slate-500 text-sm md:text-base max-w-2xl mx-auto leading-relaxed" />
+            <p className="text-slate-500 text-sm md:text-base max-w-2xl mx-auto leading-relaxed">
+              {stripHtml(data.description)}
+            </p>
           )}
         </div>
 
@@ -90,6 +115,9 @@ export function Landing1Faq({ content }: { content?: Landing1FaqContent }) {
         <div className="space-y-4">
           {data.faqs?.map((faq, idx) => {
             const isOpen = openIdx === idx;
+            const questionText = stripHtml((faq as any).quotation || (faq as any).qutation || faq.question);
+            const answerText = stripHtml(faq.answer);
+
             return (
               <div
                 key={idx}
@@ -99,27 +127,33 @@ export function Landing1Faq({ content }: { content?: Landing1FaqContent }) {
                   onClick={() => toggle(idx)}
                   className="w-full flex items-center justify-between p-6 text-left group cursor-pointer"
                 >
-                  <FormattedText
-                    content={faq.question || (faq as any).quotation}
-                    as="span"
-                    className="font-extrabold text-[#0F172A] text-sm md:text-base leading-snug pr-4"
-                  />
-                  <div className={`w-8 h-8 rounded-full border border-slate-200 flex items-center justify-center text-slate-400 group-hover:text-indigo-600 group-hover:border-indigo-600 transition-all duration-300 shrink-0 ${isOpen ? 'rotate-90 text-indigo-600 border-indigo-600 bg-indigo-50/50' : ''}`}>
-                    <ChevronRight className="w-4 h-4" />
-                  </div>
+                  <span className="font-extrabold text-[#0F172A] text-sm md:text-base leading-snug pr-4">
+                    {questionText}
+                  </span>
+                  {faq.arrowIcon || (faq as any).icon ? (
+                    <div className={`w-8 h-8 rounded-full border border-slate-200 flex items-center justify-center p-1.5 transition-all duration-300 shrink-0 ${isOpen ? 'rotate-90 border-indigo-600 bg-indigo-50/50' : ''}`}>
+                      <img
+                        src={(faq.arrowIcon || (faq as any).icon || '').startsWith('/') || (faq.arrowIcon || (faq as any).icon || '').startsWith('http') ? (faq.arrowIcon || (faq as any).icon) : `/${faq.arrowIcon || (faq as any).icon}`}
+                        alt=""
+                        className="w-full h-full object-contain"
+                      />
+                    </div>
+                  ) : (
+                    <div className={`w-8 h-8 rounded-full border border-slate-200 flex items-center justify-center text-slate-400 group-hover:text-indigo-600 group-hover:border-indigo-600 transition-all duration-300 shrink-0 ${isOpen ? 'rotate-90 text-indigo-600 border-indigo-600 bg-indigo-50/50' : ''}`}>
+                      <ChevronRight className="w-4 h-4" />
+                    </div>
+                  )}
                 </button>
                 
-                {isOpen && faq.answer && (
-                  <FormattedText
-                    content={faq.answer}
-                    className="px-6 pb-6 text-sm text-slate-500 leading-relaxed font-medium border-t border-slate-50 pt-4"
-                  />
+                {isOpen && answerText && (
+                  <div className="px-6 pb-6 text-sm text-slate-500 leading-relaxed font-medium border-t border-slate-50 pt-4">
+                    {answerText}
+                  </div>
                 )}
               </div>
             );
           })}
         </div>
-
       </div>
     </section>
   );

@@ -662,7 +662,97 @@ function ArrayField({
   depth: number;
   sectionType?: string;
 }) {
-  let normalizedValue = value;
+  let normalizedValue = Array.isArray(value) ? value : [];
+  if (sectionType === 'hospital-tech-specs' && fieldKey === 'specs' && !Array.isArray(value)) {
+    normalizedValue = [
+      { label: "Tiered Application Architecture Specifications" },
+      { label: "IIS 8.0 Application Server" },
+      { label: "My SQL DB & Database Server" },
+      { label: "HTML5, CSS3, JavaScript Web\nApplication Development" },
+      { label: "Auto-scaled Backend Application" },
+      { label: "AI/ML Powered Data Analytics &\nReport UI" },
+      { label: "Windows 2019 Enterprise\nServer and above" },
+      { label: "Sub-millisecond latency on UI queries" }
+    ];
+  }
+  if (sectionType === 'staffing-technologies' && fieldKey === 'columns' && !Array.isArray(value)) {
+    normalizedValue = [
+      {
+        iconImage: "/Staffing Services/analytics-business-chart-finance-graph-money_svgrepo.com.png",
+        title: "Business Intelligence (ETL)",
+        items: [
+          { label: "Manual Testing, JIRA" },
+          { label: "PRM Analyst" },
+          { label: "WFM Analyst" },
+          { label: "Non-ITs" },
+          { label: "Talend (BI-DWH)" },
+          { label: "Scrum Master" },
+          { label: "Java, Microservices" },
+          { label: "Solution Engineer" },
+        ]
+      },
+      {
+        iconImage: "/Staffing Services/robot_svgrepo.com.png",
+        title: "Ui Path, Automation Anywhere",
+        items: [
+          { label: "Oracle ADF" },
+          { label: "Oracle Apex" },
+          { label: "UI-React.js" },
+          { label: "PMP" },
+          { label: "Oracle Developer 2000" },
+          { label: "Java" },
+          { label: "PL/SQL" },
+          { label: "Dev Leads" },
+        ]
+      },
+      {
+        iconImage: "/Staffing Services/python-icon-new.png",
+        title: "Python",
+        items: [
+          { label: "Angular" },
+          { label: ".Net" },
+          { label: "Manual tester (lead)" },
+          { label: "Odoo" },
+          { label: "Cloud Infra/AWS" },
+          { label: "Infra/AWS Infra" },
+          { label: "Cloud Engineers" },
+          { label: "Automation" },
+        ]
+      }
+    ];
+  }
+  if (sectionType === 'staffing-why-ess' && fieldKey === 'pills' && !Array.isArray(value)) {
+    normalizedValue = [
+      { label: "Experience with Fortune 10 clients" },
+      { label: "Access top IT Talent" },
+      { label: "Offshore/Onsite/Global deployment Capabilities" },
+      { label: "Shared and dedicated ODC" },
+      { label: "Strong Domain Knowledge" },
+      { label: "High speed communication" },
+      { label: "All hours availability to suit your time zone" }
+    ];
+  }
+  if (sectionType === 'landing1-works' && fieldKey === 'works' && (!Array.isArray(value) || value.length === 0)) {
+    normalizedValue = [
+      {
+        category: 'Category Name',
+        title: "Ghana's leading Producer of Wood Products opts ebizframe ERP",
+        date: 'December 18, 2025',
+        image: '/Landing page1/assets/image 103.png',
+        link: '#'
+      }
+    ];
+  }
+  if (sectionType === 'landing1-challenges' && fieldKey === 'challenges' && (!Array.isArray(value) || value.length === 0)) {
+    normalizedValue = [
+      {
+        iconType: 'manual',
+        title: 'Manual Operations',
+        desc: 'Teams waste hours on repetitive data entry, reconciliations and spreadsheets that never agree.',
+        solution: 'Solved by ESS ERP'
+      }
+    ];
+  }
   if ((fieldKey === 'challengePoints' || fieldKey === 'challengepoints') && Array.isArray(value)) {
     normalizedValue = value.map(item => {
       if (typeof item === 'string') {
@@ -687,6 +777,55 @@ function ArrayField({
           subheading: '',
           questions: [],
           image: '',
+          ...item
+        };
+      }
+      return item;
+    });
+  } else if (sectionType === 'landing1-works' && fieldKey === 'works' && Array.isArray(value)) {
+    normalizedValue = value.map(item => {
+      if (typeof item === 'string') {
+        return {
+          image: '',
+          category: '',
+          title: item,
+          date: '',
+          link: ''
+        };
+      }
+      if (item && typeof item === 'object' && !Array.isArray(item)) {
+        return {
+          image: '',
+          category: '',
+          title: '',
+          date: '',
+          link: '',
+          ...item
+        };
+      }
+      return { image: '', category: '', title: '', date: '', link: '' };
+    });
+  } else if (sectionType === 'landing1-testimonials' && fieldKey === 'testimonials' && Array.isArray(value)) {
+    normalizedValue = value.map(item => {
+      if (item && typeof item === 'object' && !Array.isArray(item)) {
+        return {
+          avatar: '',
+          name: '',
+          rating: 5,
+          quote: '',
+          ...item
+        };
+      }
+      return item;
+    });
+  } else if (sectionType === 'landing1-challenges' && fieldKey === 'challenges' && Array.isArray(value)) {
+    normalizedValue = value.map(item => {
+      if (item && typeof item === 'object' && !Array.isArray(item)) {
+        return {
+          icon: '',
+          title: '',
+          desc: '',
+          solution: 'Solved by ESS ERP',
           ...item
         };
       }
@@ -724,6 +863,18 @@ function ArrayField({
             );
           }
           if (fieldKey === 'paragraphs') {
+            const itemFieldType = detectFieldType(fieldKey, String(item ?? ''), sectionType, keyPath);
+            if (itemFieldType === 'textarea') {
+              return (
+                <div className="flex-1">
+                  <TextareaField
+                    fieldKey={`${fieldKey}-${_idx}`}
+                    value={String(item ?? '')}
+                    onChange={(v) => onItemChange(_idx, v)}
+                  />
+                </div>
+              );
+            }
             return (
               <div className="flex-1">
                 <RichTextField
@@ -785,6 +936,14 @@ function ArrayField({
             let testimonialOrder = ['topic', 'industry', 'companyName', 'quote', 'authorAvatar', 'authorName', 'authorTitle'];
             if (sectionType === 'landing1-testimonials') {
               testimonialOrder = ['avatar', 'name', 'rating', 'quote'];
+              if (!('rating' in objItem) || objItem.rating === undefined || objItem.rating === null) {
+                objItem.rating = 5;
+              }
+              for (const k of testimonialOrder) {
+                if (!(k in objItem)) {
+                  objItem[k] = '';
+                }
+              }
             } else if (sectionType === 'landing2-testimonials') {
               // Standardize single media upload field for image or video
               if ('image' in objItem && !('mediaUrl' in objItem)) {
@@ -800,7 +959,23 @@ function ArrayField({
             sortedKeys = testimonialOrder.filter(k => k in objItem);
           } else if (fieldKey === 'cards') {
             let cardOrder = ['badge', 'icon', 'image', 'title', 'description', 'contact', 'badgeBorderColor', 'badgeTextColor', 'badgeBgColor'];
-            if (sectionType === 'europe-feature-cards') {
+            if (sectionType === 'staffing-benefits') {
+              cardOrder = ['image', 'title', 'description'];
+              delete objItem.contact;
+              for (const k of ['image', 'title', 'description']) {
+                if (!(k in objItem)) {
+                  objItem[k] = '';
+                }
+              }
+            } else if (sectionType === 'ass-enterprise') {
+              cardOrder = ['icon', 'title'];
+              delete objItem.description;
+              delete objItem.desc;
+              delete objItem.contact;
+              for (const k of ['icon', 'title']) {
+                if (!(k in objItem)) objItem[k] = '';
+              }
+            } else if (sectionType === 'europe-feature-cards') {
               cardOrder = ['image', 'title', 'description'];
             } else if (sectionType === 'europe-product-showcase') {
               cardOrder = ['title', 'description'];
@@ -885,7 +1060,26 @@ function ArrayField({
             sortedKeys = moduleOrder.filter(k => k in objItem);
           } else if (fieldKey.toLowerCase().includes('items')) {
             let itemOrder = ['icon', 'text', 'title', 'description', 'image', 'ctaText', 'ctaUrl', 'enableCta'];
-            if (sectionType === 'ass-features-grid') {
+            if (sectionType === 'about-us-services-overview') {
+              itemOrder = ['image', 'title', 'subtitle'];
+              delete objItem.description;
+              delete objItem.desc;
+              for (const k of ['image', 'title', 'subtitle']) {
+                if (!(k in objItem)) {
+                  objItem[k] = '';
+                }
+              }
+            } else if (sectionType === 'ass-functionalities') {
+              itemOrder = ['icon', 'text'];
+              if (!('icon' in objItem)) objItem.icon = '';
+              if (!('text' in objItem) && ('title' in objItem)) objItem.text = objItem.title;
+              if (!('text' in objItem)) objItem.text = '';
+              delete objItem.description;
+              delete objItem.desc;
+              delete objItem.image;
+              delete objItem.ctaText;
+              delete objItem.ctaUrl;
+            } else if (sectionType === 'ass-features-grid') {
               if (!('enableCta' in objItem)) {
                 objItem.enableCta = true;
               }
@@ -906,13 +1100,45 @@ function ArrayField({
             sortedKeys = stepOrder.filter(k => k in objItem);
           } else if (fieldKey === 'process') {
             const processOrder = ['icon', 'title', 'description'];
-            sortedKeys = processOrder.filter(k => k in objItem);
+            for (const k of processOrder) {
+              if (!(k in objItem)) {
+                objItem[k] = '';
+              }
+            }
+            sortedKeys = processOrder;
+          } else if (fieldKey === 'works') {
+            const worksOrder = ['image', 'category', 'title', 'date', 'link'];
+            for (const k of worksOrder) {
+              if (!(k in objItem)) {
+                objItem[k] = '';
+              }
+            }
+            sortedKeys = worksOrder;
+          } else if (fieldKey === 'stats' || fieldKey === 'statistics') {
+            let statOrder = ['icon', 'value', 'title'];
+            if (sectionType === 'landing1-stats') {
+              statOrder = ['icon', 'value', 'title'];
+              delete objItem.description;
+              delete objItem.desc;
+              for (const k of statOrder) {
+                if (!(k in objItem)) objItem[k] = '';
+              }
+            }
+            sortedKeys = statOrder.filter(k => k in objItem);
           } else if (fieldKey === 'features') {
             let featureOrder = ['icon', 'iconType', 'image', 'title', 'desc', 'desc2', 'description'];
             if (sectionType === 'hospital-features') {
               featureOrder = ['label'];
             } else if (sectionType === 'erp-features') {
               featureOrder = ['id', 'image', 'title', 'desc', 'desc2'];
+            } else if (sectionType === 'landing1-features') {
+              featureOrder = ['icon', 'title', 'desc'];
+              delete objItem.image;
+              delete objItem.desc2;
+              delete objItem.description;
+              for (const k of ['icon', 'title', 'desc']) {
+                if (!(k in objItem)) objItem[k] = '';
+              }
             } else if (sectionType === 'landing2-why-ess') {
               featureOrder = ['icon', 'iconType', 'title', 'description'];
             }
@@ -1006,17 +1232,17 @@ function ArrayField({
             const benefitOrder = ['image', 'title'];
             sortedKeys = benefitOrder.filter(k => k in objItem);
           } else if (fieldKey === 'challenges') {
-            let challengeOrder = ['icon', 'iconType', 'title', 'desc', 'solution'];
-            sortedKeys = challengeOrder.filter(k => k in objItem);
+            let challengeOrder = ['icon', 'title', 'desc', 'solution'];
             if (sectionType === 'landing1-challenges') {
+              delete objItem.iconType;
               for (const k of ['icon', 'title', 'desc', 'solution']) {
-                if (!sortedKeys.includes(k) && !(k === 'icon' && 'iconType' in objItem)) {
-                  sortedKeys.unshift(k);
-                }
-                if (!(k in objItem) && !(k === 'icon' && 'iconType' in objItem)) {
+                if (!(k in objItem)) {
                   objItem[k] = '';
                 }
               }
+              sortedKeys = ['icon', 'title', 'desc', 'solution'];
+            } else {
+              sortedKeys = challengeOrder.filter(k => k in objItem);
             }
           } else if (fieldKey === 'points') {
             let pointsOrder = ['title', 'description'];
@@ -1024,13 +1250,30 @@ function ArrayField({
               pointsOrder = ['label'];
             }
             sortedKeys = pointsOrder.filter(k => k in objItem);
+          } else if (fieldKey === 'specs' || fieldKey === 'pills') {
+            let specsOrder = ['label', 'text', 'title'];
+            sortedKeys = specsOrder.filter(k => k in objItem);
+            if (sortedKeys.length === 0) sortedKeys = ['label'];
+          } else if (fieldKey === 'columns') {
+            let columnOrder = ['iconImage', 'icon', 'title', 'items'];
+            sortedKeys = columnOrder.filter(k => k in objItem);
+            for (const k of ['iconImage', 'title', 'items']) {
+              if (!sortedKeys.includes(k) && !(k === 'iconImage' && 'icon' in objItem)) {
+                sortedKeys.push(k);
+              }
+              if (!(k in objItem) && !(k === 'iconImage' && 'icon' in objItem)) {
+                objItem[k] = k === 'items' ? [] : '';
+              }
+            }
           } else if (fieldKey === 'industries') {
             if (sectionType === 'landing2-industries') {
-              const industryOrder = ['name', 'title', 'image'];
-              sortedKeys = industryOrder.filter(k => k in objItem);
-              if (sortedKeys.length === 0) {
-                sortedKeys = Object.keys(objItem).filter(k => k !== 'href');
+              for (const k of ['name', 'image']) {
+                if (!(k in objItem)) {
+                  objItem[k] = '';
+                }
               }
+              const industryOrder = ['name', 'image', 'href'];
+              sortedKeys = industryOrder.filter(k => k in objItem);
             } else if (sectionType === 'rpa-industries') {
               const industryOrder = ['icon', 'title', 'description'];
               sortedKeys = industryOrder.filter(k => k in objItem);

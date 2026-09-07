@@ -266,3 +266,32 @@ section h2 {
   font-size: 16px !important;
   line-height: 1.6 !important;
 }
+
+/* Rich Text, Tiptap & Quill Editor List Styles */
+.formatted-text-content ul,
+.ql-editor ul,
+.tiptap ul,
+.ProseMirror ul {
+  list-style-type: disc !important;
+  padding-left: 1.5rem !important;
+  margin-top: 0.5rem !important;
+  margin-bottom: 0.5rem !important;
+}
+
+.formatted-text-content ol,
+.ql-editor ol,
+.tiptap ol,
+.ProseMirror ol {
+  list-style-type: decimal !important;
+  padding-left: 1.5rem !important;
+  margin-top: 0.5rem !important;
+  margin-bottom: 0.5rem !important;
+}
+
+.formatted-text-content li,
+.ql-editor li,
+.tiptap li,
+.ProseMirror li {
+  margin-bottom: 0.25rem !important;
+  display: list-item !important;
+}

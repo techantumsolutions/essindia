@@ -55,16 +55,19 @@ export function AssFunctionalities({ content }: { content?: AssFunctionalitiesCo
             </h2>
 
             <div className="space-y-2">
-              {items.map((item: FuncItem, idx: number) => (
-                <div key={idx} className="flex items-center gap-4 bg-white rounded-2xl p-3 shadow-[0_4px_20px_rgba(0,0,0,0.02)] border border-slate-100 transition-all hover:shadow-md hover:border-slate-200">
-                  {item.icon && (
-                    <div className="w-10 h-10 rounded-full bg-[#002b6c] flex items-center justify-center shrink-0">
-                      <Image src={item.icon} alt="" width={18} height={18} className="object-contain invert brightness-0" />
-                    </div>
-                  )}
-                  <span className="text-[15px] font-semibold text-slate-800">{item.text}</span>
-                </div>
-              ))}
+              {items.map((item: any, idx: number) => {
+                const itemText = item?.text || item?.title || item?.description || '';
+                return (
+                  <div key={idx} className="flex items-center gap-4 bg-[#ffffff] rounded-2xl p-3 shadow-[0_4px_20px_rgba(0,0,0,0.02)] border border-slate-100 transition-all hover:shadow-md hover:border-slate-200">
+                    {item?.icon && (
+                      <div className="w-10 h-10 rounded-full bg-[#002b6c] flex items-center justify-center shrink-0">
+                        <Image src={item.icon} alt="" width={18} height={18} className="object-contain invert brightness-0" />
+                      </div>
+                    )}
+                    <span className="text-[15px] font-semibold text-slate-800">{itemText}</span>
+                  </div>
+                );
+              })}
             </div>
           </div>
 
