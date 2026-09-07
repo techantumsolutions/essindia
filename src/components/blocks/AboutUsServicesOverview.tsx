@@ -61,30 +61,42 @@ export function AboutUsServicesOverview({
         </div>
 
         <StaggerContainer className="grid grid-cols-1 lg:grid-cols-3 gap-16 lg:gap-10">
-          {services.map((service, index) => (
-            <motion.div
-              key={index}
-              variants={{
-                initial: { opacity: 0, y: 30 },
-                animate: {
-                  opacity: 1,
-                  y: 0,
-                  transition: { duration: 0.8 },
-                },
-              }}
-              className="flex flex-col justify-between items-center text-center"
-            >
-              {/* Image */}
-              <div className="relative w-full flex justify-center items-center mb-10">
-                <Image
-                  src={service.image || '/about-us/smartDecision.png'}
-                  alt={service.title || ''}
-                  width={420}
-                  height={340}
-                  className="object-contain"
-                  priority={index === 0}
-                />
-              </div>
+          {services.map((service, index) => {
+            const defaultImg = defaultServices[index % defaultServices.length]?.image || '/about-us/smartDecision.png';
+            const isValidImageSrc = (src: any) => {
+              if (typeof src !== 'string') return false;
+              const s = src.trim();
+              if (!s || s === 'undefined' || s === 'null' || s === '[object Object]') return false;
+              return s.startsWith('/') || s.startsWith('http://') || s.startsWith('https://') || s.startsWith('data:');
+            };
+            const imgSrc = isValidImageSrc(service.image) ? (service.image as string) : defaultImg;
+
+            return (
+              <motion.div
+                key={index}
+                variants={{
+                  initial: { opacity: 0, y: 30 },
+                  animate: {
+                    opacity: 1,
+                    y: 0,
+                    transition: { duration: 0.8 },
+                  },
+                }}
+                className="flex flex-col justify-between items-center text-center"
+              >
+                {/* Image */}
+                {imgSrc ? (
+                  <div className="relative w-full flex justify-center items-center mb-10">
+                    <Image
+                      src={imgSrc}
+                      alt={service.title || ''}
+                      width={420}
+                      height={340}
+                      className="object-contain"
+                      priority={index === 0}
+                    />
+                  </div>
+                ) : null}
 
               <div className="">
                 {/* Category */}
@@ -98,7 +110,8 @@ export function AboutUsServicesOverview({
                 </h3>
               </div>
             </motion.div>
-          ))}
+          );
+        })}
         </StaggerContainer>
       </div>
     </section>

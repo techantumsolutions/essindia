@@ -1,6 +1,8 @@
 import React from 'react';
 import Image from 'next/image';
 
+import { FormattedText } from '@/components/ui/FormattedText';
+
 interface FeatureData {
   title: string;
   description: string;
@@ -10,6 +12,7 @@ interface FeatureData {
 interface JudicialFeaturesContent {
   heading?: string;
   description?: string;
+  desc?: string;
   sideImage?: string;
   features?: FeatureData[];
 }
@@ -19,9 +22,13 @@ interface JudicialFeaturesProps {
 }
 
 export function JudicialFeatures({ content }: JudicialFeaturesProps) {
-  const heading = content?.heading || "ebizframeJustice – Key features";
-  const description = content?.description || "ebizframeJustice makes available most of the elegant, sophisticated and context specific search features. ebizframeJustice is born out of the understanding that Law is a serious subject and getting to relevant results in the shortest time and most convenient way is essential to the law professionals.";
-  const sideImage = content?.sideImage || "/Judicial Automation/image 78.png";
+  const c = (content || {}) as Record<string, any>;
+  const heading = c.heading || "ebizframeJustice – Key features";
+  const rawDesc = c.description ?? c.desc ?? c.descriptionText ?? c.desc1;
+  const description = (typeof rawDesc === 'string' && rawDesc.trim().length > 0)
+    ? rawDesc
+    : "ebizframeJustice makes available most of the elegant, sophisticated and context specific search features. ebizframeJustice is born out of the understanding that Law is a serious subject and getting to relevant results in the shortest time and most convenient way is essential to the law professionals.";
+  const sideImage = c.sideImage || "/Judicial Automation/image 78.png";
   
   const defaultFeatures = [
     {
@@ -53,6 +60,13 @@ export function JudicialFeatures({ content }: JudicialFeaturesProps) {
 
   const features = content?.features || defaultFeatures;
 
+  const isValidImageSrc = (s?: string) => {
+    if (!s || typeof s !== 'string' || s.trim() === '') return false;
+    return s.startsWith('/') || s.startsWith('http://') || s.startsWith('https://') || s.startsWith('data:');
+  };
+
+  const validSideImage = isValidImageSrc(sideImage) ? sideImage : "/Judicial Automation/image 78.png";
+
   return (
     <section className="py-14 px-6 bg-white">
       <div className="container mx-auto max-w-7xl">
@@ -60,7 +74,7 @@ export function JudicialFeatures({ content }: JudicialFeaturesProps) {
           {/* Left Image */}
           <div className="lg:w-1/2 w-full hidden lg:block relative min-h-[600px]">
             <Image
-              src={sideImage}
+              src={validSideImage}
               alt="Features Side Graphic"
               fill
               className="object-cover"
@@ -68,7 +82,7 @@ export function JudicialFeatures({ content }: JudicialFeaturesProps) {
           </div>
           <div className="lg:hidden w-full relative h-[300px]">
             <Image
-              src={sideImage}
+              src={validSideImage}
               alt="Features Side Graphic"
               fill
               className="object-cover"
@@ -81,23 +95,32 @@ export function JudicialFeatures({ content }: JudicialFeaturesProps) {
               <h2 className="text-3xl md:text-4xl font-bold text-[#2a2d7c] mb-4">
                 {heading}
               </h2>
-              <p className="text-gray-500 text-sm leading-relaxed">
-                {description}
-              </p>
+              <FormattedText
+                content={description}
+                className="text-gray-500 text-sm leading-relaxed"
+              />
             </div>
-            {features.map((feature, idx) => (
-              <div key={idx} className="bg-white p-5 md:p-6 rounded-xl shadow-[0_4px_20px_rgb(0,0,0,0.08)] flex items-start gap-6 border border-gray-50">
-                <div className="flex-shrink-0 pt-1 relative w-[40px] h-[40px]">
-                  <Image src={feature.icon} alt={feature.title} fill className="object-contain" />
+            {features.map((feature, idx) => {
+              const defaultIcon = defaultFeatures[idx]?.icon || defaultFeatures[0].icon;
+              const iconSrc = isValidImageSrc(feature.icon) ? feature.icon : defaultIcon;
+              const featObj = (feature || {}) as Record<string, any>;
+              const featureDesc = featObj.description ?? featObj.desc ?? featObj.descriptionText;
+
+              return (
+                <div key={idx} className="bg-white p-5 md:p-6 rounded-xl shadow-[0_4px_20px_rgb(0,0,0,0.08)] flex items-start gap-6 border border-gray-50">
+                  <div className="flex-shrink-0 pt-1 relative w-[40px] h-[40px]">
+                    <Image src={iconSrc} alt={feature.title || ''} fill className="object-contain" />
+                  </div>
+                  <div>
+                    <h4 className="text-lg text-gray-800 font-normal mb-1">{feature.title}</h4>
+                    <FormattedText
+                      content={featureDesc}
+                      className="text-gray-500 text-sm leading-relaxed"
+                    />
+                  </div>
                 </div>
-                <div>
-                  <h4 className="text-lg text-gray-800 font-normal mb-1">{feature.title}</h4>
-                  <p className="text-gray-500 text-sm leading-relaxed">
-                    {feature.description}
-                  </p>
-                </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
       </div>

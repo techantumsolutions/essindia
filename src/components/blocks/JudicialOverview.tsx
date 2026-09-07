@@ -47,22 +47,31 @@ export function JudicialOverview({ content }: JudicialOverviewProps) {
         </p>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-10 text-left">
-          {cards.map((card, idx) => (
-            <div key={idx} className="flex flex-col items-center">
-              <div className="relative w-full aspect-[16/9] mb-6 rounded-xl overflow-hidden shadow-sm">
-                <Image
-                  src={card.image}
-                  alt={card.title}
-                  fill
-                  className="object-cover"
-                />
+          {cards.map((card, idx) => {
+            const defaultImg = defaultCards[idx]?.image || defaultCards[0].image;
+            const rawImg = card.image;
+            const isValidSrc = typeof rawImg === 'string' && rawImg.trim() !== '' && (
+              rawImg.startsWith('/') || rawImg.startsWith('http://') || rawImg.startsWith('https://') || rawImg.startsWith('data:')
+            );
+            const imgSrc = isValidSrc ? rawImg : defaultImg;
+
+            return (
+              <div key={idx} className="flex flex-col items-center">
+                <div className="relative w-full aspect-[16/9] mb-6 rounded-xl overflow-hidden shadow-sm">
+                  <Image
+                    src={imgSrc}
+                    alt={card.title || ''}
+                    fill
+                    className="object-cover"
+                  />
+                </div>
+                <h3 className="text-xl font-bold text-gray-900 mb-4">{card.title}</h3>
+                <p className="text-gray-600 text-sm leading-relaxed">
+                  {card.description}
+                </p>
               </div>
-              <h3 className="text-xl font-bold text-gray-900 mb-4">{card.title}</h3>
-              <p className="text-gray-600 text-sm leading-relaxed">
-                {card.description}
-              </p>
-            </div>
-          ))}
+            );
+          })}
         </div>
       </div>
     </section>

@@ -3,6 +3,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { useCtaAction, type CtaFormType } from '@/hooks/useCtaAction';
+import { FormattedText } from '@/components/ui/FormattedText';
 
 interface OracleApexIntroContent {
   title?: string;
@@ -49,7 +50,7 @@ export function OracleApexIntro({ content }: { content?: OracleApexIntroContent 
         {/* Paragraphs */}
         <div className="space-y-5">
           {paragraphs.map((para: string, idx: number) => (
-            <motion.p
+            <motion.div
               key={idx}
               initial={{ opacity: 0, y: 10 }}
               whileInView={{ opacity: 1, y: 0 }}
@@ -57,12 +58,8 @@ export function OracleApexIntro({ content }: { content?: OracleApexIntroContent 
               transition={{ duration: 0.4, delay: 0.05 + idx * 0.05 }}
               className="text-[15px] sm:text-base md:text-lg text-slate-600 leading-relaxed font-light"
             >
-              {typeof para === 'string' ? (
-                <span dangerouslySetInnerHTML={{ __html: para }} />
-              ) : (
-                para
-              )}
-            </motion.p>
+              <FormattedText content={para} />
+            </motion.div>
           ))}
         </div>
 

@@ -4,6 +4,8 @@ import React from 'react';
 import Image from 'next/image';
 import { motion } from 'framer-motion';
 
+import { FormattedText } from '@/components/ui/FormattedText';
+
 interface RoiFormulaContent {
   title?: string;
   paragraphs?: string[];
@@ -47,18 +49,13 @@ export function RoiFormula({ content }: { content?: RoiFormulaContent }) {
 
           <div className="space-y-2 text-slate-600 text-sm sm:text-base leading-relaxed">
             {paragraphs.map((p, idx) => {
-              const isFormulaLine = p.startsWith('ROI =');
+              const isFormulaLine = typeof p === 'string' && p.startsWith('ROI =');
               return (
-                <p
+                <FormattedText
                   key={idx}
+                  content={p}
                   className={isFormulaLine ? 'font-bold text-slate-800 text-base py-1 pl-3 border-l-2 border-[#2b2a6c]/40 font-mono' : ''}
-                >
-                  {typeof p === 'string' && (p.includes('<p>') || p.includes('<')) ? (
-                    <span dangerouslySetInnerHTML={{ __html: p }} />
-                  ) : (
-                    p
-                  )}
-                </p>
+                />
               );
             })}
           </div>

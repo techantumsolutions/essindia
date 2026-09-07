@@ -2448,7 +2448,7 @@ export function SectionEditorCard({
       meta.fieldOrder.forEach((key) => {
         if (!(key in finalMerged)) {
           // Default arrays/booleans for known list fields
-          if (['items', 'processes', 'features', 'faqs', 'cards', 'values', 'modules', 'paragraphs', 'leftItems', 'rightItems', 'steps', 'logos', 'stats', 'statistics', 'slides', 'categories', 'tabs', 'benefits', 'industries', 'solutions', 'points', 'topics', 'links', 'testimonials', 'challenges', 'introModules', 'visionPoints', 'missionPoints', 'whatWeGet'].includes(key) || key.endsWith('Points')) {
+          if (['items', 'processes', 'process', 'works', 'features', 'faqs', 'cards', 'values', 'modules', 'paragraphs', 'leftItems', 'rightItems', 'steps', 'logos', 'stats', 'statistics', 'slides', 'categories', 'tabs', 'benefits', 'industries', 'solutions', 'points', 'topics', 'links', 'testimonials', 'challenges', 'introModules', 'visionPoints', 'missionPoints', 'whatWeGet', 'badges'].includes(key) || key.endsWith('Points')) {
             finalMerged[key] = [];
           } else if (key === 'form') {
             finalMerged[key] = {

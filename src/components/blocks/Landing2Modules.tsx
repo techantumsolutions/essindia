@@ -22,6 +22,7 @@ export interface ModuleCardItem {
   image?: string;
   iconUrl?: string;
   href?: string;
+  ctaUrl?: string;
 }
 
 export interface Landing2ModulesContent {
@@ -135,8 +136,15 @@ export function Landing2Modules({ content }: { content?: Landing2ModulesContent 
               </div>
             );
 
-            return mod.href ? (
-              <Link key={idx} href={mod.href} className="block cursor-pointer">
+            const targetUrl =
+              mod.ctaUrl ||
+              (mod as any).cta_url ||
+              mod.href ||
+              (mod as any).link ||
+              (mod as any).url ||
+              (mod as any).cta;
+            return targetUrl ? (
+              <Link key={idx} href={targetUrl} className="block cursor-pointer">
                 {cardContent}
               </Link>
             ) : (

@@ -168,7 +168,6 @@ import { Landing2Industries } from '@/components/blocks/Landing2Industries';
 import { Landing2Integrations } from '@/components/blocks/Landing2Integrations';
 import { Landing2Testimonials } from '@/components/blocks/Landing2Testimonials';
 import { Landing2WhyEss } from '@/components/blocks/Landing2WhyEss';
-import { Landing2FooterBanner } from '@/components/blocks/Landing2FooterBanner';
 import { Landing1Brands } from '@/components/blocks/Landing1Brands';
 import { Landing1Intro } from '@/components/blocks/Landing1Intro';
 import { Landing1Industries } from '@/components/blocks/Landing1Industries';
@@ -551,8 +550,6 @@ export function SectionRenderer({ section }: SectionRendererProps) {
       return <Landing2Testimonials content={section.content} />;
     case 'landing2-why-ess':
       return <Landing2WhyEss content={section.content} />;
-    case 'landing2-footer-banner':
-      return null;
     case 'landing1-brands':
       return <Landing1Brands content={section.content} />;
     case 'landing1-intro':

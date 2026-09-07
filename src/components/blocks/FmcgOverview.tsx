@@ -2,6 +2,8 @@
 
 import React from 'react';
 
+import { FormattedText } from '@/components/ui/FormattedText';
+
 interface FmcgOverviewContent {
   title?: string;
   paragraphs?: string[];
@@ -31,13 +33,7 @@ export function FmcgOverview({ content }: { content?: FmcgOverviewContent }) {
             
             <div className="space-y-4 text-slate-600 text-sm sm:text-base leading-relaxed">
               {paragraphs.map((para, index) => (
-                <div key={index}>
-                  {typeof para === 'string' && (para.includes('<p>') || para.includes('<')) ? (
-                    <div dangerouslySetInnerHTML={{ __html: para }} />
-                  ) : (
-                    <p>{para}</p>
-                  )}
-                </div>
+                <FormattedText key={index} content={para} />
               ))}
             </div>
           </div>

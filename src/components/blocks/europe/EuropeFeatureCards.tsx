@@ -43,10 +43,28 @@ const DEFAULT_CARDS: FeatureCard[] = [
 export function EuropeFeatureCards({ content }: { content?: EuropeFeatureCardsContent }) {
   const cards = content?.cards?.length ? content.cards : DEFAULT_CARDS;
   const [startIndex, setStartIndex] = useState(0);
-  const showSlider = cards.length > 4;
+  // Determine cards visible based on window width (1 on mobile < 640px, 2 on tablet < 1024px, 3 on desktop >= 1024px)
+  const [visibleCount, setVisibleCount] = React.useState(3);
+
+  React.useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth < 640) {
+        setVisibleCount(1);
+      } else if (window.innerWidth < 1024) {
+        setVisibleCount(2);
+      } else {
+        setVisibleCount(3);
+      }
+    };
+    handleResize();
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  const maxIndex = Math.max(0, cards.length - visibleCount);
 
   const next = () => {
-    if (startIndex < cards.length - 4) {
+    if (startIndex < maxIndex) {
       setStartIndex(prev => prev + 1);
     }
   };
@@ -57,38 +75,49 @@ export function EuropeFeatureCards({ content }: { content?: EuropeFeatureCardsCo
     }
   };
 
+  const canGoLeft = startIndex > 0;
+  const canGoRight = startIndex < maxIndex;
+
+  // Calculate slide step percentage
+  // Mobile: 100% + gap, Tablet: 50% + gap, Desktop: 33.333% + gap
+  const stepPercent = visibleCount === 1 ? 100 : visibleCount === 2 ? 50 : 33.3333;
+  const gapPx = visibleCount === 1 ? 24 : visibleCount === 2 ? 12 : 16;
+
   return (
     <EuropeSectionShell content={{ ...content, backgroundColor: content?.backgroundColor || '#ffffff' }}>
-      <div className="relative w-full space-y-6">
-        {/* Slider Controls (rendered only if > 4 cards) */}
-        {showSlider && (
-          <div className="flex justify-end gap-2 mb-4">
-            <button
-              onClick={prev}
-              disabled={startIndex === 0}
-              className="p-3 rounded-full border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 transition-colors disabled:opacity-40 disabled:hover:bg-white"
-              aria-label="Previous cards"
-            >
-              <ChevronLeft className="w-5 h-5" />
-            </button>
-            <button
-              onClick={next}
-              disabled={startIndex >= cards.length - 4}
-              className="p-3 rounded-full border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 transition-colors disabled:opacity-40 disabled:hover:bg-white"
-              aria-label="Next cards"
-            >
-              <ChevronRight className="w-5 h-5" />
-            </button>
-          </div>
+      <div className="relative w-full px-12 sm:px-14 lg:px-16">
+        
+        {/* Left Arrow Button (visible only if there are cards to the left) */}
+        {canGoLeft && (
+          <button
+            type="button"
+            onClick={prev}
+            className="absolute left-0 sm:left-1 top-1/2 -translate-y-1/2 z-20 w-10 h-10 rounded-full border border-slate-200 bg-white/90 text-slate-700 hover:bg-white hover:scale-110 shadow-md transition-all flex items-center justify-center cursor-pointer"
+            aria-label="Previous card"
+          >
+            <ChevronLeft className="w-5 h-5" />
+          </button>
         )}
 
-        <div className="relative overflow-hidden w-full">
+        {/* Right Arrow Button (visible only if there are more cards to the right) */}
+        {canGoRight && (
+          <button
+            type="button"
+            onClick={next}
+            className="absolute right-0 sm:right-1 top-1/2 -translate-y-1/2 z-20 w-10 h-10 rounded-full border border-slate-200 bg-white/90 text-slate-700 hover:bg-white hover:scale-110 shadow-md transition-all flex items-center justify-center cursor-pointer"
+            aria-label="Next card"
+          >
+            <ChevronRight className="w-5 h-5" />
+          </button>
+        )}
+
+        {/* Cards Carousel Container */}
+        <div className="relative overflow-hidden w-full py-2">
           <div 
-            className={showSlider ? "flex transition-transform duration-500 ease-out gap-6 lg:gap-8" : "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8"}
-            style={showSlider ? {
-              transform: `translateX(-${startIndex * 25}%)`,
-              width: `${(cards.length / 4) * 100}%`
-            } : undefined}
+            className="flex transition-transform duration-500 ease-out gap-6"
+            style={{
+              transform: `translateX(calc(-${startIndex * stepPercent}% - ${startIndex * gapPx}px))`,
+            }}
           >
             {cards.map((card, index) => (
               <motion.article
@@ -97,29 +126,25 @@ export function EuropeFeatureCards({ content }: { content?: EuropeFeatureCardsCo
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.4, delay: index * 0.08 }}
-                className="flex flex-col"
-                style={showSlider ? {
-                  width: `calc(25% - 24px)`,
-                  flexShrink: 0
-                } : undefined}
+                className="flex flex-col w-full sm:w-[calc(50%-12px)] lg:w-[calc(33.333%-16px)] shrink-0"
               >
                 {card.image && (
-                  <div className="relative aspect-square w-full overflow-hidden bg-slate-50">
+                  <div className="relative aspect-square w-full overflow-hidden bg-slate-50 border border-slate-100 rounded-xl">
                     <Image
                       src={card.image}
                       alt={card.title || `Feature ${index + 1}`}
                       fill
                       className="object-cover"
-                      sizes="(max-width: 768px) 100vw, 25vw"
+                      sizes="(max-width: 768px) 100vw, 33vw"
                     />
                   </div>
                 )}
-                <div className="flex flex-col flex-1 py-6">
+                <div className="flex flex-col flex-1 py-5">
                   {card.title && (
-                    <h3 className="text-xl font-bold text-slate-900 mb-3">{card.title}</h3>
+                    <h3 className="text-xl font-bold text-slate-900 mb-2 leading-snug">{card.title}</h3>
                   )}
                   {card.description && (
-                    <p className="text-sm text-slate-500 leading-relaxed flex-1">{card.description}</p>
+                    <p className="text-sm text-slate-500 leading-relaxed flex-1 font-light">{card.description}</p>
                   )}
                 </div>
               </motion.article>

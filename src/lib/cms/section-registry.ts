@@ -867,6 +867,20 @@ const RAW_SECTION_REGISTRY: SectionTypeDefinition[] = [
     color: 'bg-emerald-50 text-emerald-600',
     defaultVariant: 'default',
     supportsVariants: false,
+    fieldOrder: [
+      'badge',
+      'title',
+      'titlePrimaryColor',
+      'titleSecondaryColor',
+      'visionIcon',
+      'visionTitle',
+      'visionDescription',
+      'visionPoints',
+      'missionIcon',
+      'missionTitle',
+      'missionDescription',
+      'missionPoints'
+    ],
   },
   {
     type: 'about-us-services-overview',
@@ -1128,7 +1142,7 @@ const RAW_SECTION_REGISTRY: SectionTypeDefinition[] = [
     color: 'bg-slate-50 text-slate-600',
     defaultVariant: 'default',
     supportsVariants: false,
-    fieldOrder: ['title', 'paragraphs'],
+    fieldOrder: ['title', 'paragraph1', 'paragraph2'],
   },
   {
     type: 'ass-functionalities',
@@ -2408,16 +2422,6 @@ const RAW_SECTION_REGISTRY: SectionTypeDefinition[] = [
     fieldOrder: ['badge', 'title', 'features', 'ctaText', 'ctaUrl']
   },
   {
-    type: 'landing2-footer-banner',
-    label: 'Landing 2 Footer Banner',
-    description: 'Vibrant purple brand footer banner with company logo, navigation links, social media icon row, rounded white CTA pill button and py-14 padding',
-    icon: Layout,
-    color: 'bg-[#4B2A63]/10 text-[#4B2A63]',
-    defaultVariant: 'default',
-    supportsVariants: false,
-    fieldOrder: ['logo', 'navLinks', 'socialLinks', 'ctaText', 'ctaUrl']
-  },
-  {
     type: 'landing1-value',
     label: 'Landing 1 Value',
     description: '3 horizontal stats layout (Value Section)',
@@ -2565,6 +2569,7 @@ const RAW_SECTION_REGISTRY: SectionTypeDefinition[] = [
     color: 'bg-[#4B2A63]/10 text-[#4B2A63]',
     defaultVariant: 'default',
     supportsVariants: false,
+    fieldOrder: ['badge', 'title', 'description', 'challenges']
   },
 ];
 

@@ -216,17 +216,21 @@ export function Landing2Hero({ content }: { content?: Landing2HeroContent }) {
           {/* Badges with Green Checkmarks */}
           {badgesList.length > 0 && (
             <div className="flex flex-wrap items-center gap-2.5 pt-1">
-              {badgesList.map((badge, idx) => (
-                <div
-                  key={idx}
-                  className="inline-flex items-center gap-2 bg-white text-slate-900 px-3.5 py-1.5 rounded-md shadow-sm font-semibold text-xs md:text-sm"
-                >
-                  <span className="w-4 h-4 rounded-full bg-emerald-500 text-white flex items-center justify-center text-[10px] shrink-0">
-                    <Check className="w-3 h-3 stroke-[3]" />
-                  </span>
-                  <span>{badge.text}</span>
-                </div>
-              ))}
+              {badgesList.map((badge, idx) => {
+                const badgeText = typeof badge === 'string' ? badge : (badge?.text || (badge as any)?.title || String(badge || ''));
+                if (!badgeText) return null;
+                return (
+                  <div
+                    key={idx}
+                    className="inline-flex items-center gap-2 bg-white text-slate-900 px-3.5 py-1.5 rounded-md shadow-sm font-semibold text-xs md:text-sm"
+                  >
+                    <span className="w-4 h-4 rounded-full bg-emerald-500 text-white flex items-center justify-center text-[10px] shrink-0">
+                      <Check className="w-3 h-3 stroke-[3]" />
+                    </span>
+                    <span>{badgeText}</span>
+                  </div>
+                );
+              })}
             </div>
           )}
 

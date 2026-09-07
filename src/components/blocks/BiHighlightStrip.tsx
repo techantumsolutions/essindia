@@ -82,11 +82,23 @@ export function BiHighlightStrip({ content }: { content?: BiHighlightStripConten
             >
               {/* Round icon circle */}
               <div 
-                className="flex-shrink-0 w-14 h-14 rounded-full flex items-center justify-center shadow-sm"
+                className="flex-shrink-0 w-14 h-14 rounded-full flex items-center justify-center shadow-sm overflow-hidden p-3"
                 style={{ backgroundColor: circleBgColor, color: circleIconColor }}
               >
                 {(() => {
-                  const Icon = iconMap[items[0].icon?.toLowerCase() || ''] || Wand2;
+                  const iconVal = items[0].icon?.trim() || '';
+                  const isUploadedImage = iconVal.startsWith('/') || iconVal.startsWith('http') || iconVal.includes('.');
+                  if (isUploadedImage) {
+                    return (
+                      /* eslint-disable-next-line @next/next/no-img-element */
+                      <img
+                        src={encodeURI(iconVal)}
+                        alt="Icon"
+                        className="w-full h-full object-contain"
+                      />
+                    );
+                  }
+                  const Icon = iconMap[iconVal.toLowerCase()] || Wand2;
                   return <Icon className="w-6 h-6" />;
                 })()}
               </div>
@@ -109,11 +121,23 @@ export function BiHighlightStrip({ content }: { content?: BiHighlightStripConten
             >
               {/* Round icon circle */}
               <div 
-                className="flex-shrink-0 w-14 h-14 rounded-full flex items-center justify-center shadow-sm"
+                className="flex-shrink-0 w-14 h-14 rounded-full flex items-center justify-center shadow-sm overflow-hidden p-3"
                 style={{ backgroundColor: circleBgColor, color: circleIconColor }}
               >
                 {(() => {
-                  const Icon = iconMap[items[1].icon?.toLowerCase() || ''] || ShieldCheck;
+                  const iconVal = items[1].icon?.trim() || '';
+                  const isUploadedImage = iconVal.startsWith('/') || iconVal.startsWith('http') || iconVal.includes('.');
+                  if (isUploadedImage) {
+                    return (
+                      /* eslint-disable-next-line @next/next/no-img-element */
+                      <img
+                        src={encodeURI(iconVal)}
+                        alt="Icon"
+                        className="w-full h-full object-contain"
+                      />
+                    );
+                  }
+                  const Icon = iconMap[iconVal.toLowerCase()] || ShieldCheck;
                   return <Icon className="w-6 h-6" />;
                 })()}
               </div>
