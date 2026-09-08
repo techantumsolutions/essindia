@@ -62,14 +62,18 @@ export function Landing2Carousel({ content }: { content?: Landing2CarouselConten
     <section className="py-14 bg-white font-sans select-none px-6">
       <div className="container mx-auto max-w-6xl relative flex items-center justify-center">
         {/* Previous Arrow Button */}
-        <button
-          type="button"
-          onClick={handlePrev}
-          aria-label="Previous Slide"
-          className="w-12 h-12 rounded-full bg-[#5d2bb9] hover:bg-[#4d229e] text-white flex items-center justify-center shadow-lg transition-all transform hover:scale-105 shrink-0 z-20 cursor-pointer mr-4 md:mr-8"
-        >
-          <ChevronLeft className="w-6 h-6 stroke-[2.5]" />
-        </button>
+        {currentIndex > 0 ? (
+          <button
+            type="button"
+            onClick={handlePrev}
+            aria-label="Previous Slide"
+            className="w-12 h-12 rounded-full bg-[#5d2bb9] hover:bg-[#4d229e] text-white flex items-center justify-center shadow-lg transition-all transform hover:scale-105 shrink-0 z-20 cursor-pointer mr-4 md:mr-8"
+          >
+            <ChevronLeft className="w-6 h-6 stroke-[2.5]" />
+          </button>
+        ) : (
+          <div className="w-12 h-12 shrink-0 mr-4 md:mr-8 invisible" aria-hidden="true" />
+        )}
 
         {/* Main Card Container */}
         <div className="w-full max-w-4xl relative rounded-[28px] overflow-hidden bg-gradient-to-r from-[#6e22d9] to-[#8c2bee] shadow-2xl border border-purple-400/20 grid grid-cols-1 md:grid-cols-12 min-h-[380px] md:min-h-[420px]">
@@ -143,14 +147,18 @@ export function Landing2Carousel({ content }: { content?: Landing2CarouselConten
         </div>
 
         {/* Next Arrow Button */}
-        <button
-          type="button"
-          onClick={handleNext}
-          aria-label="Next Slide"
-          className="w-12 h-12 rounded-full bg-[#5d2bb9] hover:bg-[#4d229e] text-white flex items-center justify-center shadow-lg transition-all transform hover:scale-105 shrink-0 z-20 cursor-pointer ml-4 md:ml-8"
-        >
-          <ChevronRight className="w-6 h-6 stroke-[2.5]" />
-        </button>
+        {currentIndex < slides.length - 1 ? (
+          <button
+            type="button"
+            onClick={handleNext}
+            aria-label="Next Slide"
+            className="w-12 h-12 rounded-full bg-[#5d2bb9] hover:bg-[#4d229e] text-white flex items-center justify-center shadow-lg transition-all transform hover:scale-105 shrink-0 z-20 cursor-pointer ml-4 md:ml-8"
+          >
+            <ChevronRight className="w-6 h-6 stroke-[2.5]" />
+          </button>
+        ) : (
+          <div className="w-12 h-12 shrink-0 ml-4 md:ml-8 invisible" aria-hidden="true" />
+        )}
       </div>
 
       {/* Pagination Dots */}

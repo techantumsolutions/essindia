@@ -21,7 +21,14 @@ async function optimizeImageBuffer(
   }
 
   try {
-    const sharpModule = await import('sharp').catch(() => null);
+    let sharpModule: any = null;
+    try {
+      sharpModule = await import('sharp');
+    } catch {
+      // sharp module or native bindings not available
+      sharpModule = null;
+    }
+
     if (!sharpModule) {
       return { buffer, mimeType, ext: mimeType.split('/')[1] || 'bin' };
     }

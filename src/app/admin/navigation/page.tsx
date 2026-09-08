@@ -818,17 +818,7 @@ export default function NavigationModule() {
                   />
                 </div>
 
-                <div className="space-y-1 md:col-span-2">
-                  <label className="text-xs font-semibold text-slate-700">Country Dropdown Button Text</label>
-                  <p className="text-[11px] text-slate-400">Default label shown on the navbar dropdown button before a specific country is selected or matched.</p>
-                  <input
-                    type="text"
-                    value={menuSettings.countryDropdownText || ''}
-                    onChange={(e) => setMenuSettings((prev: any) => ({ ...prev, countryDropdownText: e.target.value }))}
-                    placeholder="Select Country"
-                    className="w-full px-2.5 py-1.5 rounded-md border border-slate-200 focus:outline-none focus:ring-2 focus:ring-[#5C2B6A]/40 focus:border-[#5C2B6A] transition-all text-xs"
-                  />
-                </div>
+
 
                 {/* Country Dropdown Links */}
                 <div className="space-y-3 md:col-span-2 pt-3 border-t border-slate-200">

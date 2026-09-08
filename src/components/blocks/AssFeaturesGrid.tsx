@@ -182,28 +182,29 @@ export function AssFeaturesGrid({ content }: { content?: AssFeaturesGridContent 
   });
 
   return (
-    <section className="p-14 px-6 bg-[#fafcff] border-b">
+    <section className="py-12 md:py-16 px-4 sm:px-6 bg-[#fafcff] border-b">
       <div className="container mx-auto max-w-7xl">
-        <div className="flex flex-col lg:flex-row gap-10">
+        <div className="flex flex-col lg:flex-row gap-8 lg:gap-10">
 
           {/* Left Categories Sidebar */}
-          <div className="lg:w-1/4 w-full shrink-0 border border-2 p-3 rounded-xl">
-            <h3 className="text-lg font-extrabold text-[#0a1128] mb-5 tracking-wide hidden lg:block">
+          <div className="lg:w-1/4 w-full shrink-0 border border-slate-200 p-3 rounded-2xl bg-white shadow-xs">
+            <h3 className="text-lg font-extrabold text-[#0a1128] mb-4 tracking-wide hidden lg:block px-2 pt-1">
               Categories
             </h3>
 
-            {/* Mobile Category List (Scrollable Row) */}
-            <div className="lg:hidden flex overflow-x-auto gap-2 pb-4 scrollbar-none snap-x -mx-6 px-6">
+            {/* Mobile Category List (Scrollable Horizontal Tabs) */}
+            <div className="lg:hidden flex overflow-x-auto gap-2 py-1 scrollbar-none snap-x items-center">
               {categories.map((cat, idx) => (
                 <button
                   key={idx}
+                  type="button"
                   onClick={() => {
                     setActiveCategoryIndex(idx);
                     setSearchQuery('');
                   }}
-                  className={`snap-start shrink-0 px-4 py-2 text-xs font-semibold rounded-full border transition-all duration-300 ${idx === activeCategoryIndex
-                    ? 'bg-[#2a2b6a] text-white border-[#2a2b6a]'
-                    : 'bg-white text-slate-600 border-slate-200 hover:bg-slate-50'
+                  className={`snap-start shrink-0 px-4 py-2.5 text-xs font-semibold rounded-xl border transition-all duration-300 cursor-pointer ${idx === activeCategoryIndex
+                    ? 'bg-[#2a2b6a] text-white border-[#2a2b6a] shadow-sm'
+                    : 'bg-slate-50 text-slate-600 border-slate-200 hover:bg-slate-100'
                     }`}
                 >
                   {cat.name}
@@ -212,17 +213,18 @@ export function AssFeaturesGrid({ content }: { content?: AssFeaturesGridContent 
             </div>
 
             {/* Desktop Category List */}
-            <div className="hidden lg:flex flex-col gap-1 pr-6 border-r border-slate-100">
+            <div className="hidden lg:flex flex-col gap-1 pr-2">
               {categories.map((cat, idx) => (
                 <button
                   key={idx}
+                  type="button"
                   onClick={() => {
                     setActiveCategoryIndex(idx);
                     setSearchQuery('');
                   }}
-                  className={`w-full text-left px-4 py-3 text-sm font-semibold rounded-xl transition-all duration-300 ${idx === activeCategoryIndex
+                  className={`w-full text-left px-4 py-3 text-sm font-semibold rounded-xl transition-all duration-300 cursor-pointer ${idx === activeCategoryIndex
                     ? 'bg-[#2a2b6a] text-white shadow-sm shadow-[#2a2b6a]/10'
-                    : 'bg-transparent text-slate-600 hover:bg-blue-100/70 hover:text-slate-900 cursor-pointer'
+                    : 'bg-transparent text-slate-600 hover:bg-blue-50/70 hover:text-slate-900'
                     }`}
                 >
                   {cat.name}
@@ -234,7 +236,7 @@ export function AssFeaturesGrid({ content }: { content?: AssFeaturesGridContent 
           {/* Right Cards Content Grid */}
           <div className="flex-grow">
             {/* Header info */}
-            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-2 pb-4 border-slate-200">
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6 pb-4 border-b border-slate-100">
               {/* Search Bar */}
               <div className="relative w-full sm:w-64">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />

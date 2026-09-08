@@ -218,13 +218,13 @@ export function CaseStudyDetailBlock({ content }: CaseStudyDetailBlockProps) {
               <p className="text-slate-600 text-[15px]">{solutionSubtitle}</p>
             </div>
             
-            <div className="flex flex-wrap gap-6">
+            <div className="flex flex-wrap justify-center lg:justify-start gap-6">
               {solutionModules.map((module: any, idx: number) => {
                 const title = module.label || module.name || module.title;
                 const icon = module.iconImage || module.icon || module.image;
                 const desc = module.description || module.desc;
                 return (
-                  <div key={idx} className="flex-1 min-w-[200px] max-w-[300px] flex flex-col items-center justify-center bg-white border border-slate-200 rounded-2xl p-6 shadow-sm text-center gap-3 hover:shadow-md transition-all">
+                  <div key={idx} className="w-full sm:w-auto flex-1 min-w-[200px] max-w-[300px] flex flex-col items-center justify-center bg-white border border-slate-200 rounded-2xl p-6 shadow-sm text-center gap-3 hover:shadow-md transition-all mx-auto sm:mx-0">
                     {icon && (
                       <div className="w-12 h-12 text-[#1a1e4a]">
                         <img src={icon} alt={title || 'Module'} className="w-full h-full object-contain" />

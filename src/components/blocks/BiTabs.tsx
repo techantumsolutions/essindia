@@ -74,12 +74,49 @@ export function BiTabs({ content }: { content?: BiTabsContent }) {
   const [startIndex, setStartIndex] = useState(0);
   const maxStartIndex = Math.max(0, tabs.length - 3);
 
+  const scrollRef = React.useRef<HTMLDivElement>(null);
+  const [canScrollLeft, setCanScrollLeft] = useState(false);
+  const [canScrollRight, setCanScrollRight] = useState(false);
+
+  const checkScroll = React.useCallback(() => {
+    if (scrollRef.current) {
+      const { scrollLeft, scrollWidth, clientWidth } = scrollRef.current;
+      setCanScrollLeft(scrollLeft > 5);
+      setCanScrollRight(scrollLeft + clientWidth < scrollWidth - 5);
+    }
+  }, []);
+
+  useEffect(() => {
+    checkScroll();
+    window.addEventListener('resize', checkScroll);
+    return () => window.removeEventListener('resize', checkScroll);
+  }, [checkScroll, tabs]);
+
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth < 768);
+    handleResize();
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
   const handlePrev = () => {
-    setStartIndex((prev) => Math.max(0, prev - 1));
+    if (scrollRef.current && isMobile) {
+      const cardWidth = scrollRef.current.clientWidth * 0.85;
+      scrollRef.current.scrollBy({ left: -cardWidth, behavior: 'smooth' });
+    } else {
+      setStartIndex((prev) => Math.max(0, prev - 1));
+    }
   };
 
   const handleNext = () => {
-    setStartIndex((prev) => Math.min(maxStartIndex, prev + 1));
+    if (scrollRef.current && isMobile) {
+      const cardWidth = scrollRef.current.clientWidth * 0.85;
+      scrollRef.current.scrollBy({ left: cardWidth, behavior: 'smooth' });
+    } else {
+      setStartIndex((prev) => Math.min(maxStartIndex, prev + 1));
+    }
   };
 
   // Keep active tab in view if it changes from outside
@@ -106,36 +143,40 @@ export function BiTabs({ content }: { content?: BiTabsContent }) {
           )}
 
           {/* Tab Headers Navigation */}
-          <div className="flex items-center gap-4 pb-0 border-b border-white/15">
+          <div className="flex items-center gap-2 sm:gap-4 pb-0 border-b border-white/15">
             {/* Backward Arrow */}
-            {tabs.length > 3 && (
+            {tabs.length > 1 && (
               <button
                 type="button"
                 onClick={handlePrev}
-                disabled={startIndex === 0}
-                className={`p-2.5 rounded-full border border-white/20 text-white transition-all duration-300 flex items-center justify-center shrink-0 ${startIndex === 0
+                disabled={isMobile ? !canScrollLeft : startIndex === 0}
+                className={`p-2 sm:p-2.5 rounded-full border border-white/20 text-white transition-all duration-300 flex items-center justify-center shrink-0 ${
+                  (isMobile ? !canScrollLeft : startIndex === 0)
                     ? 'opacity-30 cursor-not-allowed'
                     : 'opacity-100 hover:bg-white/10 hover:border-white/50 cursor-pointer active:scale-95'
-                  }`}
+                }`}
                 aria-label="Previous tabs"
               >
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M15 19l-7-7 7-7" />
                 </svg>
               </button>
             )}
 
             {/* Tabs List */}
-            <div className="flex-1 grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-12">
-              {visibleTabs.map((tab, idx) => {
-                const actualIdx = startIndex + idx;
+            <div
+              ref={scrollRef}
+              onScroll={checkScroll}
+              className="flex-1 flex md:grid md:grid-cols-3 gap-4 sm:gap-6 md:gap-12 overflow-x-auto scrollbar-none pb-2 md:pb-0 scroll-smooth snap-x snap-mandatory"
+            >
+              {tabs.map((tab, actualIdx) => {
                 const isActive = actualIdx === activeTabIdx;
                 return (
                   <button
                     key={actualIdx}
                     type="button"
                     onClick={() => setActiveTabIdx(actualIdx)}
-                    className="text-left shrink-0 transition-all duration-300 select-none cursor-pointer outline-none focus:outline-none py-1 block w-full relative group"
+                    className="text-center md:text-left shrink-0 transition-all duration-300 select-none cursor-pointer outline-none focus:outline-none py-1 block w-full flex-none max-w-[82vw] sm:max-w-[320px] md:max-w-none md:w-full snap-center relative group"
                   >
                     <div className={`text-base sm:text-lg font-bold transition-colors duration-300 ${isActive ? 'text-white' : 'text-white/60 group-hover:text-white'}`}>
                       {tab.tabName}
@@ -159,18 +200,19 @@ export function BiTabs({ content }: { content?: BiTabsContent }) {
             </div>
 
             {/* Forward Arrow */}
-            {tabs.length > 3 && (
+            {tabs.length > 1 && (
               <button
                 type="button"
                 onClick={handleNext}
-                disabled={startIndex >= maxStartIndex}
-                className={`p-2.5 rounded-full border border-white/20 text-white transition-all duration-300 flex items-center justify-center shrink-0 ${startIndex >= maxStartIndex
+                disabled={isMobile ? !canScrollRight : startIndex >= maxStartIndex}
+                className={`p-2 sm:p-2.5 rounded-full border border-white/20 text-white transition-all duration-300 flex items-center justify-center shrink-0 ${
+                  (isMobile ? !canScrollRight : startIndex >= maxStartIndex)
                     ? 'opacity-30 cursor-not-allowed'
                     : 'opacity-100 hover:bg-white/10 hover:border-white/50 cursor-pointer active:scale-95'
-                  }`}
+                }`}
                 aria-label="Next tabs"
               >
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 5l7 7-7 7" />
                 </svg>
               </button>

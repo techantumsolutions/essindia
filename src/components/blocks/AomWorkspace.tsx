@@ -146,9 +146,21 @@ export function AomWorkspace({ content }: { content?: AomWorkspaceContent }) {
     }));
   };
 
+  const contentPanelRef = React.useRef<HTMLDivElement>(null);
+
   const selectTab = (catIdx: number, tabIdx: number) => {
     setActiveCategoryIdx(catIdx);
     setActiveTabIdx(tabIdx);
+    if (typeof window !== 'undefined' && window.innerWidth < 1024 && contentPanelRef.current) {
+      const headerOffset = 90; // Offset for sticky navbar header
+      const elementPosition = contentPanelRef.current.getBoundingClientRect().top;
+      const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+
+      window.scrollTo({
+        top: offsetPosition,
+        behavior: 'smooth'
+      });
+    }
   };
 
   // Safe tab selection lookup
@@ -243,7 +255,10 @@ export function AomWorkspace({ content }: { content?: AomWorkspaceContent }) {
           </div>
 
           {/* Right Column Tab Content Panel */}
-          <div className="flex-1 w-full bg-white border border-slate-100 rounded-3xl p-6 sm:p-8 lg:p-10 shadow-md flex flex-col md:flex-row gap-8 items-center md:items-start min-h-[480px]">
+          <div
+            ref={contentPanelRef}
+            className="flex-1 w-full bg-white border border-slate-100 rounded-3xl p-6 sm:p-8 lg:p-10 shadow-md flex flex-col md:flex-row gap-8 items-center md:items-start min-h-[480px]"
+          >
             
             {/* Left side content inside card */}
             <div className="flex-1 space-y-6 text-left w-full">

@@ -77,9 +77,9 @@ export function OracleApexDeliverables({ content }: { content?: OracleApexDelive
     <section className="py-14 font-sans relative overflow-hidden" style={{ backgroundColor: bgColor }}>
       <div className="container mx-auto max-w-7xl px-6 relative z-10">
 
-        {/* Section Header Row */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 text-center items-center pb-5">
-          <div className="pb-4 lg:pb-0">
+        {/* Desktop Section Header Row */}
+        <div className="hidden lg:grid lg:grid-cols-2 text-center items-center pb-5">
+          <div>
             <h2 className="text-xl sm:text-2xl font-extrabold text-white tracking-wider uppercase">
               {leftTitle}
             </h2>
@@ -91,14 +91,20 @@ export function OracleApexDeliverables({ content }: { content?: OracleApexDelive
           </div>
         </div>
 
-        {/* Horizontal Divider Line */}
-        <div className="border-t border-white w-full mb-8" />
+        {/* Desktop Horizontal Divider Line */}
+        <div className="hidden lg:block border-t border-white w-full mb-8" />
 
         {/* Main Content Side-by-Side Lists */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-0 lg:divide-x lg:divide-white">
 
           {/* Left Column: What We Deliver */}
           <div className="space-y-4 lg:pr-12">
+            {/* Mobile Title */}
+            <div className="block lg:hidden text-center pb-2 border-b border-white/40 mb-4">
+              <h2 className="text-xl font-extrabold text-white tracking-wider uppercase">
+                {leftTitle}
+              </h2>
+            </div>
             {leftItems.map((item, index) => (
               <motion.div
                 key={index}
@@ -120,6 +126,12 @@ export function OracleApexDeliverables({ content }: { content?: OracleApexDelive
 
           {/* Right Column: Business Impact */}
           <div className="space-y-4 lg:pl-12">
+            {/* Mobile Title */}
+            <div className="block lg:hidden text-center pb-2 border-b border-white/40 mb-4 pt-4 lg:pt-0">
+              <h2 className="text-xl font-extrabold text-white tracking-wider uppercase">
+                {rightTitle}
+              </h2>
+            </div>
             {rightItems.map((item, index) => (
               <motion.div
                 key={index}
