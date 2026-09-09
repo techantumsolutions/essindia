@@ -383,6 +383,7 @@ const RAW_SECTION_REGISTRY: SectionTypeDefinition[] = [
     color: 'bg-indigo-50 text-indigo-600',
     defaultVariant: 'default',
     supportsVariants: false,
+    fieldOrder: ['title', 'paragraphs', 'imagePath'],
   },
   {
     type: 'mfg-hero',

@@ -102,7 +102,7 @@ export function HeroSection({ content }: HeroSectionProps) {
 
   return (
     <section
-      className="relative min-h-[60vh] flex items-center pt-0 pb-0 overflow-hidden bg-white border-b border-gray-200"
+      className="relative min-h-[60vh] flex items-center py-10 md:py-0 overflow-hidden bg-white border-b border-gray-200"
       style={hasBg ? bgStyles : undefined}
     >
       {/* Background Dotted Pattern */}

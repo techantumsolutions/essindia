@@ -76,62 +76,63 @@ export function MegaMenuMobile({ data, onNavigate }: Props) {
                 )}
                 {cat.subCategories.map((sub) => (
                   <div key={sub.id}>
-                    <button
-                      type="button"
-                      onClick={() =>
-                        setOpenSubId((prev) => (prev === sub.id ? null : sub.id))
-                      }
-                      className="flex items-center justify-between w-full text-left text-sm text-slate-500 py-1"
-                    >
-                      <span>{sub.name}</span>
-                      {sub.subSubCategories.length > 0 && (
-                        <ChevronDown
-                          className={cn(
-                            'w-3.5 h-3.5 transition-transform',
-                            openSubId === sub.id && 'rotate-180'
-                          )}
-                        />
-                      )}
-                    </button>
-                    <AnimatePresence>
-                      {openSubId === sub.id && sub.subSubCategories.length > 0 && (
-                        <motion.div
-                          initial={{ opacity: 0 }}
-                          animate={{ opacity: 1 }}
-                          exit={{ opacity: 0 }}
-                          className="pl-3 flex flex-col gap-1 pb-2"
+                    {sub.subSubCategories.length > 0 ? (
+                      <>
+                        <button
+                          type="button"
+                          onClick={() =>
+                            setOpenSubId((prev) => (prev === sub.id ? null : sub.id))
+                          }
+                          className="flex items-center justify-between w-full text-left text-sm text-slate-500 py-1 cursor-pointer"
                         >
-                          {sub.pageId && (
-                            <Link
-                              href={sub.href || '#'}
-                              onClick={onNavigate}
-                              className="text-sm font-semibold text-slate-600 hover:text-[#4B2A63] py-1 underline"
+                          <span>{sub.name}</span>
+                          <ChevronDown
+                            className={cn(
+                              'w-3.5 h-3.5 transition-transform',
+                              openSubId === sub.id && 'rotate-180'
+                            )}
+                          />
+                        </button>
+                        <AnimatePresence>
+                          {openSubId === sub.id && (
+                            <motion.div
+                              initial={{ opacity: 0 }}
+                              animate={{ opacity: 1 }}
+                              exit={{ opacity: 0 }}
+                              className="pl-3 flex flex-col gap-1 pb-2"
                             >
-                              Go to {sub.name} Page
-                            </Link>
+                              {sub.pageId && (
+                                <Link
+                                  href={sub.href || '#'}
+                                  onClick={onNavigate}
+                                  className="text-sm font-semibold text-slate-600 hover:text-[#4B2A63] py-1 underline"
+                                >
+                                  Go to {sub.name} Page
+                                </Link>
+                              )}
+                              {sub.subSubCategories
+                                .filter((leaf) => !!leaf.pageId)
+                                .map((leaf) => (
+                                  <Link
+                                    key={leaf.id}
+                                    href={leaf.href}
+                                    onClick={onNavigate}
+                                    className="text-sm text-slate-500 hover:text-[#4B2A63]"
+                                  >
+                                    {leaf.name}
+                                  </Link>
+                                ))}
+                            </motion.div>
                           )}
-                          {sub.subSubCategories
-                            .filter((leaf) => !!leaf.pageId)
-                            .map((leaf) => (
-                              <Link
-                                key={leaf.id}
-                                href={leaf.href}
-                                onClick={onNavigate}
-                                className="text-sm text-slate-500 hover:text-[#4B2A63]"
-                              >
-                                {leaf.name}
-                              </Link>
-                            ))}
-                        </motion.div>
-                      )}
-                    </AnimatePresence>
-                    {sub.subSubCategories.length === 0 && sub.pageId && (
+                        </AnimatePresence>
+                      </>
+                    ) : (
                       <Link
-                        href={sub.href}
+                        href={sub.href || '#'}
                         onClick={onNavigate}
-                        className="pl-3 text-sm text-slate-500 hover:text-[#4B2A63] block py-0.5"
+                        className="flex items-center justify-between w-full text-left text-sm text-slate-500 hover:text-[#4B2A63] py-1 block cursor-pointer"
                       >
-                        View
+                        <span>{sub.name}</span>
                       </Link>
                     )}
                   </div>

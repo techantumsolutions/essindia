@@ -1,8 +1,9 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
 import Image from 'next/image';
 import { motion, AnimatePresence } from 'framer-motion';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
 
 interface ServiceTab {
   tabName: string;
@@ -89,6 +90,24 @@ export function BiIndustryServices({ content }: { content?: BiIndustryServicesCo
   const [activeTabIdx, setActiveTabIdx] = useState(0);
   const activeTab = tabs[activeTabIdx] || tabs[0];
 
+  const tabsRef = useRef<HTMLDivElement>(null);
+  const [canScrollLeft, setCanScrollLeft] = useState(false);
+  const [canScrollRight, setCanScrollRight] = useState(false);
+
+  const checkScroll = useCallback(() => {
+    if (tabsRef.current) {
+      const { scrollLeft, scrollWidth, clientWidth } = tabsRef.current;
+      setCanScrollLeft(scrollLeft > 2);
+      setCanScrollRight(scrollLeft + clientWidth < scrollWidth - 2);
+    }
+  }, []);
+
+  useEffect(() => {
+    checkScroll();
+    window.addEventListener('resize', checkScroll);
+    return () => window.removeEventListener('resize', checkScroll);
+  }, [checkScroll, tabs]);
+
   return (
     <section className="py-14 bg-white font-sans">
       <div className="container mx-auto max-w-7xl px-6">
@@ -104,22 +123,67 @@ export function BiIndustryServices({ content }: { content?: BiIndustryServicesCo
         </div>
 
         {/* Tab Switcher */}
-        <div className="flex flex-wrap justify-center gap-3 sm:gap-4 mb-6">
-          {tabs.map((tab, idx) => {
-            const isActive = activeTabIdx === idx;
-            return (
-              <button
-                key={idx}
-                onClick={() => setActiveTabIdx(idx)}
-                className={`px-6 py-2.5 rounded-full text-sm font-semibold tracking-wide border transition-all duration-300 cursor-pointer ${isActive
-                  ? 'bg-white border-[#4c327f] text-[#4c327f] shadow-md scale-[1.02]'
-                  : 'bg-white/50 border-slate-200 text-slate-600 hover:text-slate-900 hover:border-slate-300'
-                  }`}
-              >
-                {tab.tabName}
-              </button>
-            );
-          })}
+        <div className="relative flex items-center justify-center max-w-5xl mx-auto mb-6 px-2 sm:px-10">
+          {/* Left Arrow */}
+          <button
+            type="button"
+            onClick={() => {
+              if (tabsRef.current) {
+                tabsRef.current.scrollBy({ left: -220, behavior: 'smooth' });
+              }
+            }}
+            disabled={!canScrollLeft}
+            className={`p-2 rounded-full border border-slate-200 bg-white text-[#4c327f] transition-all duration-300 flex items-center justify-center shrink-0 mr-1 sm:mr-2 shadow-xs ${
+              !canScrollLeft
+                ? 'opacity-30 cursor-not-allowed'
+                : 'opacity-100 hover:bg-[#4c327f] hover:text-white hover:border-[#4c327f] cursor-pointer active:scale-95'
+            }`}
+            aria-label="Scroll left"
+          >
+            <ChevronLeft className="w-4 h-4 sm:w-5 sm:h-5" />
+          </button>
+
+          {/* Horizontal Scrollable Tabs */}
+          <div
+            ref={tabsRef}
+            onScroll={checkScroll}
+            className="flex items-center gap-2 sm:gap-3 overflow-x-auto scrollbar-none py-2 px-1 w-full justify-start md:justify-center scroll-smooth"
+          >
+            {tabs.map((tab, idx) => {
+              const isActive = activeTabIdx === idx;
+              return (
+                <button
+                  key={idx}
+                  onClick={() => setActiveTabIdx(idx)}
+                  className={`shrink-0 px-5 sm:px-6 py-2.5 rounded-full text-xs sm:text-sm font-semibold tracking-wide border transition-all duration-300 cursor-pointer whitespace-nowrap ${isActive
+                    ? 'bg-[#4c327f] border-[#4c327f] text-white shadow-md scale-[1.02]'
+                    : 'bg-white border-slate-200 text-slate-600 hover:text-slate-900 hover:border-slate-300'
+                    }`}
+                >
+                  {tab.tabName}
+                </button>
+              );
+            })}
+          </div>
+
+          {/* Right Arrow */}
+          <button
+            type="button"
+            onClick={() => {
+              if (tabsRef.current) {
+                tabsRef.current.scrollBy({ left: 220, behavior: 'smooth' });
+              }
+            }}
+            disabled={!canScrollRight}
+            className={`p-2 rounded-full border border-slate-200 bg-white text-[#4c327f] transition-all duration-300 flex items-center justify-center shrink-0 ml-1 sm:ml-2 shadow-xs ${
+              !canScrollRight
+                ? 'opacity-30 cursor-not-allowed'
+                : 'opacity-100 hover:bg-[#4c327f] hover:text-white hover:border-[#4c327f] cursor-pointer active:scale-95'
+            }`}
+            aria-label="Scroll right"
+          >
+            <ChevronRight className="w-4 h-4 sm:w-5 sm:h-5" />
+          </button>
         </div>
 
         {/* Tab Content Box */}

@@ -103,66 +103,71 @@ export function FmcgTabs({ content }: { content?: FmcgTabsContent }) {
         </div>
 
         {/* Tab Content Panels */}
-        {activeTab && (
-          <div className="pt-12 flex flex-col lg:flex-row items-center gap-12 lg:gap-16">
-
-            {/* Left Content Column (Questions list) */}
-             <div className="flex-1 space-y-8 text-left w-full">
-              <div className="space-y-3">
-                <h3 className="text-3xl sm:text-4xl font-extrabold tracking-tight">
-                  {typeof activeTab.heading === 'string' && (activeTab.heading.includes('<p>') || activeTab.heading.includes('<')) ? (
-                    <span dangerouslySetInnerHTML={{ __html: activeTab.heading }} />
-                  ) : (
-                    activeTab.heading
-                  )}
-                </h3>
-                {activeTab.subheading && (
-                  <p className="text-slate-300 text-sm sm:text-base font-medium">
-                    {typeof activeTab.subheading === 'string' && (activeTab.subheading.includes('<p>') || activeTab.subheading.includes('<')) ? (
-                      <span dangerouslySetInnerHTML={{ __html: activeTab.subheading }} />
+        {tabs.map((tab, idx) => {
+          const isActive = idx === activeTabIdx;
+          return (
+            <div
+              key={idx}
+              className={`pt-12 flex flex-col lg:flex-row items-center gap-12 lg:gap-16 ${isActive ? 'block' : 'hidden'}`}
+            >
+              {/* Left Content Column (Questions list) */}
+              <div className="flex-1 space-y-8 text-left w-full">
+                <div className="space-y-3">
+                  <h3 className="text-3xl sm:text-4xl font-extrabold tracking-tight">
+                    {typeof tab.heading === 'string' && (tab.heading.includes('<p>') || tab.heading.includes('<')) ? (
+                      <span dangerouslySetInnerHTML={{ __html: tab.heading }} />
                     ) : (
-                      activeTab.subheading
+                      tab.heading
                     )}
-                  </p>
+                  </h3>
+                  {tab.subheading && (
+                    <p className="text-slate-300 text-sm sm:text-base font-medium">
+                      {typeof tab.subheading === 'string' && (tab.subheading.includes('<p>') || tab.subheading.includes('<')) ? (
+                        <span dangerouslySetInnerHTML={{ __html: tab.subheading }} />
+                      ) : (
+                        tab.subheading
+                      )}
+                    </p>
+                  )}
+                </div>
+
+                {/* Questions List */}
+                {tab.questions && tab.questions.length > 0 && (
+                  <div className="space-y-4">
+                    {tab.questions.map((question, qIdx) => (
+                      <div
+                        key={qIdx}
+                        className="bg-white text-[#2a2b6a] font-semibold text-sm sm:text-base px-6 py-4 rounded-xl border-l-4 border-[#2b2a6c] shadow-md transition-all duration-300 hover:translate-x-1"
+                      >
+                        {typeof question === 'string' && (question.includes('<p>') || question.includes('<')) ? (
+                          <span dangerouslySetInnerHTML={{ __html: question }} />
+                        ) : (
+                          question
+                        )}
+                      </div>
+                    ))}
+                  </div>
                 )}
               </div>
 
-              {/* Questions List */}
-              {activeTab.questions && activeTab.questions.length > 0 && (
-                <div className="space-y-4">
-                  {activeTab.questions.map((question, qIdx) => (
-                    <div
-                      key={qIdx}
-                      className="bg-white text-[#2a2b6a] font-semibold text-sm sm:text-base px-6 py-4 rounded-xl border-l-4 border-[#2b2a6c] shadow-md transition-all duration-300 hover:translate-x-1"
-                    >
-                      {typeof question === 'string' && (question.includes('<p>') || question.includes('<')) ? (
-                        <span dangerouslySetInnerHTML={{ __html: question }} />
-                      ) : (
-                        question
-                      )}
-                    </div>
-                  ))}
+              {/* Right Image Column (Mockup) */}
+              {tab.image && (
+                <div className="flex-1 w-full max-w-md lg:max-w-xl shrink-0 flex justify-center items-center">
+                  <div className="w-full relative aspect-[4/3] sm:aspect-[1.4] rounded-2xl overflow-hidden shadow-2xl border border-slate-700/30">
+                    <Image
+                      src={tab.image}
+                      alt={tab.heading}
+                      fill
+                      sizes="(max-width: 1024px) 100vw, 50vw"
+                      className="object-cover"
+                      priority={idx === 0}
+                    />
+                  </div>
                 </div>
               )}
             </div>
-
-            {/* Right Image Column (Mockup) */}
-            {activeTab.image && (
-              <div className="flex-1 w-full max-w-md lg:max-w-xl shrink-0 flex justify-center items-center">
-                <div className="w-full relative aspect-[4/3] sm:aspect-[1.4] rounded-2xl overflow-hidden shadow-2xl border border-slate-700/30">
-                  <Image
-                    src={activeTab.image}
-                    alt={activeTab.heading}
-                    fill
-                    sizes="(max-width: 1024px) 100vw, 50vw"
-                    className="object-cover"
-                  />
-                </div>
-              </div>
-            )}
-
-          </div>
-        )}
+          );
+        })}
 
       </div>
     </section>

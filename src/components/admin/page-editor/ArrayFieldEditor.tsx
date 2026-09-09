@@ -231,7 +231,6 @@ export function ArrayFieldEditor({
                    (sectionType === 'europe-product-showcase' && fieldKey === 'cards') ||
                    (sectionType === 'europe-reports' && fieldKey === 'cards') ||
                    (sectionType === 'uganda-presence' && fieldKey === 'stats') ||
-                   (sectionType === 'uganda-services' && fieldKey === 'cards') ||
                    (sectionType === 'uganda-control' && fieldKey === 'points') ||
                    (sectionType === 'uganda-capabilities' && fieldKey === 'cards') ||
                    (sectionType === 'uganda-industries' && fieldKey === 'cards') ||

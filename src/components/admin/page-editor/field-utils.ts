@@ -567,7 +567,7 @@ export function detectFieldType(
       if (lower === 'description' && (!keyPath || !keyPath.includes('items'))) return 'textarea';
     }
 
-    if (sectionType === 'mfg-demand' || sectionType === 'fmcg-overview' || sectionType === 'roi-explanation' || sectionType === 'roi-formula') {
+    if (sectionType === 'mfg-demand' || sectionType === 'fmcg-overview' || sectionType === 'roi-explanation' || sectionType === 'roi-formula' || sectionType === 'retail-why-erp') {
       if (lower === 'paragraph1' || lower === 'paragraph2' || lower.includes('paragraph')) return 'richtext';
     }
 

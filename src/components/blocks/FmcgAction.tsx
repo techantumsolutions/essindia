@@ -136,7 +136,7 @@ export function FmcgAction({ content }: { content?: FmcgActionContent }) {
                   </h3>
 
                   {/* Description */}
-                  <div className="text-slate-500 text-sm leading-relaxed max-w-[240px]">
+                  <div className="text-slate-500 text-sm leading-relaxed max-w-full sm:max-w-[240px] pb-12 sm:pb-0">
                     {typeof card.description === 'string' && (card.description.includes('<p>') || card.description.includes('<')) ? (
                       <div dangerouslySetInnerHTML={{ __html: card.description }} />
                     ) : (
@@ -147,7 +147,7 @@ export function FmcgAction({ content }: { content?: FmcgActionContent }) {
 
                 {/* Card Image at Bottom Right */}
                 {card.image && (
-                  <div className="absolute bottom-4 right-4 w-40 h-40">
+                  <div className="absolute bottom-2 right-2 w-32 h-32 sm:bottom-4 sm:right-4 sm:w-40 sm:h-40 pointer-events-none opacity-80 sm:opacity-100 z-0 sm:z-auto">
                     <div className="relative w-full h-full">
                       <Image
                         src={card.image}
