@@ -2,6 +2,7 @@
 
 import React from 'react';
 import Image from 'next/image';
+import { safeImageUrl } from '@/lib/utils';
 
 interface ActionCard {
   badge: string;
@@ -113,6 +114,7 @@ export function FmcgAction({ content }: { content?: FmcgActionContent }) {
           {cards.map((card, idx) => {
             const badgeStyle = getBadgeStyles(card, idx);
             const cardStyle = getCardStyles(idx);
+            const imgSrc = safeImageUrl(card.image);
             return (
               <div
                 key={idx}
@@ -146,12 +148,12 @@ export function FmcgAction({ content }: { content?: FmcgActionContent }) {
                 </div>
 
                 {/* Card Image at Bottom Right */}
-                {card.image && (
+                {imgSrc && (
                   <div className="absolute bottom-2 right-2 w-32 h-32 sm:bottom-4 sm:right-4 sm:w-40 sm:h-40 pointer-events-none opacity-80 sm:opacity-100 z-0 sm:z-auto">
                     <div className="relative w-full h-full">
                       <Image
-                        src={card.image}
-                        alt={card.title}
+                        src={imgSrc}
+                        alt={card.title || 'Action step image'}
                         fill
                         className="object-contain object-bottom transition-transform duration-500 group-hover:scale-110"
                       />

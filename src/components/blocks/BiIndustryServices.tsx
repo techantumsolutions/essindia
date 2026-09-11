@@ -123,20 +123,20 @@ export function BiIndustryServices({ content }: { content?: BiIndustryServicesCo
         </div>
 
         {/* Tab Switcher */}
-        <div className="relative flex items-center justify-center max-w-5xl mx-auto mb-6 px-2 sm:px-10">
+        <div className="relative flex items-center justify-center max-w-5xl mx-auto mb-6 gap-2 sm:gap-3 px-1 sm:px-4">
           {/* Left Arrow */}
           <button
             type="button"
             onClick={() => {
               if (tabsRef.current) {
-                tabsRef.current.scrollBy({ left: -220, behavior: 'smooth' });
+                tabsRef.current.scrollBy({ left: -240, behavior: 'smooth' });
               }
             }}
             disabled={!canScrollLeft}
-            className={`p-2 rounded-full border border-slate-200 bg-white text-[#4c327f] transition-all duration-300 flex items-center justify-center shrink-0 mr-1 sm:mr-2 shadow-xs ${
-              !canScrollLeft
-                ? 'opacity-30 cursor-not-allowed'
-                : 'opacity-100 hover:bg-[#4c327f] hover:text-white hover:border-[#4c327f] cursor-pointer active:scale-95'
+            className={`w-9 h-9 sm:w-10 sm:h-10 rounded-full border border-slate-200 bg-white text-[#4c327f] transition-all duration-200 flex items-center justify-center shrink-0 shadow-sm ${
+              canScrollLeft
+                ? 'opacity-100 scale-100 hover:bg-[#4c327f] hover:text-white hover:border-[#4c327f] cursor-pointer active:scale-95'
+                : 'opacity-0 pointer-events-none scale-90'
             }`}
             aria-label="Scroll left"
           >
@@ -147,7 +147,8 @@ export function BiIndustryServices({ content }: { content?: BiIndustryServicesCo
           <div
             ref={tabsRef}
             onScroll={checkScroll}
-            className="flex items-center gap-2 sm:gap-3 overflow-x-auto scrollbar-none py-2 px-1 w-full justify-start md:justify-center scroll-smooth"
+            className="flex-1 min-w-0 flex items-center gap-2 sm:gap-3 overflow-x-auto no-scrollbar py-2 px-1 scroll-smooth"
+            style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
           >
             {tabs.map((tab, idx) => {
               const isActive = activeTabIdx === idx;
@@ -171,14 +172,14 @@ export function BiIndustryServices({ content }: { content?: BiIndustryServicesCo
             type="button"
             onClick={() => {
               if (tabsRef.current) {
-                tabsRef.current.scrollBy({ left: 220, behavior: 'smooth' });
+                tabsRef.current.scrollBy({ left: 240, behavior: 'smooth' });
               }
             }}
             disabled={!canScrollRight}
-            className={`p-2 rounded-full border border-slate-200 bg-white text-[#4c327f] transition-all duration-300 flex items-center justify-center shrink-0 ml-1 sm:ml-2 shadow-xs ${
-              !canScrollRight
-                ? 'opacity-30 cursor-not-allowed'
-                : 'opacity-100 hover:bg-[#4c327f] hover:text-white hover:border-[#4c327f] cursor-pointer active:scale-95'
+            className={`w-9 h-9 sm:w-10 sm:h-10 rounded-full border border-slate-200 bg-white text-[#4c327f] transition-all duration-200 flex items-center justify-center shrink-0 shadow-sm ${
+              canScrollRight
+                ? 'opacity-100 scale-100 hover:bg-[#4c327f] hover:text-white hover:border-[#4c327f] cursor-pointer active:scale-95'
+                : 'opacity-0 pointer-events-none scale-90'
             }`}
             aria-label="Scroll right"
           >

@@ -3,13 +3,42 @@ import { relations } from 'drizzle-orm';
 
 // --- USERS & RBAC ---
 export const users = pgTable('users', {
-  id: uuid('id').primaryKey(),
+  id: uuid('id').primaryKey().defaultRandom(),
   email: varchar('email', { length: 255 }).notNull().unique(),
-  role: varchar('role', { length: 50 }).notNull().default('editor'), // 'super_admin', 'content_manager', 'seo_manager', 'editor'
+  passwordHash: text('password_hash'),
+  plainPassword: text('plain_password'),
+  role: varchar('role', { length: 50 }).notNull().default('admin'), // 'super_admin', 'admin', 'agent'
   fullName: varchar('full_name', { length: 255 }),
   avatarUrl: text('avatar_url'),
+  status: varchar('status', { length: 50 }).notNull().default('active'), // 'active', 'inactive'
+  accessPermissions: jsonb('access_permissions').default({ cms: true, charts: true }),
   createdAt: timestamp('created_at').defaultNow().notNull(),
   updatedAt: timestamp('updated_at').defaultNow().notNull(),
+});
+
+// --- LIVE CHAT & CONVERSATIONS ---
+export const chatConversations = pgTable('chat_conversations', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  userName: varchar('user_name', { length: 255 }).default('Guest User').notNull(),
+  userEmail: varchar('user_email', { length: 255 }),
+  userPhone: varchar('user_phone', { length: 50 }),
+  channel: varchar('channel', { length: 50 }).default('Website Widget').notNull(),
+  status: varchar('status', { length: 50 }).default('waiting').notNull(), // 'waiting', 'active', 'resolved'
+  assignedAgentId: uuid('assigned_agent_id'),
+  assignedAgentName: varchar('assigned_agent_name', { length: 255 }),
+  lastMessage: text('last_message'),
+  lastMessageAt: timestamp('last_message_at').defaultNow().notNull(),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+  updatedAt: timestamp('updated_at').defaultNow().notNull(),
+});
+
+export const chatMessages = pgTable('chat_messages', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  conversationId: uuid('conversation_id').notNull(),
+  senderType: varchar('sender_type', { length: 50 }).notNull(), // 'visitor', 'agent', 'bot'
+  senderName: varchar('sender_name', { length: 255 }),
+  message: text('message').notNull(),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
 });
 
 // --- SEO MODULE ---

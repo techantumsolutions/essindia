@@ -44,8 +44,9 @@ function FormsAdminInner() {
   // Pagination & Tab State
   const searchParams = useSearchParams();
   const [currentPage, setCurrentPage] = React.useState(1);
-  const [activeTab, setActiveTab] = React.useState<'contact' | 'landing-1' | 'landing-2' | 'cta' | 'blog-lead'>(() => {
+  const [activeTab, setActiveTab] = React.useState<'contact' | 'landing-1' | 'landing-2' | 'cta' | 'blog-lead' | 'chat-lead'>(() => {
     const t = searchParams?.get('tab');
+    if (t === 'chat-lead' || t === 'chat') return 'chat-lead';
     if (t === 'blog-lead' || t === 'blog') return 'blog-lead';
     if (t === 'cta') return 'cta';
     if (t === 'landing-2') return 'landing-2';
@@ -83,6 +84,7 @@ function FormsAdminInner() {
       if (activeTab === 'contact' && type !== 'contact') return false;
       if (activeTab === 'cta' && type !== 'cta') return false;
       if (activeTab === 'blog-lead' && type !== 'blog-lead') return false;
+      if (activeTab === 'chat-lead' && type !== 'chat-lead') return false;
 
       if (activeTab === 'landing-1') {
         const isLanding1 = type === 'landing-1' || (type === 'landing-page' && sub.message?.includes('requirement'));
@@ -269,6 +271,13 @@ function FormsAdminInner() {
         >
           Page Leads
         </button>
+
+        <button
+          onClick={() => setActiveTab('chat-lead')}
+          className={`cursor-pointer pb-2 px-2 font-semibold text-xs transition-colors border-b-2 ${activeTab === 'chat-lead' ? 'border-[#4B2A63] text-[#4B2A63]' : 'border-transparent text-slate-500 hover:text-slate-800'}`}
+        >
+          Chat Leads
+        </button>
       </div>
 
       <div className="admin-compact-card flex flex-col md:flex-row gap-2.5 p-3 items-end bg-white border border-slate-100 rounded-xl">
@@ -364,6 +373,11 @@ function FormsAdminInner() {
                       <>
                         <th className="px-3 py-2 whitespace-nowrap">Page Name</th>
                         <th className="px-3 py-2 whitespace-nowrap">PDF URL</th>
+                      </>
+                    ) : activeTab === 'chat-lead' ? (
+                      <>
+                        <th className="px-3 py-2 whitespace-nowrap">Source Channel</th>
+                        <th className="px-3 py-2 whitespace-nowrap w-1/3">Last Chat Message</th>
                       </>
                     ) : null}
                     <th className="px-3 py-2 whitespace-nowrap text-right pr-6">Actions</th>
@@ -470,6 +484,25 @@ function FormsAdminInner() {
                                   View PDF
                                 </a>
                               ) : '-'}
+                            </td>
+                          </>
+                        ) : activeTab === 'chat-lead' ? (
+                          <>
+                            <td className="px-3 py-3.5 text-[11px] text-[#4B2A63] font-semibold whitespace-nowrap uppercase">
+                              {sub.pageName || 'Website Chat'}
+                            </td>
+                            <td className="px-3 py-3.5">
+                              <div className="relative group cursor-pointer">
+                                <p className="text-slate-600 line-clamp-2 text-[11px] leading-relaxed max-w-[280px]">
+                                  {sub.message || '-'}
+                                </p>
+                                {sub.message && sub.message.length > 50 && (
+                                  <div className="absolute right-0 top-full mt-2 hidden group-hover:block w-[400px] max-w-[90vw] p-3 bg-slate-900 text-white text-xs rounded-lg shadow-2xl z-[999] whitespace-normal break-words">
+                                    <div className="absolute bottom-full right-8 -mb-1 border-4 border-transparent border-b-slate-900"></div>
+                                    {sub.message}
+                                  </div>
+                                )}
+                              </div>
                             </td>
                           </>
                         ) : null}

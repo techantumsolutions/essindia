@@ -1864,16 +1864,15 @@ function ContentSegmentsEditor({
                   {seg.items?.map((item: any, itemIdx: number) => (
                     <div key={itemIdx} className="p-3 border border-slate-100 rounded-lg space-y-3 bg-slate-50/50">
                       <div className="space-y-1">
-                        <label className="admin-label">Item Title</label>
-                        <input
-                          type="text"
+                        <RichTextField
+                          fieldKey={`item-title-${itemIdx}`}
+                          label="Item Title"
                           value={item.title || ''}
-                          onChange={(e) => {
+                          onChange={(v) => {
                             const copy = [...contentSegments];
-                            copy[sIdx].items[itemIdx].title = e.target.value;
+                            copy[sIdx].items[itemIdx].title = v;
                             onChange(copy);
                           }}
-                          className="admin-input font-bold"
                         />
                       </div>
                       <div className="space-y-1">
@@ -1891,28 +1890,32 @@ function ContentSegmentsEditor({
                       <div className="space-y-2">
                         <label className="admin-label">Item Descriptions</label>
                         {item.descriptions?.map((dText: string, dIdx: number) => (
-                          <div key={dIdx} className="flex items-center gap-2">
-                            <textarea
-                              rows={2}
-                              value={dText}
-                              onChange={(e) => {
-                                const copy = [...contentSegments];
-                                copy[sIdx].items[itemIdx].descriptions[dIdx] = e.target.value;
-                                onChange(copy);
-                              }}
-                              className="admin-input flex-1 text-xs"
-                            />
-                            <button
-                              type="button"
-                              onClick={() => {
-                                const copy = [...contentSegments];
-                                copy[sIdx].items[itemIdx].descriptions = copy[sIdx].items[itemIdx].descriptions.filter((_: any, i: number) => i !== dIdx);
-                                onChange(copy);
-                              }}
-                              className="text-xs text-rose-500 font-bold px-1"
-                            >
-                              ✕
-                            </button>
+                          <div key={dIdx} className="space-y-1">
+                            <div className="flex items-start gap-2">
+                              <div className="flex-1">
+                                <RichTextField
+                                  fieldKey={`item-desc-${itemIdx}-${dIdx}`}
+                                  label={`Description ${dIdx + 1}`}
+                                  value={dText || ''}
+                                  onChange={(v) => {
+                                    const copy = [...contentSegments];
+                                    copy[sIdx].items[itemIdx].descriptions[dIdx] = v;
+                                    onChange(copy);
+                                  }}
+                                />
+                              </div>
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  const copy = [...contentSegments];
+                                  copy[sIdx].items[itemIdx].descriptions = copy[sIdx].items[itemIdx].descriptions.filter((_: any, i: number) => i !== dIdx);
+                                  onChange(copy);
+                                }}
+                                className="text-xs text-rose-500 font-bold px-1 mt-7 cursor-pointer"
+                              >
+                                ✕
+                              </button>
+                            </div>
                           </div>
                         ))}
                         <button

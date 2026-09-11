@@ -22,27 +22,48 @@ export default function AdminLogin() {
   const [error, setError] = React.useState('');
   const [showPassword, setShowPassword] = React.useState(false);
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
     setError('');
 
-    // Simulate auth
-    setTimeout(() => {
-      const form = e.target as HTMLFormElement;
-      const username = (form.elements.namedItem('username') as HTMLInputElement).value;
-      const password = (form.elements.namedItem('password') as HTMLInputElement).value;
+    const form = e.target as HTMLFormElement;
+    const username = (form.elements.namedItem('username') as HTMLInputElement).value;
+    const password = (form.elements.namedItem('password') as HTMLInputElement).value;
 
-      if (username === 'admin@essindia.com' && password === 'admin123') {
-        // Set mock session cookie for middleware
-        document.cookie = "mock-admin-session=true; path=/; max-age=604800; SameSite=Lax";
-        setIsLoading(false);
-        router.push('/admin/dashboard');
-      } else {
-        setError('Invalid credentials. Please try again.');
-        setIsLoading(false);
+    try {
+      const res = await fetch('/api/admin/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: username, password })
+      });
+
+      const data = await res.json();
+      if (!res.ok) {
+        throw new Error(data.error || 'Invalid credentials. Please try again.');
       }
-    }, 1500);
+
+      // Save user info in localStorage for quick client access
+      if (data.user) {
+        localStorage.setItem('admin-user-session', JSON.stringify(data.user));
+        localStorage.setItem('admin-profile', JSON.stringify({
+          name: data.user.fullName || 'Admin User',
+          role: data.user.role === 'super_admin' ? 'Super Administrator' : data.user.role === 'admin' ? 'Administrator' : 'Chat Agent',
+          avatar: data.user.avatarUrl || 'https://api.dicebear.com/7.x/avataaars/svg?seed=Admin'
+        }));
+      }
+
+      setIsLoading(false);
+
+      if (data.user?.role === 'agent') {
+        router.push('/admin/charts');
+      } else {
+        router.push('/admin/dashboard');
+      }
+    } catch (err: any) {
+      setError(err.message || 'Login failed. Please try again.');
+      setIsLoading(false);
+    }
   };
 
   return (

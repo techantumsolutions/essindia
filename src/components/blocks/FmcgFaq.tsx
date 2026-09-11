@@ -128,7 +128,7 @@ export function FmcgFaq({ content }: { content?: FmcgFaqContent }) {
                 >
                   <FormattedText
                     content={faq.answer}
-                    className="p-6 sm:p-8 text-slate-500 text-xs sm:text-sm leading-relaxed"
+                    className="p-6 sm:p-8 text-slate-500 text-xs sm:text-sm leading-relaxed [&_p]:!text-xs sm:[&_p]:!text-sm [&_p]:!leading-relaxed [&_p]:m-0"
                   />
                 </div>
               </div>

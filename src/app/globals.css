@@ -267,6 +267,11 @@ section h2 {
   line-height: 1.6 !important;
 }
 
+.formatted-text-content p {
+  font-size: inherit !important;
+  line-height: inherit !important;
+}
+
 /* Rich Text, Tiptap & Quill Editor List Styles */
 .formatted-text-content ul,
 .ql-editor ul,
@@ -294,4 +299,15 @@ section h2 {
 .ProseMirror li {
   margin-bottom: 0.25rem !important;
   display: list-item !important;
+}
+
+/* Laptop Screens Specific Width (80vw for Header, Footer & Main Content) */
+@media (min-width: 1024px) and (max-width: 1600px) {
+  .container,
+  .max-w-7xl,
+  .max-w-6xl,
+  .max-w-5xl {
+    max-width: 80vw !important;
+    width: 80vw !important;
+  }
 }

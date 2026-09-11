@@ -674,8 +674,12 @@ export function CaseStudyManager({ pageId, onRefresh }: { pageId?: string; onRef
                   {activeTab === 'overview' && (
                     <div className="space-y-6">
                       <div className="space-y-1">
-                        <label className="admin-label">Overview Text</label>
-                        <textarea value={overview} onChange={(e) => setOverview(e.target.value)} rows={6} className="admin-input resize-none" />
+                        <RichTextField
+                          fieldKey="case-study-overview"
+                          label="Overview Text"
+                          value={overview}
+                          onChange={(val) => setOverview(val)}
+                        />
                       </div>
                     </div>
                   )}
@@ -683,12 +687,20 @@ export function CaseStudyManager({ pageId, onRefresh }: { pageId?: string; onRef
                   {activeTab === 'challenge' && (
                     <div className="space-y-6">
                       <div className="space-y-1">
-                        <label className="admin-label">Challenge Title</label>
-                        <input type="text" value={challengeTitle} onChange={(e) => setChallengeTitle(e.target.value)} className="admin-input" />
+                        <RichTextField
+                          fieldKey="challenge-title"
+                          label="Challenge Title"
+                          value={challengeTitle}
+                          onChange={(val) => setChallengeTitle(val)}
+                        />
                       </div>
                       <div className="space-y-1">
-                        <label className="admin-label">Challenge Description</label>
-                        <textarea value={challengeDescription} onChange={(e) => setChallengeDescription(e.target.value)} rows={3} className="admin-input resize-none" />
+                        <RichTextField
+                          fieldKey="challenge-description"
+                          label="Challenge Description"
+                          value={challengeDescription}
+                          onChange={(val) => setChallengeDescription(val)}
+                        />
                       </div>
                       <div className="space-y-1">
                         <label className="admin-label">Challenge Image</label>
@@ -711,12 +723,20 @@ export function CaseStudyManager({ pageId, onRefresh }: { pageId?: string; onRef
                   {activeTab === 'solutions' && (
                     <div className="space-y-6">
                       <div className="space-y-1">
-                        <label className="admin-label">Solutions Title</label>
-                        <input type="text" value={solutionsTitle} onChange={(e) => setSolutionsTitle(e.target.value)} className="admin-input" />
+                        <RichTextField
+                          fieldKey="solutions-title"
+                          label="Solutions Title"
+                          value={solutionsTitle}
+                          onChange={(val) => setSolutionsTitle(val)}
+                        />
                       </div>
                       <div className="space-y-1">
-                        <label className="admin-label">Solutions Description</label>
-                        <textarea value={solutionsDescription} onChange={(e) => setSolutionsDescription(e.target.value)} rows={3} className="admin-input resize-none" />
+                        <RichTextField
+                          fieldKey="solutions-description"
+                          label="Solutions Description"
+                          value={solutionsDescription}
+                          onChange={(val) => setSolutionsDescription(val)}
+                        />
                       </div>
                       <div className="space-y-3">
                         <label className="admin-label">Solution Modules</label>
@@ -1880,16 +1900,15 @@ export function BlogManager({ pageId, onRefresh, blogListSection }: BlogManagerP
                             {seg.items?.map((item: any, iIdx: number) => (
                               <div key={iIdx} className="p-3 border border-slate-100 rounded-lg space-y-3 bg-slate-50/50">
                                 <div className="space-y-1">
-                                  <label className="admin-label">Item Title</label>
-                                  <input
-                                    type="text"
+                                  <RichTextField
+                                    fieldKey={`item-title-${iIdx}`}
+                                    label="Item Title"
                                     value={item.title || ''}
-                                    onChange={(e) => {
+                                    onChange={(val) => {
                                       const copy = [...contentSegments];
-                                      copy[sIdx].items[iIdx].title = e.target.value;
+                                      copy[sIdx].items[iIdx].title = val;
                                       setContentSegments(copy);
                                     }}
-                                    className="admin-input font-bold"
                                   />
                                 </div>
 
@@ -1911,7 +1930,7 @@ export function BlogManager({ pageId, onRefresh, blogListSection }: BlogManagerP
                                       type="button"
                                       onClick={() => {
                                         const copy = [...contentSegments];
-                                        copy[sIdx].items[iIdx].descriptions = [...(copy[sIdx].items[iIdx].descriptions || []), 'New description paragraph...'];
+                                        copy[sIdx].items[iIdx].descriptions = [...(copy[sIdx].items[iIdx].descriptions || []), ''];
                                         setContentSegments(copy);
                                       }}
                                       className="text-[11px] font-bold text-[#4B2A63] hover:underline"
@@ -1921,16 +1940,18 @@ export function BlogManager({ pageId, onRefresh, blogListSection }: BlogManagerP
                                   </div>
                                   {item.descriptions?.map((desc: string, dIdx: number) => (
                                     <div key={dIdx} className="flex items-start gap-2">
-                                      <textarea
-                                        rows={2}
-                                        value={desc}
-                                        onChange={(e) => {
-                                          const copy = [...contentSegments];
-                                          copy[sIdx].items[iIdx].descriptions[dIdx] = e.target.value;
-                                          setContentSegments(copy);
-                                        }}
-                                        className="admin-input text-xs resize-y"
-                                      />
+                                      <div className="flex-1">
+                                        <RichTextField
+                                          fieldKey={`item-desc-${iIdx}-${dIdx}`}
+                                          label={`Description ${dIdx + 1}`}
+                                          value={desc || ''}
+                                          onChange={(val) => {
+                                            const copy = [...contentSegments];
+                                            copy[sIdx].items[iIdx].descriptions[dIdx] = val;
+                                            setContentSegments(copy);
+                                          }}
+                                        />
+                                      </div>
                                       <button
                                         type="button"
                                         onClick={() => {
@@ -1938,7 +1959,7 @@ export function BlogManager({ pageId, onRefresh, blogListSection }: BlogManagerP
                                           copy[sIdx].items[iIdx].descriptions = copy[sIdx].items[iIdx].descriptions.filter((_: any, i: number) => i !== dIdx);
                                           setContentSegments(copy);
                                         }}
-                                        className="text-rose-500 p-1"
+                                        className="text-rose-500 p-1 mt-7 cursor-pointer"
                                       >
                                         ✕
                                       </button>
@@ -2421,26 +2442,7 @@ export default function PageEditor() {
     const selectedNav = navItems.find((n) => n.id === newNavId);
     const pageSlug = resolvePageSlug(page.title, page.slug);
 
-    let newFullPath: string;
-    if (!selectedNav) {
-      newFullPath = `/${pageSlug}`;
-    } else {
-      const navSlug = slugify(selectedNav.label) || selectedNav.slug?.replace(/^\//, '') || '';
-      if (megaMenu && newMegaCatId) {
-        const cat = megaMenu.categories.find((c) => c.id === newMegaCatId);
-        const sub = cat?.subCategories.find((s) => s.id === newMegaSubCatId);
-        const subSub = sub?.subSubCategories.find((l) => l.id === newMegaSubSubCatId);
-        newFullPath = buildPagePathFromNavHierarchy({
-          navSlug,
-          categorySlug: cat?.slug,
-          subSlug: sub?.slug,
-          subSubSlug: subSub?.slug,
-          pageSlug,
-        });
-      } else {
-        newFullPath = `/${navSlug.replace(/^\//, '')}/${pageSlug}`;
-      }
-    }
+    let newFullPath = `/${pageSlug}`;
 
     setPage((prev) =>
       prev

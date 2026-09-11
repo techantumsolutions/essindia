@@ -76,3 +76,21 @@ export function safeImageUrl(url?: string | null, fallback = ''): string {
 
   return fallback;
 }
+
+export function formatChatTime(dateStr?: string | Date | null): string {
+  if (!dateStr) return '';
+  try {
+    let str = typeof dateStr === 'string' ? dateStr.trim() : (dateStr instanceof Date ? dateStr.toISOString() : String(dateStr));
+    if (str.includes(' ') && !str.includes('T')) {
+      str = str.replace(' ', 'T');
+    }
+    if (!str.endsWith('Z') && !str.includes('+') && !str.includes('-')) {
+      str += 'Z';
+    }
+    const d = new Date(str);
+    if (isNaN(d.getTime())) return '';
+    return d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+  } catch (e) {
+    return '';
+  }
+}
