@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button';
 import { type CaseStudyPost, defaultCaseStudies } from '@/lib/case-studies-data';
 import { useInternalNavigate } from '@/hooks/useInternalNavigate';
 import { HeroTitle } from '@/components/ui/HeroTitle';
+import { FormattedText } from '@/components/ui/FormattedText';
 
 interface CaseStudyDetailSectionProps {
   content?: any;
@@ -78,12 +79,11 @@ export function CaseStudyDetailSection({ content }: CaseStudyDetailSectionProps)
             )}
 
             {cs.description && (
-              <div 
+              <FormattedText
+                content={cs.description}
                 className="text-base leading-relaxed line-clamp-4 max-w-xl transition-colors duration-300"
                 style={{ color: cs.descriptionColor || '#e2e8f0' }}
-              >
-                {cs.description}
-              </div>
+              />
             )}
           </motion.div>
 
@@ -110,16 +110,12 @@ export function CaseStudyDetailSection({ content }: CaseStudyDetailSectionProps)
           <div className="text-[#4b5563] text-[17px] leading-[1.8] space-y-6 max-w-none font-normal">
             {cs.overviewParagraphs && cs.overviewParagraphs.length > 0 ? (
               cs.overviewParagraphs.map((paragraph: string, idx: number) => (
-                <p key={idx}>{paragraph}</p>
+                <FormattedText key={idx} content={paragraph} />
               ))
             ) : cs.overview ? (
-              <div className="whitespace-pre-line space-y-4">
-                {cs.overview.split('\n\n').map((para: string, idx: number) => (
-                  <p key={idx}>{para}</p>
-                ))}
-              </div>
+              <FormattedText content={cs.overview} />
             ) : cs.overviewHtml ? (
-              <div dangerouslySetInnerHTML={{ __html: cs.overviewHtml }} />
+              <FormattedText content={cs.overviewHtml} />
             ) : (
               <>
                 <p>
@@ -171,13 +167,17 @@ export function CaseStudyDetailSection({ content }: CaseStudyDetailSectionProps)
           {/* Left Column: Challenge */}
           <div>
             <h2 className="text-[40px] font-bold text-slate-900 mb-6">
-              {cs.challengeTitle || "The Challenge"}
+              {cs.challengeTitle ? (
+                <FormattedText content={cs.challengeTitle} as="span" />
+              ) : (
+                "The Challenge"
+              )}
             </h2>
             <div className="text-[#4b5563] text-[17px] leading-[1.8] space-y-6 max-w-none font-normal">
               {cs.challengeDescription ? (
-                <div dangerouslySetInnerHTML={{ __html: cs.challengeDescription }} />
+                <FormattedText content={cs.challengeDescription} />
               ) : cs.challengeHtml ? (
-                <div dangerouslySetInnerHTML={{ __html: cs.challengeHtml }} />
+                <FormattedText content={cs.challengeHtml} />
               ) : (
                 <p>
                   They had been using locally developed software for several years. The company has grown multifold over the last few years. However, in the absence of an integrated system, they were facing a lot of difficulties in managing their operations. They felt the need to integrate their business functions with a comprehensive ERP Software solution in Ghana. One of the major challenges that the firm was facing was that there was no integration between disparate departments; they were unable to access data from multiple locations or when on the move. There was no proper control on inventory and neither were they able to generate MIS. After evaluating various options, they decided to go ahead with ebizframe because they felt that ERP System Ghana was the right solution for all their business needs.
@@ -193,8 +193,8 @@ export function CaseStudyDetailSection({ content }: CaseStudyDetailSectionProps)
                   if (!ptTitle && !ptDesc) return null;
                   return (
                     <div key={idx} className="bg-slate-50/80 border border-slate-200/60 rounded-xl p-4">
-                      {ptTitle && <h4 className="font-bold text-slate-800 text-base mb-1">{ptTitle}</h4>}
-                      {ptDesc && <p className="text-slate-600 text-sm leading-relaxed">{ptDesc}</p>}
+                      {ptTitle && <FormattedText content={ptTitle} as="h4" className="font-bold text-slate-800 text-base mb-1" />}
+                      {ptDesc && <FormattedText content={ptDesc} className="text-slate-600 text-sm leading-relaxed" />}
                     </div>
                   );
                 })}
@@ -217,11 +217,19 @@ export function CaseStudyDetailSection({ content }: CaseStudyDetailSectionProps)
       <section className="py-14 px-6 bg-white border-b">
         <div className="max-w-7xl mx-auto">
           <h2 className="text-[32px] font-bold text-[#111827] mb-2">
-            {cs.solutionsTitle || "ESS Solution Choice"}
+            {cs.solutionsTitle ? (
+              <FormattedText content={cs.solutionsTitle} as="span" />
+            ) : (
+              "ESS Solution Choice"
+            )}
           </h2>
-          <p className="text-slate-500 text-lg mb-8">
-            {cs.solutionsDescription || "ebizframe ERP is to be implemented for the following functions"}
-          </p>
+          <div className="text-slate-500 text-lg mb-8 font-normal">
+            {cs.solutionsDescription ? (
+              <FormattedText content={cs.solutionsDescription} />
+            ) : (
+              "ebizframe ERP is to be implemented for the following functions"
+            )}
+          </div>
 
           <div className="flex flex-wrap justify-center lg:justify-start gap-6">
             {(cs.solutionModules && cs.solutionModules.length > 0) ? (
@@ -232,8 +240,8 @@ export function CaseStudyDetailSection({ content }: CaseStudyDetailSectionProps)
                 return (
                   <div key={idx} className="w-full sm:w-auto flex-1 min-w-[220px] max-w-[320px] border border-slate-200 rounded-2xl p-6 flex flex-col items-center justify-center text-center gap-3 hover:shadow-lg transition-all bg-white mx-auto sm:mx-0">
                     <img src={icon} alt={title || 'Solution Module'} className="w-10 h-10 object-contain" />
-                    {title && <span className="text-slate-900 font-bold text-base leading-snug">{title}</span>}
-                    {desc && <p className="text-slate-600 text-sm leading-relaxed font-normal">{desc}</p>}
+                    {title && <FormattedText content={title} as="span" className="text-slate-900 font-bold text-base leading-snug" />}
+                    {desc && <FormattedText content={desc} className="text-slate-600 text-sm leading-relaxed font-normal" />}
                   </div>
                 );
               })
@@ -261,13 +269,13 @@ export function CaseStudyDetailSection({ content }: CaseStudyDetailSectionProps)
       <section className="py-14 px-6 bg-white border-b">
         <div className="max-w-7xl mx-auto">
           <h2 className="text-[40px] font-bold text-[#111827] mb-2">
-            {cs.resultsTitle || "The Results"}
+            {cs.resultsTitle ? <FormattedText content={cs.resultsTitle} as="span" /> : "The Results"}
           </h2>
           <div className="prose prose-lg prose-slate max-w-none mb-10 text-slate-500 leading-relaxed font-normal">
             {cs.resultsSubtitle ? (
-              <p>{cs.resultsSubtitle}</p>
+              <FormattedText content={cs.resultsSubtitle} />
             ) : cs.resultsHtml ? (
-              <div dangerouslySetInnerHTML={{ __html: cs.resultsHtml }} />
+              <FormattedText content={cs.resultsHtml} />
             ) : (
               <p>
                 The client is expecting the following benefits from ebizframe :
@@ -288,7 +296,7 @@ export function CaseStudyDetailSection({ content }: CaseStudyDetailSectionProps)
                     className="flex items-center gap-4"
                   >
                     <img src="/Case-studies details/Background.png" alt="Checkmark" className="w-10 h-10 object-contain shrink-0" />
-                    <span className="text-slate-600 font-medium">{item}</span>
+                    <FormattedText content={item} as="span" className="text-slate-600 font-medium" />
                   </motion.li>
                 ))}
               </ul>
@@ -315,7 +323,7 @@ export function CaseStudyDetailSection({ content }: CaseStudyDetailSectionProps)
           {/* CTA Description at the bottom */}
           <div className="mt-14 max-w-7xl text-slate-600 leading-relaxed font-normal prose prose-slate">
             {cs.resultsCtaDescription ? (
-              <div dangerouslySetInnerHTML={{ __html: cs.resultsCtaDescription }} />
+              <FormattedText content={cs.resultsCtaDescription} />
             ) : (
               <p>
                 For more information on how <a href="/contact-us" className="text-[#4B2A63] underline">ebizframe</a> can help you transform your business, please leave your contact details in the contact form or mail us at <br className="hidden sm:block" />

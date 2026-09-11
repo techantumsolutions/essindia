@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronDown, Check, ArrowRight, Loader2 } from 'lucide-react';
 import { useInternalNavigate } from '@/hooks/useInternalNavigate';
 import { HeroTitle } from '@/components/ui/HeroTitle';
+import { FormattedText } from '@/components/ui/FormattedText';
 
 export interface KeyTakeawaysSegment {
   type: 'key-takeaways';
@@ -562,16 +563,16 @@ export function BlogDetailSection({ content }: BlogDetailSectionProps) {
                     {seg.items?.map((item, iIdx) => (
                       <div key={iIdx} className="space-y-6">
                         {item.title && (
-                          <h2 className="text-xl sm:text-2xl font-bold text-slate-900">{item.title}</h2>
+                          <FormattedText
+                            content={item.title}
+                            as="div"
+                            className="text-xl sm:text-2xl font-bold text-slate-900 [&_p]:text-inherit [&_p]:font-bold [&_p]:m-0"
+                          />
                         )}
                         {item.descriptions && item.descriptions.length > 0 && (
                           <div className="space-y-4 text-sm sm:text-base text-slate-600 leading-relaxed font-normal">
                             {item.descriptions.map((dText, dIdx) => (
-                              typeof dText === 'string' && (dText.includes('<p>') || dText.includes('<')) ? (
-                                <div key={dIdx} dangerouslySetInnerHTML={{ __html: dText }} />
-                              ) : (
-                                <p key={dIdx}>{dText}</p>
-                              )
+                              <FormattedText key={dIdx} content={dText} />
                             ))}
                           </div>
                         )}

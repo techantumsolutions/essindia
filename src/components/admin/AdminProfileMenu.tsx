@@ -107,18 +107,32 @@ export function AdminProfileMenu() {
                 </div>
               </div>
 
-              <div className="px-6 py-4 bg-slate-50 border-t border-slate-100 flex items-center justify-end gap-2">
-                <Button variant="ghost" onClick={() => setIsOpen(false)} className="rounded-xl">
-                  Cancel
+              <div className="px-6 py-4 bg-slate-50 border-t border-slate-100 flex items-center justify-between">
+                <Button
+                  variant="ghost"
+                  onClick={async () => {
+                    await fetch('/api/admin/auth/logout', { method: 'POST' });
+                    localStorage.removeItem('admin-user-session');
+                    localStorage.removeItem('admin-profile');
+                    window.location.href = '/admin/login';
+                  }}
+                  className="rounded-xl text-rose-600 hover:text-rose-700 hover:bg-rose-50 text-xs font-bold"
+                >
+                  Log Out
                 </Button>
-                <Button onClick={handleSave} className="bg-[#4B2A63] hover:bg-[#3B198F] text-white rounded-xl">
-                  Save Changes
-                </Button>
+                <div className="flex gap-2">
+                  <Button variant="ghost" onClick={() => setIsOpen(false)} className="rounded-xl">
+                    Cancel
+                  </Button>
+                  <Button onClick={handleSave} className="bg-[#4B2A63] hover:bg-[#3B198F] text-white rounded-xl">
+                    Save Changes
+                  </Button>
+                </div>
               </div>
             </motion.div>
           </>
         )}
       </AnimatePresence>
-    </div >
+    </div>
   );
 }

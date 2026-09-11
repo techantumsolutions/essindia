@@ -26,7 +26,7 @@ function createClient() {
 }
 
 /** Singleton client — prevents "Connection is closed" during Next.js HMR. */
-const client = globalDb.postgresClient ?? createClient();
+export const client = globalDb.postgresClient ?? createClient();
 
 if (process.env.NODE_ENV !== 'production') {
   globalDb.postgresClient = client;

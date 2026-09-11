@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import Image from 'next/image';
 import { FormattedText } from '@/components/ui/FormattedText';
+import { safeImageUrl } from '@/lib/utils';
 
 export interface TestimonialCardItem {
   quote: string;
@@ -69,21 +70,28 @@ export function Landing2Testimonials({ content }: { content?: Landing2Testimonia
         {/* Testimonial Cards Grid (2-column on desktop) */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-10 text-left">
           {items.map((item, idx) => {
-            const media = (item as any).mediaUrl || item.image || item.videoUrl || '';
-            const isVideo = media.toLowerCase().match(/\.(mp4|webm|ogg|mov)(\?.*)?$/) || media.includes('youtube.com') || media.includes('vimeo.com') || media.includes('youtu.be');
+            const rawMedia = (item as any).mediaUrl || item.image || item.videoUrl || '';
+            const isVideo = Boolean(
+              rawMedia &&
+              (rawMedia.toLowerCase().match(/\.(mp4|webm|ogg|mov)(\?.*)?$/) ||
+                rawMedia.includes('youtube.com') ||
+                rawMedia.includes('vimeo.com') ||
+                rawMedia.includes('youtu.be'))
+            );
+            const imageSrc = safeImageUrl(rawMedia, '/Landing Page-2/assets/3ddf828267cb844171aaad94b1f6da3e7949acbd.png');
 
             return (
               <div key={idx} className="flex flex-col group">
                 {/* Image & Video Box */}
                 <div
-                  onClick={() => isVideo && setActiveVideoUrl(media)}
+                  onClick={() => isVideo && setActiveVideoUrl(rawMedia)}
                   className={`relative w-full aspect-[16/10] rounded-2xl overflow-hidden shadow-sm border border-slate-200/80 mb-6 bg-slate-200 ${
                     isVideo ? 'cursor-pointer group-hover:shadow-md' : ''
                   } transition-all duration-300`}
                 >
-                  {isVideo && media.toLowerCase().match(/\.(mp4|webm|ogg|mov)(\?.*)?$/) ? (
+                  {isVideo && rawMedia.toLowerCase().match(/\.(mp4|webm|ogg|mov)(\?.*)?$/) ? (
                     <video
-                      src={media}
+                      src={rawMedia}
                       className="w-full h-full object-cover"
                       controlsList="nodownload"
                       muted
@@ -93,7 +101,7 @@ export function Landing2Testimonials({ content }: { content?: Landing2Testimonia
                     />
                   ) : (
                     <Image
-                      src={media || '/Landing Page-2/assets/3ddf828267cb844171aaad94b1f6da3e7949acbd.png'}
+                      src={imageSrc}
                       alt={item.author || 'Testimonial Image'}
                       fill
                       className="object-cover group-hover:scale-103 transition-transform duration-500"

@@ -102,39 +102,36 @@ export function BiTabs({ content }: { content?: BiTabsContent }) {
   }, []);
 
   const handlePrev = () => {
-    if (scrollRef.current && isMobile) {
-      const cardWidth = scrollRef.current.clientWidth * 0.85;
-      scrollRef.current.scrollBy({ left: -cardWidth, behavior: 'smooth' });
-    } else {
-      setStartIndex((prev) => Math.max(0, prev - 1));
+    if (isMobile) {
+      setActiveTabIdx((prev) => {
+        const nextIdx = Math.max(0, prev - 1);
+        return nextIdx;
+      });
+    }
+    if (scrollRef.current) {
+      const scrollAmount = scrollRef.current.clientWidth * 0.8;
+      scrollRef.current.scrollBy({ left: -scrollAmount, behavior: 'smooth' });
     }
   };
 
   const handleNext = () => {
-    if (scrollRef.current && isMobile) {
-      const cardWidth = scrollRef.current.clientWidth * 0.85;
-      scrollRef.current.scrollBy({ left: cardWidth, behavior: 'smooth' });
-    } else {
-      setStartIndex((prev) => Math.min(maxStartIndex, prev + 1));
+    if (isMobile) {
+      setActiveTabIdx((prev) => {
+        const nextIdx = Math.min(tabs.length - 1, prev + 1);
+        return nextIdx;
+      });
+    }
+    if (scrollRef.current) {
+      const scrollAmount = scrollRef.current.clientWidth * 0.8;
+      scrollRef.current.scrollBy({ left: scrollAmount, behavior: 'smooth' });
     }
   };
-
-  // Keep active tab in view if it changes from outside
-  useEffect(() => {
-    if (activeTabIdx < startIndex) {
-      setStartIndex(activeTabIdx);
-    } else if (activeTabIdx >= startIndex + 3) {
-      setStartIndex(Math.min(maxStartIndex, activeTabIdx - 2));
-    }
-  }, [activeTabIdx, maxStartIndex]);
-
-  const visibleTabs = tabs.slice(startIndex, startIndex + 3);
 
   return (
     <section className="bg-[#F4F0FD] text-slate-900 overflow-hidden font-sans">
 
       {/* Top Part: Tab Headers with dark background color #0e1a43 */}
-      <div className="bg-[#0e1a43] pt-14 pb-0 text-white">
+      <div className="bg-[#0e1a43] py-3 md:pt-14 md:pb-0 text-white">
         <div className="container mx-auto max-w-7xl px-6">
           {title && (
             <h2 className="text-3xl font-bold text-white text-center mb-6">
@@ -145,16 +142,11 @@ export function BiTabs({ content }: { content?: BiTabsContent }) {
           {/* Tab Headers Navigation */}
           <div className="flex items-center gap-2 sm:gap-4 pb-0 border-b border-white/15">
             {/* Backward Arrow */}
-            {tabs.length > 1 && (
+            {canScrollLeft && (
               <button
                 type="button"
                 onClick={handlePrev}
-                disabled={isMobile ? !canScrollLeft : startIndex === 0}
-                className={`p-2 sm:p-2.5 rounded-full border border-white/20 text-white transition-all duration-300 flex items-center justify-center shrink-0 ${
-                  (isMobile ? !canScrollLeft : startIndex === 0)
-                    ? 'opacity-30 cursor-not-allowed'
-                    : 'opacity-100 hover:bg-white/10 hover:border-white/50 cursor-pointer active:scale-95'
-                }`}
+                className="p-2 sm:p-2.5 rounded-full border border-white/20 text-white transition-all duration-300 flex items-center justify-center shrink-0 opacity-100 hover:bg-white/10 hover:border-white/50 cursor-pointer active:scale-95"
                 aria-label="Previous tabs"
               >
                 <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -167,7 +159,7 @@ export function BiTabs({ content }: { content?: BiTabsContent }) {
             <div
               ref={scrollRef}
               onScroll={checkScroll}
-              className="flex-1 flex md:grid md:grid-cols-3 gap-4 sm:gap-6 md:gap-12 overflow-x-auto scrollbar-none pb-2 md:pb-0 scroll-smooth snap-x snap-mandatory"
+              className="flex-1 flex gap-6 md:gap-12 overflow-x-auto scrollbar-none pb-2 md:pb-0 scroll-smooth snap-x snap-mandatory"
             >
               {tabs.map((tab, actualIdx) => {
                 const isActive = actualIdx === activeTabIdx;
@@ -176,7 +168,7 @@ export function BiTabs({ content }: { content?: BiTabsContent }) {
                     key={actualIdx}
                     type="button"
                     onClick={() => setActiveTabIdx(actualIdx)}
-                    className="text-center md:text-left shrink-0 transition-all duration-300 select-none cursor-pointer outline-none focus:outline-none py-1 block w-full flex-none max-w-[82vw] sm:max-w-[320px] md:max-w-none md:w-full snap-center relative group"
+                    className="text-center md:text-left shrink-0 transition-all duration-300 select-none cursor-pointer outline-none focus:outline-none py-1 block w-full flex-none max-w-[82vw] sm:max-w-[320px] md:max-w-[calc((100%-6rem)/3)] snap-center relative group"
                   >
                     <div className={`text-base sm:text-lg font-bold transition-colors duration-300 ${isActive ? 'text-white' : 'text-white/60 group-hover:text-white'}`}>
                       {tab.tabName}
@@ -200,16 +192,11 @@ export function BiTabs({ content }: { content?: BiTabsContent }) {
             </div>
 
             {/* Forward Arrow */}
-            {tabs.length > 1 && (
+            {canScrollRight && (
               <button
                 type="button"
                 onClick={handleNext}
-                disabled={isMobile ? !canScrollRight : startIndex >= maxStartIndex}
-                className={`p-2 sm:p-2.5 rounded-full border border-white/20 text-white transition-all duration-300 flex items-center justify-center shrink-0 ${
-                  (isMobile ? !canScrollRight : startIndex >= maxStartIndex)
-                    ? 'opacity-30 cursor-not-allowed'
-                    : 'opacity-100 hover:bg-white/10 hover:border-white/50 cursor-pointer active:scale-95'
-                }`}
+                className="p-2 sm:p-2.5 rounded-full border border-white/20 text-white transition-all duration-300 flex items-center justify-center shrink-0 opacity-100 hover:bg-white/10 hover:border-white/50 cursor-pointer active:scale-95"
                 aria-label="Next tabs"
               >
                 <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">

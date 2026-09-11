@@ -170,27 +170,8 @@ export function PageCreateWizard({ open, onClose, templates, onSubmit, fullPage 
       ? resolvePageSlug(form.title, form.slug)
       : form.slug.trim() || 'page-slug';
 
-    if (!selectedNav) {
-      // Unlinked
-      return `/${pageSlug}`;
-    }
-
-    if (megaMenu && form.megaMenuCategoryId) {
-      const cat = megaMenu.categories.find(c => c.id === form.megaMenuCategoryId);
-      const sub = cat?.subCategories.find(s => s.id === form.megaMenuSubCategoryId);
-      const subSub = sub?.subSubCategories.find(l => l.id === form.megaMenuSubSubCategoryId);
-      
-      return buildPagePathFromNavHierarchy({
-        navSlug,
-        categorySlug: cat?.slug,
-        subSlug: sub?.slug,
-        subSubSlug: subSub?.slug,
-        pageSlug,
-      });
-    }
-
-    return `/${navSlug.replace(/^\//, '')}/${pageSlug}`;
-  }, [selectedNav, megaMenu, form.megaMenuCategoryId, form.megaMenuSubCategoryId, form.megaMenuSubSubCategoryId, form.title, form.slug]);
+    return `/${pageSlug}`;
+  }, [form.title, form.slug]);
 
   const submit = async () => {
     if (!form.title.trim()) {

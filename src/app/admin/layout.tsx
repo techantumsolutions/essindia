@@ -55,27 +55,23 @@ const navGroups = [
       { icon: BookOpen, label: 'Blogs', href: '/admin/blogs' },
       { icon: Briefcase, label: 'Careers', href: '/admin/careers' },
       { icon: Settings, label: 'Footer Settings', href: '/admin/footer' },
-      // { icon: Briefcase, label: 'Solutions', href: '/admin/solutions' },
-      // { icon: Globe, label: 'Industries', href: '/admin/industries' },
-      // { icon: FileText, label: 'Resources', href: '/admin/resources' },
     ]
   },
   {
     label: 'Marketing & SEO',
     items: [
+      { icon: BarChart3, label: 'Charts', href: '/admin/charts' },
       { icon: Shield, label: 'SEO Settings', href: '/admin/seo' },
       { icon: ArrowRightLeft, label: 'Redirects', href: '/admin/redirects' },
       { icon: MessageSquare, label: 'Leads', href: '/admin/forms' },
-      // { icon: BarChart3, label: 'Analytics', href: '/admin/analytics' },
     ]
   },
-  // {
-  //   label: 'System',
-  //   items: [
-  //     { icon: User, label: 'Users & Roles', href: '/admin/users' },
-  //     { icon: Settings, label: 'Settings', href: '/admin/settings' },
-  //   ]
-  // }
+  {
+    label: 'System',
+    items: [
+      { icon: User, label: 'Users & Roles', href: '/admin/users' },
+    ]
+  }
 ];
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
@@ -83,6 +79,8 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   const router = useRouter();
   const [isSidebarOpen, setIsSidebarOpen] = React.useState(true);
   const [logoUrl, setLogoUrl] = React.useState<string | null>(null);
+  const [userRole, setUserRole] = React.useState<'super_admin' | 'admin' | 'agent' | null>(null);
+  const [userPermissions, setUserPermissions] = React.useState<{ cms: boolean; charts: boolean }>({ cms: true, charts: true });
 
   React.useEffect(() => {
     const controller = new AbortController();
@@ -94,12 +92,69 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           console.error('Unable to load admin brand logo', error);
         }
       });
+
+    // Check user auth session & role
+    fetch('/api/admin/auth/me')
+      .then((res) => res.ok ? res.json() : null)
+      .then((data) => {
+        if (data?.authenticated && data?.user) {
+          const role = data.user.role;
+          const perms = data.user.accessPermissions || { cms: role !== 'agent', charts: true };
+          setUserRole(role);
+          setUserPermissions(perms);
+
+          // Route Access Guard for Agents without CMS access
+          if (role === 'agent' && !perms.cms && pathname !== '/admin/charts' && !pathname.startsWith('/admin/login')) {
+            router.replace('/admin/charts');
+          }
+          // Route Access Guard for Admins & Agents (Block /admin/users for non-super-admins)
+          if (role !== 'super_admin' && pathname.startsWith('/admin/users')) {
+            router.replace(perms.cms ? '/admin/dashboard' : '/admin/charts');
+          }
+        }
+      })
+      .catch(() => {
+        // Fallback local storage check
+        const stored = localStorage.getItem('admin-user-session');
+        if (stored) {
+          try {
+            const parsed = JSON.parse(stored);
+            const perms = parsed.accessPermissions || { cms: parsed.role !== 'agent', charts: true };
+            setUserRole(parsed.role);
+            setUserPermissions(perms);
+            if (parsed.role === 'agent' && !perms.cms && pathname !== '/admin/charts' && !pathname.startsWith('/admin/login')) {
+              router.replace('/admin/charts');
+            }
+          } catch (e) {}
+        }
+      });
+
     return () => controller.abort();
-  }, []);
+  }, [pathname, router]);
 
   if (pathname === '/admin/login' || pathname.endsWith('/preview')) {
     return <>{children}</>;
   }
+
+  // Filter Nav Groups based on Role & Dual Access Permissions
+  const filteredNavGroups = navGroups.map((group) => {
+    const filteredItems = group.items.filter((item) => {
+      // System management (Users & Roles) is exclusive to Super Admin
+      if (item.href === '/admin/users') {
+        return userRole === 'super_admin';
+      }
+
+      // Charts Page permission check
+      if (item.href === '/admin/charts') {
+        return userPermissions.charts;
+      }
+
+      // All other CMS pages (Dashboard, Pages, Media, Blogs, Forms, etc.) check CMS permission
+      return userPermissions.cms;
+    });
+
+    return { ...group, items: filteredItems };
+  }).filter((group) => group.items.length > 0);
 
   return (
     <div className="admin-shell min-h-screen bg-[#F6F7F9] flex overflow-hidden font-sans">
@@ -140,7 +195,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
         {/* Navigation Groups */}
         <div className="flex-1 overflow-y-auto overflow-x-hidden py-4 custom-scrollbar">
-          {navGroups.map((group, groupIdx) => (
+          {filteredNavGroups.map((group, groupIdx) => (
             <div key={groupIdx} className="mb-5 last:mb-0">
               <AnimatePresence>
                 {isSidebarOpen && (

@@ -192,7 +192,7 @@ export function UgandaInsights({ content }: { content?: UgandaInsightsContent })
           </button>
         </div>
 
-        {/* Full-Width Active Content Panel */}
+        {/* Active Content Panel - Left Content, Right Image */}
         <div className="w-full max-w-7xl mx-auto">
           <AnimatePresence mode="wait">
             <motion.div
@@ -201,50 +201,53 @@ export function UgandaInsights({ content }: { content?: UgandaInsightsContent })
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -15 }}
               transition={{ duration: 0.35 }}
-              className="space-y-6"
+              className={`grid grid-cols-1 ${safeImageUrl(activeTab.image) ? 'lg:grid-cols-2' : ''} gap-8 items-start`}
             >
-              {/* Content Title */}
-              {activeTab.contentTitle && (
-                <FormattedText content={activeTab.contentTitle} as="h3" className="text-xl sm:text-[28px] font-extrabold text-[#1d1b4b] leading-tight tracking-tight" />
-              )}
+              {/* Left Column: Content */}
+              <div className="space-y-6">
+                {/* Content Title */}
+                {activeTab.contentTitle && (
+                  <FormattedText content={activeTab.contentTitle} as="h3" className="text-xl sm:text-[28px] font-extrabold text-[#1d1b4b] leading-tight tracking-tight" />
+                )}
 
-              {/* Body Paragraphs */}
-              {activeTab.body1 && (
-                <FormattedText content={activeTab.body1} className="text-xs sm:text-sm text-slate-700 leading-relaxed" />
-              )}
-              {activeTab.body2 && (
-                <FormattedText content={activeTab.body2} className="text-xs sm:text-sm text-slate-700 leading-relaxed font-medium" />
-              )}
+                {/* Body Paragraphs */}
+                {activeTab.body1 && (
+                  <FormattedText content={activeTab.body1} className="text-xs sm:text-sm text-slate-700 leading-relaxed" />
+                )}
+                {activeTab.body2 && (
+                  <FormattedText content={activeTab.body2} className="text-xs sm:text-sm text-slate-700 leading-relaxed font-medium" />
+                )}
 
-              {/* Points checklist */}
-              {activeTab.points && activeTab.points.length > 0 && (
-                <ul className="space-y-4 pt-2">
-                  {activeTab.points.map((p, pidx) => (
-                    <li key={pidx} className="text-xs sm:text-sm text-slate-700 flex items-start gap-3">
-                      <span className="flex-shrink-0 w-1.5 h-1.5 rounded-full bg-slate-900 mt-2" />
-                      <div>
-                        <FormattedText content={p.title} as="strong" className="text-slate-950 font-bold mr-1" />
-                        <FormattedText content={p.description} as="span" className="text-slate-600" />
-                      </div>
-                    </li>
-                  ))}
-                </ul>
-              )}
+                {/* Points checklist */}
+                {activeTab.points && activeTab.points.length > 0 && (
+                  <ul className="space-y-4 pt-2">
+                    {activeTab.points.map((p, pidx) => (
+                      <li key={pidx} className="text-xs sm:text-sm text-slate-700 flex items-start gap-3">
+                        <span className="flex-shrink-0 w-1.5 h-1.5 rounded-full bg-slate-900 mt-2" />
+                        <div>
+                          <FormattedText content={p.title} as="strong" className="text-slate-950 font-bold mr-1" />
+                          <FormattedText content={p.description} as="span" className="text-slate-600" />
+                        </div>
+                      </li>
+                    ))}
+                  </ul>
+                )}
 
-              {/* Subsections Rich text */}
-              {activeTab.subsections && (
-                <FormattedText content={activeTab.subsections} className="whitespace-pre-line text-xs sm:text-sm text-slate-700 leading-relaxed space-y-6 border-t border-slate-100 pt-6" />
-              )}
+                {/* Subsections Rich text */}
+                {activeTab.subsections && (
+                  <FormattedText content={activeTab.subsections} className="whitespace-pre-line text-xs sm:text-sm text-slate-700 leading-relaxed space-y-6 border-t border-slate-100 pt-6" />
+                )}
+              </div>
 
-              {/* Mockup Dashboard Image */}
+              {/* Right Column: Mockup Dashboard Image */}
               {safeImageUrl(activeTab.image) && (
-                <div className="relative w-full aspect-[16/9] max-w-4xl mx-auto rounded-xl overflow-hidden border border-slate-150 shadow-sm mt-8">
+                <div className="relative w-full aspect-[4/3] rounded-xl overflow-hidden lg:sticky lg:top-24">
                   <Image
                     src={safeImageUrl(activeTab.image)}
                     alt={activeTab.contentTitle || 'Dashboard detail'}
                     fill
                     className="object-contain"
-                    sizes="(max-width: 1024px) 100vw, 75vw"
+                    sizes="(max-width: 1024px) 100vw, 50vw"
                     priority
                   />
                 </div>

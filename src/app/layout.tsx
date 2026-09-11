@@ -31,6 +31,8 @@ export const metadata: Metadata = {
   },
 };
 
+import { WebsiteChatWidget } from "@/components/chat/WebsiteChatWidget";
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -44,6 +46,7 @@ export default function RootLayout({
         </QueryProvider>
         <Toaster />
         <FormModalProvider />
+        <WebsiteChatWidget />
       </body>
     </html>
   );

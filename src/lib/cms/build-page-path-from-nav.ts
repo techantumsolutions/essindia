@@ -7,17 +7,16 @@ export function buildPagePathFromNavHierarchy(input: {
   subSubSlug?: string;
   pageSlug?: string;
 }): string {
-  const parts = [input.navSlug.replace(/^\//, '')];
-  if (input.categorySlug) parts.push(input.categorySlug);
-  if (input.subSlug) parts.push(input.subSlug);
-  if (input.subSubSlug) parts.push(input.subSubSlug);
-  
-  if (input.pageSlug) {
-    const lastPart = parts[parts.length - 1];
-    if (input.pageSlug !== lastPart && input.pageSlug !== input.navSlug.replace(/^\//, '')) {
-      parts.push(input.pageSlug);
-    }
+  if (input.pageSlug && input.pageSlug.trim()) {
+    const cleanSlug = input.pageSlug.replace(/^\//, '');
+    return `/${cleanSlug}`;
   }
+  const parts = [
+    input.navSlug?.replace(/^\//, ''),
+    input.categorySlug,
+    input.subSlug,
+    input.subSubSlug,
+  ].filter(Boolean);
   return `/${parts.join('/')}`;
 }
 
@@ -27,13 +26,11 @@ export function buildPagePathFromNavAndCategorySlugs(
   categorySlugs: string[],
   pageSlug?: string
 ): string {
-  const parts = [navSlug.replace(/^\//, ''), ...categorySlugs].filter(Boolean);
-  if (pageSlug) {
-    const lastPart = parts[parts.length - 1];
-    if (pageSlug !== lastPart && pageSlug !== navSlug.replace(/^\//, '')) {
-      parts.push(pageSlug);
-    }
+  if (pageSlug && pageSlug.trim()) {
+    const cleanSlug = pageSlug.replace(/^\//, '');
+    return `/${cleanSlug}`;
   }
+  const parts = [navSlug.replace(/^\//, ''), ...categorySlugs].filter(Boolean);
   return `/${parts.join('/')}`;
 }
 
