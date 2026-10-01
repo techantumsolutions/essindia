@@ -23,7 +23,8 @@ import {
   Mail,
   CheckCheck,
   ShieldAlert,
-  User
+  User,
+  X
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn, formatChatTime } from '@/lib/utils';
@@ -64,6 +65,9 @@ export default function AgentChartsPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [isSending, setIsSending] = useState(false);
   const [agentStatus, setAgentStatus] = useState<'Online' | 'Away' | 'Offline'>('Online');
+  const [alertEmails, setAlertEmails] = useState<string[] | null>(null);
+  const [alertDraft, setAlertDraft] = useState('');
+  const [isSavingAlerts, setIsSavingAlerts] = useState(false);
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const socketRef = useRef<Socket | null>(null);
@@ -137,6 +141,51 @@ export default function AgentChartsPage() {
     return () => clearInterval(interval);
   }, []);
 
+  useEffect(() => {
+    fetch('/api/admin/chat/notification-emails')
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data) => {
+        if (data && Array.isArray(data.emails)) setAlertEmails(data.emails);
+      })
+      .catch(() => {});
+  }, []);
+
+  const saveAlertEmails = async (next: string[]) => {
+    setIsSavingAlerts(true);
+    try {
+      const res = await fetch('/api/admin/chat/notification-emails', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ emails: next }),
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        toast.error(data.error || 'Could not save notification emails');
+        return;
+      }
+      setAlertEmails(Array.isArray(data.emails) ? data.emails : next);
+      toast.success('Notification emails saved');
+    } catch {
+      toast.error('Could not save notification emails');
+    } finally {
+      setIsSavingAlerts(false);
+    }
+  };
+
+  const addAlertEmail = () => {
+    const email = alertDraft.trim().toLowerCase();
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      toast.error('Enter a valid email address');
+      return;
+    }
+    if ((alertEmails || []).includes(email)) {
+      toast.error('That email is already in the list');
+      return;
+    }
+    setAlertDraft('');
+    saveAlertEmails([...(alertEmails || []), email]);
+  };
+
   // Fetch messages for selected conversation
   const fetchMessages = React.useCallback(async () => {
     if (!selectedConvId) return;
@@ -201,9 +250,60 @@ export default function AgentChartsPage() {
   });
 
   return (
-    <div className="h-[calc(100vh-70px)] bg-[#F8FAFC] p-2 md:p-4 overflow-hidden flex flex-col">
+    <div className="h-[calc(100vh-70px)] bg-[#F8FAFC] p-2 md:p-4 overflow-hidden flex flex-col gap-2">
+      {alertEmails && (
+        <div className="bg-white rounded-2xl border border-slate-200/80 px-4 py-3 shrink-0">
+          <div className="flex flex-col lg:flex-row lg:items-center gap-3">
+            <div className="shrink-0">
+              <p className="text-xs font-bold text-slate-800">Chat alert emails</p>
+              <p className="text-[11px] text-slate-400">First message in a new chat is emailed to this list.</p>
+            </div>
+            <div className="flex flex-wrap items-center gap-1.5 flex-1 min-w-0">
+              {alertEmails.length === 0 && (
+                <span className="text-[11px] text-slate-400">No emails added yet.</span>
+              )}
+              {alertEmails.map((email) => (
+                <span key={email} className="inline-flex items-center gap-1 rounded-full bg-purple-50 text-[#4B2A63] border border-purple-100 px-2.5 py-1 text-[11px] font-semibold">
+                  {email}
+                  <button
+                    type="button"
+                    disabled={isSavingAlerts}
+                    onClick={() => saveAlertEmails(alertEmails.filter((item) => item !== email))}
+                    className="text-purple-400 hover:text-[#4B2A63] disabled:opacity-40"
+                    aria-label={`Remove ${email}`}
+                  >
+                    <X className="w-3 h-3" />
+                  </button>
+                </span>
+              ))}
+            </div>
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                addAlertEmail();
+              }}
+              className="flex items-center gap-2 shrink-0"
+            >
+              <input
+                type="email"
+                value={alertDraft}
+                onChange={(e) => setAlertDraft(e.target.value)}
+                placeholder="name@company.com"
+                className="w-52 px-3 py-2 bg-slate-100 border-none rounded-xl text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-[#4B2A63]"
+              />
+              <button
+                type="submit"
+                disabled={isSavingAlerts || !alertDraft.trim()}
+                className="px-3.5 py-2 bg-[#4B2A63] text-white font-bold text-xs rounded-xl hover:bg-[#3b204e] disabled:opacity-50"
+              >
+                Add
+              </button>
+            </form>
+          </div>
+        </div>
+      )}
       {/* Main WhatsApp-Style Interface */}
-      <div className="bg-white rounded-3xl border border-slate-200/80 shadow-xl overflow-hidden grid grid-cols-1 lg:grid-cols-12 h-full">
+      <div className="bg-white rounded-3xl border border-slate-200/80 shadow-xl overflow-hidden grid grid-cols-1 lg:grid-cols-12 flex-1 min-h-0">
         {/* Left Column: Chat Conversation List */}
         <div className="lg:col-span-4 border-r border-slate-100 flex flex-col bg-slate-50/40 h-full overflow-hidden">
           {/* Search Header */}

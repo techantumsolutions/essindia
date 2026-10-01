@@ -608,4 +608,12 @@ export const careersSettings = pgTable('careers_settings', {
   updatedAt: timestamp('updated_at').defaultNow().notNull(),
 });
 
+/** Addresses that receive one email when a visitor sends the first message in a chat session. */
+export const chatNotificationSettings = pgTable('chat_notification_settings', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  emails: jsonb('emails').default('[]').notNull(),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+  updatedAt: timestamp('updated_at').defaultNow().notNull(),
+});
+
 
