@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { db, client } from '@/lib/db';
+import { ensureChatTables } from '@/lib/db/ensure-chat-tables';
 import { chatConversations, chatMessages } from '@/lib/db/schema';
 import { eq, desc } from 'drizzle-orm';
 import { getAdminSessionServer } from '@/lib/auth/session';
@@ -11,23 +12,8 @@ export async function GET() {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    // Ensure table exists on target DB
-    await client`
-      CREATE TABLE IF NOT EXISTS "chat_conversations" (
-        "id" uuid PRIMARY KEY DEFAULT gen_random_uuid(),
-        "user_name" varchar(255) NOT NULL DEFAULT 'Guest User',
-        "user_email" varchar(255),
-        "user_phone" varchar(50),
-        "channel" varchar(50) NOT NULL DEFAULT 'Website Widget',
-        "status" varchar(50) NOT NULL DEFAULT 'waiting',
-        "assigned_agent_id" uuid,
-        "assigned_agent_name" varchar(255),
-        "last_message" text,
-        "last_message_at" timestamp DEFAULT now() NOT NULL,
-        "created_at" timestamp DEFAULT now() NOT NULL,
-        "updated_at" timestamp DEFAULT now() NOT NULL
-      );
-    `;
+    // Ensure tables exist on target DB (run once per runtime instance)
+    await ensureChatTables();
 
     const conversations = await client`
       SELECT id, user_name as "userName", user_email as "userEmail", user_phone as "userPhone", channel, status, assigned_agent_id as "assignedAgentId", assigned_agent_name as "assignedAgentName", last_message as "lastMessage", last_message_at as "lastMessageAt", created_at as "createdAt"

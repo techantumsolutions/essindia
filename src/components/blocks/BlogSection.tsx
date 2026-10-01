@@ -91,7 +91,7 @@ export function BlogSection({ content }: BlogSectionProps) {
     async function fetchBlogs() {
       try {
         const res = await fetch('/api/blogs');
-        if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
+        if (!res.ok) return;
         const data = await res.json();
         const blogList = Array.isArray(data) ? data : data?.blogs || [];
         if (Array.isArray(blogList) && blogList.length > 0) {
@@ -107,7 +107,7 @@ export function BlogSection({ content }: BlogSectionProps) {
           setBlogs(formatted);
         }
       } catch (err) {
-        console.error('[BlogSection]', err);
+        // Silently preserve default static blogs on fetch failure
       }
     }
     fetchBlogs();

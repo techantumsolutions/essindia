@@ -83,6 +83,8 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   const [userPermissions, setUserPermissions] = React.useState<{ cms: boolean; charts: boolean }>({ cms: true, charts: true });
 
   React.useEffect(() => {
+    if (pathname === '/admin/login') return;
+
     const controller = new AbortController();
     fetch('/api/admin/navigation?location=header-main', { signal: controller.signal })
       .then((response) => response.ok ? response.json() : null)

@@ -39,6 +39,9 @@ export function DynamicFieldRenderer({
   const fieldLabel = humanLabel(fieldKey, { sectionType, keyPath });
 
   let fieldType = detectFieldType(fieldKey, value, sectionType, keyPath);
+  if (sectionType === 'ass-stats' && (fieldKey === 'label' || fieldKey === 'description')) {
+    fieldType = 'textarea';
+  }
   if (sectionType === 'career-perks' || keyPath.includes('perks') || fieldKey.toLowerCase().includes('perk')) {
     if (fieldType === 'richtext' || fieldType === 'text') {
       fieldType = 'textarea';
@@ -58,6 +61,25 @@ export function DynamicFieldRenderer({
         sectionType={sectionType}
         allSectionValues={allSectionValues}
       />
+    );
+  }
+
+  if (fieldKey === 'mediaType') {
+    const val = String(value || 'media');
+    return (
+      <div className="space-y-1.5">
+        <label className="block text-xs font-semibold text-slate-700">
+          Media Source Type
+        </label>
+        <select
+          value={val === 'youtube' ? 'youtube' : 'media'}
+          onChange={(e) => onChange(keyPath, e.target.value)}
+          className="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-[#4B2A63] focus:border-transparent font-medium"
+        >
+          <option value="media">Media / Video File Upload</option>
+          <option value="youtube">YouTube Link</option>
+        </select>
+      </div>
     );
   }
 
@@ -770,13 +792,75 @@ function ArrayField({
   } else if (sectionType === 'bi-tabs' && fieldKey === 'tabs' && Array.isArray(value)) {
     normalizedValue = value.map(item => {
       if (item && typeof item === 'object' && !Array.isArray(item)) {
+        const rawQuestions = Array.isArray(item.questions) ? item.questions : [];
+        const normalizedQuestions = rawQuestions.map((q: any) => {
+          if (typeof q === 'string') {
+            return { text: q, image: '' };
+          }
+          if (q && typeof q === 'object') {
+            return {
+              text: q.text || q.question || '',
+              image: q.image || '',
+              ...q
+            };
+          }
+          return { text: '', image: '' };
+        });
         return {
           tabName: '',
           tabDesc: '',
           heading: '',
           subheading: '',
-          questions: [],
           image: '',
+          ...item,
+          questions: normalizedQuestions
+        };
+      }
+      return item;
+    });
+  } else if (sectionType === 'ass-stats' && fieldKey === 'stats' && Array.isArray(value)) {
+    normalizedValue = value.map((item: any) => {
+      if (item && typeof item === 'object' && !Array.isArray(item)) {
+        return {
+          value: item.value ?? '',
+          label: item.label ?? item.description ?? '',
+          description: item.description ?? item.label ?? '',
+          ...item
+        };
+      }
+      return { value: '', label: '', description: '' };
+    });
+  } else if (sectionType === 'landing1-showcase' && fieldKey === 'tabs' && Array.isArray(value)) {
+    normalizedValue = value.map((item: any) => {
+      if (item && typeof item === 'object' && !Array.isArray(item)) {
+        return {
+          name: '',
+          title: '',
+          desc: '',
+          mediaType: item.mediaType || (item.youtubeUrl || (item.videoUrl && item.videoUrl.includes('youtube')) ? 'youtube' : 'media'),
+          image: item.image || (item.videoUrl && !item.videoUrl.includes('youtube') ? item.videoUrl : ''),
+          youtubeUrl: item.youtubeUrl || (item.videoUrl && item.videoUrl.includes('youtube') ? item.videoUrl : ''),
+          videoUrl: item.videoUrl || '',
+          primaryCtaText: '',
+          primaryCtaUrl: '',
+          secondaryCtaText: '',
+          secondaryCtaUrl: '',
+          ...item
+        };
+      }
+      return item;
+    });
+  } else if (sectionType === 'landing2-carousel' && fieldKey === 'slides' && Array.isArray(value)) {
+    normalizedValue = value.map((item: any) => {
+      if (item && typeof item === 'object' && !Array.isArray(item)) {
+        return {
+          badge: '',
+          title: '',
+          description: '',
+          mediaType: item.mediaType || (item.youtubeUrl || (item.videoUrl && item.videoUrl.includes('youtube')) ? 'youtube' : 'media'),
+          mediaUrl: '',
+          youtubeUrl: item.youtubeUrl || (item.videoUrl && item.videoUrl.includes('youtube') ? item.videoUrl : ''),
+          videoUrl: item.videoUrl || '',
           ...item
         };
       }
@@ -1019,6 +1103,18 @@ function ArrayField({
             }
             const locationOrder = ['city', 'address', 'name', 'phone', 'email'];
             sortedKeys = locationOrder;
+          } else if (fieldKey === 'questions') {
+            let qOrder = ['text', 'question', 'image'];
+            if (sectionType === 'bi-tabs') {
+              if ('question' in objItem && !('text' in objItem)) {
+                objItem.text = objItem.question;
+              }
+              qOrder = ['text', 'image'];
+              for (const k of ['text', 'image']) {
+                if (!(k in objItem)) objItem[k] = '';
+              }
+            }
+            sortedKeys = qOrder.filter(k => k in objItem);
           } else if (fieldKey === 'challengePoints' || fieldKey === 'challengepoints') {
             const challengeOrder = ['title', 'description'];
             sortedKeys = challengeOrder.filter(k => k in objItem);
@@ -1115,8 +1211,17 @@ function ArrayField({
             }
             sortedKeys = worksOrder;
           } else if (fieldKey === 'stats' || fieldKey === 'statistics') {
-            let statOrder = ['icon', 'value', 'title'];
-            if (sectionType === 'landing1-stats') {
+            let statOrder = ['icon', 'value', 'label', 'description', 'title'];
+            if (sectionType === 'ass-stats') {
+              statOrder = ['value', 'label'];
+              if (!('label' in objItem) || !objItem.label) {
+                objItem.label = objItem.description || '';
+              }
+              delete objItem.description;
+              for (const k of ['value', 'label']) {
+                if (!(k in objItem)) objItem[k] = '';
+              }
+            } else if (sectionType === 'landing1-stats') {
               statOrder = ['icon', 'value', 'title'];
               delete objItem.description;
               delete objItem.desc;
@@ -1165,18 +1270,41 @@ function ArrayField({
             } else if (sectionType === 'aom-workspace') {
               tabOrder = ['label', 'desc', 'icon', 'contentTitle', 'contentDescription', 'contentImage', 'benefits', 'ctaText', 'ctaUrl'];
             } else if (sectionType === 'bi-industry-services') {
-              tabOrder = ['tabName', 'tabTitle', 'points', 'buttonText', 'buttonHoverBgColor', 'buttonHoverTextColor', 'buttonUrl', 'image'];
-              for (const k of ['buttonHoverBgColor', 'buttonHoverTextColor']) {
+              tabOrder = ['tabName', 'tabTitle', 'points', 'buttonText', 'buttonBgColor', 'buttonTextColor', 'buttonHoverBgColor', 'buttonHoverTextColor', 'buttonUrl', 'image'];
+              for (const k of ['buttonBgColor', 'buttonTextColor', 'buttonHoverBgColor', 'buttonHoverTextColor']) {
                 if (!(k in objItem)) objItem[k] = '';
               }
             } else if (sectionType === 'oracle-apex-approach') {
               tabOrder = ['tabName', 'items'];
             } else if (sectionType === 'uganda-insights') {
-              tabOrder = ['tabName', 'contentTitle', 'body1', 'body2', 'points', 'subsections', 'image'];
+              tabOrder = ['tabName', 'contentTitle', 'body1', 'body2', 'points', 'subsections', 'image', 'ctaText', 'ctaUrl', 'ctaFormType'];
+              for (const k of ['tabName', 'contentTitle', 'body1', 'body2', 'subsections', 'image', 'ctaText', 'ctaUrl']) {
+                if (!(k in objItem)) objItem[k] = '';
+              }
             } else if (sectionType === 'landing1-showcase') {
-              tabOrder = ['name', 'title', 'desc', 'image', 'primaryCtaText', 'primaryCtaUrl', 'primaryCtaFormType', 'secondaryCtaText', 'secondaryCtaUrl', 'secondaryCtaFormType'];
+              const currentMediaType = objItem.mediaType || (objItem.youtubeUrl || (objItem.videoUrl && String(objItem.videoUrl).includes('youtube')) ? 'youtube' : 'media');
+              objItem.mediaType = currentMediaType;
+              
+              if (currentMediaType === 'youtube') {
+                delete objItem.image;
+                if (!('youtubeUrl' in objItem)) {
+                  objItem.youtubeUrl = objItem.videoUrl || '';
+                }
+                tabOrder = ['name', 'title', 'desc', 'mediaType', 'youtubeUrl', 'primaryCtaText', 'primaryCtaUrl', 'primaryCtaFormType', 'secondaryCtaText', 'secondaryCtaUrl', 'secondaryCtaFormType'];
+              } else {
+                delete objItem.youtubeUrl;
+                if (!('image' in objItem)) {
+                  objItem.image = objItem.videoUrl || '';
+                }
+                // Synchronize uploaded media path to videoUrl so frontend video player picks it up
+                if (objItem.image) {
+                  objItem.videoUrl = objItem.image;
+                }
+                tabOrder = ['name', 'title', 'desc', 'mediaType', 'image', 'primaryCtaText', 'primaryCtaUrl', 'primaryCtaFormType', 'secondaryCtaText', 'secondaryCtaUrl', 'secondaryCtaFormType'];
+              }
+
               sortedKeys = tabOrder.filter(k => k in objItem);
-              for (const k of ['name', 'title', 'desc', 'image', 'primaryCtaText', 'primaryCtaUrl', 'secondaryCtaText', 'secondaryCtaUrl']) {
+              for (const k of ['name', 'title', 'desc', 'mediaType', currentMediaType === 'youtube' ? 'youtubeUrl' : 'image', 'primaryCtaText', 'primaryCtaUrl', 'secondaryCtaText', 'secondaryCtaUrl']) {
                 if (!sortedKeys.includes(k)) sortedKeys.push(k);
                 if (!(k in objItem)) objItem[k] = '';
               }
@@ -1216,7 +1344,23 @@ function ArrayField({
           } else if (fieldKey === 'slides') {
             let slideOrder = ['image', 'logo', 'title', 'stats', 'ctaText', 'ctaUrl'];
             if (sectionType === 'landing2-carousel') {
-              sortedKeys = ['badge', 'title', 'description', 'mediaUrl', 'videoUrl'];
+              const currentMediaType = objItem.mediaType || (objItem.youtubeUrl || (objItem.videoUrl && String(objItem.videoUrl).includes('youtube')) ? 'youtube' : 'media');
+              objItem.mediaType = currentMediaType;
+              if (currentMediaType === 'youtube') {
+                delete objItem.mediaUrl;
+                if (!('youtubeUrl' in objItem)) {
+                  objItem.youtubeUrl = objItem.videoUrl || '';
+                }
+                delete objItem.videoUrl;
+                sortedKeys = ['badge', 'title', 'description', 'mediaType', 'youtubeUrl'];
+              } else {
+                delete objItem.youtubeUrl;
+                if (!('mediaUrl' in objItem)) {
+                  objItem.mediaUrl = objItem.videoUrl || '';
+                }
+                delete objItem.videoUrl;
+                sortedKeys = ['badge', 'title', 'description', 'mediaType', 'mediaUrl'];
+              }
               for (const k of sortedKeys) {
                 if (!(k in objItem)) {
                   objItem[k] = '';
