@@ -1156,7 +1156,35 @@ function ArrayField({
             sortedKeys = moduleOrder.filter(k => k in objItem);
           } else if (fieldKey.toLowerCase().includes('items')) {
             let itemOrder = ['icon', 'text', 'title', 'description', 'image', 'ctaText', 'ctaUrl', 'enableCta'];
-            if (sectionType === 'about-us-services-overview') {
+            if (sectionType === 'europe-dark-showcase') {
+              itemOrder = [
+                'badgeText',
+                'title',
+                'description',
+                'primaryButtonText',
+                'primaryButtonUrl',
+                'primaryButtonFormType',
+                'primaryButtonPdfUrl',
+                'primaryButtonBgColor',
+                'primaryButtonHoverBgColor',
+                'primaryButtonBorderColor',
+                'primaryButtonTextColor',
+                'primaryButtonHoverTextColor',
+                'secondaryButtonText',
+                'secondaryButtonUrl',
+                'secondaryButtonFormType',
+                'secondaryButtonPdfUrl',
+                'secondaryButtonBgColor',
+                'secondaryButtonHoverBgColor',
+                'secondaryButtonBorderColor',
+                'secondaryButtonTextColor',
+                'secondaryButtonHoverTextColor',
+                'image',
+              ];
+              for (const k of itemOrder) {
+                if (!(k in objItem)) objItem[k] = '';
+              }
+            } else if (sectionType === 'about-us-services-overview') {
               itemOrder = ['image', 'title', 'subtitle'];
               delete objItem.description;
               delete objItem.desc;

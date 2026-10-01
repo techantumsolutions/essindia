@@ -435,6 +435,29 @@ export function humanLabel(
     if (key === 'button2HoverTextColor') return 'Button 2 Hover Text Color';
   }
 
+  if (options?.sectionType === 'europe-dark-showcase' && options?.keyPath?.includes('items.')) {
+    if (key === 'badgeText') return 'Tag / Badge';
+    if (key === 'title') return 'Item Title';
+    if (key === 'description') return 'Item Description';
+    if (key === 'primaryButtonText') return 'Primary Button Text';
+    if (key === 'primaryButtonUrl') return 'Primary Button URL';
+    if (key === 'primaryButtonFormType') return 'Primary Button Form Action';
+    if (key === 'primaryButtonBgColor') return 'Primary Button BG Color';
+    if (key === 'primaryButtonHoverBgColor') return 'Primary Button Hover BG Color';
+    if (key === 'primaryButtonBorderColor') return 'Primary Button Border Color';
+    if (key === 'primaryButtonTextColor') return 'Primary Button Text Color';
+    if (key === 'primaryButtonHoverTextColor') return 'Primary Button Hover Text Color';
+    if (key === 'secondaryButtonText') return 'Secondary Button Text';
+    if (key === 'secondaryButtonUrl') return 'Secondary Button URL';
+    if (key === 'secondaryButtonFormType') return 'Secondary Button Form Action';
+    if (key === 'secondaryButtonBgColor') return 'Secondary Button BG Color';
+    if (key === 'secondaryButtonHoverBgColor') return 'Secondary Button Hover BG Color';
+    if (key === 'secondaryButtonBorderColor') return 'Secondary Button Border Color';
+    if (key === 'secondaryButtonTextColor') return 'Secondary Button Text Color';
+    if (key === 'secondaryButtonHoverTextColor') return 'Secondary Button Hover Text Color';
+    if (key === 'image') return 'Showcase Image Upload';
+  }
+
   if (options?.sectionType === 'bi-industry-services') {
     if (key === 'buttonBgColor') return 'Button Background Color';
     if (key === 'buttonTextColor') return 'Button Text Color';

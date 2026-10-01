@@ -2066,19 +2066,12 @@ const RAW_SECTION_REGISTRY: SectionTypeDefinition[] = [
   {
     type: 'europe-dark-showcase',
     label: 'Europe Dark Showcase',
-    description: 'Dark full-width showcase with badge, CTAs, and dashboard image carousel',
+    description: 'Dark full-width showcase with left scroll items and right sticky image',
     icon: Layers,
     color: 'bg-violet-50 text-violet-600',
     defaultVariant: 'default',
     supportsVariants: false,
-    fieldOrder: [
-      'badgeText',
-      'title',
-      'description',
-      'primaryButtonText', 'primaryButtonHoverBgColor', 'primaryButtonHoverTextColor', 'primaryButtonUrl', 'primaryButtonFormType',
-      'secondaryButtonText', 'secondaryButtonHoverBgColor', 'secondaryButtonHoverTextColor', 'secondaryButtonUrl', 'secondaryButtonFormType',
-      'slides',
-    ],
+    fieldOrder: ['items'],
   },
   {
     type: 'europe-global-presence',
