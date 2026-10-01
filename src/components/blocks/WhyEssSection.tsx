@@ -68,56 +68,58 @@ export function WhyEssSection({ content }: WhyEssSectionProps) {
         </div>
 
         {/* Content Split */}
-        <div className="flex flex-col lg:flex-row gap-16 lg:gap-8 items-center lg:items-stretch">
+        <div className="flex flex-col lg:flex-row gap-16 lg:gap-8 items-start">
 
           {/* Left Side - Image Composition */}
-          <div className="w-full lg:w-1/2 relative flex justify-center mt-10 lg:mt-0">
-            <MotionSection variant="scaleIn" className="relative w-full max-w-[500px] pb-12 md:pb-16">
-              {/* Main Background Hand/UI Image */}
-              <motion.img
-                whileHover={{ scale: 1.02 }}
-                transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
-                src={image1}
-                alt="ESS Platform Interface"
-                className="w-full h-auto rounded-[32px] shadow-[0_32px_64px_-12px_rgba(0,0,0,0.15)] object-cover"
-              />
+          <div className="w-full lg:w-1/2 relative flex justify-center mt-10 lg:mt-0 lg:sticky lg:top-24">
+            <MotionSection variant="scaleIn" className="relative w-full max-w-[500px] pb-24 md:pb-32">
+              {/* Main Top Image Container with Fixed Height & Object Cover */}
+              <div className="w-full h-[280px] sm:h-[320px] md:h-[350px] rounded-[32px] overflow-hidden shadow-[0_32px_64px_-12px_rgba(0,0,0,0.15)] bg-slate-100 border border-slate-200/60">
+                <motion.img
+                  whileHover={{ scale: 1.02 }}
+                  transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
+                  src={image1}
+                  alt="ESS Platform Interface"
+                  className="w-full h-full object-cover"
+                />
+              </div>
 
-              {/* Floating Revenue Card */}
+              {/* Floating Bottom Left Image (Restricted within top image width bounds) */}
               {image2 && (
                 <motion.div
-                  initial={{ opacity: 0, x: -50, y: 20 }}
+                  initial={{ opacity: 0, x: -30, y: 20 }}
                   whileInView={{ opacity: 1, x: 0, y: 0 }}
                   transition={{ duration: 1, delay: 0.5, ease: [0.22, 1, 0.36, 1] }}
-                  animate={{ y: [0, -10, 0] }}
+                  animate={{ y: [0, -6, 0] }}
                   viewport={{ once: true }}
-                  className="absolute -left-2 sm:-left-6 -bottom-4 md:-bottom-6 w-[170px] sm:w-[200px] md:w-[230px] rounded-2xl overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.12)] z-10 bg-white border border-slate-100/80"
+                  className="absolute left-0 -bottom-6 md:-bottom-10 w-[48%] h-[120px] sm:h-[140px] md:h-[150px] rounded-2xl overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.12)] z-10 bg-white border border-slate-100/80"
                 >
                   <motion.img
-                    whileHover={{ scale: 1.02 }}
+                    whileHover={{ scale: 1.05 }}
                     transition={{ duration: 0.4 }}
                     src={image2}
                     alt="Revenue Chart"
-                    className="w-full h-auto object-contain"
+                    className="w-full h-full object-cover"
                   />
                 </motion.div>
               )}
 
-              {/* Floating Statistics Card */}
+              {/* Floating Bottom Right Image (Restricted within top image width bounds) */}
               {image3 && (
                 <motion.div
-                  initial={{ opacity: 0, x: 50, y: 50 }}
+                  initial={{ opacity: 0, x: 30, y: 50 }}
                   whileInView={{ opacity: 1, x: 0, y: 0 }}
                   transition={{ duration: 1, delay: 0.7, ease: [0.22, 1, 0.36, 1] }}
-                  animate={{ y: [0, 10, 0] }}
+                  animate={{ y: [0, 6, 0] }}
                   viewport={{ once: true }}
-                  className="absolute -right-2 sm:-right-6 -bottom-4 md:-bottom-6 w-[170px] sm:w-[200px] md:w-[230px] rounded-2xl overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.12)] z-10 bg-white border border-slate-100/80"
+                  className="absolute right-0 -bottom-6 md:-bottom-10 w-[48%] h-[120px] sm:h-[140px] md:h-[150px] rounded-2xl overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.12)] z-10 bg-white border border-slate-100/80"
                 >
                   <motion.img
-                    whileHover={{ scale: 1.02 }}
+                    whileHover={{ scale: 1.05 }}
                     transition={{ duration: 0.4 }}
                     src={image3}
                     alt="Statistics Chart"
-                    className="w-full h-auto object-contain"
+                    className="w-full h-full object-cover"
                   />
                 </motion.div>
               )}

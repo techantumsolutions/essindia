@@ -6,6 +6,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { FormattedText } from '@/components/ui/FormattedText';
 import { safeImageUrl } from '@/lib/utils';
+import { useCtaAction, type CtaFormType } from '@/hooks/useCtaAction';
 
 interface PointItem {
   title: string;
@@ -20,6 +21,10 @@ interface TabItem {
   points?: PointItem[];
   subsections?: string; // Rich text / markdown / paragraph block text
   image?: string;
+  ctaText?: string;
+  ctaUrl?: string;
+  ctaFormType?: string;
+  ctaPdfUrl?: string;
 }
 
 export interface UgandaInsightsContent {
@@ -156,7 +161,7 @@ export function UgandaInsights({ content }: { content?: UgandaInsightsContent })
           <div
             ref={tabsRef}
             onScroll={checkScrollState}
-            className="flex-1 flex items-center justify-start sm:justify-center gap-2.5 overflow-x-auto no-scrollbar scroll-smooth py-2 px-1 border-b border-slate-200"
+            className="flex-1 flex items-center justify-start gap-2.5 overflow-x-auto no-scrollbar scroll-smooth py-2 px-2 border-b border-slate-200"
             style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
           >
             {tabs.map((tab, idx) => {
@@ -237,6 +242,13 @@ export function UgandaInsights({ content }: { content?: UgandaInsightsContent })
                 {activeTab.subsections && (
                   <FormattedText content={activeTab.subsections} className="whitespace-pre-line text-xs sm:text-sm text-slate-700 leading-relaxed space-y-6 border-t border-slate-100 pt-6" />
                 )}
+
+                {/* Tab CTA Action Button */}
+                {activeTab.ctaText && (
+                  <div className="pt-2">
+                    <TabCtaButton tab={activeTab} />
+                  </div>
+                )}
               </div>
 
               {/* Right Column: Mockup Dashboard Image */}
@@ -257,6 +269,27 @@ export function UgandaInsights({ content }: { content?: UgandaInsightsContent })
         </div>
       </div>
     </section>
+  );
+}
+
+function TabCtaButton({ tab }: { tab: TabItem }) {
+  const { handleClick, modalNode } = useCtaAction(
+    tab.ctaUrl || '/contact-us',
+    (tab.ctaFormType || '') as CtaFormType,
+    tab.ctaPdfUrl
+  );
+
+  return (
+    <>
+      <a
+        href={tab.ctaUrl || '/contact-us'}
+        onClick={tab.ctaFormType ? (e) => { e.preventDefault(); handleClick(); } : undefined}
+        className="inline-flex items-center justify-center px-6 py-3 rounded-full text-xs sm:text-sm font-bold text-white bg-[#1d1b4b] hover:bg-[#151338] transition-all shadow-md shadow-[#1d1b4b]/20 cursor-pointer"
+      >
+        {tab.ctaText}
+      </a>
+      {modalNode}
+    </>
   );
 }
 
