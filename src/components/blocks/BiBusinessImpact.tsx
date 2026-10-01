@@ -3,6 +3,7 @@
 import React from 'react';
 import Image from 'next/image';
 import { motion } from 'framer-motion';
+import { FormattedText } from '@/components/ui/FormattedText';
 
 interface StepItem {
   number: string;
@@ -101,9 +102,16 @@ export function BiBusinessImpact({ content }: { content?: BiBusinessImpactConten
               {subtitle}
             </h2>
 
-            <p className="text-slate-500 font-light text-base sm:text-[17px] leading-relaxed max-w-xl pt-1">
-              {description}
-            </p>
+            {description.includes('<') && description.includes('>') ? (
+              <FormattedText
+                content={description}
+                className="text-slate-500 font-light text-base sm:text-[17px] leading-relaxed max-w-xl pt-1 [&>p]:my-2 [&>p:first-child]:mt-0 [&>p:last-child]:mb-0"
+              />
+            ) : (
+              <p className="text-slate-500 font-light text-base sm:text-[17px] leading-relaxed max-w-xl pt-1">
+                {description}
+              </p>
+            )}
           </div>
 
           {/* Right Column: Stepper Timeline */}

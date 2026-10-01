@@ -147,24 +147,26 @@ export function BiIndustryServices({ content }: { content?: BiIndustryServicesCo
           <div
             ref={tabsRef}
             onScroll={checkScroll}
-            className="flex-1 min-w-0 flex items-center gap-2 sm:gap-3 overflow-x-auto no-scrollbar py-2 px-1 scroll-smooth"
+            className="flex-1 min-w-0 overflow-x-auto no-scrollbar py-2 px-1 scroll-smooth"
             style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
           >
-            {tabs.map((tab, idx) => {
-              const isActive = activeTabIdx === idx;
-              return (
-                <button
-                  key={idx}
-                  onClick={() => setActiveTabIdx(idx)}
-                  className={`shrink-0 px-5 sm:px-6 py-2.5 rounded-full text-xs sm:text-sm font-semibold tracking-wide border transition-all duration-300 cursor-pointer whitespace-nowrap ${isActive
-                    ? 'bg-[#4c327f] border-[#4c327f] text-white shadow-md scale-[1.02]'
-                    : 'bg-white border-slate-200 text-slate-600 hover:text-slate-900 hover:border-slate-300'
-                    }`}
-                >
-                  {tab.tabName}
-                </button>
-              );
-            })}
+            <div className="flex w-max min-w-full items-center justify-center gap-2 sm:gap-3">
+              {tabs.map((tab, idx) => {
+                const isActive = activeTabIdx === idx;
+                return (
+                  <button
+                    key={idx}
+                    onClick={() => setActiveTabIdx(idx)}
+                    className={`shrink-0 px-5 sm:px-6 py-2.5 rounded-full text-xs sm:text-sm font-semibold tracking-wide border transition-all duration-300 cursor-pointer whitespace-nowrap ${isActive
+                      ? 'bg-[#4c327f] border-[#4c327f] text-white shadow-md scale-[1.02]'
+                      : 'bg-white border-slate-200 text-slate-600 hover:text-slate-900 hover:border-slate-300'
+                      }`}
+                  >
+                    {tab.tabName}
+                  </button>
+                );
+              })}
+            </div>
           </div>
 
           {/* Right Arrow */}

@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useRef } from 'react';
+import React, { useCallback, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { ArrowRight, ChevronLeft, ChevronRight } from 'lucide-react';
@@ -81,16 +81,76 @@ export function PortfolioSection({ content }: PortfolioSectionProps) {
   const { handleClick, modalNode } = useCtaAction(btnUrl, btnFormType, pdfUrl);
 
   const scrollRef = useRef<HTMLDivElement>(null);
+  const pausedRef = useRef(false);
   const showArrows = projects.length > 3;
+  const slides = showArrows ? [...projects, ...projects] : projects;
 
-  const scroll = (direction: 'left' | 'right') => {
-    if (scrollRef.current) {
-      const { current } = scrollRef;
-      // Scroll by the container's visible width so it pages perfectly
-      const scrollAmount = direction === 'left' ? -current.offsetWidth : current.offsetWidth;
-      current.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+  const getSlideStep = useCallback(() => {
+    const el = scrollRef.current;
+    if (!el) return 0;
+    const cards = el.querySelectorAll<HTMLElement>('[data-portfolio-card]');
+    if (cards.length >= 2) return cards[1].offsetLeft - cards[0].offsetLeft;
+    return cards[0]?.offsetWidth || el.clientWidth;
+  }, []);
+
+  const normalizeLoop = useCallback(() => {
+    const el = scrollRef.current;
+    if (!el || !showArrows || projects.length === 0) return;
+    const cycle = getSlideStep() * projects.length;
+    if (cycle <= 0 || el.scrollLeft < cycle - 1) return;
+    const previous = el.style.scrollBehavior;
+    el.style.scrollBehavior = 'auto';
+    el.scrollLeft = el.scrollLeft - cycle;
+    el.style.scrollBehavior = previous;
+  }, [getSlideStep, projects.length, showArrows]);
+
+  const scroll = useCallback((direction: 'left' | 'right') => {
+    const el = scrollRef.current;
+    if (!el) return;
+    const step = getSlideStep();
+    if (el.scrollWidth - el.clientWidth <= 8 || step <= 0) return;
+
+    if (direction === 'left' && showArrows && el.scrollLeft <= 8) {
+      const cycle = step * projects.length;
+      const previous = el.style.scrollBehavior;
+      el.style.scrollBehavior = 'auto';
+      el.scrollLeft = el.scrollLeft + cycle;
+      el.style.scrollBehavior = previous;
     }
-  };
+
+    el.scrollBy({ left: direction === 'right' ? step : -step, behavior: 'smooth' });
+  }, [getSlideStep, projects.length, showArrows]);
+
+  useEffect(() => {
+    const el = scrollRef.current;
+    if (!el || !showArrows) return;
+
+    let settleTimer = 0;
+    const onScroll = () => {
+      window.clearTimeout(settleTimer);
+      settleTimer = window.setTimeout(() => normalizeLoop(), 80);
+    };
+
+    el.addEventListener('scroll', onScroll, { passive: true });
+    return () => {
+      window.clearTimeout(settleTimer);
+      el.removeEventListener('scroll', onScroll);
+    };
+  }, [normalizeLoop, showArrows, slides.length]);
+
+  useEffect(() => {
+    const el = scrollRef.current;
+    if (!el || !showArrows) return;
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+    const id = window.setInterval(() => {
+      if (pausedRef.current) return;
+      if (el.scrollWidth - el.clientWidth <= 8) return;
+      el.scrollBy({ left: getSlideStep(), behavior: 'smooth' });
+    }, 4500);
+
+    return () => window.clearInterval(id);
+  }, [getSlideStep, showArrows, projects.length]);
 
   return (
     <section className="py-14 bg-[#F2F6F9] overflow-hidden relative">
@@ -111,18 +171,22 @@ export function PortfolioSection({ content }: PortfolioSectionProps) {
         </div>
 
         {/* Carousel / Grid Container */}
-        <div className={cn(
-          "relative flex items-center justify-center group/carousel w-full",
-          showArrows ? "xl:px-24" : ""
-        )}>
+        <div
+          className={cn(
+            "relative @container flex items-center justify-center group/carousel w-full",
+            showArrows ? "xl:px-24" : ""
+          )}
+          onMouseEnter={() => { pausedRef.current = true; }}
+          onMouseLeave={() => { pausedRef.current = false; }}
+        >
           
           {/* Left Arrow */}
           {showArrows && (
             <button 
               onClick={() => scroll('left')}
-              className="hidden xl:flex absolute left-4 z-10 w-14 h-14 rounded-full border border-slate-200 bg-white items-center justify-center text-slate-600 hover:bg-[#4B2A63] hover:text-white hover:border-[#4B2A63] transition-all duration-300 shadow-sm cursor-pointer hover:scale-110 active:scale-95"
+              className="flex absolute left-2 top-[calc(75cqw+1.625rem)] md:top-1/2 md:-translate-y-1/2 xl:left-4 z-10 w-10 h-10 rounded-full border border-slate-200 bg-white items-center justify-center text-slate-600 hover:bg-[#4B2A63] hover:text-white hover:border-[#4B2A63] transition-all duration-300 shadow-sm cursor-pointer hover:scale-110 active:scale-95"
             >
-              <ChevronLeft className="w-6 h-6" />
+              <ChevronLeft className="w-4 h-4" />
             </button>
           )}
 
@@ -142,16 +206,18 @@ export function PortfolioSection({ content }: PortfolioSectionProps) {
                   : "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10 xl:px-24"
               )}
             >
-              {projects.map((portfolio, index) => {
+              {slides.map((portfolio, index) => {
                 const targetUrl = portfolio.ctaUrl || (portfolio as any).url || (portfolio as any).link || (portfolio as any).buttonUrl || '';
                 const formType = ((portfolio as any).ctaFormType || (portfolio as any).formType || '') as CtaFormType;
+                const isClone = showArrows && index >= projects.length;
                 return (
                   <ProjectCard
-                    key={index}
+                    key={`${portfolio.title}-${index}`}
                     portfolio={portfolio}
                     showArrows={showArrows}
                     targetUrl={targetUrl}
                     formType={formType}
+                    isClone={isClone}
                   />
                 );
               })}
@@ -162,9 +228,9 @@ export function PortfolioSection({ content }: PortfolioSectionProps) {
           {showArrows && (
             <button 
               onClick={() => scroll('right')}
-              className="hidden xl:flex absolute right-4 z-10 w-14 h-14 rounded-full border border-slate-200 bg-white items-center justify-center text-slate-600 hover:bg-[#4B2A63] hover:text-white hover:border-[#4B2A63] transition-all duration-300 shadow-sm cursor-pointer hover:scale-110 active:scale-95"
+              className="flex absolute right-2 top-[calc(75cqw+1.625rem)] md:top-1/2 md:-translate-y-1/2 xl:right-4 z-10 w-10 h-10 rounded-full border border-slate-200 bg-white items-center justify-center text-slate-600 hover:bg-[#4B2A63] hover:text-white hover:border-[#4B2A63] transition-all duration-300 shadow-sm cursor-pointer hover:scale-110 active:scale-95"
             >
-              <ChevronRight className="w-6 h-6" />
+              <ChevronRight className="w-4 h-4" />
             </button>
           )}
 
@@ -199,11 +265,13 @@ function ProjectCard({
   showArrows,
   targetUrl,
   formType,
+  isClone = false,
 }: {
   portfolio: Project;
   showArrows: boolean;
   targetUrl: string;
   formType: CtaFormType;
+  isClone?: boolean;
 }) {
   const { handleClick, modalNode } = useCtaAction(targetUrl, formType);
   const handleCardClick = (e: React.MouseEvent) => {
@@ -221,6 +289,8 @@ function ProjectCard({
           animate: { opacity: 1, y: 0, filter: 'blur(0px)', transition: { duration: 0.8, ease: [0.22, 1, 0.36, 1] } }
         }}
         whileHover={{ y: -10, transition: { duration: 0.4, ease: [0.22, 1, 0.36, 1] } }}
+        data-portfolio-card
+        aria-hidden={isClone || undefined}
         className={cn(
           "flex flex-col group cursor-pointer",
           showArrows ? "w-full md:w-[calc(50%-20px)] lg:w-[calc(33.33%-26px)] shrink-0 flex-none snap-start" : ""
@@ -243,7 +313,10 @@ function ProjectCard({
         </div>
 
         {/* Content */}
-        <h3 className="text-lg md:text-xl font-bold text-[#4B2A63] mb-2.5 tracking-tight group-hover:text-black transition-colors">
+        <h3 className={cn(
+          "text-lg md:text-xl font-bold text-[#4B2A63] mb-2.5 tracking-tight group-hover:text-black transition-colors",
+          showArrows && "max-md:px-12"
+        )}>
           {portfolio.title}
         </h3>
         
@@ -262,7 +335,7 @@ function ProjectCard({
         {/* Link */}
         <div className="flex items-center text-slate-900 text-xs md:text-sm font-bold group-hover:text-[#4B2A63] transition-all duration-300 mt-auto cursor-pointer">
           {targetUrl ? (
-            <a href={targetUrl} onClick={handleCardClick} className="flex items-center">
+            <a href={targetUrl} onClick={handleCardClick} tabIndex={isClone ? -1 : undefined} className="flex items-center">
               {portfolio.ctaText || 'Explore Project'} <ArrowRight className="w-3.5 h-3.5 ml-1.5 transition-transform group-hover:translate-x-1" />
             </a>
           ) : (

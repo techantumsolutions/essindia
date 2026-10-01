@@ -17,6 +17,7 @@ export type FieldType =
   | 'industrySelect'
   | 'formSelect'
   | 'ratingSelect'
+  | 'date'
   | 'null';
 
 /** Fields editors should not change — heading level is fixed in the component. */
@@ -427,6 +428,12 @@ export function humanLabel(
     return 'Category Name';
   }
 
+  if (options?.sectionType === 'landing1-testimonials' && options?.keyPath?.includes('testimonials')) {
+    if (key === 'name') return 'Name';
+    if (key === 'companyName') return 'Company Name';
+    if (key === 'designation') return 'Designation';
+  }
+
   if (options?.sectionType === 'landing2-testimonials' && options?.keyPath?.includes('testimonials.')) {
     if (key === 'mediaUrl' || key === 'image' || key === 'videoUrl') return 'Image / Video Upload';
     if (key === 'quote') return 'Quote';
@@ -533,6 +540,10 @@ export function detectFieldType(
   if (typeof value === 'string') {
     const lower = key.toLowerCase();
 
+    if (sectionType === 'landing1-works' && lower === 'date' && keyPath?.includes('works')) {
+      return 'date';
+    }
+
     if (lower.endsWith('formtype') || lower.includes('formtype')) {
       return 'formSelect';
     }
@@ -619,6 +630,15 @@ export function detectFieldType(
       return 'textarea';
     }
 
+    // Section-level description only. Step descriptions stay textareas.
+    if (
+      sectionType === 'bi-business-impact' &&
+      lower === 'description' &&
+      (!keyPath || !keyPath.includes('steps'))
+    ) {
+      return 'richtext';
+    }
+
     if ((sectionType?.startsWith('europe-') || sectionType?.startsWith('uganda-') || sectionType?.startsWith('landing2-') || sectionType === 'bi-hero' || sectionType?.startsWith('bi-') || sectionType?.startsWith('oracle-') || sectionType === 'roi-hero' || sectionType?.startsWith('roi-') || sectionType === 'rpa-capabilities' || sectionType === 'employee-spotlight-hero' || sectionType === 'mfg-hero' || sectionType === 'mfg-process' || sectionType === 'retail-hero' || sectionType === 'erp-value' || sectionType === 'erp-intro' || sectionType === 'erp-modules' || sectionType === 'erp-modules-grid' || sectionType === 'why-ess' || sectionType === 'sticky-card' || sectionType === 'sticky-floating-card' || sectionType?.includes('industr') || sectionType === 'hospital-tech-specs' || sectionType?.startsWith('staffing-') || sectionType?.startsWith('about-us-') || sectionType?.startsWith('contact-') || sectionType?.startsWith('judicial-') || sectionType?.startsWith('ass-') || sectionType?.startsWith('aom-') || sectionType?.startsWith('fmcg-') || sectionType?.startsWith('rpa-')) && (lower === 'description' || lower === 'desc' || lower === 'desc2' || lower.includes('description') || lower.includes('desc'))) {
       return 'textarea';
     }
@@ -634,6 +654,13 @@ export function detectFieldType(
       return 'textarea';
     }
     if (sectionType === 'landing1-testimonials' && lower === 'quote') {
+      return 'textarea';
+    }
+    if (
+      sectionType === 'retail-operations' &&
+      keyPath?.includes('operations') &&
+      (lower === 'description' || lower === 'desc')
+    ) {
       return 'textarea';
     }
     if (lower !== 'badgeicon' && (lower === 'badge' || lower === 'badgetext' || lower.includes('badge') || lower === 'tagtext' || lower === 'tag1text' || lower === 'tag2text' || lower === 'tag')) {
