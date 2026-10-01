@@ -5,12 +5,18 @@ import Image from 'next/image';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronRight } from 'lucide-react';
 
+interface QuestionItem {
+  text?: string;
+  question?: string;
+  image?: string;
+}
+
 interface TabItem {
   tabName: string;
   tabDesc: string;
   heading: string;
   subheading: string;
-  questions: string[];
+  questions: (string | QuestionItem)[];
   image: string;
 }
 
@@ -20,6 +26,7 @@ interface BiTabsContent {
 }
 
 export function BiTabs({ content }: { content?: BiTabsContent }) {
+  const [hoveredQuestionImage, setHoveredQuestionImage] = useState<string | null>(null);
   const defaultTabs: TabItem[] = [
     {
       tabName: 'Leadership (CEOs / Directors)',
@@ -221,7 +228,7 @@ export function BiTabs({ content }: { content?: BiTabsContent }) {
               className="flex flex-col lg:flex-row items-center gap-12 lg:gap-16"
             >
               <div className="flex-1 space-y-6 text-left w-full">
-                <div className="space-y-1">
+                <div className="space-y-3">
                   <h3 className="text-3xl sm:text-4xl font-bold text-slate-900 tracking-tight leading-tight">
                     {typeof activeTab.heading === 'string' && (activeTab.heading.includes('<p>') || activeTab.heading.includes('<')) ? (
                       <span dangerouslySetInnerHTML={{ __html: activeTab.heading }} />
@@ -243,43 +250,68 @@ export function BiTabs({ content }: { content?: BiTabsContent }) {
                 {/* Questions List (Matching light rounded pills with chevron icon) */}
                 {activeTab.questions && activeTab.questions.length > 0 && (
                   <div className="space-y-3 w-full max-w-xl">
-                    {activeTab.questions.map((question, qIdx) => (
-                      <motion.div
-                        key={qIdx}
-                        initial={{ opacity: 0, x: -10 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        transition={{ delay: qIdx * 0.04 }}
-                        className="bg-white border border-slate-200/80 hover:border-purple-300 text-slate-800 font-medium text-[15px] sm:text-base px-6 py-4 rounded-2xl shadow-[0_2px_8px_rgba(0,0,0,0.03)] transition-all duration-300 hover:shadow-md hover:translate-x-1 flex items-center justify-between gap-4 group cursor-default"
-                      >
-                        <span className="flex-1">
-                          {typeof question === 'string' && (question.includes('<p>') || question.includes('<')) ? (
-                            <span dangerouslySetInnerHTML={{ __html: question }} />
-                          ) : (
-                            question
-                          )}
-                        </span>
-                        <ChevronRight className="w-5 h-5 text-purple-600 shrink-0 group-hover:translate-x-0.5 transition-transform" />
-                      </motion.div>
-                    ))}
+                    {activeTab.questions.map((question, qIdx) => {
+                      const qText = typeof question === 'string' ? question : (question.text || question.question || '');
+                      const qImage = typeof question === 'object' ? question.image : undefined;
+
+                      return (
+                        <motion.div
+                          key={qIdx}
+                          initial={{ opacity: 0, x: -10 }}
+                          animate={{ opacity: 1, x: 0 }}
+                          transition={{ delay: qIdx * 0.04 }}
+                          onMouseEnter={() => {
+                            if (qImage && qImage.trim() !== '') {
+                              setHoveredQuestionImage(qImage);
+                            }
+                          }}
+                          onMouseLeave={() => {
+                            setHoveredQuestionImage(null);
+                          }}
+                          className={`bg-white border border-slate-200/80 hover:border-purple-400 text-slate-800 font-medium text-[15px] sm:text-base px-6 py-4 rounded-2xl shadow-[0_2px_8px_rgba(0,0,0,0.03)] transition-all duration-300 hover:shadow-md hover:translate-x-1 flex items-center justify-between gap-4 group cursor-pointer ${
+                            qImage ? 'hover:bg-purple-50/50' : ''
+                          }`}
+                        >
+                          <span className="flex-1">
+                            {typeof qText === 'string' && (qText.includes('<p>') || qText.includes('<')) ? (
+                              <span dangerouslySetInnerHTML={{ __html: qText }} />
+                            ) : (
+                              qText
+                            )}
+                          </span>
+                          <ChevronRight className="w-5 h-5 text-purple-600 shrink-0 group-hover:translate-x-0.5 transition-transform" />
+                        </motion.div>
+                      );
+                    })}
                   </div>
                 )}
               </div>
 
               {/* Right Image Column */}
-              {activeTab.image && (
-                <div className="flex-1 w-full max-w-lg lg:max-w-2xl shrink-0 flex justify-center items-center">
-                  <div className="w-full relative aspect-[4/3] sm:aspect-[1.4] rounded-2xl overflow-hidden shadow-xl border border-slate-200/80 bg-white">
-                    <Image
-                      src={activeTab.image}
-                      alt={typeof activeTab.heading === 'string' ? activeTab.heading : 'BI Tab'}
-                      fill
-                      sizes="(max-width: 1024px) 100vw, 50vw"
-                      className="object-contain p-2"
-                      priority
-                    />
+              {(() => {
+                let rawSrc = hoveredQuestionImage || activeTab.image || '';
+                let imgSrc = rawSrc.trim();
+                if (!imgSrc) return null;
+                if (!imgSrc.startsWith('/') && !imgSrc.startsWith('http://') && !imgSrc.startsWith('https://')) {
+                  imgSrc = `/${imgSrc}`;
+                }
+                return (
+                  <div className="flex-1 w-full max-w-lg lg:max-w-2xl shrink-0 flex justify-center items-center">
+                    <div className="w-full relative aspect-[4/3] sm:aspect-[1.4] rounded-2xl overflow-hidden shadow-xl border border-slate-200/80 bg-white">
+                      <Image
+                        key={imgSrc}
+                        src={imgSrc}
+                        alt={typeof activeTab.heading === 'string' ? activeTab.heading : 'BI Tab'}
+                        fill
+                        sizes="(max-width: 1024px) 100vw, 50vw"
+                        className="object-contain p-2 transition-all duration-300"
+                        priority
+                        unoptimized={imgSrc.startsWith('http://') || imgSrc.startsWith('https://')}
+                      />
+                    </div>
                   </div>
-                </div>
-              )}
+                );
+              })()}
             </motion.div>
           </AnimatePresence>
         </div>

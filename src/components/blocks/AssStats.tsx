@@ -31,7 +31,7 @@ export function AssStats({ content }: { content?: AssStatsContent }) {
                   {stat.value}
                 </span>
                 <span className="text-[15px] md:text-base text-slate-600 font-normal max-w-[200px] leading-relaxed">
-                  {stat.label}
+                  {stat.label || (stat as any).description}
                 </span>
               </div>
               {idx < stats.length - 1 && (

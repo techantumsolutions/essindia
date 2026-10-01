@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { client } from '@/lib/db';
+import { ensureChatTables } from '@/lib/db/ensure-chat-tables';
 import { getAdminSessionServer } from '@/lib/auth/session';
 import { sendEmail } from '@/lib/email';
 import { absoluteUrl } from '@/lib/seo/site-url';
@@ -13,17 +14,8 @@ export async function GET(request: Request) {
       return NextResponse.json({ error: 'conversationId parameter is required' }, { status: 400 });
     }
 
-    // Ensure table exists on target DB
-    await client`
-      CREATE TABLE IF NOT EXISTS "chat_messages" (
-        "id" uuid PRIMARY KEY DEFAULT gen_random_uuid(),
-        "conversation_id" uuid NOT NULL,
-        "sender_type" varchar(50) NOT NULL,
-        "sender_name" varchar(255),
-        "message" text NOT NULL,
-        "created_at" timestamp DEFAULT now() NOT NULL
-      );
-    `;
+    // Ensure table exists on target DB (run once per runtime instance)
+    await ensureChatTables();
 
     const messages = await client`
       SELECT id, conversation_id as "conversationId", sender_type as "senderType", sender_name as "senderName", message, created_at as "createdAt"

@@ -160,7 +160,7 @@ export function ArrayFieldEditor({
       } else if (lowerKey === 'sections') {
         defaultObj = { title: '', items: [''] };
       } else if (lowerKey === 'stats') {
-        defaultObj = { value: '', label: '' };
+        defaultObj = { value: '', label: '', description: '' };
       } else if (lowerKey === 'features') {
         if (sectionType === 'hospital-features') {
           defaultObj = { label: '' };

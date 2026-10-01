@@ -71,25 +71,33 @@ function CardItem({ card, index }: { card: ServiceCard; index: number }) {
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
       transition={{ duration: 0.4, delay: index * 0.08 }}
-      className="group flex flex-col justify-between rounded-2xl bg-white p-7 text-center border border-slate-200/80 shadow-[0_4px_20px_rgba(0,0,0,0.03)] hover:bg-[#f0f4ff] hover:border-[#4f46e5] hover:shadow-[0_12px_30px_rgba(79,70,229,0.15)] transition-all duration-300 min-h-[460px] cursor-pointer"
+      className="group flex flex-col rounded-2xl bg-white p-6 sm:p-7 text-center border border-slate-200/80 shadow-[0_4px_20px_rgba(0,0,0,0.03)] hover:bg-[#f0f4ff] hover:border-[#4f46e5] hover:shadow-[0_12px_30px_rgba(79,70,229,0.15)] transition-all duration-300 h-full cursor-pointer"
     >
-      <div className="flex flex-col items-center">
+      <div className="flex flex-col items-center flex-1">
         {/* SVG Icon */}
-        {card.image && (
-          <div className="relative w-20 h-20 mb-6 flex items-center justify-center transition-transform duration-300 group-hover:scale-105">
-            <Image
-              src={card.image}
-              alt={card.title || 'Service Icon'}
-              fill
-              className="object-contain"
-              sizes="80px"
-            />
-          </div>
-        )}
+        {(() => {
+          let imgSrc = (card.image || '').trim();
+          if (!imgSrc) return null;
+          if (!imgSrc.startsWith('/') && !imgSrc.startsWith('http://') && !imgSrc.startsWith('https://')) {
+            imgSrc = `/${imgSrc}`;
+          }
+          return (
+            <div className="relative w-16 h-16 sm:w-20 sm:h-20 mb-4 flex items-center justify-center transition-transform duration-300 group-hover:scale-105">
+              <Image
+                src={imgSrc}
+                alt={card.title || 'Service Icon'}
+                fill
+                className="object-contain"
+                sizes="80px"
+                unoptimized={imgSrc.startsWith('http://') || imgSrc.startsWith('https://')}
+              />
+            </div>
+          );
+        })()}
 
         {/* Card Title */}
         {card.title && (
-          <div className="w-full mb-3">
+          <div className="w-full mb-2">
             <h3 className="text-lg sm:text-[20px] font-bold text-[#0a1128] leading-snug">
               {card.title}
             </h3>
@@ -98,14 +106,14 @@ function CardItem({ card, index }: { card: ServiceCard; index: number }) {
 
         {/* Short Description */}
         {card.description && (
-          <p className="text-xs sm:text-sm text-slate-600 leading-relaxed mb-6 font-normal max-w-[260px]">
+          <p className="text-xs sm:text-sm text-slate-600 leading-relaxed mb-4 font-normal max-w-[260px]">
             {card.description}
           </p>
         )}
 
         {/* Feature Checkpoints */}
         {card.points && card.points.length > 0 && (
-          <ul className="w-full space-y-2.5 text-left pl-1">
+          <ul className="w-full space-y-2 text-left pl-1 mb-4">
             {card.points.map((point, pIdx) => (
               <li key={pIdx} className="flex items-center gap-2.5 text-xs sm:text-[13px] font-medium text-slate-700">
                 <CheckCircle2 className="w-4 h-4 text-[#4f46e5] shrink-0" />
@@ -118,7 +126,7 @@ function CardItem({ card, index }: { card: ServiceCard; index: number }) {
 
       {/* Action CTA */}
       {card.ctaText && (
-        <div className="mt-2 flex justify-start pl-1">
+        <div className="mt-4 pt-2 flex justify-start pl-1">
           <Link
             href={card.ctaUrl || '/contact-us'}
             onClick={card.ctaFormType ? (e) => { e.preventDefault(); handleClick(); } : undefined}
@@ -139,6 +147,24 @@ export function UgandaServices({ content }: { content?: UgandaServicesContent })
   const title = content?.title || 'Smart digital solutions that drive real results.';
   const description = content?.description || 'We turn ideas into powerful digital experiences that help your business grow and succeed.';
   const cards = content?.cards?.length ? content.cards : DEFAULT_CARDS;
+
+  const [currentIndex, setCurrentIndex] = React.useState(0);
+  const isCarousel = cards.length > 4;
+
+  const getGridColsClass = (count: number) => {
+    if (count === 1) return 'grid-cols-1 max-w-xl mx-auto';
+    if (count === 2) return 'grid-cols-1 sm:grid-cols-2 max-w-4xl mx-auto';
+    if (count === 3) return 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 max-w-6xl mx-auto';
+    return 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 max-w-7xl mx-auto';
+  };
+
+  const handlePrev = () => {
+    setCurrentIndex((prev) => (prev === 0 ? Math.max(0, cards.length - 4) : prev - 1));
+  };
+
+  const handleNext = () => {
+    setCurrentIndex((prev) => (prev >= cards.length - 4 ? 0 : prev + 1));
+  };
 
   return (
     <section className="w-full py-20 bg-[#f8fafc] border-b border-slate-100">
@@ -169,12 +195,65 @@ export function UgandaServices({ content }: { content?: UgandaServicesContent })
           </p>
         )}
 
-        {/* 4 Card Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-7 max-w-7xl mx-auto">
-          {cards.map((card, index) => (
-            <CardItem key={index} card={card} index={index} />
-          ))}
-        </div>
+        {/* Cards Layout */}
+        {!isCarousel ? (
+          <div className={`grid gap-6 lg:gap-7 ${getGridColsClass(cards.length)}`}>
+            {cards.map((card, index) => (
+              <CardItem key={index} card={card} index={index} />
+            ))}
+          </div>
+        ) : (
+          <div className="relative max-w-7xl mx-auto px-4 md:px-12">
+            {/* Carousel Track Container */}
+            <div className="overflow-hidden">
+              <div
+                className="flex transition-transform duration-500 ease-out gap-6"
+                style={{
+                  transform: `translateX(-${currentIndex * (100 / 4)}%)`,
+                }}
+              >
+                {cards.map((card, index) => (
+                  <div key={index} className="w-full sm:w-[calc(50%-12px)] lg:w-[calc(25%-18px)] shrink-0">
+                    <CardItem card={card} index={index} />
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Navigation Arrows */}
+            <button
+              type="button"
+              onClick={handlePrev}
+              aria-label="Previous services"
+              className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-2 md:-translate-x-4 w-10 h-10 rounded-full bg-white border border-slate-200 shadow-md text-slate-700 hover:text-indigo-600 flex items-center justify-center transition-all cursor-pointer z-10"
+            >
+              <span className="text-lg font-bold">‹</span>
+            </button>
+            <button
+              type="button"
+              onClick={handleNext}
+              aria-label="Next services"
+              className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-2 md:translate-x-4 w-10 h-10 rounded-full bg-white border border-slate-200 shadow-md text-slate-700 hover:text-indigo-600 flex items-center justify-center transition-all cursor-pointer z-10"
+            >
+              <span className="text-lg font-bold">›</span>
+            </button>
+
+            {/* Pagination Dots */}
+            <div className="flex justify-center items-center gap-2 mt-8">
+              {Array.from({ length: cards.length - 3 }).map((_, idx) => (
+                <button
+                  key={idx}
+                  type="button"
+                  onClick={() => setCurrentIndex(idx)}
+                  className={`h-2.5 rounded-full transition-all cursor-pointer ${
+                    currentIndex === idx ? 'w-8 bg-indigo-600' : 'w-2.5 bg-slate-300 hover:bg-slate-400'
+                  }`}
+                  aria-label={`Go to slide ${idx + 1}`}
+                />
+              ))}
+            </div>
+          </div>
+        )}
 
       </div>
     </section>

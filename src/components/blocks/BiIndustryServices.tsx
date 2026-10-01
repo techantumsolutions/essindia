@@ -11,6 +11,8 @@ interface ServiceTab {
   image: string;
   points: string[];
   buttonText?: string;
+  buttonBgColor?: string;
+  buttonTextColor?: string;
   buttonHoverBgColor?: string;
   buttonHoverTextColor?: string;
   buttonUrl?: string;
@@ -267,17 +269,21 @@ export function BiIndustryServices({ content }: { content?: BiIndustryServicesCo
                       href={activeTab.buttonUrl || '#'}
                       onMouseEnter={() => setIsCardBtnHovered(true)}
                       onMouseLeave={() => setIsCardBtnHovered(false)}
-                      style={
-                        isCardBtnHovered && (activeTab.buttonHoverBgColor || activeTab.buttonHoverTextColor)
-                          ? {
-                              backgroundColor: activeTab.buttonHoverBgColor || undefined,
-                              color: activeTab.buttonHoverTextColor || undefined,
-                            }
-                          : undefined
-                      }
-                      className={`inline-block bg-white ${
+                      style={{
+                        backgroundColor: isCardBtnHovered
+                          ? activeTab.buttonHoverBgColor || activeTab.buttonBgColor || undefined
+                          : activeTab.buttonBgColor || undefined,
+                        color: isCardBtnHovered
+                          ? activeTab.buttonHoverTextColor || activeTab.buttonTextColor || undefined
+                          : activeTab.buttonTextColor || undefined,
+                      }}
+                      className={`inline-block ${
+                        activeTab.buttonBgColor ? '' : 'bg-white'
+                      } ${
                         activeTab.buttonHoverBgColor ? '' : 'hover:bg-slate-50'
-                      } text-[#4c327f] font-semibold text-sm sm:text-base rounded-full px-8 py-3 w-fit shadow-md transition-all duration-300 hover:shadow-lg active:scale-[0.98] text-center cursor-pointer`}
+                      } ${
+                        activeTab.buttonTextColor ? '' : 'text-[#4c327f]'
+                      } font-semibold text-sm sm:text-base rounded-full px-8 py-3 w-fit shadow-md transition-all duration-300 hover:shadow-lg active:scale-[0.98] text-center cursor-pointer`}
                     >
                       {activeTab.buttonText || 'Case studies'}
                     </a>

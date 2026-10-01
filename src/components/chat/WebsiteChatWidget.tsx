@@ -79,12 +79,15 @@ export function WebsiteChatWidget() {
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ userName: 'Guest User', channel: 'Website Widget' }),
         });
-        const data = await res.json();
-        if (data.success && data.conversation) {
-          setConversationId(data.conversation.id);
-          localStorage.setItem('ess_chat_conv_id', data.conversation.id);
-          localStorage.setItem('ess_chat_user_name', 'Guest User');
-          setHasStarted(true);
+        const contentType = res.headers.get('content-type') || '';
+        if (res.ok && contentType.includes('application/json')) {
+          const data = await res.json();
+          if (data.success && data.conversation) {
+            setConversationId(data.conversation.id);
+            localStorage.setItem('ess_chat_conv_id', data.conversation.id);
+            localStorage.setItem('ess_chat_user_name', 'Guest User');
+            setHasStarted(true);
+          }
         }
       } catch (err) {
         console.error('Session init error:', err);
@@ -101,7 +104,8 @@ export function WebsiteChatWidget() {
     const fetchMessages = async () => {
       try {
         const res = await fetch(`/api/chat/messages?conversationId=${conversationId}`);
-        if (res.ok) {
+        const contentType = res.headers.get('content-type') || '';
+        if (res.ok && contentType.includes('application/json')) {
           const data = await res.json();
           setMessages(data.messages || []);
 

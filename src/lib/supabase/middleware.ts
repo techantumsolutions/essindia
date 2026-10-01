@@ -7,6 +7,11 @@ export async function updateSession(request: NextRequest) {
     request.nextUrl.pathname.startsWith('/admin') &&
     !request.nextUrl.pathname.startsWith('/admin/login')
 
+  // Allow login route to render directly without Supabase auth check latency or redirects
+  if (request.nextUrl.pathname.startsWith('/admin/login')) {
+    return NextResponse.next({ request })
+  }
+
   // Mock admin sessions must skip Supabase refresh — getUser() can rewrite cookies
   // and cause spurious redirects to /admin/login on in-app navigation.
   if (isMockAuthenticated && isAdminRoute) {

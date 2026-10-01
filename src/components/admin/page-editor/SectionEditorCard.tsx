@@ -345,6 +345,14 @@ const DEFAULT_JOB_DETAIL_CONTENT: Record<string, any> = {
   formSubheader: 'Join our team',
 };
 
+const DEFAULT_ASS_STATS_CONTENT: Record<string, any> = {
+  stats: [
+    { value: '100%', label: 'increase in customer Satisfaction', description: 'increase in customer Satisfaction' },
+    { value: '80%', label: 'increase in field productivity', description: 'increase in field productivity' },
+    { value: '60%', label: 'Reduction in inventory carrying costs', description: 'Reduction in inventory carrying costs' }
+  ]
+};
+
 const DEFAULT_ASS_HERO_CONTENT: Record<string, any> = {
   bgColor: '#161f38',
   badgeBgColor: '#ffffff',
@@ -2285,6 +2293,8 @@ export function SectionEditorCard({
         baseSchema = DEFAULT_ASS_HERO_CONTENT as Record<string, JsonValue>;
       } else if (section.type === 'ass-experience') {
         baseSchema = DEFAULT_ASS_EXPERIENCE_CONTENT as Record<string, JsonValue>;
+      } else if (section.type === 'ass-stats') {
+        baseSchema = DEFAULT_ASS_STATS_CONTENT as Record<string, JsonValue>;
       } else if (section.type === 'ass-cta') {
         baseSchema = DEFAULT_ASS_CTA_CONTENT as Record<string, JsonValue>;
       } else if (section.type === 'aom-hero') {

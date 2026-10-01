@@ -68,18 +68,14 @@ export function MediaField({ fieldKey, label, value, onChange, hint, sectionType
 
   const allowedTabs = React.useMemo((): TabType[] => {
     const key = fieldKey.toLowerCase();
-    if (sectionType === 'landing2-testimonials') {
-      if (key.includes('video')) return ['videos'];
-      return ['images', 'videos'];
-    }
-    if (sectionType === 'landing1-showcase') {
+    if (sectionType === 'landing2-carousel' || sectionType === 'landing1-showcase') {
       return ['videos'];
     }
-    if (sectionType === 'europe-case-study-slider') {
-      return ['images', 'videos'];
+    if (sectionType === 'landing2-testimonials' || sectionType === 'europe-case-study-slider') {
+      return ['videos', 'images'];
     }
     if (key === 'videourl' || key.includes('video')) {
-      return ['videos'];
+      return ['videos', 'images'];
     }
     if (key.includes('pdf') || key.includes('document')) {
       return ['pdfs'];
@@ -88,7 +84,7 @@ export function MediaField({ fieldKey, label, value, onChange, hint, sectionType
       return ['gifs'];
     }
     if (key === 'image' || key.includes('image') || key.includes('media') || key === 'mediaurl') {
-      return ['images'];
+      return ['images', 'videos'];
     }
     // Default fallback to images only
     return ['images'];

@@ -79,12 +79,25 @@ export function Landing1Showcase({ content }: { content?: Landing1ShowcaseConten
   const [isVideoModalOpen, setIsVideoModalOpen] = useState(false);
 
   const activeTabData = data.tabs?.[activeTab];
-  const activeMedia = activeTabData?.image || (activeTabData as any)?.videoUrl || '';
+  const activeMedia = (
+    (activeTabData as any)?.youtubeUrl ||
+    (activeTabData as any)?.videoUrl ||
+    (activeTabData as any)?.mediaUrl ||
+    activeTabData?.image ||
+    ''
+  );
 
   const isVideoFile = (url: string) => {
     if (!url) return false;
     const lower = url.toLowerCase();
-    return Boolean(lower.match(/\.(mp4|webm|mov|ogg)$/) || lower.includes('/video/') || lower.includes('youtube.com') || lower.includes('vimeo.com'));
+    return Boolean(
+      lower.match(/\.(mp4|webm|mov|ogg|m4v)$/) ||
+      lower.includes('/video/') ||
+      lower.includes('/videos/') ||
+      lower.includes('youtube.com') ||
+      lower.includes('youtu.be') ||
+      lower.includes('vimeo.com')
+    );
   };
 
   const primaryFormType = (activeTabData?.primaryCtaFormType || '') as CtaFormType;
@@ -179,77 +192,80 @@ export function Landing1Showcase({ content }: { content?: Landing1ShowcaseConten
                 </div>
               </div>
 
-              {/* Graphic / Video Player Box */}
-              <div className="relative w-full aspect-[16/8] mt-6 rounded-xl overflow-hidden shadow-md border border-slate-100 bg-slate-900 group">
-                {isVideoFile(activeMedia) ? (
-                  <video
-                    src={activeMedia}
-                    controls
-                    autoPlay
-                    muted
-                    loop
-                    playsInline
-                    className="w-full h-full object-cover"
-                  />
-                ) : (
-                  <div
-                    onClick={() => activeMedia && setIsVideoModalOpen(true)}
-                    className="relative w-full h-full cursor-pointer"
-                  >
-                    {(() => {
-                      let imgSrc = activeMedia && activeMedia.trim() !== '' ? activeMedia.trim() : '/Landing page1/assets/Frame 1618872978.png';
-                      if (!imgSrc.startsWith('/') && !imgSrc.startsWith('http://') && !imgSrc.startsWith('https://')) {
-                        imgSrc = `/${imgSrc}`;
-                      }
-                      return (
-                        <Image
-                          src={imgSrc}
-                          alt={data.tabs[activeTab].title || 'Showcase Image'}
-                          fill
-                          className="object-cover object-top"
-                          unoptimized={imgSrc.startsWith('http://') || imgSrc.startsWith('https://')}
-                        />
-                      );
-                    })()}
-                    {/* Play Button Overlay */}
-                    <div className="absolute inset-0 flex items-center justify-center bg-black/20 hover:bg-black/30 transition-colors">
-                      <div className="w-16 h-16 rounded-full bg-red-600 flex items-center justify-center shadow-lg transition-transform group-hover:scale-110 duration-200">
-                        <Play className="w-7 h-7 text-white fill-current ml-1" />
-                      </div>
-                    </div>
-                  </div>
-                )}
+              {/* Inline Graphic / Embedded Video Player Box */}
+              <div className="relative w-full aspect-[16/8] mt-6 rounded-xl overflow-hidden shadow-md border border-slate-100 bg-slate-900">
+                {(() => {
+                  const media = (activeMedia || '').trim();
+                  const isYouTube = media.includes('youtube.com') || media.includes('youtu.be');
+                  const isVimeo = media.includes('vimeo.com');
+
+                  let embedUrl = media;
+                  if (isYouTube) {
+                    let videoId = '';
+                    if (media.includes('watch?v=')) {
+                      videoId = media.split('watch?v=')[1]?.split('&')[0] || '';
+                    } else if (media.includes('youtu.be/')) {
+                      videoId = media.split('youtu.be/')[1]?.split('?')[0] || '';
+                    } else if (media.includes('youtube.com/shorts/')) {
+                      videoId = media.split('youtube.com/shorts/')[1]?.split('?')[0] || '';
+                    } else if (media.includes('youtube.com/embed/')) {
+                      videoId = media.split('youtube.com/embed/')[1]?.split('?')[0] || '';
+                    }
+                    if (videoId) {
+                      embedUrl = `https://www.youtube.com/embed/${videoId}`;
+                    }
+                  } else if (isVimeo) {
+                    const id = media.split('vimeo.com/')[1]?.split('?')[0];
+                    if (id) {
+                      embedUrl = `https://player.vimeo.com/video/${id}`;
+                    }
+                  }
+
+                  if (isYouTube || isVimeo) {
+                    return (
+                      <iframe
+                        src={embedUrl}
+                        title={data.tabs[activeTab]?.title || 'Video Player'}
+                        className="w-full h-full border-0"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                        allowFullScreen
+                      />
+                    );
+                  }
+
+                  if (isVideoFile(media)) {
+                    return (
+                      <video
+                        src={media}
+                        controls
+                        autoPlay
+                        muted
+                        loop
+                        playsInline
+                        className="w-full h-full object-cover"
+                      />
+                    );
+                  }
+
+                  let imgSrc = media && media !== '' ? media : '/Landing page1/assets/Frame 1618872978.png';
+                  if (!imgSrc.startsWith('/') && !imgSrc.startsWith('http://') && !imgSrc.startsWith('https://')) {
+                    imgSrc = `/${imgSrc}`;
+                  }
+                  return (
+                    <Image
+                      src={imgSrc}
+                      alt={data.tabs[activeTab]?.title || 'Showcase Image'}
+                      fill
+                      className="object-cover object-top"
+                      unoptimized={imgSrc.startsWith('http://') || imgSrc.startsWith('https://')}
+                    />
+                  );
+                })()}
               </div>
             </div>
           )}
         </div>
       </div>
-
-      {/* Fullscreen Video Popup Modal */}
-      {isVideoModalOpen && activeMedia && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4">
-          <div className="relative w-full max-w-4xl bg-black rounded-2xl overflow-hidden aspect-video shadow-2xl border border-white/20">
-            <button
-              type="button"
-              onClick={() => setIsVideoModalOpen(false)}
-              className="absolute top-4 right-4 z-10 w-10 h-10 rounded-full bg-black/60 text-white flex items-center justify-center hover:bg-black transition-colors cursor-pointer"
-            >
-              <X className="w-6 h-6" />
-            </button>
-            {activeMedia.includes('youtube') || activeMedia.includes('vimeo') ? (
-              <iframe
-                src={activeMedia}
-                title="Video Preview"
-                className="w-full h-full border-0"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                allowFullScreen
-              />
-            ) : (
-              <video src={activeMedia} controls autoPlay className="w-full h-full object-contain" />
-            )}
-          </div>
-        </div>
-      )}
 
       {primaryModal}
       {secondaryModal}

@@ -371,6 +371,11 @@ export function humanLabel(
     if (key === 'description') return 'Point Description';
   }
 
+  if (options?.sectionType === 'ass-stats' && options?.keyPath?.includes('stats')) {
+    if (key === 'value') return 'Value (e.g. 100%)';
+    if (key === 'label' || key === 'description') return 'Description';
+  }
+
   if (options?.sectionType === 'sticky-card') {
     if (key === 'image') return 'Image Upload';
     if (key === 'title') return 'Title';
@@ -391,27 +396,86 @@ export function humanLabel(
     if (key === 'name') return 'Tab Name';
     if (key === 'title') return 'Tab Title';
     if (key === 'desc') return 'Tab Description';
+    if (key === 'videoUrl' || key === 'youtubeUrl') return 'YouTube / Video Link';
+    if (key === 'image' || key === 'mediaUrl') return 'Media / Video File Upload';
     if (key === 'primaryCtaText') return 'Tab CTA 1';
     if (key === 'primaryCtaUrl') return 'Tab CTA 1 URL';
     if (key === 'primaryCtaFormType') return 'Tab CTA 1 Form Action';
     if (key === 'secondaryCtaText') return 'Tab CTA 2';
     if (key === 'secondaryCtaUrl') return 'Tab CTA 2 URL';
     if (key === 'secondaryCtaFormType') return 'Tab CTA 2 Form Action';
-    if (key === 'image' || key === 'videoUrl') return 'Video Upload';
   }
 
   if (options?.sectionType === 'landing2-carousel') {
     if (key === 'badge') return 'Tag';
     if (key === 'title') return 'Title';
     if (key === 'description') return 'Description';
-    if (key === 'mediaUrl') return 'Thumbnail Upload';
-    if (key === 'videoUrl') return 'Media Upload';
+    if (key === 'videoUrl' || key === 'youtubeUrl') return 'YouTube / Video Link';
+    if (key === 'mediaUrl' || key === 'image') return 'Media / Video File Upload';
   }
 
   if (options?.sectionType === 'landing2-modules' && options?.keyPath?.includes('modules.')) {
     if (key === 'title') return 'Module Title';
     if (key === 'icon' || key === 'iconType' || key === 'image' || key === 'iconUrl') return 'Icon / Image Upload';
     if (key === 'href') return 'Link URL';
+  }
+
+  if (options?.sectionType === 'bi-tabs' && options?.keyPath?.includes('questions')) {
+    if (key === 'text' || key === 'question') return 'Question Text';
+    if (key === 'image') return 'Question Image Upload';
+  }
+
+  if (options?.sectionType === 'fmcg-hero') {
+    if (key === 'button2Text') return 'Button 2 Text';
+    if (key === 'button2Url') return 'Button 2 URL';
+    if (key === 'button2FormType') return 'Button 2 Form Action';
+    if (key === 'button2BgColor') return 'Button 2 Background Color';
+    if (key === 'button2HoverBgColor') return 'Button 2 Hover Background Color';
+    if (key === 'button2BorderColor') return 'Button 2 Border Color';
+    if (key === 'button2TextColor') return 'Button 2 Text Color';
+    if (key === 'button2HoverTextColor') return 'Button 2 Hover Text Color';
+  }
+
+  if (options?.sectionType === 'europe-dark-showcase' && options?.keyPath?.includes('items.')) {
+    if (key === 'badgeText') return 'Tag / Badge';
+    if (key === 'title') return 'Item Title';
+    if (key === 'description') return 'Item Description';
+    if (key === 'primaryButtonText') return 'Primary Button Text';
+    if (key === 'primaryButtonUrl') return 'Primary Button URL';
+    if (key === 'primaryButtonFormType') return 'Primary Button Form Action';
+    if (key === 'primaryButtonBgColor') return 'Primary Button BG Color';
+    if (key === 'primaryButtonHoverBgColor') return 'Primary Button Hover BG Color';
+    if (key === 'primaryButtonBorderColor') return 'Primary Button Border Color';
+    if (key === 'primaryButtonTextColor') return 'Primary Button Text Color';
+    if (key === 'primaryButtonHoverTextColor') return 'Primary Button Hover Text Color';
+    if (key === 'secondaryButtonText') return 'Secondary Button Text';
+    if (key === 'secondaryButtonUrl') return 'Secondary Button URL';
+    if (key === 'secondaryButtonFormType') return 'Secondary Button Form Action';
+    if (key === 'secondaryButtonBgColor') return 'Secondary Button BG Color';
+    if (key === 'secondaryButtonHoverBgColor') return 'Secondary Button Hover BG Color';
+    if (key === 'secondaryButtonBorderColor') return 'Secondary Button Border Color';
+    if (key === 'secondaryButtonTextColor') return 'Secondary Button Text Color';
+    if (key === 'secondaryButtonHoverTextColor') return 'Secondary Button Hover Text Color';
+    if (key === 'image') return 'Showcase Image Upload';
+  }
+
+  if (options?.sectionType === 'bi-industry-services') {
+    if (key === 'buttonBgColor') return 'Button Background Color';
+    if (key === 'buttonTextColor') return 'Button Text Color';
+    if (key === 'buttonHoverBgColor') return 'Button Hover Background Color';
+    if (key === 'buttonHoverTextColor') return 'Button Hover Text Color';
+  }
+
+  if (options?.sectionType === 'uganda-insights') {
+    if (key === 'tabName') return 'Tab Name';
+    if (key === 'contentTitle') return 'Tab Title';
+    if (key === 'body1') return 'Main Description / Paragraph 1';
+    if (key === 'body2') return 'Sub Description / Paragraph 2';
+    if (key === 'subsections') return 'Rich Text / Subsections';
+    if (key === 'image') return 'Dashboard / Content Image Upload';
+    if (key === 'ctaText') return 'Tab CTA Button Text';
+    if (key === 'ctaUrl') return 'Tab CTA Button URL';
+    if (key === 'ctaFormType') return 'Tab CTA Form Action';
   }
 
   if (options?.sectionType === 'landing2-capabilities') {
@@ -745,6 +809,20 @@ export function mergeSchemaWithContent(
     } else if (key in schema) {
       merged[key] = schema[key];
     }
+  }
+
+  // Normalize ass-stats stats items so existing saved JSON gets label & description fields
+  if (Array.isArray(merged.stats)) {
+    merged.stats = (merged.stats as any[]).map((item: any) => {
+      if (typeof item === 'object' && item !== null) {
+        return {
+          value: item.value ?? '',
+          label: item.label ?? item.description ?? '',
+          description: item.description ?? item.label ?? '',
+        };
+      }
+      return item;
+    });
   }
 
   return merged;

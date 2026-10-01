@@ -29,11 +29,20 @@ interface FmcgHeroContent {
   buttonHoverTextColor?: string;
   buttonUrl?: string;
   buttonFormType?: string;
+  button2Text?: string;
+  button2Url?: string;
+  button2FormType?: string;
+  button2BgColor?: string;
+  button2HoverBgColor?: string;
+  button2BorderColor?: string;
+  button2TextColor?: string;
+  button2HoverTextColor?: string;
   image?: string;
 }
 
 export function FmcgHero({ content }: { content?: FmcgHeroContent }) {
   const [isBtnHovered, setIsBtnHovered] = React.useState(false);
+  const [isBtn2Hovered, setIsBtn2Hovered] = React.useState(false);
   const bgColor = content?.bgColor || '#4b4685';
   const badgeBgColor = content?.badgeBgColor || '#7142D7';
   const badgeBorderColor = content?.badgeBorderColor || '#7167be';
@@ -53,7 +62,18 @@ export function FmcgHero({ content }: { content?: FmcgHeroContent }) {
   const buttonHoverTextColor = content?.buttonHoverTextColor;
   const buttonUrl = content?.buttonUrl || '#';
   const buttonFormType = (content?.buttonFormType || '') as CtaFormType;
-  const { handleClick: handleBtnClick, modalNode } = useCtaAction(buttonUrl, buttonFormType);
+  const { handleClick: handleBtnClick, modalNode: modalNode1 } = useCtaAction(buttonUrl, buttonFormType);
+
+  const button2Text = content?.button2Text;
+  const button2Url = content?.button2Url || '#';
+  const button2FormType = (content?.button2FormType || '') as CtaFormType;
+  const button2BgColor = content?.button2BgColor || '#ffffff';
+  const button2HoverBgColor = content?.button2HoverBgColor;
+  const button2BorderColor = content?.button2BorderColor || '#ffffff';
+  const button2TextColor = content?.button2TextColor || '#2b2a6c';
+  const button2HoverTextColor = content?.button2HoverTextColor;
+  const { handleClick: handleBtn2Click, modalNode: modalNode2 } = useCtaAction(button2Url, button2FormType);
+
   const rightImage = content?.image || '/BI-industy solution-FMGC/2b58cf43-2428-4667-ac1c-680abeb784a1 1.png';
 
   const isGradient = bgColor.includes('gradient') || bgColor.includes('rgba') || bgColor.startsWith('linear') || bgColor.startsWith('radial');
@@ -142,6 +162,24 @@ export function FmcgHero({ content }: { content?: FmcgHeroContent }) {
                   {buttonText}
                 </Link>
               )}
+              {button2Text && (
+                <Link
+                  href={button2Url}
+                  onClick={button2FormType ? (e: React.MouseEvent) => { e.preventDefault(); handleBtn2Click(); } : undefined}
+                  onMouseEnter={() => setIsBtn2Hovered(true)}
+                  onMouseLeave={() => setIsBtn2Hovered(false)}
+                  className={`px-6 py-3 rounded-full text-sm font-bold shadow-md transition-all duration-300 border text-center min-w-[140px] cursor-pointer ${
+                    button2HoverBgColor ? '' : 'hover:shadow-lg hover:scale-105 active:scale-95'
+                  }`}
+                  style={{
+                    backgroundColor: isBtn2Hovered && button2HoverBgColor ? button2HoverBgColor : button2BgColor,
+                    borderColor: button2BorderColor,
+                    color: isBtn2Hovered && button2HoverTextColor ? button2HoverTextColor : button2TextColor,
+                  }}
+                >
+                  {button2Text}
+                </Link>
+              )}
             </div>
           </div>
 
@@ -166,7 +204,8 @@ export function FmcgHero({ content }: { content?: FmcgHeroContent }) {
 
         </div>
       </div>
-      {modalNode}
+      {modalNode1}
+      {modalNode2}
     </section>
   );
 }

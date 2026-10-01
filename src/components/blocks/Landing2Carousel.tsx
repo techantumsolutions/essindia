@@ -55,7 +55,16 @@ export function Landing2Carousel({ content }: { content?: Landing2CarouselConten
   };
 
   const isVideoFile = (url: string) => {
-    return url?.endsWith('.mp4') || url?.endsWith('.webm') || url?.endsWith('.mov');
+    if (!url) return false;
+    const lower = url.toLowerCase();
+    return Boolean(
+      lower.match(/\.(mp4|webm|mov|ogg|m4v)$/) ||
+      lower.includes('/video/') ||
+      lower.includes('/videos/') ||
+      lower.includes('youtube.com') ||
+      lower.includes('youtu.be') ||
+      lower.includes('vimeo.com')
+    );
   };
 
   return (
@@ -77,48 +86,84 @@ export function Landing2Carousel({ content }: { content?: Landing2CarouselConten
 
         {/* Main Card Container */}
         <div className="w-full max-w-4xl relative rounded-[28px] overflow-hidden bg-gradient-to-r from-[#6e22d9] to-[#8c2bee] shadow-2xl border border-purple-400/20 grid grid-cols-1 md:grid-cols-12 min-h-[380px] md:min-h-[420px]">
-          {/* Left Side: Media Upload (Image/Video) & Overlay Play Button */}
+          {/* Left Side: Media Upload (Image/Video) - Embedded Inline */}
           <div className="md:col-span-7 relative p-6 sm:p-8 flex items-center justify-center overflow-hidden min-h-[260px] md:min-h-[420px]">
-            {/* Background Graphic or Uploaded Media */}
-            {isVideoFile(activeSlide.mediaUrl) ? (
-              <video
-                src={activeSlide.mediaUrl}
-                autoPlay
-                muted
-                loop
-                playsInline
-                className="w-full h-full object-contain max-h-[340px] drop-shadow-xl"
-              />
-            ) : (
-              <div className="relative w-full h-full min-h-[240px] md:min-h-[340px] flex items-center justify-center">
-                <Image
-                  src={
-                    activeSlide.mediaUrl &&
-                    !activeSlide.mediaUrl.includes('<iframe') &&
-                    (activeSlide.mediaUrl.startsWith('/') || activeSlide.mediaUrl.startsWith('http://') || activeSlide.mediaUrl.startsWith('https://'))
-                      ? activeSlide.mediaUrl
-                      : '/Landing Page-2/assets/63e39c93deb059f6e6a6bccf_Bsh.svg.png'
-                  }
-                  alt={activeSlide.title || 'Carousel Media'}
-                  fill
-                  className="object-contain drop-shadow-2xl"
-                  priority
-                />
-              </div>
-            )}
+            {(() => {
+              const video = ((activeSlide as any).youtubeUrl || activeSlide.videoUrl || '').trim();
+              const media = (activeSlide.mediaUrl || '').trim();
+              const activeUrl = video || media;
 
-            {/* Central Play Button Badge */}
-            <div className="absolute inset-0 flex items-center justify-center z-10 pointer-events-none">
-              <button
-                type="button"
-                onClick={() => activeSlide.videoUrl && setIsVideoModalOpen(true)}
-                className="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-white/20 backdrop-blur-md border-2 border-white/60 text-white flex items-center justify-center shadow-[0_0_30px_rgba(255,255,255,0.3)] pointer-events-auto transition-transform hover:scale-110 cursor-pointer"
-              >
-                <div className="w-11 h-11 sm:w-14 sm:h-14 rounded-full bg-[#462294] flex items-center justify-center pl-1 shadow-inner">
-                  <Play className="w-5 h-5 sm:w-7 sm:h-7 fill-white text-white" />
+              const isYouTube = activeUrl.includes('youtube.com') || activeUrl.includes('youtu.be');
+              const isVimeo = activeUrl.includes('vimeo.com');
+
+              let embedUrl = activeUrl;
+              if (isYouTube) {
+                let videoId = '';
+                if (activeUrl.includes('watch?v=')) {
+                  videoId = activeUrl.split('watch?v=')[1]?.split('&')[0] || '';
+                } else if (activeUrl.includes('youtu.be/')) {
+                  videoId = activeUrl.split('youtu.be/')[1]?.split('?')[0] || '';
+                } else if (activeUrl.includes('youtube.com/shorts/')) {
+                  videoId = activeUrl.split('youtube.com/shorts/')[1]?.split('?')[0] || '';
+                } else if (activeUrl.includes('youtube.com/embed/')) {
+                  videoId = activeUrl.split('youtube.com/embed/')[1]?.split('?')[0] || '';
+                }
+                if (videoId) {
+                  embedUrl = `https://www.youtube.com/embed/${videoId}`;
+                }
+              } else if (isVimeo) {
+                const id = activeUrl.split('vimeo.com/')[1]?.split('?')[0];
+                if (id) {
+                  embedUrl = `https://player.vimeo.com/video/${id}`;
+                }
+              }
+
+              if (isYouTube || isVimeo) {
+                return (
+                  <div className="w-full h-full min-h-[240px] md:min-h-[340px] rounded-xl overflow-hidden shadow-md bg-black">
+                    <iframe
+                      src={embedUrl}
+                      title={activeSlide.title || 'Carousel Video'}
+                      className="w-full h-full border-0"
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                      allowFullScreen
+                    />
+                  </div>
+                );
+              }
+
+              if (isVideoFile(activeUrl)) {
+                return (
+                  <video
+                    src={activeUrl}
+                    controls
+                    autoPlay
+                    muted
+                    loop
+                    playsInline
+                    className="w-full h-full object-contain max-h-[340px] drop-shadow-xl"
+                  />
+                );
+              }
+
+              return (
+                <div className="relative w-full h-full min-h-[240px] md:min-h-[340px] flex items-center justify-center">
+                  <Image
+                    src={
+                      media &&
+                      !media.includes('<iframe') &&
+                      (media.startsWith('/') || media.startsWith('http://') || media.startsWith('https://'))
+                        ? media
+                        : '/Landing Page-2/assets/63e39c93deb059f6e6a6bccf_Bsh.svg.png'
+                    }
+                    alt={activeSlide.title || 'Carousel Media'}
+                    fill
+                    className="object-contain drop-shadow-2xl"
+                    priority
+                  />
                 </div>
-              </button>
-            </div>
+              );
+            })()}
           </div>
 
           {/* Right Side: Yellow Content Box */}
@@ -177,32 +222,6 @@ export function Landing2Carousel({ content }: { content?: Landing2CarouselConten
               }`}
             />
           ))}
-        </div>
-      )}
-
-      {/* Video Popup Modal */}
-      {isVideoModalOpen && activeSlide.videoUrl && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4">
-          <div className="relative w-full max-w-4xl bg-black rounded-2xl overflow-hidden aspect-video shadow-2xl border border-white/20">
-            <button
-              type="button"
-              onClick={() => setIsVideoModalOpen(false)}
-              className="absolute top-4 right-4 z-10 w-10 h-10 rounded-full bg-black/60 text-white flex items-center justify-center hover:bg-black transition-colors"
-            >
-              <X className="w-6 h-6" />
-            </button>
-            {activeSlide.videoUrl.includes('youtube') || activeSlide.videoUrl.includes('vimeo') ? (
-              <iframe
-                src={activeSlide.videoUrl}
-                title="Video Preview"
-                className="w-full h-full border-0"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                allowFullScreen
-              />
-            ) : (
-              <video src={activeSlide.videoUrl} controls autoPlay className="w-full h-full object-contain" />
-            )}
-          </div>
         </div>
       )}
     </section>

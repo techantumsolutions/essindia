@@ -15,7 +15,7 @@ interface SlideImage {
   alt?: string;
 }
 
-export interface EuropeDarkShowcaseContent extends EuropeCommonSettings {
+export interface ShowcaseItem {
   badgeText?: string;
   badgeBgColor?: string;
   badgeTextColor?: string;
@@ -42,216 +42,320 @@ export interface EuropeDarkShowcaseContent extends EuropeCommonSettings {
   secondaryButtonUrl?: string;
   secondaryButtonFormType?: string;
   secondaryButtonPdfUrl?: string;
-  dashboardImage?: string;
-  slides?: SlideImage[];
-  enableSlider?: boolean;
-  autoplay?: boolean;
-  autoplayInterval?: number;
+  image?: string;
 }
 
-const DEFAULT_SLIDES: SlideImage[] = [
-  { image: '/industry-solution-Retail/banner-image.png', alt: 'ebizframe ERP Dashboard' },
-  { image: '/industry-solution-Retail/process_ERP_Retail.png', alt: 'ERP Process Overview' },
-  { image: '/Business intilligence/image 44.png', alt: 'Business Intelligence Dashboard' },
+export interface EuropeDarkShowcaseContent extends EuropeCommonSettings {
+  badgeText?: string;
+  title?: string;
+  description?: string;
+  primaryButtonText?: string;
+  primaryButtonUrl?: string;
+  secondaryButtonText?: string;
+  secondaryButtonUrl?: string;
+  image?: string;
+  items?: ShowcaseItem[];
+}
+
+const DEFAULT_ITEMS: ShowcaseItem[] = [
+  {
+    badgeText: 'APIS',
+    title: 'Messaging, email, and voice APIs to help developers build better products',
+    description: 'Start small or scale globally—our messaging, email, and voice APIs provide the secure, reliable foundation you need to connect with every handset worldwide.',
+    primaryButtonText: 'Talk to an expert',
+    primaryButtonUrl: '/contact-us',
+    secondaryButtonText: 'View APIs',
+    secondaryButtonUrl: '/contact-us',
+    image: '/industry-solution-Retail/banner-image.png',
+  },
+  {
+    badgeText: 'AUTOMATION',
+    title: 'Streamlined operational workflows for scaling enterprises',
+    description: 'Automate repetitive tasks, sync multi-location inventory, and empower your teams with real-time insights across departments.',
+    primaryButtonText: 'Book a demo',
+    primaryButtonUrl: '/contact-us',
+    secondaryButtonText: 'Explore Features',
+    secondaryButtonUrl: '/contact-us',
+    image: '/industry-solution-Retail/process_ERP_Retail.png',
+  },
+  {
+    badgeText: 'ANALYTICS',
+    title: 'Real-time dashboards & predictive business intelligence',
+    description: 'Gain complete visibility into business performance with interactive analytics, custom reporting, and executive alerts.',
+    primaryButtonText: 'Get Started',
+    primaryButtonUrl: '/contact-us',
+    secondaryButtonText: 'Learn More',
+    secondaryButtonUrl: '/contact-us',
+    image: '/Business intilligence/image 44.png',
+  },
 ];
 
-export function EuropeDarkShowcase({ content }: { content?: EuropeDarkShowcaseContent }) {
+function ShowcaseItemCard({ item, index }: { item: ShowcaseItem; index: number }) {
   const [isPrimaryHovered, setIsPrimaryHovered] = useState(false);
   const [isSecondaryHovered, setIsSecondaryHovered] = useState(false);
 
-  const badgeText = content?.badgeText || 'AI Services';
-  const badgeBgColor = 'transparent';
-  const badgeBorderColor = 'rgba(255,255,255,0.2)';
-  const badgeTextColor = '#ffffff';
-  const title = content?.title || 'Built on Experience. Driven\nby Outcomes.';
-  const titleColor = '#ffffff';
-  const description =
-    content?.description ||
-    'AI adoption in European enterprises is no longer an experiment; it is a competitive necessity. But success depends less on the technology itself and more on how effectively it is applied to real business challenges. At ESS, we deliver AI capabilities that are built around your operations, integrated into your systems, and measured by business outcomes.';
-  const descriptionColor = '#94a3b8';
+  const primaryButtonText = item.primaryButtonText;
+  const primaryButtonTextColor = item.primaryButtonTextColor || '#ffffff';
+  const primaryButtonHoverTextColor = item.primaryButtonHoverTextColor;
+  const primaryButtonBgColor = item.primaryButtonBgColor || '#2563eb';
+  const primaryButtonHoverBgColor = item.primaryButtonHoverBgColor || '#1d4ed8';
+  const primaryButtonBorderColor = item.primaryButtonBorderColor || '#2563eb';
+  const primaryButtonUrl = item.primaryButtonUrl || '/contact-us';
+  const primaryButtonFormType = (item.primaryButtonFormType || '') as CtaFormType;
 
-  const primaryButtonText = content?.primaryButtonText || 'Case studies';
-  const primaryButtonTextColor = '#111827';
-  const primaryButtonHoverTextColor = content?.primaryButtonHoverTextColor;
-  const primaryButtonBgColor = '#ffffff';
-  const primaryButtonHoverBgColor = content?.primaryButtonHoverBgColor;
-  const primaryButtonBorderColor = '#ffffff';
-  const primaryButtonUrl = content?.primaryButtonUrl || '/contact-us';
-  const primaryButtonFormType = (content?.primaryButtonFormType || '') as CtaFormType;
+  const secondaryButtonText = item.secondaryButtonText;
+  const secondaryButtonTextColor = item.secondaryButtonTextColor || '#ffffff';
+  const secondaryButtonHoverTextColor = item.secondaryButtonHoverTextColor;
+  const secondaryButtonBgColor = item.secondaryButtonBgColor || 'transparent';
+  const secondaryButtonHoverBgColor = item.secondaryButtonHoverBgColor || 'rgba(255,255,255,0.1)';
+  const secondaryButtonBorderColor = item.secondaryButtonBorderColor || 'rgba(255,255,255,0.4)';
+  const secondaryButtonUrl = item.secondaryButtonUrl || '/contact-us';
+  const secondaryButtonFormType = (item.secondaryButtonFormType || '') as CtaFormType;
 
-  const secondaryButtonText = content?.secondaryButtonText || 'Talk to an expert';
-  const secondaryButtonTextColor = '#ffffff';
-  const secondaryButtonHoverTextColor = content?.secondaryButtonHoverTextColor;
-  const secondaryButtonBgColor = 'transparent';
-  const secondaryButtonHoverBgColor = content?.secondaryButtonHoverBgColor;
-  const secondaryButtonBorderColor = 'rgba(255,255,255,0.4)';
-  const secondaryButtonUrl = content?.secondaryButtonUrl || '/contact-us';
-  const secondaryButtonFormType = (content?.secondaryButtonFormType || '') as CtaFormType;
+  const { handleClick: handlePrimaryClick, modalNode: primaryModal } = useCtaAction(
+    primaryButtonUrl,
+    primaryButtonFormType,
+    item.primaryButtonPdfUrl
+  );
+  const { handleClick: handleSecondaryClick, modalNode: secondaryModal } = useCtaAction(
+    secondaryButtonUrl,
+    secondaryButtonFormType,
+    item.secondaryButtonPdfUrl
+  );
 
-  const { handleClick: handlePrimaryClick, modalNode: primaryModal } = useCtaAction(primaryButtonUrl, primaryButtonFormType, content?.primaryButtonPdfUrl);
-  const { handleClick: handleSecondaryClick, modalNode: secondaryModal } = useCtaAction(secondaryButtonUrl, secondaryButtonFormType, content?.secondaryButtonPdfUrl);
+  return (
+    <div className="py-12 border-b border-white/10 last:border-b-0 space-y-6 text-left">
+      {item.badgeText && (
+        <span
+          className="inline-block px-4 py-1.5 rounded-full text-xs font-semibold uppercase tracking-wider border border-white/20"
+          style={{
+            backgroundColor: item.badgeBgColor || 'transparent',
+            color: item.badgeTextColor || '#ffffff',
+          }}
+        >
+          {item.badgeText}
+        </span>
+      )}
 
-  const enableSlider = content?.enableSlider !== false;
-  const autoplay = content?.autoplay !== false;
-  const autoplayInterval = content?.autoplayInterval || 5000;
+      {item.title && (
+        <CmsHeading
+          tag={item.headingTag as any}
+          fallback="h2"
+          className="text-3xl sm:text-4xl lg:text-[44px] font-bold tracking-tight leading-[1.15] whitespace-pre-line text-white"
+          style={{ color: item.titleColor || '#ffffff' }}
+        >
+          {item.title}
+        </CmsHeading>
+      )}
 
-  const slides: SlideImage[] = enableSlider
-    ? (content?.slides?.length ? content.slides : DEFAULT_SLIDES)
-    : DEFAULT_SLIDES;
+      {item.description && (
+        <p className="text-sm sm:text-base leading-relaxed text-slate-400 max-w-xl" style={{ color: item.descriptionColor }}>
+          {item.description}
+        </p>
+      )}
 
-  const [current, setCurrent] = useState(0);
+      <div className="flex flex-wrap items-center gap-4 pt-2">
+        {primaryButtonText && (
+          <Link
+            href={primaryButtonUrl}
+            onClick={primaryButtonFormType ? (e) => { e.preventDefault(); handlePrimaryClick(); } : undefined}
+            onMouseEnter={() => setIsPrimaryHovered(true)}
+            onMouseLeave={() => setIsPrimaryHovered(false)}
+            className="px-7 py-3 rounded-full text-sm font-semibold border transition-all duration-200 cursor-pointer shadow-sm hover:scale-105"
+            style={{
+              backgroundColor: isPrimaryHovered && primaryButtonHoverBgColor ? primaryButtonHoverBgColor : primaryButtonBgColor,
+              borderColor: primaryButtonBorderColor,
+              color: isPrimaryHovered && primaryButtonHoverTextColor ? primaryButtonHoverTextColor : primaryButtonTextColor,
+            }}
+          >
+            {primaryButtonText}
+          </Link>
+        )}
 
-  const next = useCallback(() => {
-    setCurrent((prev) => (prev + 1) % slides.length);
-  }, [slides.length]);
+        {secondaryButtonText && (
+          <Link
+            href={secondaryButtonUrl}
+            onClick={secondaryButtonFormType ? (e) => { e.preventDefault(); handleSecondaryClick(); } : undefined}
+            onMouseEnter={() => setIsSecondaryHovered(true)}
+            onMouseLeave={() => setIsSecondaryHovered(false)}
+            className="px-7 py-3 rounded-full text-sm font-semibold border transition-all duration-200 cursor-pointer shadow-sm hover:scale-105"
+            style={{
+              backgroundColor: isSecondaryHovered && secondaryButtonHoverBgColor ? secondaryButtonHoverBgColor : secondaryButtonBgColor,
+              borderColor: secondaryButtonBorderColor,
+              color: isSecondaryHovered && secondaryButtonHoverTextColor ? secondaryButtonHoverTextColor : secondaryButtonTextColor,
+            }}
+          >
+            {secondaryButtonText}
+          </Link>
+        )}
+      </div>
 
-  const prev = useCallback(() => {
-    setCurrent((prev) => (prev - 1 + slides.length) % slides.length);
-  }, [slides.length]);
+      {primaryModal}
+      {secondaryModal}
+    </div>
+  );
+}
+
+export function EuropeDarkShowcase({ content }: { content?: EuropeDarkShowcaseContent }) {
+  const items: ShowcaseItem[] = content?.items && content.items.length > 0
+    ? content.items
+    : (content?.title
+        ? [
+            {
+              badgeText: content.badgeText,
+              title: content.title,
+              description: content.description,
+              primaryButtonText: content.primaryButtonText,
+              primaryButtonUrl: content.primaryButtonUrl,
+              secondaryButtonText: content.secondaryButtonText,
+              secondaryButtonUrl: content.secondaryButtonUrl,
+              image: content.image || (content as any).dashboardImage,
+            },
+          ]
+        : DEFAULT_ITEMS);
+
+  const [activeIndex, setActiveIndex] = useState(0);
+  const leftScrollRef = React.useRef<HTMLDivElement>(null);
+  const rightPanelRef = React.useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (!enableSlider || !autoplay || slides.length <= 1) return;
-    const timer = setInterval(next, autoplayInterval);
-    return () => clearInterval(timer);
-  }, [enableSlider, autoplay, autoplayInterval, next, slides.length]);
+    const rightEl = rightPanelRef.current;
+    if (!rightEl) return;
 
-  const bgColor = '#0b0f19';
+    const handleRightWheel = (e: WheelEvent) => {
+      if (!leftScrollRef.current) return;
+      const leftEl = leftScrollRef.current;
+
+      const isScrollable = leftEl.scrollHeight > leftEl.clientHeight;
+      if (!isScrollable) return;
+
+      const atTop = leftEl.scrollTop <= 0 && e.deltaY < 0;
+      const atBottom = Math.ceil(leftEl.scrollTop + leftEl.clientHeight) >= leftEl.scrollHeight && e.deltaY > 0;
+
+      if (!atTop && !atBottom) {
+        e.preventDefault();
+      }
+
+      // Trackpads send tiny pixel deltas (~1-5px per event), standard mice send ~100px.
+      // Scaling factor: if deltaMode is pixel, scale up by 3.5x to match browser native wheel speed.
+      let dy = e.deltaY;
+      if (e.deltaMode === 1) {
+        dy *= 40;
+      } else if (e.deltaMode === 2) {
+        dy *= leftEl.clientHeight;
+      } else {
+        dy *= 3.5;
+      }
+
+      leftEl.scrollBy({ top: dy, behavior: 'instant' as ScrollBehavior });
+    };
+
+    rightEl.addEventListener('wheel', handleRightWheel, { passive: false });
+    return () => {
+      rightEl.removeEventListener('wheel', handleRightWheel);
+    };
+  }, []);
+
+  const handleLeftScroll = () => {
+    if (!leftScrollRef.current) return;
+    const container = leftScrollRef.current;
+    const itemElements = container.querySelectorAll('.showcase-scroll-item');
+    const containerTop = container.getBoundingClientRect().top;
+
+    itemElements.forEach((el, idx) => {
+      const rect = el.getBoundingClientRect();
+      const relativeTop = rect.top - containerTop;
+      if (relativeTop <= container.clientHeight * 0.4 && rect.bottom - containerTop >= container.clientHeight * 0.1) {
+        setActiveIndex(idx);
+      }
+    });
+  };
+
+  const activeImage = items[activeIndex]?.image || items[0]?.image || '/industry-solution-Retail/banner-image.png';
+
+  let formattedImage = activeImage.trim();
+  if (!formattedImage.startsWith('/') && !formattedImage.startsWith('http://') && !formattedImage.startsWith('https://')) {
+    formattedImage = `/${formattedImage}`;
+  }
 
   return (
     <EuropeSectionShell
       content={{
         ...content,
-        backgroundColor: bgColor,
-        textAlignment: 'center',
-        sectionPaddingTop: 'pt-14',
-        sectionPaddingBottom: 'pb-14',
+        textAlignment: 'left',
+        backgroundColor: '#0b0f19',
+        sectionPaddingTop: 'pt-16',
+        sectionPaddingBottom: 'pb-16',
       }}
     >
-      <div className="text-center space-y-6 max-w-4xl mx-auto mb-12">
-        {badgeText && (
-          <span
-            className="inline-block px-5 py-2 rounded-full text-xs font-semibold border border-white/20 tracking-wider"
-            style={{ backgroundColor: badgeBgColor, color: badgeTextColor, borderColor: badgeBorderColor }}
-          >
-            {badgeText}
-          </span>
-        )}
-        {title && (
-          <CmsHeading
-            tag={undefined}
-            fallback="h2"
-            className="text-4xl sm:text-5xl lg:text-[60px] font-bold tracking-tight leading-[1.15] whitespace-pre-line"
-            style={{ color: titleColor }}
-          >
-            {title}
-          </CmsHeading>
-        )}
-        {description && (
-          <p className="text-sm sm:text-base leading-relaxed max-w-3xl mx-auto" style={{ color: descriptionColor }}>
-            {description}
-          </p>
-        )}
-        <div className="flex flex-wrap justify-center gap-4 pt-4">
-          {primaryButtonText && (
-            <Link
-              href={primaryButtonUrl}
-              onClick={primaryButtonFormType ? (e) => { e.preventDefault(); handlePrimaryClick(); } : undefined}
-              onMouseEnter={() => setIsPrimaryHovered(true)}
-              onMouseLeave={() => setIsPrimaryHovered(false)}
-              className="px-10 py-3.5 rounded-full text-sm font-semibold border transition-all hover:scale-105 duration-200 cursor-pointer"
-              style={{
-                backgroundColor: isPrimaryHovered && primaryButtonHoverBgColor ? primaryButtonHoverBgColor : primaryButtonBgColor,
-                borderColor: primaryButtonBorderColor,
-                color: isPrimaryHovered && primaryButtonHoverTextColor ? primaryButtonHoverTextColor : primaryButtonTextColor,
-              }}
-            >
-              {primaryButtonText}
-            </Link>
-          )}
-          {secondaryButtonText && (
-            <Link
-              href={secondaryButtonUrl}
-              onClick={secondaryButtonFormType ? (e) => { e.preventDefault(); handleSecondaryClick(); } : undefined}
-              onMouseEnter={() => setIsSecondaryHovered(true)}
-              onMouseLeave={() => setIsSecondaryHovered(false)}
-              className="px-10 py-3.5 rounded-full text-sm font-semibold border transition-all hover:scale-105 duration-200 cursor-pointer"
-              style={{
-                backgroundColor: isSecondaryHovered && secondaryButtonHoverBgColor ? secondaryButtonHoverBgColor : secondaryButtonBgColor,
-                borderColor: secondaryButtonBorderColor,
-                color: isSecondaryHovered && secondaryButtonHoverTextColor ? secondaryButtonHoverTextColor : secondaryButtonTextColor,
-              }}
-            >
-              {secondaryButtonText}
-            </Link>
-          )}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center max-w-7xl mx-auto text-left">
+        {/* Left Internally Scrollable Column (Sinch-style) */}
+        <div
+          ref={leftScrollRef}
+          onScroll={handleLeftScroll}
+          className="lg:col-span-6 max-h-[520px] overflow-y-auto no-scrollbar pr-2 sm:pr-4"
+          style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+        >
+          {items.map((item, idx) => (
+            <div key={idx} className="showcase-scroll-item min-h-[460px] flex flex-col justify-center">
+              <ShowcaseItemCard item={item} index={idx} />
+            </div>
+          ))}
         </div>
-      </div>
-      {primaryModal}
-      {secondaryModal}
 
-      <div className="relative max-w-5xl mx-auto">
-        {enableSlider && slides.length > 1 && (
-          <>
-            <button
-              type="button"
-              onClick={prev}
-              className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 lg:-translate-x-14 z-10 w-12 h-12 rounded-full border border-white/20 bg-white/10 text-white flex items-center justify-center hover:bg-white/20 transition-colors"
-              aria-label="Previous slide"
-            >
-              <ChevronLeft className="w-5 h-5" />
-            </button>
-            <button
-              type="button"
-              onClick={next}
-              className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 lg:translate-x-14 z-10 w-12 h-12 rounded-full border border-white/20 bg-white/10 text-white flex items-center justify-center hover:bg-white/20 transition-colors"
-              aria-label="Next slide"
-            >
-              <ChevronRight className="w-5 h-5" />
-            </button>
-          </>
-        )}
-
-        <div className="relative aspect-[16/9] w-full rounded-2xl overflow-hidden shadow-2xl border border-white/10 bg-slate-900/50">
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={current}
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: -20 }}
-              transition={{ duration: 0.4 }}
-              className="absolute inset-0"
-            >
-              {slides[current]?.image && (
+        {/* Right Sticky / Synchronized Image Panel */}
+        <div
+          ref={rightPanelRef}
+          className="lg:col-span-6"
+        >
+          <div className="relative w-full aspect-[4/3] rounded-3xl overflow-hidden shadow-2xl border border-white/10 bg-slate-900">
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={activeIndex}
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 1.05 }}
+                transition={{ duration: 0.4 }}
+                className="absolute inset-0 w-full h-full"
+              >
                 <Image
-                  src={slides[current].image!}
-                  alt={slides[current].alt || title}
+                  src={formattedImage}
+                  alt={items[activeIndex]?.title || 'Showcase Image'}
                   fill
-                  className="object-contain p-4"
-                  sizes="(max-width: 1024px) 100vw, 1024px"
+                  className="object-cover"
+                  sizes="(max-width: 1024px) 100vw, 50vw"
+                  priority
+                  unoptimized={formattedImage.startsWith('http://') || formattedImage.startsWith('https://')}
                 />
-              )}
-            </motion.div>
-          </AnimatePresence>
-        </div>
-
-        {enableSlider && slides.length > 1 && (
-          <div className="flex justify-center gap-2 mt-6" role="tablist" aria-label="Dashboard slides">
-            {slides.map((_, idx) => (
-              <button
-                key={idx}
-                type="button"
-                role="tab"
-                aria-selected={idx === current}
-                aria-label={`Slide ${idx + 1}`}
-                onClick={() => setCurrent(idx)}
-                className={cn(
-                  'w-2.5 h-2.5 rounded-full transition-all',
-                  idx === current ? 'bg-white w-6' : 'bg-white/40 hover:bg-white/60'
-                )}
-              />
-            ))}
+              </motion.div>
+            </AnimatePresence>
           </div>
-        )}
+
+          {/* Quick item navigation indicator dots */}
+          {items.length > 1 && (
+            <div className="flex justify-center items-center gap-2 mt-6">
+              {items.map((_, idx) => (
+                <button
+                  key={idx}
+                  type="button"
+                  onClick={() => {
+                    setActiveIndex(idx);
+                    if (leftScrollRef.current) {
+                      const itemEls = leftScrollRef.current.querySelectorAll('.showcase-scroll-item');
+                      if (itemEls[idx]) {
+                        itemEls[idx].scrollIntoView({ behavior: 'smooth', block: 'center' });
+                      }
+                    }
+                  }}
+                  className={`h-2 rounded-full transition-all cursor-pointer ${
+                    activeIndex === idx ? 'w-8 bg-blue-500' : 'w-2 bg-white/30 hover:bg-white/50'
+                  }`}
+                  aria-label={`Go to item ${idx + 1}`}
+                />
+              ))}
+            </div>
+          )}
+        </div>
       </div>
     </EuropeSectionShell>
   );
