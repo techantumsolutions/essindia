@@ -102,13 +102,13 @@ export default function AdminLogin() {
             )}
 
             <div className="space-y-2">
-              <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest ml-1">Account ID</label>
+              <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest ml-1">Email</label>
               <div className="relative group">
                 <User className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 group-focus-within:text-[#4B2A63] transition-colors" />
                 <input 
                   name="username"
                   type="email" 
-                  placeholder="admin@essindia.com"
+                  placeholder="Enter Your email"
                   required
                   className="w-full bg-slate-50 border-2 border-transparent focus:border-[#4B2A63]/10 focus:bg-white focus:ring-4 focus:ring-[#4B2A63]/5 rounded-2xl pl-12 pr-4 py-4 text-sm font-bold text-slate-900 transition-all outline-none"
                 />
@@ -117,7 +117,7 @@ export default function AdminLogin() {
 
             <div className="space-y-2">
               <div className="flex justify-between items-center ml-1">
-                <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">Passkey</label>
+                <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">Password</label>
                 <button type="button" className="text-[11px] font-bold text-[#4B2A63] hover:underline">Forgot?</button>
               </div>
               <div className="relative group">
@@ -125,7 +125,7 @@ export default function AdminLogin() {
                 <input 
                   name="password"
                   type={showPassword ? "text" : "password"} 
-                  placeholder="••••••••"
+                  placeholder="Enter your password"
                   required
                   className="w-full bg-slate-50 border-2 border-transparent focus:border-[#4B2A63]/10 focus:bg-white focus:ring-4 focus:ring-[#4B2A63]/5 rounded-2xl pl-12 pr-12 py-4 text-sm font-bold text-slate-900 transition-all outline-none"
                 />
