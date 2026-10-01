@@ -2,6 +2,7 @@
 
 import React from 'react';
 import { motion } from 'framer-motion';
+import { FormattedText } from '@/components/ui/FormattedText';
 
 export interface RetailOperationItem {
   title: string;
@@ -140,7 +141,14 @@ export function RetailOperations({ content }: { content: RetailOperationsContent
                 />
               </div>
               <h4 className="font-bold text-[#2b2a63] mb-1 text-base md:text-sm">{op.title}</h4>
-              <p className="text-[#888888] text-xs  leading-relaxed">{op.description}</p>
+              {(op.description?.includes('<') && op.description.includes('>')) || op.description?.includes('&lt;') ? (
+                <FormattedText
+                  content={op.description}
+                  className="text-[#888888] text-[16px] leading-[1.6] [&_p]:m-0 [&_p]:text-[#888888]"
+                />
+              ) : (
+                <p className="text-[#888888] text-xs  leading-relaxed">{op.description}</p>
+              )}
             </motion.div>
           ))}
         </div>

@@ -11,6 +11,7 @@ import { useCtaAction, type CtaFormType } from '@/hooks/useCtaAction';
 import { HeroTitle } from '@/components/ui/HeroTitle';
 
 export interface EuropeHeroContent extends EuropeCommonSettings {
+  bgColor?: string;
   gradientColor1?: string;
   gradientColor2?: string;
   gradientColor3?: string;
@@ -89,6 +90,11 @@ export function EuropeHero({ content }: { content?: EuropeHeroContent }) {
     content?.backgroundGradient ||
     'radial-gradient(circle at center, #ffffff 40%, #f6f1fc 100%)';
 
+  const gradientStops = [content?.gradientColor1, content?.gradientColor2, content?.gradientColor3]
+    .map((color) => (color ? color.replace(/\u200B/g, '').trim() : ''))
+    .filter((color) => color !== '' && color !== 'transparent');
+  const bgColor = (content?.bgColor || '').replace(/\u200B/g, '').trim();
+
   const enableIllustration = content?.enableIllustration !== false;
   const enableAnimation = content?.enableAnimation !== false;
 
@@ -105,7 +111,11 @@ export function EuropeHero({ content }: { content?: EuropeHeroContent }) {
     gradientColor1: content?.gradientColor1,
     gradientColor2: content?.gradientColor2,
     gradientColor3: content?.gradientColor3,
-  }, { background: backgroundGradient });
+  }, gradientStops.length > 0
+    ? undefined
+    : bgColor
+      ? { backgroundColor: bgColor, backgroundImage: 'none' }
+      : { background: backgroundGradient });
 
   return (
     <EuropeSectionShell

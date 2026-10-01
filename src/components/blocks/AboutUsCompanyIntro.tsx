@@ -115,10 +115,10 @@ export function AboutUsCompanyIntro({
 
             <MotionSection variant="fadeUp">
 
-              <FormattedText content={subtitle} as="h3" className="text-3xl lg:text-5xl font-bold text-black leading-tight" />
-              <FormattedText content={title} as="h2" className="text-3xl lg:text-5xl font-bold text-black leading-tight" />
+              <FormattedText content={subtitle} as="h3" className="text-[22px] lg:text-[36px] font-bold text-black leading-tight" />
+              <FormattedText content={title} as="h2" className="text-[22px] lg:text-[36px] font-bold text-black leading-tight" />
 
-              <div className="space-y-2">
+              <div className="space-y-2 mt-5">
                 <div className="text-[#71717A] text-base">
                   {typeof description === 'string' && (description.includes('<p>') || description.includes('<')) ? (
                     <div dangerouslySetInnerHTML={{ __html: description }} />

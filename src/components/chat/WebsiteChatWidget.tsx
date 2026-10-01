@@ -309,18 +309,10 @@ export function WebsiteChatWidget() {
             {/* Header */}
             <div className="bg-gradient-to-r from-[#4B2A63] to-[#2E1543] p-4 text-white flex items-center justify-between shadow-md">
               <div className="flex items-center gap-3">
-                <div className="relative">
-                  <div className="w-10 h-10 rounded-2xl bg-white/15 backdrop-blur-md flex items-center justify-center border border-white/20">
-                    <MessageSquare className="w-5 h-5 text-white" />
-                  </div>
-                  <span className="absolute bottom-0 right-0 w-3 h-3 rounded-full bg-emerald-400 border-2 border-[#4B2A63]" />
+                <div className="w-10 h-10 rounded-2xl bg-white/15 backdrop-blur-md flex items-center justify-center border border-white/20">
+                  <MessageSquare className="w-5 h-5 text-white" />
                 </div>
-                <div>
-                  <h3 className="font-bold text-sm tracking-wide">ESS India Live Support</h3>
-                  <p className="text-[11px] text-purple-200 flex items-center gap-1">
-                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" /> We are online
-                  </p>
-                </div>
+                <h3 className="font-bold text-sm tracking-wide">ESS India Live Support</h3>
               </div>
               <button
                 onClick={() => setIsOpen(false)}

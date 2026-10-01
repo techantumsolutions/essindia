@@ -20,7 +20,6 @@ import {
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
-import { ALL_COUNTRIES_LIST } from '@/lib/countries';
 
 export default function NavigationModule() {
   const [menus, setMenus] = useState<any[]>([]);
@@ -62,7 +61,61 @@ export default function NavigationModule() {
     }
   };
 
+  const handleCountryFlagUpload = async (idx: number, e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    const maxSizeBytes = 3 * 1024 * 1024;
+    if (file.size > maxSizeBytes) {
+      toast.error('File size exceeds the 3MB limit.');
+      e.target.value = '';
+      return;
+    }
+
+    const toastId = toast.loading('Uploading flag...');
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('folder', 'flags');
+
+    try {
+      const res = await fetch('/api/admin/media', {
+        method: 'POST',
+        body: formData,
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Upload failed');
+
+      setMenuSettings((prev: any) => {
+        const updated = [...(prev.countryLinks || [])];
+        updated[idx] = { ...updated[idx], flagUrl: data.url };
+        return { ...prev, countryLinks: updated };
+      });
+      toast.success('Flag uploaded', { id: toastId });
+    } catch (err: any) {
+      toast.error(err.message || 'Failed to upload flag', { id: toastId });
+    } finally {
+      e.target.value = '';
+    }
+  };
+
   const handleSaveHeaderSettings = async () => {
+    const countryLinks = menuSettings.countryLinks || [];
+    const missingName = countryLinks.some((link: any) => !String(link.countryName || '').trim());
+    const missingPage = countryLinks.some((link: any) => !link.pageId && !String(link.redirectUrl || '').trim());
+
+    if (missingName && missingPage) {
+      toast.error('Enter a country name and assign a page before saving.');
+      return;
+    }
+    if (missingName) {
+      toast.error('Enter a country name before saving.');
+      return;
+    }
+    if (missingPage) {
+      toast.error('Assign a page to each country before saving.');
+      return;
+    }
+
     setIsSavingHeaderSettings(true);
     try {
       const res = await fetch('/api/admin/navigation', {
@@ -825,7 +878,7 @@ export default function NavigationModule() {
                   <div className="flex justify-between items-center">
                     <div>
                       <label className="text-xs font-bold text-slate-800">Header Country Dropdown Links</label>
-                      <p className="text-[11px] text-slate-400">Add countries and target URLs for the header dropdown before Contact Us button.</p>
+                      <p className="text-[11px] text-slate-400">Add a country name, optional flag, and target page for the header dropdown before Contact Us.</p>
                     </div>
                     <Button
                       type="button"
@@ -833,17 +886,11 @@ export default function NavigationModule() {
                       variant="outline"
                       onClick={() => {
                         const existing: any[] = menuSettings.countryLinks || [];
-                        // Pick first available country not yet added
-                        const available = ALL_COUNTRIES_LIST.find((c) => !existing.some((e: any) => e.countryCode === c.code));
-                        if (!available) {
-                          toast.error('All countries have already been added.');
-                          return;
-                        }
                         setMenuSettings((prev: any) => ({
                           ...prev,
                           countryLinks: [
+                            { countryCode: '', countryName: '', flagUrl: '', redirectUrl: '', pageId: '' },
                             ...existing,
-                            { countryCode: available.code, countryName: available.name, redirectUrl: '' }
                           ]
                         }));
                       }}
@@ -855,36 +902,61 @@ export default function NavigationModule() {
 
                   <div className="space-y-2">
                     {((menuSettings.countryLinks as any[]) || []).map((cLink: any, idx: number) => {
-                      const selectedCodes = (menuSettings.countryLinks as any[]).map((c: any) => c.countryCode);
+                      const hasCssFlag = /^[a-z]{2}$/i.test(String(cLink.countryCode || ''));
                       return (
                         <div key={idx} className="p-3 bg-slate-50 rounded-xl border border-slate-200 flex items-center gap-3 relative">
-                          <div className="flex-1 grid grid-cols-1 sm:grid-cols-2 gap-2">
+                          <div className="flex-1 grid grid-cols-1 sm:grid-cols-3 gap-2">
                             <div>
                               <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wide block mb-1">Country</span>
-                              <select
-                                value={cLink.countryCode}
+                              <input
+                                type="text"
+                                value={cLink.countryName || ''}
                                 onChange={(e) => {
-                                  const code = e.target.value;
-                                  const countryObj = ALL_COUNTRIES_LIST.find((c) => c.code === code);
                                   const updated = [...(menuSettings.countryLinks || [])];
                                   updated[idx] = {
                                     ...updated[idx],
-                                    countryCode: code,
-                                    countryName: countryObj ? countryObj.name : code,
+                                    countryName: e.target.value,
                                   };
                                   setMenuSettings((prev: any) => ({ ...prev, countryLinks: updated }));
                                 }}
+                                placeholder="e.g. India"
                                 className="w-full px-2 py-1 rounded bg-white border border-slate-200 text-xs focus:outline-none focus:ring-1 focus:ring-[#5C2B6A]"
-                              >
-                                {ALL_COUNTRIES_LIST.map((c) => {
-                                  const isSelectedElseWhere = selectedCodes.includes(c.code) && c.code !== cLink.countryCode;
-                                  return (
-                                    <option key={c.code} value={c.code} disabled={isSelectedElseWhere}>
-                                      {c.name} {isSelectedElseWhere ? '(Already Added)' : ''}
-                                    </option>
-                                  );
-                                })}
-                              </select>
+                              />
+                            </div>
+
+                            <div>
+                              <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wide block mb-1">Flag</span>
+                              <div className="flex items-center gap-2 min-h-[26px]">
+                                {cLink.flagUrl ? (
+                                  <img src={cLink.flagUrl} alt="" className="w-4 h-3 rounded-xs object-cover shrink-0 border border-slate-200" />
+                                ) : hasCssFlag ? (
+                                  <span className={`fi fi-${String(cLink.countryCode).toLowerCase()} shrink-0 rounded-xs w-4 h-3`} aria-hidden />
+                                ) : (
+                                  <img src="/flags/fallback-flag.svg" alt="" className="w-4 h-3 rounded-xs object-cover shrink-0 border border-slate-200" />
+                                )}
+                                <label className="inline-flex items-center px-2 py-1 bg-white hover:bg-slate-50 text-slate-700 text-[10px] font-semibold rounded border border-slate-200 cursor-pointer">
+                                  <span>{cLink.flagUrl ? 'Replace' : 'Upload'}</span>
+                                  <input
+                                    type="file"
+                                    accept="image/*"
+                                    onChange={(e) => handleCountryFlagUpload(idx, e)}
+                                    className="hidden"
+                                  />
+                                </label>
+                                {cLink.flagUrl ? (
+                                  <button
+                                    type="button"
+                                    onClick={() => {
+                                      const updated = [...(menuSettings.countryLinks || [])];
+                                      updated[idx] = { ...updated[idx], flagUrl: '' };
+                                      setMenuSettings((prev: any) => ({ ...prev, countryLinks: updated }));
+                                    }}
+                                    className="text-[10px] font-semibold text-slate-400 hover:text-rose-500 cursor-pointer"
+                                  >
+                                    Remove
+                                  </button>
+                                ) : null}
+                              </div>
                             </div>
 
                             <div>

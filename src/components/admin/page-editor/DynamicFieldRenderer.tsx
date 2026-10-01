@@ -236,6 +236,16 @@ export function DynamicFieldRenderer({
         />
       );
 
+    case 'date':
+      return (
+        <DateField
+          fieldKey={fieldKey}
+          label={fieldLabel}
+          value={value as string}
+          onChange={(v) => onChange(keyPath, v)}
+        />
+      );
+
     case 'array':
       if (fieldKey === 'contentSegments' && sectionType === 'blog-detail-block') {
         return (
@@ -303,6 +313,51 @@ export function DynamicFieldRenderer({
     default:
       return null;
   }
+}
+
+function toDateInputValue(value: string): string {
+  const trimmed = value.trim();
+  if (!trimmed) return '';
+  if (/^\d{4}-\d{2}-\d{2}$/.test(trimmed)) return trimmed;
+
+  const parsed = new Date(trimmed);
+  if (Number.isNaN(parsed.getTime())) return '';
+  const year = parsed.getFullYear();
+  const month = String(parsed.getMonth() + 1).padStart(2, '0');
+  const day = String(parsed.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+}
+
+function fromDateInputValue(iso: string): string {
+  if (!iso) return '';
+  const [year, month, day] = iso.split('-').map(Number);
+  if (!year || !month || !day) return '';
+  const date = new Date(year, month - 1, day);
+  return date.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+}
+
+function DateField({
+  fieldKey,
+  label,
+  value,
+  onChange,
+}: {
+  fieldKey: string;
+  label?: string;
+  value: string;
+  onChange: (value: string) => void;
+}) {
+  return (
+    <div className="space-y-1.5">
+      <label className="admin-label">{label || humanLabel(fieldKey)}</label>
+      <input
+        type="date"
+        value={toDateInputValue(value || '')}
+        onChange={(e) => onChange(fromDateInputValue(e.target.value))}
+        className="admin-input text-sm font-medium"
+      />
+    </div>
+  );
 }
 
 function TextField({
@@ -895,6 +950,8 @@ function ArrayField({
         return {
           avatar: '',
           name: '',
+          designation: '',
+          companyName: '',
           rating: 5,
           quote: '',
           ...item
@@ -1019,7 +1076,7 @@ function ArrayField({
           if (fieldKey === 'testimonials') {
             let testimonialOrder = ['topic', 'industry', 'companyName', 'quote', 'authorAvatar', 'authorName', 'authorTitle'];
             if (sectionType === 'landing1-testimonials') {
-              testimonialOrder = ['avatar', 'name', 'rating', 'quote'];
+              testimonialOrder = ['avatar', 'name', 'designation', 'companyName', 'rating', 'quote'];
               if (!('rating' in objItem) || objItem.rating === undefined || objItem.rating === null) {
                 objItem.rating = 5;
               }

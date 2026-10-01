@@ -170,6 +170,8 @@ export function ArrayFieldEditor({
       } else if (lowerKey === 'testimonials') {
         if (sectionType === 'landing2-testimonials') {
           defaultObj = { mediaUrl: '', quote: '', role: '', author: '' };
+        } else if (sectionType === 'landing1-testimonials') {
+          defaultObj = { avatar: '', name: '', designation: '', companyName: '', rating: 5, quote: '' };
         } else {
           defaultObj = { avatar: '', name: '', role: '', quote: '' };
         }
@@ -197,6 +199,8 @@ export function ArrayFieldEditor({
         defaultObj = { label: '' };
       } else if (lowerKey === 'columns') {
         defaultObj = { iconImage: '', title: '', items: [] };
+      } else if (lowerKey === 'projects' && sectionType === 'portfolio') {
+        defaultObj = { title: '', tags: [], image: '', ctaText: '', ctaUrl: '', ctaFormType: '' };
       }
       
       onChange([...safeValue, defaultObj]);
@@ -369,7 +373,7 @@ export function ArrayFieldEditor({
                 );
               })}
 
-              {!isLocked && !(sectionType === 'portfolio' && fieldKey === 'projects') && !(sectionType === 'landing1-process' && fieldKey === 'process' && safeValue.length >= 7) && !(sectionType === 'landing2-testimonials' && fieldKey === 'testimonials' && safeValue.length >= 2) && !(sectionType === 'staffing-technologies' && fieldKey === 'columns' && safeValue.length >= 3) && (
+              {!isLocked && !(sectionType === 'landing1-process' && fieldKey === 'process' && safeValue.length >= 7) && !(sectionType === 'landing2-testimonials' && fieldKey === 'testimonials' && safeValue.length >= 2) && !(sectionType === 'staffing-technologies' && fieldKey === 'columns' && safeValue.length >= 3) && (
                 <Button
                   variant="outline"
                   size="sm"
