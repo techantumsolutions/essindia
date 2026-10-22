@@ -91,12 +91,14 @@ export function IndustrySection({ content }: IndustrySectionProps) {
 
   useEffect(() => {
     checkScroll();
+    const timer = setTimeout(checkScroll, 100);
     const el = scrollRef.current;
     if (el) {
       el.addEventListener('scroll', checkScroll);
       window.addEventListener('resize', checkScroll);
     }
     return () => {
+      clearTimeout(timer);
       if (el) {
         el.removeEventListener('scroll', checkScroll);
       }
@@ -106,7 +108,9 @@ export function IndustrySection({ content }: IndustrySectionProps) {
 
   const scroll = (direction: 'left' | 'right') => {
     if (scrollRef.current) {
-      const scrollAmount = direction === 'left' ? -340 : 340;
+      const card = scrollRef.current.firstElementChild as HTMLElement | null;
+      const cardWidth = card ? card.offsetWidth + 24 : 340;
+      const scrollAmount = direction === 'left' ? -cardWidth : cardWidth;
       scrollRef.current.scrollBy({ left: scrollAmount, behavior: 'smooth' });
     }
   };
@@ -144,7 +148,7 @@ export function IndustrySection({ content }: IndustrySectionProps) {
             <button
               onClick={() => scroll('left')}
               aria-label="Scroll Left"
-              className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-3 md:-translate-x-12 lg:-translate-x-14 z-20 w-11 h-11 rounded-full bg-white/90 hover:bg-white text-[#462885] shadow-lg flex items-center justify-center transition-all duration-300 hover:scale-110 active:scale-95 cursor-pointer border border-slate-100"
+              className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-3 md:-translate-x-4 lg:-translate-x-8 xl:-translate-x-14 z-20 w-11 h-11 rounded-full bg-white/90 hover:bg-white text-[#462885] shadow-lg flex items-center justify-center transition-all duration-300 hover:scale-110 active:scale-95 cursor-pointer border border-slate-100"
             >
               <ChevronLeft className="w-6 h-6" />
             </button>
@@ -155,7 +159,7 @@ export function IndustrySection({ content }: IndustrySectionProps) {
             <button
               onClick={() => scroll('right')}
               aria-label="Scroll Right"
-              className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-3 md:translate-x-12 lg:translate-x-14 z-20 w-11 h-11 rounded-full bg-white/90 hover:bg-white text-[#462885] shadow-lg flex items-center justify-center transition-all duration-300 hover:scale-110 active:scale-95 cursor-pointer border border-slate-100"
+              className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-3 md:translate-x-4 lg:translate-x-8 xl:translate-x-14 z-20 w-11 h-11 rounded-full bg-white/90 hover:bg-white text-[#462885] shadow-lg flex items-center justify-center transition-all duration-300 hover:scale-110 active:scale-95 cursor-pointer border border-slate-100"
             >
               <ChevronRight className="w-6 h-6" />
             </button>
@@ -171,11 +175,16 @@ export function IndustrySection({ content }: IndustrySectionProps) {
               <motion.div
                 key={ind.name + index}
                 initial={{ opacity: 0, y: 30, scale: 0.95 }}
-                whileInView={{ opacity: 1, y: 0, scale: 1 }}
+                whileInView={{
+                  opacity: 1,
+                  y: 0,
+                  scale: 1,
+                  transition: { duration: 0.5, delay: index * 0.05 }
+                }}
                 viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: index * 0.05 }}
-                whileHover={{ y: -10, transition: { duration: 0.4, ease: [0.22, 1, 0.36, 1] } }}
-                className="bg-white rounded-[24px] overflow-hidden flex flex-col shadow-[0_20px_40px_-15px_rgba(0,0,0,0.4)] hover:shadow-[0_40px_80px_-20px_rgba(0,0,0,0.5)] transition-shadow duration-500 cursor-pointer group shrink-0 w-[280px] sm:w-[300px] md:w-[310px] lg:w-[calc((100%-4.5rem)/4)] snap-start"
+                whileHover={{ y: -10, transition: { duration: 0.3, ease: 'easeInOut' } }}
+                transition={{ duration: 0.3, ease: 'easeInOut' }}
+                className="bg-white rounded-[24px] overflow-hidden flex flex-col shadow-[0_20px_40px_-15px_rgba(0,0,0,0.4)] hover:shadow-[0_40px_80px_-20px_rgba(0,0,0,0.5)] transition-shadow duration-300 cursor-pointer group shrink-0 w-full sm:w-[300px] md:w-[310px] lg:w-[calc((100%-4.5rem)/4)] snap-start"
               >
                 {/* Image Container */}
                 <div className="h-[220px] relative bg-slate-100 overflow-hidden">

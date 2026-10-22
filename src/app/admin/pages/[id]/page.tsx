@@ -2562,36 +2562,81 @@ export default function PageEditor() {
     if (!page) return;
     setIsSaving(true);
     try {
-      const metaRes = await fetch(`/api/admin/pages/${pageId}`, {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          title: page.title,
-          slug: page.slug,
-          fullPath: page.fullPath,
-          navigationItemId: page.navigationItemId || null,
-          megaMenuCategoryId: page.megaMenuCategoryId || null,
-          megaMenuSubCategoryId: page.megaMenuSubCategoryId || null,
-          megaMenuSubSubCategoryId: page.megaMenuSubSubCategoryId || null,
-        }),
-      });
-      if (!metaRes.ok) throw new Error('Failed to save page settings');
+      let savedSnapshotObj: any = null;
+      try {
+        if (savedSnapshot) savedSnapshotObj = JSON.parse(savedSnapshot);
+      } catch {
+        savedSnapshotObj = null;
+      }
 
-      const seoRes = await fetch(`/api/admin/pages/${pageId}`, {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ seo: seoForm }),
-      });
-      if (!seoRes.ok) throw new Error('Failed to save SEO');
+      const metaChanged = !savedSnapshotObj || (
+        savedSnapshotObj.title !== page.title ||
+        savedSnapshotObj.slug !== page.slug ||
+        savedSnapshotObj.fullPath !== page.fullPath ||
+        savedSnapshotObj.navigationItemId !== (page.navigationItemId || null) ||
+        savedSnapshotObj.megaMenuCategoryId !== (page.megaMenuCategoryId || null) ||
+        savedSnapshotObj.megaMenuSubCategoryId !== (page.megaMenuSubCategoryId || null) ||
+        savedSnapshotObj.megaMenuSubSubCategoryId !== (page.megaMenuSubSubCategoryId || null)
+      );
 
-      const secRes = await fetch(`/api/admin/pages/${pageId}/sections`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          sections: page.sections.map((s) => ({ id: s.id, content: s.content })),
-        }),
-      });
-      if (!secRes.ok) throw new Error('Failed to save page sections');
+      const seoChanged = JSON.stringify(seoForm) !== savedSeoSnapshot;
+
+      const savePromises: Promise<Response>[] = [];
+
+      if (metaChanged) {
+        savePromises.push(
+          fetch(`/api/admin/pages/${pageId}`, {
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              title: page.title,
+              slug: page.slug,
+              fullPath: page.fullPath,
+              navigationItemId: page.navigationItemId || null,
+              megaMenuCategoryId: page.megaMenuCategoryId || null,
+              megaMenuSubCategoryId: page.megaMenuSubCategoryId || null,
+              megaMenuSubSubCategoryId: page.megaMenuSubSubCategoryId || null,
+            }),
+          })
+        );
+      }
+
+      if (seoChanged) {
+        savePromises.push(
+          fetch(`/api/admin/pages/${pageId}`, {
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ seo: seoForm }),
+          })
+        );
+      }
+
+      // Save sections if any section is dirty or if dirtySections is empty but we're saving all
+      const sectionsToSave = dirtySections.size > 0
+        ? page.sections.filter((s) => dirtySections.has(s.id))
+        : page.sections;
+
+      if (sectionsToSave.length > 0 && (dirtySections.size > 0 || (!metaChanged && !seoChanged))) {
+        savePromises.push(
+          fetch(`/api/admin/pages/${pageId}/sections`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              sections: sectionsToSave.map((s) => ({ id: s.id, content: s.content })),
+            }),
+          })
+        );
+      }
+
+      if (savePromises.length > 0) {
+        const results = await Promise.all(savePromises);
+        for (const res of results) {
+          if (!res.ok) {
+            const errData = await res.json().catch(() => ({}));
+            throw new Error(errData.error || errData.message || 'Save failed');
+          }
+        }
+      }
 
       toast.success('All changes saved');
       await fetchPage();
@@ -2654,12 +2699,27 @@ export default function PageEditor() {
 
   // ---- Section operations ----
   const handleSaveSection = async (section: PageSection) => {
-    toast.success('Section saved to draft preview');
-    setDirtySections((prev) => {
-      const next = new Set(prev);
-      next.delete(section.id);
-      return next;
-    });
+    try {
+      const res = await fetch(`/api/admin/pages/${pageId}/sections`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          sections: [{ id: section.id, content: section.content }],
+        }),
+      });
+      if (!res.ok) {
+        const errData = await res.json().catch(() => ({}));
+        throw new Error(errData.error || errData.message || 'Failed to save section');
+      }
+      toast.success('Section saved');
+      setDirtySections((prev) => {
+        const next = new Set(prev);
+        next.delete(section.id);
+        return next;
+      });
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : 'Save failed');
+    }
   };
 
   const handleDiscardSection = async (sectionId: string) => {

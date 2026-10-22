@@ -149,9 +149,9 @@ export function Landing1Works({ content }: { content?: Landing1WorksContent }) {
   }, [shouldLoop, works.length]);
 
   return (
-    <section className="py-20 bg-slate-50 text-slate-900 font-sans select-none border-b border-slate-200">
+    <section className="py-10 lg:py-12 bg-slate-50 text-slate-900 font-sans select-none border-b border-slate-200">
       <div className="container mx-auto px-6 max-w-7xl">
-        
+
         {/* Header */}
         <div className="text-center max-w-3xl mx-auto mb-16 space-y-4">
           {data.badge && (
@@ -205,46 +205,46 @@ export function Landing1Works({ content }: { content?: Landing1WorksContent }) {
             role="region"
             aria-label="Works carousel"
           >
-          {slides.map((item, idx) => (
-            <Link
-              key={`${item.title}-${idx}`}
-              href={item.link || '#'}
-              aria-hidden={shouldLoop && idx >= works.length ? true : undefined}
-              tabIndex={shouldLoop && idx >= works.length ? -1 : undefined}
-              className="snap-start shrink-0 w-full md:w-[calc((100%-4rem)/3)] bg-white rounded-[32px] overflow-hidden p-5 border border-indigo-900/5 shadow-[0_8px_30px_rgb(0,0,0,0.015)] hover:shadow-[0_20px_40px_rgb(0,0,0,0.04)] hover:-translate-y-1.5 transition-all duration-300 flex flex-col h-full cursor-pointer group"
-            >
-              {/* Image Frame */}
-              <div className="relative w-full aspect-[4/3] rounded-2xl overflow-hidden mb-5 bg-slate-100 shrink-0">
-                <img
-                  src={item.image}
-                  alt={item.title}
-                  className="w-full h-full object-cover object-center"
-                  loading="lazy"
-                />
-              </div>
-
-              {/* Details */}
-              <div className="flex flex-col flex-grow">
-                {/* Category Pill */}
-                <span className="inline-flex px-3 py-1 rounded-full text-[10px] font-semibold text-indigo-600 bg-indigo-55/10 border border-indigo-100/50 uppercase w-fit mb-3.5 tracking-wide">
-                  {item.category}
-                </span>
-
-                {/* Title */}
-                <h4 className="text-base font-extrabold text-slate-900 leading-snug tracking-tight mb-4 flex-grow line-clamp-3">
-                  {item.title}
-                </h4>
-
-                {/* Footer with date and arrow */}
-                <div className="flex items-center justify-between pt-2 border-t border-slate-50 shrink-0">
-                  <span className="text-xs text-slate-400 font-medium tracking-wide">
-                    {item.date}
-                  </span>
-                  <ArrowRight className="w-5 h-5 text-indigo-600 group-hover:translate-x-1.5 transition-transform duration-300" />
+            {slides.map((item, idx) => (
+              <Link
+                key={`${item.title}-${idx}`}
+                href={item.link || '#'}
+                aria-hidden={shouldLoop && idx >= works.length ? true : undefined}
+                tabIndex={shouldLoop && idx >= works.length ? -1 : undefined}
+                className="snap-start shrink-0 w-full md:w-[calc((100%-4rem)/3)] bg-white rounded-[32px] overflow-hidden p-5 border border-indigo-900/5 shadow-[0_8px_30px_rgb(0,0,0,0.015)] hover:shadow-[0_20px_40px_rgb(0,0,0,0.04)] hover:-translate-y-1.5 transition-all duration-300 flex flex-col h-full cursor-pointer group"
+              >
+                {/* Image Frame */}
+                <div className="relative w-full aspect-[4/3] rounded-2xl overflow-hidden mb-5 bg-slate-100 shrink-0">
+                  <img
+                    src={item.image}
+                    alt={item.title}
+                    className="w-full h-full object-cover object-center"
+                    loading="lazy"
+                  />
                 </div>
-              </div>
-            </Link>
-          ))}
+
+                {/* Details */}
+                <div className="flex flex-col flex-grow">
+                  {/* Category Pill */}
+                  <span className="inline-flex px-3 py-1 rounded-full text-[10px] font-semibold text-indigo-600 bg-indigo-55/10 border border-indigo-100/50 uppercase w-fit mb-3.5 tracking-wide">
+                    {item.category}
+                  </span>
+
+                  {/* Title */}
+                  <h4 className="text-base font-extrabold text-slate-900 leading-snug tracking-tight mb-4 flex-grow line-clamp-3">
+                    {item.title}
+                  </h4>
+
+                  {/* Footer with date and arrow */}
+                  <div className="flex items-center justify-between pt-2 border-t border-slate-50 shrink-0">
+                    <span className="text-xs text-slate-400 font-medium tracking-wide">
+                      {item.date}
+                    </span>
+                    <ArrowRight className="w-5 h-5 text-indigo-600 group-hover:translate-x-1.5 transition-transform duration-300" />
+                  </div>
+                </div>
+              </Link>
+            ))}
           </div>
         </div>
 

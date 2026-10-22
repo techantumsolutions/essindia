@@ -42,9 +42,9 @@ export function StaffingBenefits({ content }: StaffingBenefitsProps) {
   const cards = content?.cards || defaultCards;
 
   return (
-    <section className="py-14 px-6 bg-white">
+    <section className="py-12 px-6 bg-white border-b">
       <div className="container mx-auto max-w-7xl">
-        <div className=" max-w-7xl mx-auto mb-16">
+        <div className="max-w-7xl mx-auto mb-6 md:mb-16">
           <h2 className="text-3xl md:text-4xl font-bold text-[#2a2d7c] mb-6 text-center">
             {heading}
           </h2>

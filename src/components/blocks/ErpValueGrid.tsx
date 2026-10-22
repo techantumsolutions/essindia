@@ -55,7 +55,7 @@ export function ErpValueGrid({ content }: ErpValueGridProps) {
   };
 
   return (
-    <section className="relative w-full py-16 bg-[#F8F9FA] overflow-hidden border-b border-slate-100">
+    <section className="relative w-full py-12 bg-[#F8F9FA] overflow-hidden border-b border-slate-100">
       {/* Background radial soft light */}
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-200 h-200 rounded-full bg-slate-200/30 blur-[130px] -z-10" />
 
@@ -68,7 +68,7 @@ export function ErpValueGrid({ content }: ErpValueGridProps) {
               {heading}
             </h2>
             {description.includes('<p>') ? (
-              <div 
+              <div
                 className="text-[#777777] text-lg font-normal prose prose-lg max-w-none prose-p:my-2 mx-auto"
                 dangerouslySetInnerHTML={{ __html: description }}
               />
@@ -149,7 +149,7 @@ export function ErpValueGrid({ content }: ErpValueGridProps) {
                 </h3>
 
                 {card.description?.includes('<p>') ? (
-                  <div 
+                  <div
                     className="text-[#6E6E73] text-[15px] font-normal prose prose-sm max-w-none prose-p:my-1"
                     dangerouslySetInnerHTML={{ __html: card.description }}
                   />

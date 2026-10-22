@@ -92,7 +92,7 @@ export function RetailOperations({ content }: { content: RetailOperationsContent
       <div className="container mx-auto px-4 md:px-8 max-w-7xl">
         
         {/* Header */}
-        <div className="text-center mb-20 max-w-4xl mx-auto">
+        <div className="text-center mb-6 md:mb-8 lg:mb-20 max-w-4xl mx-auto">
           <motion.h2 
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}

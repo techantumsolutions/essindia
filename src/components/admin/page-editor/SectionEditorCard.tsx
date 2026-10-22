@@ -2233,6 +2233,35 @@ const DEFAULT_LANDING1_SUITE_CONTENT: Record<string, any> = {
   ctaUrl: '/contact-us'
 };
 
+const DEFAULT_LANDING1_TESTIMONIALS_CONTENT: Record<string, any> = {
+  badge: 'TESTIMONIALS',
+  title: 'Built For Every Industry',
+  description: '25+ Industry-Specific Configurations Out Of The Box. Pre-Built Workflows, Reports And Compliance — Tuned To How Your Sector Actually Works.',
+  testimonials: [
+    {
+      avatar: '/Landing page1/assets/unsplash_OhKElOkQ3RE.png',
+      name: 'James Pattinson',
+      designation: 'Operations Director',
+      rating: 4,
+      quote: '"Lobortis leo pretium facilisis amet nisl at nec. Scelerisque risus tortor donec ipsum consequat semper consequat adipiscing ultrices."'
+    },
+    {
+      avatar: '/Landing page1/assets/unsplash_WMD64tMfc4k.png',
+      name: 'Greg Stuart',
+      designation: 'Supply Chain Head',
+      rating: 5,
+      quote: '"Vestibulum, cum nam non amet consectetur morbi aenean condimentum eget. Ultricies integer nunc neque accumsan laoreet. Viverra nibh ultrices."'
+    },
+    {
+      avatar: '/Landing page1/assets/unsplash_6anudmpILw4.png',
+      name: 'Trevor Mitchell',
+      designation: 'Managing Director',
+      rating: 3,
+      quote: '"Ut tristique viverra sed porttitor senectus. A facilisis metus pretium ut habitant lorem. Velit vel bibendum eget aliquet sem nec, id sed. Tincidunt."'
+    }
+  ]
+};
+
 interface SectionEditorCardProps {
   section: PageSection;
   schema?: Record<string, unknown> | null;
@@ -2445,6 +2474,8 @@ export function SectionEditorCard({
         baseSchema = DEFAULT_ABOUT_US_WHY_ESS_CONTENT as Record<string, JsonValue>;
       } else if (section.type === 'erp-features') {
         baseSchema = DEFAULT_ERP_FEATURES_CONTENT as Record<string, JsonValue>;
+      } else if (section.type === 'landing1-testimonials') {
+        baseSchema = DEFAULT_LANDING1_TESTIMONIALS_CONTENT as Record<string, JsonValue>;
       }
     }
 

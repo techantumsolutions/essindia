@@ -58,7 +58,8 @@ export function ContactHero({ content }: { content?: ContactHeroContent }) {
         )}
 
         {/* Content */}
-        <div className="relative z-10 text-center px-4 max-w-4xl mx-auto flex flex-col items-center space-y-4">
+        <div className="relative z-10 w-full lg:max-w-7xl mx-auto lg:px-8">
+          <div className="text-center px-4 max-w-4xl mx-auto flex flex-col items-center space-y-4">
           <div 
             className="rounded-full px-6 py-2 shadow-md"
             style={{ backgroundColor: badgeBgColor }}
@@ -94,6 +95,7 @@ export function ContactHero({ content }: { content?: ContactHeroContent }) {
             style={{ color: descriptionColor }}
             dangerouslySetInnerHTML={{ __html: description }}
           />
+        </div>
         </div>
       </div>
     </div>

@@ -3,6 +3,9 @@ export function getImageHint(sectionType: string, fieldKey: string): string {
   const key = fieldKey.toLowerCase();
 
   // 1. Specific Section Overrides
+  if (sectionType === 'trusted-brands' && (key.includes('image') || key.includes('brand') || key.includes('logo'))) {
+    return 'Recommended: 200x80px transparent PNG or SVG';
+  }
   if (sectionType === 'bi-architecture' && key.includes('image')) {
     return 'Recommended: 1200x675px (16:9 ratio) PNG, JPEG, or animated GIF';
   }

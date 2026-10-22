@@ -54,7 +54,7 @@ export function WhyEssSection({ content }: WhyEssSectionProps) {
       <div className="container mx-auto px-4 md:px-8 max-w-7xl">
 
         {/* Header */}
-        <div className="text-center mb-20 max-w-3xl mx-auto">
+        <div className="text-center mb-8 md:mb-16 lg:mb-20 max-w-3xl mx-auto">
           <TextReveal
             as="h2"
             text={heading}
@@ -68,11 +68,11 @@ export function WhyEssSection({ content }: WhyEssSectionProps) {
         </div>
 
         {/* Content Split */}
-        <div className="flex flex-col lg:flex-row gap-16 lg:gap-8 items-start">
+        <div className="flex flex-col lg:flex-row gap-6 md:gap-8 lg:gap-8 items-start">
 
           {/* Left Side - Image Composition */}
-          <div className="w-full lg:w-1/2 relative flex justify-center mt-10 lg:mt-0 lg:sticky lg:top-24">
-            <MotionSection variant="scaleIn" className="relative w-full max-w-[500px] pb-24 md:pb-32">
+          <div className="w-full lg:w-1/2 relative flex justify-center mt-2 md:mt-6 lg:mt-0 lg:sticky lg:top-24">
+            <MotionSection variant="scaleIn" className="relative w-full max-w-[500px] pb-0 md:pb-0 lg:pb-32">
               {/* Main Top Image Container with Fixed Height & Object Cover */}
               <div className="w-full h-[280px] sm:h-[320px] md:h-[350px] rounded-[32px] overflow-hidden shadow-[0_32px_64px_-12px_rgba(0,0,0,0.15)] bg-slate-100 border border-slate-200/60">
                 <motion.img
@@ -84,50 +84,51 @@ export function WhyEssSection({ content }: WhyEssSectionProps) {
                 />
               </div>
 
-              {/* Floating Bottom Left Image (Restricted within top image width bounds) */}
-              {image2 && (
-                <motion.div
-                  initial={{ opacity: 0, x: -30, y: 20 }}
-                  whileInView={{ opacity: 1, x: 0, y: 0 }}
-                  transition={{ duration: 1, delay: 0.5, ease: [0.22, 1, 0.36, 1] }}
-                  animate={{ y: [0, -6, 0] }}
-                  viewport={{ once: true }}
-                  className="absolute left-0 -bottom-6 md:-bottom-10 w-[48%] h-[120px] sm:h-[140px] md:h-[150px] rounded-2xl overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.12)] z-10 bg-white border border-slate-100/80"
-                >
-                  <motion.img
-                    whileHover={{ scale: 1.05 }}
-                    transition={{ duration: 0.4 }}
-                    src={image2}
-                    alt="Revenue Chart"
-                    className="w-full h-full object-cover"
-                  />
-                </motion.div>
-              )}
+              {/* Bottom Images - In-flow with gap on mobile & tablet, absolute floating on desktop */}
+              <div className="flex justify-between w-full mt-5 md:mt-6 lg:mt-0 lg:contents">
+                {image2 && (
+                  <motion.div
+                    initial={{ opacity: 0, x: -30, y: 20 }}
+                    whileInView={{ opacity: 1, x: 0, y: 0 }}
+                    transition={{ duration: 1, delay: 0.5, ease: [0.22, 1, 0.36, 1] }}
+                    animate={{ y: [0, -6, 0] }}
+                    viewport={{ once: true }}
+                    className="relative lg:absolute lg:left-0 lg:-bottom-10 w-[48%] h-[120px] sm:h-[140px] md:h-[150px] rounded-2xl overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.12)] z-10 bg-white border border-slate-100/80"
+                  >
+                    <motion.img
+                      whileHover={{ scale: 1.05 }}
+                      transition={{ duration: 0.4 }}
+                      src={image2}
+                      alt="Revenue Chart"
+                      className="w-full h-full object-cover"
+                    />
+                  </motion.div>
+                )}
 
-              {/* Floating Bottom Right Image (Restricted within top image width bounds) */}
-              {image3 && (
-                <motion.div
-                  initial={{ opacity: 0, x: 30, y: 50 }}
-                  whileInView={{ opacity: 1, x: 0, y: 0 }}
-                  transition={{ duration: 1, delay: 0.7, ease: [0.22, 1, 0.36, 1] }}
-                  animate={{ y: [0, 6, 0] }}
-                  viewport={{ once: true }}
-                  className="absolute right-0 -bottom-6 md:-bottom-10 w-[48%] h-[120px] sm:h-[140px] md:h-[150px] rounded-2xl overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.12)] z-10 bg-white border border-slate-100/80"
-                >
-                  <motion.img
-                    whileHover={{ scale: 1.05 }}
-                    transition={{ duration: 0.4 }}
-                    src={image3}
-                    alt="Statistics Chart"
-                    className="w-full h-full object-cover"
-                  />
-                </motion.div>
-              )}
+                {image3 && (
+                  <motion.div
+                    initial={{ opacity: 0, x: 30, y: 50 }}
+                    whileInView={{ opacity: 1, x: 0, y: 0 }}
+                    transition={{ duration: 1, delay: 0.7, ease: [0.22, 1, 0.36, 1] }}
+                    animate={{ y: [0, 6, 0] }}
+                    viewport={{ once: true }}
+                    className="relative lg:absolute lg:right-0 lg:-bottom-10 w-[48%] h-[120px] sm:h-[140px] md:h-[150px] rounded-2xl overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.12)] z-10 bg-white border border-slate-100/80"
+                  >
+                    <motion.img
+                      whileHover={{ scale: 1.05 }}
+                      transition={{ duration: 0.4 }}
+                      src={image3}
+                      alt="Statistics Chart"
+                      className="w-full h-full object-cover"
+                    />
+                  </motion.div>
+                )}
+              </div>
             </MotionSection>
           </div>
 
           {/* Right Side - Cards List */}
-          <StaggerContainer className="w-full lg:w-1/2 flex flex-col justify-center gap-6 lg:pl-16 mt-20 lg:mt-0">
+          <StaggerContainer className="w-full lg:w-1/2 flex flex-col justify-center gap-6 lg:pl-16 mt-0 lg:mt-0">
             {points.map((point: Point, index: number) => (
               <motion.div
                 key={index}

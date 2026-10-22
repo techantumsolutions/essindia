@@ -83,28 +83,41 @@ export function EmployeeSpotlightCards({ content }: { content?: any }) {
   const [canScrollRight, setCanScrollRight] = useState(false);
 
   const updateScrollState = useCallback(() => {
-    if (scrollRef.current) {
-      const { scrollLeft, scrollWidth, clientWidth } = scrollRef.current;
-      setCanScrollLeft(scrollLeft > 5);
-      setCanScrollRight(scrollLeft < scrollWidth - clientWidth - 5);
+    const el = scrollRef.current;
+    if (!el) return;
+    const { scrollLeft, scrollWidth, clientWidth } = el;
+    const maxScroll = scrollWidth - clientWidth;
 
-      const index = Math.round(scrollLeft / (clientWidth / 3 || 1));
-      setActiveIndex(Math.min(Math.max(index, 0), employees.length - 1));
+    if (maxScroll <= 15) {
+      setCanScrollLeft(false);
+      setCanScrollRight(false);
+      setActiveIndex(0);
+      return;
     }
+
+    setCanScrollLeft(scrollLeft > 15);
+    setCanScrollRight(scrollLeft < maxScroll - 15);
+
+    const index = Math.round(scrollLeft / (clientWidth / 3 || 1));
+    setActiveIndex(Math.min(Math.max(index, 0), employees.length - 1));
   }, [employees.length]);
 
   useEffect(() => {
     updateScrollState();
     const el = scrollRef.current;
     if (el) {
-      el.addEventListener('scroll', updateScrollState);
+      el.addEventListener('scroll', updateScrollState, { passive: true });
       window.addEventListener('resize', updateScrollState);
     }
+    const t1 = setTimeout(updateScrollState, 100);
+    const t2 = setTimeout(updateScrollState, 400);
     return () => {
       if (el) {
         el.removeEventListener('scroll', updateScrollState);
       }
       window.removeEventListener('resize', updateScrollState);
+      clearTimeout(t1);
+      clearTimeout(t2);
     };
   }, [updateScrollState, employees]);
 
@@ -120,13 +133,18 @@ export function EmployeeSpotlightCards({ content }: { content?: any }) {
   };
 
   const handleScroll = (direction: 'left' | 'right') => {
-    if (scrollRef.current) {
-      const scrollAmount = direction === 'left' ? -360 : 360;
-      scrollRef.current.scrollBy({
-        left: scrollAmount,
-        behavior: 'smooth'
-      });
-    }
+    const el = scrollRef.current;
+    if (!el) return;
+    const firstCard = el.firstElementChild as HTMLElement | null;
+    const cardStep = firstCard ? firstCard.offsetWidth + 24 : el.clientWidth / 3;
+    const scrollAmount = direction === 'left' ? -cardStep : cardStep;
+    el.scrollBy({
+      left: scrollAmount,
+      behavior: 'smooth'
+    });
+    setTimeout(updateScrollState, 100);
+    setTimeout(updateScrollState, 350);
+    setTimeout(updateScrollState, 500);
   };
 
   return (
@@ -139,7 +157,7 @@ export function EmployeeSpotlightCards({ content }: { content?: any }) {
             <button
               onClick={() => handleScroll('left')}
               aria-label="Scroll Left"
-              className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 md:-translate-x-12 lg:-translate-x-14 xl:-translate-x-16 z-20 w-11 h-11 rounded-full bg-white/90 hover:bg-white text-purple-700 shadow-md border border-purple-200 flex items-center justify-center transition-all cursor-pointer hover:scale-110 active:scale-95"
+              className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 md:-translate-x-2 lg:-translate-x-4 xl:-translate-x-14 2xl:-translate-x-16 z-20 w-11 h-11 rounded-full bg-white/90 hover:bg-white text-purple-700 shadow-md border border-purple-200 flex items-center justify-center transition-all cursor-pointer hover:scale-110 active:scale-95"
             >
               <ChevronLeft className="w-6 h-6" />
             </button>
@@ -150,7 +168,7 @@ export function EmployeeSpotlightCards({ content }: { content?: any }) {
             <button
               onClick={() => handleScroll('right')}
               aria-label="Scroll Right"
-              className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 md:translate-x-12 lg:translate-x-14 xl:translate-x-16 z-20 w-11 h-11 rounded-full bg-white/90 hover:bg-white text-purple-700 shadow-md border border-purple-200 flex items-center justify-center transition-all cursor-pointer hover:scale-110 active:scale-95"
+              className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 md:translate-x-2 lg:translate-x-4 xl:translate-x-14 2xl:translate-x-16 z-20 w-11 h-11 rounded-full bg-white/90 hover:bg-white text-purple-700 shadow-md border border-purple-200 flex items-center justify-center transition-all cursor-pointer hover:scale-110 active:scale-95"
             >
               <ChevronRight className="w-6 h-6" />
             </button>
