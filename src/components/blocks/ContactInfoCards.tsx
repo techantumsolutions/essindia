@@ -51,8 +51,8 @@ export function ContactInfoCards({ content }: { content?: ContactInfoCardsConten
   ];
 
   return (
-    <div className="w-full bg-white py-14 px-6 border-b">
-      <div className="max-w-7xl mx-auto w-full">
+    <div className="w-full bg-white py-14 px-6 lg:px-0 border-b">
+      <div className="max-w-7xl mx-auto w-full lg:px-8">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {cards.map((card, i) => {
             const contactVal = card.contact || card.linkText;

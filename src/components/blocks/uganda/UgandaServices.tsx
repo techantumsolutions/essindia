@@ -167,7 +167,7 @@ export function UgandaServices({ content }: { content?: UgandaServicesContent })
   };
 
   return (
-    <section className="w-full py-20 bg-[#f8fafc] border-b border-slate-100">
+    <section className="w-full py-12 bg-[#f8fafc] border-b border-slate-100">
       <div className="container mx-auto px-4 md:px-8 max-w-7xl text-center">
 
         {/* Badge Pill with lines */}

@@ -155,7 +155,7 @@ export function ContactFormFaq({ content }: { content?: ContactFormFaqContent })
   );
 
   return (
-    <div className="max-w-7xl mx-auto px-6 py-14">
+    <div className="max-w-7xl mx-auto px-6 lg:px-8 py-14">
       <div className="flex flex-col lg:flex-row gap-12 lg:gap-8">
 
         {/* Left Side - Form */}

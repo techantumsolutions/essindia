@@ -112,7 +112,7 @@ export function TestimonialsSection({ content }: TestimonialsSectionProps) {
     <section className="bg-white min-h-screen">
       {/* Premium Dark Glowing Hero Banner */}
       <div
-        className="relative pt-40 pb-28 text-center px-4 overflow-hidden"
+        className="relative py-12 text-center px-4 overflow-hidden"
         style={{
           backgroundColor: bgColor,
           backgroundImage: bgImage ? `url('${bgImage}')` : undefined,
@@ -159,13 +159,13 @@ export function TestimonialsSection({ content }: TestimonialsSectionProps) {
       </div>
 
       {/* Main Grid Content */}
-      <div className="max-w-7xl mx-auto px-4 md:px-8 py-16">
+      <div className="max-w-7xl mx-auto px-4 md:px-8 py-12 border-b">
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-12">
-          
+
           {/* Left Column: Filter Sidebar */}
           <div className="col-span-1 space-y-6 lg:sticky lg:top-32 h-fit">
             <div className="bg-white border border-slate-100 rounded-[28px] p-6 shadow-sm space-y-6">
-              
+
               {/* Header */}
               <div className="flex items-center gap-2 pb-4 border-b border-slate-100">
                 <SlidersHorizontal className="w-4 h-4 text-[#4B2A63]" />

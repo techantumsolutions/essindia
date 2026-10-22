@@ -225,7 +225,7 @@ export function BiTabs({ content }: { content?: BiTabsContent }) {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -10 }}
               transition={{ duration: 0.25 }}
-              className="flex flex-col lg:flex-row items-center gap-12 lg:gap-16"
+              className="flex flex-col lg:flex-row items-center gap-6 md:gap-8 lg:gap-16"
             >
               <div className="flex-1 space-y-6 text-left w-full">
                 <div className="space-y-3">

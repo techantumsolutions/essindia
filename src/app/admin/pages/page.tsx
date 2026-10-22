@@ -266,8 +266,8 @@ function RegistryPageRow({
         <div className="w-7 h-7 rounded-md bg-slate-100 flex items-center justify-center shrink-0">
           <FileText className="w-3.5 h-3.5 text-slate-400" />
         </div>
-        <div className="min-w-0">
-          <h4 className="text-xs font-semibold text-slate-900 truncate">{page.title}</h4>
+        <div className="min-w-0" title={page.title}>
+          <h4 className="text-xs font-semibold text-slate-900 truncate" title={page.title}>{page.title}</h4>
           <p className="text-[10px] text-slate-400 truncate">
             {page.source}
           </p>

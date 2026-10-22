@@ -572,6 +572,10 @@ export function humanLabel(
     if (key === 'desc2') return 'Description Line 2';
   }
 
+  if (options?.sectionType === 'trusted-brands' || options?.keyPath?.includes('brands')) {
+    if (key === 'image') return 'Brand Logo Upload';
+  }
+
   const base = baseHumanLabel(key);
   const tag = getHeadingTagForField(key, options?.sectionType, options?.keyPath);
   if (!tag) return base;

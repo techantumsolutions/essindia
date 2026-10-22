@@ -45,7 +45,7 @@ export function UgandaControl({ content }: { content?: UgandaControlContent }) {
   return (
     <section className="w-full py-14 bg-white flex items-center justify-center border-b">
       <div className="container mx-auto px-4 md:px-8 max-w-7xl">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-stretch">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-8 lg:gap-16 items-stretch">
           {/* Left Column: Text & Points */}
           <div className="flex flex-col justify-center space-y-3 text-left">
             {subtitle && (
@@ -102,15 +102,15 @@ export function UgandaControl({ content }: { content?: UgandaControlContent }) {
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
-            className="relative flex items-center justify-center w-full min-h-[400px] lg:min-h-full"
+            className="relative flex items-center justify-center w-full min-h-[280px] sm:min-h-[350px] md:min-h-[400px] lg:min-h-full"
           >
-            <div className="relative w-full h-full min-h-[400px] lg:min-h-[500px]">
+            <div className="relative w-full h-full min-h-[280px] sm:min-h-[350px] md:min-h-[400px] lg:min-h-[500px]">
               {image && (
                 <Image
                   src={image}
                   alt="Governance & Control Showcase"
                   fill
-                  className="object-contain"
+                  className="object-contain object-top lg:object-center"
                   sizes="(max-width: 1024px) 100vw, 50vw"
                   priority
                 />

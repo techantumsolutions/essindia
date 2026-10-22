@@ -73,6 +73,10 @@ export function ArrayFieldEditor({
       onChange([...safeValue, '']);
       return;
     }
+    if (fieldKey.toLowerCase() === 'brands' || sectionType === 'trusted-brands') {
+      onChange([...safeValue, { image: '' }]);
+      return;
+    }
     if (safeValue.length > 0) {
       const template = createEmptyFromTemplate(safeValue[0]);
       onChange([...safeValue, template]);
@@ -398,6 +402,10 @@ function getItemPreviewTitle(item: JsonValue, index: number): string {
     const obj = item as Record<string, JsonValue>;
     const titleField = obj.title || obj.name || obj.label || obj.heading || obj.question || obj.text || obj.tabName;
     if (typeof titleField === 'string' && titleField.trim()) return titleField.slice(0, 50);
+    if (typeof obj.image === 'string' && obj.image.trim()) {
+      const fileName = obj.image.split('/').pop() || '';
+      return fileName || `Item ${index + 1}`;
+    }
     for (const val of Object.values(obj)) {
       if (typeof val === 'string' && val.trim() && val.length > 2 && val.length < 60) {
         return val;

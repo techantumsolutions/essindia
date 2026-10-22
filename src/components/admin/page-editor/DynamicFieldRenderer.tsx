@@ -947,14 +947,21 @@ function ArrayField({
   } else if (sectionType === 'landing1-testimonials' && fieldKey === 'testimonials' && Array.isArray(value)) {
     normalizedValue = value.map(item => {
       if (item && typeof item === 'object' && !Array.isArray(item)) {
+        const raw = item as Record<string, any>;
+        const fallbackDesig = raw.designation || (
+          raw.name === 'James Pattinson' ? 'Operations Director' :
+          raw.name === 'Greg Stuart' ? 'Supply Chain Head' :
+          raw.name === 'Trevor Mitchell' ? 'Managing Director' :
+          ''
+        );
         return {
           avatar: '',
           name: '',
-          designation: '',
           companyName: '',
           rating: 5,
           quote: '',
-          ...item
+          ...raw,
+          designation: raw.designation !== undefined && raw.designation !== '' ? raw.designation : fallbackDesig
         };
       }
       return item;
@@ -978,7 +985,9 @@ function ArrayField({
   const isImageArray = isPrimitive && (
     fieldKey.toLowerCase().includes('image') ||
     fieldKey.toLowerCase().includes('logo') ||
-    fieldKey.toLowerCase().includes('photo')
+    fieldKey.toLowerCase().includes('photo') ||
+    fieldKey.toLowerCase() === 'brands' ||
+    sectionType === 'trusted-brands'
   );
 
   return (
@@ -1073,12 +1082,22 @@ function ArrayField({
           }
 
           let sortedKeys = Object.keys(objItem);
-          if (fieldKey === 'testimonials') {
+          if (fieldKey === 'brands' || sectionType === 'trusted-brands') {
+            if (!('image' in objItem)) {
+              objItem.image = '';
+            }
+            sortedKeys = ['image'];
+          } else if (fieldKey === 'testimonials') {
             let testimonialOrder = ['topic', 'industry', 'companyName', 'quote', 'authorAvatar', 'authorName', 'authorTitle'];
             if (sectionType === 'landing1-testimonials') {
               testimonialOrder = ['avatar', 'name', 'designation', 'companyName', 'rating', 'quote'];
               if (!('rating' in objItem) || objItem.rating === undefined || objItem.rating === null) {
                 objItem.rating = 5;
+              }
+              if (!('designation' in objItem) || !objItem.designation) {
+                objItem.designation = (objItem as any).name === 'James Pattinson' ? 'Operations Director' :
+                  (objItem as any).name === 'Greg Stuart' ? 'Supply Chain Head' :
+                  (objItem as any).name === 'Trevor Mitchell' ? 'Managing Director' : '';
               }
               for (const k of testimonialOrder) {
                 if (!(k in objItem)) {

@@ -38,7 +38,7 @@ export function EuropeAiMonitor({ content }: { content?: EuropeAiMonitorContent 
 
   return (
     <EuropeSectionShell content={{ ...content, backgroundColor: '#f4f7fa' }}>
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6 lg:gap-16 items-center">
         <div className="space-y-6 text-left flex flex-col justify-center">
           {badgeText && (
             <span className="inline-block text-xs sm:text-sm font-bold uppercase tracking-wider text-[#231f61]">
@@ -87,13 +87,13 @@ export function EuropeAiMonitor({ content }: { content?: EuropeAiMonitorContent 
           transition={{ duration: 0.5 }}
           className="relative flex justify-center lg:justify-end"
         >
-          <div className="relative w-full aspect-[4/3] md:aspect-[5/4] shrink-0">
+          <div className="relative w-full aspect-[3/2] lg:aspect-[5/4] shrink-0">
             {image && (
               <Image
                 src={image}
                 alt="AI Brand Monitoring Dashboard"
                 fill
-                className="object-contain"
+                className="object-contain object-top lg:object-center"
                 sizes="(max-width: 1024px) 100vw, 50vw"
                 priority
               />

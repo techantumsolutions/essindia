@@ -28,9 +28,9 @@ export default function CareerLife({ content }: { content?: any }) {
   ].filter(img => Boolean(img.src && String(img.src).trim() !== ''));
 
   return (
-    <section className="py-14 px-6 bg-white">
+    <section className="py-12 px-6 bg-white border-b">
       <div className="container mx-auto max-w-7xl">
-        <div className="text-center mb-16">
+        <div className="text-center mb-6 md:mb-8 lg:mb-16">
           <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-4">{title}</h2>
           <p className="text-[#71717A] max-w-2xl mx-auto text-2xl font-light leading-none">
             {subtitle}
@@ -40,13 +40,12 @@ export default function CareerLife({ content }: { content?: any }) {
         <div className="space-y-4">
           {/* Top Gallery Grid */}
           {topImages.length > 0 && (
-            <div className={`grid grid-cols-1 sm:grid-cols-2 ${
-              topImages.length === 5
+            <div className={`grid grid-cols-1 sm:grid-cols-2 ${topImages.length === 5
                 ? 'md:grid-cols-5'
                 : topImages.length === 4
-                ? 'md:grid-cols-4'
-                : 'md:grid-cols-3'
-            } gap-4`}>
+                  ? 'md:grid-cols-4'
+                  : 'md:grid-cols-3'
+              } gap-4`}>
               {topImages.map((img, idx) => (
                 <motion.div
                   key={idx}

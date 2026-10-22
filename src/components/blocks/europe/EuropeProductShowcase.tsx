@@ -55,21 +55,21 @@ export function EuropeProductShowcase({ content }: { content?: EuropeProductShow
 
   return (
     <EuropeSectionShell content={{ ...content, backgroundColor: '#eef2f6' }}>
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-stretch">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-0 md:gap-8 lg:gap-16 items-stretch">
         <motion.div
           initial={{ opacity: 0, x: -30 }}
           whileInView={{ opacity: 1, x: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.5 }}
-          className="relative flex items-center justify-center min-h-[350px] lg:min-h-full"
+          className="relative flex items-center justify-center min-h-[260px] sm:min-h-[300px] md:min-h-[360px] lg:min-h-full"
         >
-          <div className="relative w-full h-full min-h-[350px] lg:min-h-[500px]">
+          <div className="relative w-full h-full min-h-[260px] sm:min-h-[300px] md:min-h-[360px] lg:min-h-[500px]">
             {deviceImage && (
               <Image
                 src={deviceImage}
                 alt="ebizframe mobile app"
                 fill
-                className="object-contain"
+                className="object-contain object-bottom lg:object-center"
                 sizes="(max-width: 1024px) 100vw, 50vw"
                 priority
               />
@@ -102,14 +102,13 @@ export function EuropeProductShowcase({ content }: { content?: EuropeProductShow
               style={
                 isBtnHovered && (buttonHoverBgColor || buttonHoverTextColor)
                   ? {
-                      backgroundColor: buttonHoverBgColor || undefined,
-                      color: buttonHoverTextColor || undefined,
-                    }
+                    backgroundColor: buttonHoverBgColor || undefined,
+                    color: buttonHoverTextColor || undefined,
+                  }
                   : undefined
               }
-              className={`inline-flex items-center gap-2 px-8 py-3.5 rounded-lg text-sm font-medium text-white bg-[#231f61] ${
-                buttonHoverBgColor ? '' : 'hover:bg-[#1a174d]'
-              } transition-all shadow-md w-fit cursor-pointer`}
+              className={`inline-flex items-center gap-2 px-8 py-3.5 rounded-lg text-sm font-medium text-white bg-[#231f61] ${buttonHoverBgColor ? '' : 'hover:bg-[#1a174d]'
+                } transition-all shadow-md w-fit cursor-pointer`}
             >
               {buttonText}
               <ArrowRight className="w-4 h-4" aria-hidden="true" />

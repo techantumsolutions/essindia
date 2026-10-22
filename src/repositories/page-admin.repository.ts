@@ -738,6 +738,69 @@ export class PageAdminRepository {
     return updated;
   }
 
+  async updateSections(
+    pageId: string,
+    sections: Array<{
+      id: string;
+      content?: Record<string, unknown> | null;
+      name?: string;
+      variant?: string;
+      isActive?: boolean;
+    }>
+  ) {
+    if (!sections.length) return [];
+
+    const updatedSections = await Promise.all(
+      sections.map(async (s) => {
+        if (!s.id) return null;
+        const { content, ...rest } = s;
+
+        let [updated] = await db
+          .update(pageSections)
+          .set({
+            ...rest,
+            ...(content !== undefined ? { content: content ?? {} } : {}),
+            updatedAt: new Date(),
+          })
+          .where(eq(pageSections.id, s.id))
+          .returning();
+
+        if (!updated) {
+          const { name, ...templateRest } = rest;
+          const [templateUpdated] = await db
+            .update(templateSections)
+            .set({
+              ...templateRest,
+              ...(content !== undefined ? { contentJson: content ?? {} } : {}),
+              updatedAt: new Date(),
+            })
+            .where(eq(templateSections.id, s.id))
+            .returning();
+          return templateUpdated || null;
+        }
+
+        return updated;
+      })
+    );
+
+    const validUpdated = updatedSections.filter(Boolean);
+    const firstUpdated = validUpdated[0] as any;
+    const targetPageId = pageId || (firstUpdated && 'pageId' in firstUpdated ? firstUpdated.pageId : null);
+
+    if (targetPageId) {
+      const page = await db.query.pages.findFirst({
+        where: eq(pages.id, targetPageId),
+      }).catch(() => null);
+
+      if (page) {
+        await this.saveRevision(targetPageId).catch(() => null);
+        await this.invalidateCache(page.fullPath).catch(() => null);
+      }
+    }
+
+    return validUpdated;
+  }
+
   async reorderSections(pageId: string, sectionIds: string[]) {
     const page = await this.getById(pageId);
     if (!page) return null;

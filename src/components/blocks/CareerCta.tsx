@@ -18,7 +18,7 @@ export default function CareerCta({ content }: { content?: any }) {
   } = content || {};
 
   return (
-    <section className="py-14 px-6 bg-white">
+    <section className="py-12 px-6 bg-white">
       <div className="container mx-auto max-w-7xl text-center">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -39,9 +39,9 @@ export default function CareerCta({ content }: { content?: any }) {
             style={
               isBtnHovered && (ctaHoverBgColor || ctaHoverTextColor)
                 ? {
-                    backgroundColor: ctaHoverBgColor || undefined,
-                    color: ctaHoverTextColor || undefined,
-                  }
+                  backgroundColor: ctaHoverBgColor || undefined,
+                  color: ctaHoverTextColor || undefined,
+                }
                 : undefined
             }
             className={`bg-[#0D1A5C] ${ctaHoverBgColor ? '' : 'hover:bg-[#07103a]'} text-white px-8 py-3 rounded-full font-medium transition-colors inline-flex items-center gap-2 cursor-pointer`}

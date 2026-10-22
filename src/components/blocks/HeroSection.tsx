@@ -207,23 +207,23 @@ export function HeroSection({ content }: HeroSectionProps) {
           </div>
 
           {/* Right Content - Dashboard Composition */}
-          <div className="w-full lg:w-1/2 relative h-[450px] md:h-[600px] flex items-center justify-center">
+          <div className="w-full lg:w-1/2 relative h-auto lg:h-[600px] flex items-center justify-center">
             <motion.div
               initial={{ opacity: 0, scale: 0.9, filter: 'blur(20px)' }}
               animate={{ opacity: 1, scale: 1, filter: 'blur(0px)' }}
               transition={{ duration: 1.2, ease: [0.22, 1, 0.36, 1], delay: 0.2 }}
-              className="relative w-full h-full flex items-center justify-center"
+              className="relative w-full h-auto lg:h-full flex items-center justify-center"
             >
               {/* Floating Animation */}
               <motion.div
                 animate={{ y: [0, -15, 0] }}
                 transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
-                className="relative z-10"
+                className="relative z-10 w-full flex items-center justify-center"
               >
                 <img
                   src={image}
                   alt="Platform Dashboard Features"
-                  className="w-full h-auto max-w-[650px] object-contain drop-shadow-[0_32px_64px_rgba(0,0,0,0.12)]"
+                  className="w-auto h-auto max-w-full max-h-[350px] sm:max-h-[420px] md:max-h-[480px] lg:max-h-none lg:w-full lg:max-w-[650px] object-contain drop-shadow-[0_32px_64px_rgba(0,0,0,0.12)] mx-auto"
                 />
               </motion.div>
 
@@ -231,12 +231,12 @@ export function HeroSection({ content }: HeroSectionProps) {
               <motion.div
                 animate={{ rotate: 360, scale: [1, 1.1, 1] }}
                 transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-                className="absolute -top-10 -right-10 w-48 h-48 bg-gradient-to-br from-purple-100 to-transparent rounded-full blur-3xl opacity-60"
+                className="absolute -top-10 -right-10 w-48 h-48 bg-gradient-to-br from-purple-100 to-transparent rounded-full blur-3xl opacity-60 pointer-events-none"
               />
               <motion.div
                 animate={{ rotate: -360, scale: [1, 1.2, 1] }}
                 transition={{ duration: 25, repeat: Infinity, ease: "linear" }}
-                className="absolute -bottom-20 -left-10 w-56 h-56 bg-gradient-to-tr from-blue-50 to-transparent rounded-full blur-3xl opacity-40"
+                className="absolute -bottom-20 -left-10 w-56 h-56 bg-gradient-to-tr from-blue-50 to-transparent rounded-full blur-3xl opacity-40 pointer-events-none"
               />
             </motion.div>
           </div>

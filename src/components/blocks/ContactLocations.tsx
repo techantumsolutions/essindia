@@ -77,14 +77,14 @@ export function ContactLocations({ content }: { content?: ContactLocationsConten
   ];
 
   return (
-    <div className="relative w-full py-14 px-6 bg-[#F8F9FA] overflow-hidden">
+    <div className="relative w-full py-14 px-6 lg:px-0 bg-[#F8F9FA] overflow-hidden">
       {/* Background Map Image */}
       <div
         className="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-40 mix-blend-multiply"
         style={{ backgroundImage: `url("${backgroundImageUrl}")` }}
       ></div>
 
-      <div className="relative z-10 max-w-7xl mx-auto">
+      <div className="relative z-10 max-w-7xl mx-auto lg:px-8">
         <div className="text-center max-w-4xl mx-auto mb-16">
           <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">{title}</h2>
           <FormattedText content={description} className="text-gray-500 text-sm md:text-base leading-relaxed" />

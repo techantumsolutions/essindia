@@ -124,10 +124,10 @@ export function Landing1Cta({ content }: { content?: Landing1CtaContent }) {
   };
 
   return (
-    <section className="py-20 bg-[#FAF9FF] text-slate-900 font-sans select-none border-b border-slate-200">
+    <section className="py-12 bg-[#FAF9FF] text-slate-900 font-sans select-none border-b border-slate-200">
       <div className="container mx-auto px-6 max-w-7xl">
         <div className="bg-white rounded-[32px] border border-slate-100 shadow-[0_15px_50px_rgba(0,0,0,0.03)] overflow-hidden grid grid-cols-1 lg:grid-cols-12">
-          
+
           {/* Left Column */}
           <div className="lg:col-span-5 p-8 md:p-12 bg-slate-50/50 flex flex-col justify-between border-r border-slate-100">
             <div>

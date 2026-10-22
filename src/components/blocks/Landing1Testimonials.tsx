@@ -24,18 +24,21 @@ const DEFAULT_TESTIMONIALS: TestimonialItem[] = [
   {
     avatar: '/Landing page1/assets/unsplash_OhKElOkQ3RE.png',
     name: 'James Pattinson',
+    designation: 'Operations Director',
     rating: 4,
     quote: '"Lobortis leo pretium facilisis amet nisl at nec. Scelerisque risus tortor donec ipsum consequat semper consequat adipiscing ultrices."'
   },
   {
     avatar: '/Landing page1/assets/unsplash_WMD64tMfc4k.png',
     name: 'Greg Stuart',
+    designation: 'Supply Chain Head',
     rating: 5,
     quote: '"Vestibulum, cum nam non amet consectetur morbi aenean condimentum eget. Ultricies integer nunc neque accumsan laoreet. Viverra nibh ultrices."'
   },
   {
     avatar: '/Landing page1/assets/unsplash_6anudmpILw4.png',
     name: 'Trevor Mitchell',
+    designation: 'Managing Director',
     rating: 3,
     quote: '"Ut tristique viverra sed porttitor senectus. A facilisis metus pretium ut habitant lorem. Velit vel bibendum eget aliquet sem nec, id sed. Tincidunt."'
   }
@@ -149,7 +152,7 @@ export function Landing1Testimonials({ content }: { content?: Landing1Testimonia
   return (
     <section className="py-20 bg-slate-50 text-slate-900 font-sans select-none border-b border-slate-200">
       <div className="container mx-auto px-6 max-w-5xl">
-        
+
         {/* Header */}
         <div className="text-center max-w-3xl mx-auto mb-12 space-y-3">
           {data.badge && (
@@ -202,65 +205,77 @@ export function Landing1Testimonials({ content }: { content?: Landing1Testimonia
             role="region"
             aria-label="Testimonials carousel"
           >
-          {slides.map((test, idx) => (
-            <div
-              key={`${test.name}-${idx}`}
-              aria-hidden={shouldLoop && idx >= testimonials.length ? true : undefined}
-              className="snap-start shrink-0 w-full md:w-[calc((100%-3rem)/3)] bg-white p-5 md:p-6 rounded-[24px] border border-[#FF9F1C] shadow-sm flex flex-col items-center text-center transition-all duration-300 hover:shadow-md hover:-translate-y-1"
-            >
-              {/* Avatar */}
-              {test.avatar && (
-                <div className="w-20 h-20 rounded-full overflow-hidden mb-4 border-2 border-slate-50 shadow-inner shrink-0 relative bg-slate-100">
-                  <img
-                    src={test.avatar}
-                    alt={test.name}
-                    className="w-full h-full object-cover object-center"
-                    loading="lazy"
-                  />
-                </div>
-              )}
-
-              {/* Name */}
-              <h4 className={`text-base font-extrabold text-[#49288a] tracking-wide ${test.designation || test.companyName ? 'mb-1' : 'mb-1.5'}`}>
-                {test.name}
-              </h4>
-
-              {(test.designation || test.companyName) && (
-                <div className="flex flex-col items-center gap-1 mb-2.5 max-w-full">
-                  {test.designation && (
-                    <span className="text-xs font-semibold text-slate-600 leading-tight">
-                      {test.designation}
-                    </span>
-                  )}
-                  {test.companyName && (
-                    <span className="inline-flex max-w-full items-center rounded-full bg-[#f6f1fc] px-2.5 py-0.5 text-[11px] font-semibold leading-tight text-[#49288a]">
-                      <span className="truncate">{test.companyName}</span>
-                    </span>
-                  )}
-                </div>
-              )}
-
-              {/* Star Rating */}
-              <div className="flex items-center gap-0.5 mb-3">
-                {[...Array(5)].map((_, starIdx) => {
-                  const active = starIdx < test.rating;
-                  return (
-                    <Star
-                      key={starIdx}
-                      className={`w-4 h-4 ${active ? 'fill-[#FF8A00] text-[#FF8A00]' : 'fill-[#E2E8F0] text-[#E2E8F0]'}`}
+            {slides.map((test, idx) => (
+              <div
+                key={`${test.name}-${idx}`}
+                aria-hidden={shouldLoop && idx >= testimonials.length ? true : undefined}
+                className="snap-start shrink-0 w-full md:w-[calc((100%-3rem)/3)] bg-white p-5 md:p-6 rounded-[24px] border border-[#FF9F1C] shadow-sm flex flex-col items-center text-center transition-all duration-300 hover:shadow-md hover:-translate-y-1"
+              >
+                {/* Avatar */}
+                {test.avatar && (
+                  <div className="w-20 h-20 rounded-full overflow-hidden mb-4 shrink-0 relative">
+                    <img
+                      src={test.avatar}
+                      alt={test.name}
+                      className="w-full h-full object-cover object-center rounded-full"
+                      loading="lazy"
                     />
+                  </div>
+                )}
+
+                {/* Name & Designation */}
+                {(() => {
+                  const designation = test.designation || (
+                    test.name === 'James Pattinson' ? 'Operations Director' :
+                    test.name === 'Greg Stuart' ? 'Supply Chain Head' :
+                    test.name === 'Trevor Mitchell' ? 'Managing Director' :
+                    ''
                   );
-                })}
+                  return (
+                    <>
+                      <h4 className={`text-base font-extrabold text-[#49288a] tracking-wide ${designation || test.companyName ? 'mb-1' : 'mb-1.5'}`}>
+                        {test.name}
+                      </h4>
+
+                      {(designation || test.companyName) && (
+                        <div className="flex flex-col items-center gap-1 mb-2.5 max-w-full">
+                          {designation && (
+                            <span className="text-xs font-semibold text-slate-600 leading-tight">
+                              {designation}
+                            </span>
+                          )}
+                          {test.companyName && (
+                            <span className="inline-flex max-w-full items-center rounded-full bg-[#f6f1fc] px-2.5 py-0.5 text-[11px] font-semibold leading-tight text-[#49288a]">
+                              <span className="truncate">{test.companyName}</span>
+                            </span>
+                          )}
+                        </div>
+                      )}
+                    </>
+                  );
+                })()}
+
+                {/* Star Rating */}
+                <div className="flex items-center gap-0.5 mb-3">
+                  {[...Array(5)].map((_, starIdx) => {
+                    const active = starIdx < test.rating;
+                    return (
+                      <Star
+                        key={starIdx}
+                        className={`w-4 h-4 ${active ? 'fill-[#FF8A00] text-[#FF8A00]' : 'fill-[#E2E8F0] text-[#E2E8F0]'}`}
+                      />
+                    );
+                  })}
+                </div>
+
+                {/* Quote */}
+                <FormattedText
+                  content={test.quote}
+                  className="text-slate-600 text-xs leading-relaxed font-medium"
+                />
+
               </div>
-
-              {/* Quote */}
-              <FormattedText
-                content={test.quote}
-                className="text-slate-600 text-xs leading-relaxed font-medium"
-              />
-
-            </div>
-          ))}
+            ))}
           </div>
         </div>
 

@@ -61,17 +61,16 @@ export async function PUT(
     const { sections } = body;
     if (!Array.isArray(sections)) return badRequest('sections must be an array');
 
-    const updatedSections = [];
-    for (const s of sections) {
-      if (!s.id) continue;
-      const updated = await pageAdminRepository.updateSection(s.id, {
-        ...(s.content !== undefined ? { content: s.content } : {}),
-        ...(s.name !== undefined ? { name: s.name } : {}),
-        ...(s.variant !== undefined ? { variant: s.variant } : {}),
-        ...(s.isActive !== undefined ? { isActive: s.isActive } : {}),
-      });
-      if (updated) updatedSections.push(updated);
-    }
+    const updatedSections = await pageAdminRepository.updateSections(
+      pageId,
+      sections.filter((s) => s && s.id).map((s) => ({
+        id: s.id,
+        content: s.content,
+        name: s.name,
+        variant: s.variant,
+        isActive: s.isActive,
+      }))
+    );
 
     return NextResponse.json({ success: true, count: updatedSections.length, pageId });
   } catch (error) {

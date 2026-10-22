@@ -105,6 +105,42 @@ export function Header({
   }, [pathname]);
 
   React.useEffect(() => {
+    if (isMobileMenuOpen) {
+      const scrollY = window.scrollY;
+      const originalBodyOverflow = document.body.style.overflow;
+      const originalBodyPosition = document.body.style.position;
+      const originalBodyTop = document.body.style.top;
+      const originalBodyWidth = document.body.style.width;
+      const originalHtmlOverflow = document.documentElement.style.overflow;
+
+      document.documentElement.style.overflow = 'hidden';
+      document.body.style.overflow = 'hidden';
+      document.body.style.position = 'fixed';
+      document.body.style.top = `-${scrollY}px`;
+      document.body.style.width = '100%';
+
+      return () => {
+        document.documentElement.style.overflow = originalHtmlOverflow;
+        document.body.style.overflow = originalBodyOverflow;
+        document.body.style.position = originalBodyPosition;
+        document.body.style.top = originalBodyTop;
+        document.body.style.width = originalBodyWidth;
+        window.scrollTo(0, scrollY);
+      };
+    }
+  }, [isMobileMenuOpen]);
+
+  React.useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth >= 1024) {
+        setIsMobileMenuOpen(false);
+      }
+    };
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  React.useEffect(() => {
     const handleScroll = () => {
       setScrolled(window.scrollY > 20);
     };
@@ -121,7 +157,7 @@ export function Header({
         animate={{ y: 0, opacity: 1 }}
         transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
         className={cn(
-          "w-full transition-all duration-500 ease-[0.22, 1, 0.36, 1]",
+          "w-full transition-all duration-500 ease-[0.22, 1, 0.36, 1] relative z-50",
           "bg-white py-3 shadow-[0_4px_25px_-5px_rgba(0,0,0,0.1)] border-b border-slate-200"
         )}
       >
@@ -165,21 +201,34 @@ export function Header({
       {/* Mobile Menu Dropdown */}
       <AnimatePresence>
         {isMobileMenuOpen && (
-          <motion.div
-            initial={{ opacity: 0, y: 10, scale: 0.95 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: 10, scale: 0.95 }}
-            transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
-            className="absolute top-[80px] left-4 right-4 bg-white/95 backdrop-blur-2xl rounded-none shadow-2xl border border-slate-100 p-6 flex flex-col gap-6 lg:hidden z-50"
-          >
-            <nav className="flex flex-col gap-4">
+          <>
+            {/* Backdrop overlay for mobile & tablet screens */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.25 }}
+              onClick={() => setIsMobileMenuOpen(false)}
+              className="fixed inset-0 bg-black/40 backdrop-blur-xs z-40 lg:hidden touch-none"
+              aria-hidden="true"
+            />
+
+            <motion.div
+              initial={{ opacity: 0, y: 10, scale: 0.95 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: 10, scale: 0.95 }}
+              transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+              style={{ maxHeight: 'calc(100dvh - 96px)', WebkitOverflowScrolling: 'touch' }}
+              className="absolute top-[80px] left-4 right-4 bg-white/95 backdrop-blur-2xl rounded-none shadow-2xl border border-slate-100 p-6 pb-8 flex flex-col gap-6 lg:hidden z-50 max-h-[calc(100vh-96px)] max-h-[calc(100dvh-96px)] overflow-y-auto overscroll-contain"
+            >
+            <nav className="flex flex-col gap-4 shrink-0">
               {navData.map((item) => {
                 const simpleLinks = item.megaMenuConfig?.links || [];
                 const hasSubmenu = hasRenderableMegaMenu(item.megaMenu) || simpleLinks.length > 0 || (item.children && item.children.length > 0);
                 const isExpanded = !!expandedMobileItems[item.id];
 
                 return (
-                  <motion.div key={item.id} className="w-full">
+                  <motion.div key={item.id} className="w-full shrink-0">
                     {hasSubmenu ? (
                       <div className="flex flex-col gap-2">
                         <button
@@ -254,7 +303,7 @@ export function Header({
               })}
             </nav>
 
-            <div className="pt-4 border-t border-slate-100 flex items-center gap-3 w-full">
+            <div className="pt-4 border-t border-slate-100 flex items-center gap-3 w-full shrink-0">
               {countryLinks && countryLinks.length > 0 && (
                 <div className="flex-1 w-full min-w-0">
                   <HeaderCountryDropdown countries={countryLinks} buttonText={countryDropdownText} isMobile onNavigate={() => setIsMobileMenuOpen(false)} />
@@ -267,8 +316,9 @@ export function Header({
               </Link>
             </div>
           </motion.div>
-        )}
-      </AnimatePresence>
+        </>
+      )}
+    </AnimatePresence>
     </header>
   );
 }

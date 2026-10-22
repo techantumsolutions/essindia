@@ -51,7 +51,7 @@ export function JudicialHero({ content }: JudicialHeroProps) {
   const buttonUrl = content?.buttonUrl || '#';
   const image = content?.image || '/Judicial Automation/Rectangle 196.png';
 
-  
+
   const bgStyles = getHeroBackgroundStyles({
     gradientColor1: content?.gradientColor1,
     gradientColor2: content?.gradientColor2,
@@ -59,20 +59,20 @@ export function JudicialHero({ content }: JudicialHeroProps) {
   }, { backgroundColor: bgColor });
 
   return (
-    <section className="relative min-h-[80vh] flex items-center py-14 px-6" style={bgStyles}>
+    <section className="relative min-h-[80vh] flex items-center py-12 px-6" style={bgStyles}>
       <div className="container mx-auto max-w-7xl">
         <div className="flex flex-col lg:flex-row items-center justify-between gap-12">
           <div className="lg:w-1/2 space-y-6 text-white">
             {badgeText && (
-              <div 
+              <div
                 className="inline-block font-semibold px-4 py-2 rounded-full text-sm"
                 style={{ backgroundColor: badgeBgColor, color: badgeTextColor }}
               >
                 {badgeText}
               </div>
             )}
-            
-             {((content as any)?.titleGradientFrom || (content as any)?.titleGradientTo) && (content as any)?.enableTitleGradientAnimation !== false ? (
+
+            {((content as any)?.titleGradientFrom || (content as any)?.titleGradientTo) && (content as any)?.enableTitleGradientAnimation !== false ? (
               <HeroTitle
                 as="h1"
                 title={title.replace(/<[^>]*>/g, '')}
@@ -82,7 +82,7 @@ export function JudicialHero({ content }: JudicialHeroProps) {
                 className="text-4xl sm:text-5xl lg:text-6xl font-light leading-[1.1] mb-6 text-left"
               />
             ) : title.includes('<p>') ? (
-              <div 
+              <div
                 className="text-4xl sm:text-5xl lg:text-6xl font-light leading-[1.1] mb-6 prose prose-invert max-w-none"
                 style={{ color: titleColor }}
                 dangerouslySetInnerHTML={{ __html: title }}
@@ -96,7 +96,7 @@ export function JudicialHero({ content }: JudicialHeroProps) {
             )}
 
             {description.includes('<p>') ? (
-              <div 
+              <div
                 className="text-base sm:text-lg max-w-xl leading-relaxed mb-8 prose prose-invert max-w-none prose-p:my-2"
                 style={{ color: descriptionColor }}
                 dangerouslySetInnerHTML={{ __html: description }}
@@ -112,9 +112,8 @@ export function JudicialHero({ content }: JudicialHeroProps) {
                 href={buttonUrl}
                 onMouseEnter={() => setIsBtnHovered(true)}
                 onMouseLeave={() => setIsBtnHovered(false)}
-                className={`inline-block px-6 py-3 rounded-full font-bold transition-all shadow-md text-sm text-center min-w-[140px] cursor-pointer ${
-                  buttonHoverBgColor ? '' : 'hover:brightness-95'
-                }`}
+                className={`inline-block px-6 py-3 rounded-full font-bold transition-all shadow-md text-sm text-center min-w-[140px] cursor-pointer ${buttonHoverBgColor ? '' : 'hover:brightness-95'
+                  }`}
                 style={{
                   backgroundColor: isBtnHovered && buttonHoverBgColor ? buttonHoverBgColor : buttonBgColor,
                   color: isBtnHovered && buttonHoverTextColor ? buttonHoverTextColor : buttonTextColor,
@@ -125,7 +124,7 @@ export function JudicialHero({ content }: JudicialHeroProps) {
             </div>
           </div>
           <div className="lg:w-1/2 flex justify-end w-full">
-            <div className="relative w-full aspect-[4/3] max-w-[500px] rounded-2xl overflow-hidden shadow-2xl">
+            <div className="relative w-full aspect-[4/3] max-w-[500px] rounded-2xl overflow-hidden">
               <motion.div
                 animate={{ y: [0, -12, 0] }}
                 transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}

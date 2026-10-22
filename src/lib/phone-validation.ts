@@ -10,7 +10,7 @@ export const validatePhoneNumber = (phone: string, countryCode: string): { isVal
   }
 
   const code = countryCode.toLowerCase();
-  
+
   if (code === 'in') {
     // India: 10 digits, starting with 6, 7, 8, or 9
     const regex = /^[6-9]\d{9}$/;

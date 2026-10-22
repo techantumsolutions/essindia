@@ -127,10 +127,10 @@ export function UgandaInsights({ content }: { content?: UgandaInsightsContent })
   };
 
   return (
-    <section className="w-full py-14 bg-white flex flex-col items-center border-b">
+    <section className="w-full py-8 md:py-10 bg-white flex flex-col items-center border-b">
       <div className="container mx-auto px-4 md:px-8 max-w-7xl">
         {/* Header Block */}
-        <div className="text-center max-w-3xl mx-auto mb-10">
+        <div className="text-center max-w-3xl mx-auto">
           {tag && (
             <FormattedText content={tag} as="span" className="inline-block text-xs sm:text-sm font-bold uppercase tracking-wider text-slate-500 mb-3" />
           )}
@@ -149,9 +149,8 @@ export function UgandaInsights({ content }: { content?: UgandaInsightsContent })
             type="button"
             onClick={() => scrollTabs('left')}
             disabled={!canScrollLeft}
-            className={`w-9 h-9 rounded-full border border-slate-200 bg-white hover:bg-slate-100 flex items-center justify-center shadow-sm text-slate-700 shrink-0 transition-all duration-200 ${
-              canScrollLeft ? 'opacity-100 scale-100 cursor-pointer' : 'opacity-0 pointer-events-none scale-90'
-            }`}
+            className={`w-9 h-9 rounded-full border border-slate-200 bg-white hover:bg-slate-100 flex items-center justify-center shadow-sm text-slate-700 shrink-0 transition-all duration-200 ${canScrollLeft ? 'opacity-100 scale-100 cursor-pointer' : 'opacity-0 pointer-events-none scale-90'
+              }`}
             aria-label="Scroll tabs left"
           >
             <ChevronLeft className="w-5 h-5" />
@@ -171,11 +170,10 @@ export function UgandaInsights({ content }: { content?: UgandaInsightsContent })
                   key={idx}
                   type="button"
                   onClick={() => setActiveTabIdx(idx)}
-                  className={`px-5 py-3 rounded-xl text-xs sm:text-sm font-semibold transition-all duration-200 whitespace-nowrap shrink-0 ${
-                    isActive
-                      ? 'bg-[#1d1b4b] text-white shadow-md shadow-[#1d1b4b]/20 scale-100'
-                      : 'bg-slate-100 text-slate-600 hover:bg-slate-200 hover:text-slate-900'
-                  }`}
+                  className={`px-5 py-3 rounded-xl text-xs sm:text-sm font-semibold transition-all duration-200 whitespace-nowrap shrink-0 ${isActive
+                    ? 'bg-[#1d1b4b] text-white shadow-md shadow-[#1d1b4b]/20 scale-100'
+                    : 'bg-slate-100 text-slate-600 hover:bg-slate-200 hover:text-slate-900'
+                    }`}
                 >
                   <FormattedText content={tab.tabName} as="span" />
                 </button>
@@ -188,9 +186,8 @@ export function UgandaInsights({ content }: { content?: UgandaInsightsContent })
             type="button"
             onClick={() => scrollTabs('right')}
             disabled={!canScrollRight}
-            className={`w-9 h-9 rounded-full border border-slate-200 bg-white hover:bg-slate-100 flex items-center justify-center shadow-sm text-slate-700 shrink-0 transition-all duration-200 ${
-              canScrollRight ? 'opacity-100 scale-100 cursor-pointer' : 'opacity-0 pointer-events-none scale-90'
-            }`}
+            className={`w-9 h-9 rounded-full border border-slate-200 bg-white hover:bg-slate-100 flex items-center justify-center shadow-sm text-slate-700 shrink-0 transition-all duration-200 ${canScrollRight ? 'opacity-100 scale-100 cursor-pointer' : 'opacity-0 pointer-events-none scale-90'
+              }`}
             aria-label="Scroll tabs right"
           >
             <ChevronRight className="w-5 h-5" />

@@ -38,8 +38,34 @@ export function AssEnterprise({ content }: { content?: AssEnterpriseContent }) {
     { icon: '/App-After Sales Service/a4460102-b4a2-4158-bb5e-45e56678a570 4.png', title: 'Performance Marketer', description: '' },
   ];
 
-  const renderCard = (card: EnterpriseCard, idx: number) => {
+  const renderCard = (card: EnterpriseCard, idx: number, isMobile = false) => {
     const style = cardStyles[idx % cardStyles.length] || cardStyles[0];
+
+    if (isMobile) {
+      return (
+        <div
+          className={`flex items-center gap-1.5 sm:gap-2 md:gap-2.5 pl-1.5 pr-2.5 sm:pl-2 sm:pr-3.5 md:pl-2.5 md:pr-4 py-0.5 sm:py-1 md:py-1.5 h-[28px] sm:h-[36px] md:h-[44px] rounded-full border ${style.bg} ${style.border} shadow-[0_4px_12px_rgba(0,0,0,0.04)] transition-all hover:scale-105 duration-300`}
+        >
+          {card.icon && (
+            <div
+              className={`w-5 h-5 sm:w-6 sm:h-6 md:w-8 md:h-8 rounded-full ${style.iconBg} flex items-center justify-center shrink-0`}
+            >
+              <div className="relative w-3 h-3 sm:w-3.5 sm:h-3.5 md:w-4 md:h-4">
+                <Image src={card.icon} alt="" fill className="object-contain" />
+              </div>
+            </div>
+          )}
+          <div className="text-left">
+            <h4
+              className={`text-[9.5px] sm:text-[11px] md:text-xs font-bold ${style.text} tracking-tight sm:tracking-normal md:tracking-wide whitespace-nowrap`}
+            >
+              {card.title}
+            </h4>
+          </div>
+        </div>
+      );
+    }
+
     return (
       <div className={`flex items-center gap-3 pl-2 pr-6 py-2 h-[52px] rounded-full border ${style.bg} ${style.border} shadow-[0_8px_20px_rgba(0,0,0,0.04)] transition-all hover:scale-105 hover:shadow-md duration-300`}>
         {card.icon && (
@@ -55,12 +81,12 @@ export function AssEnterprise({ content }: { content?: AssEnterpriseContent }) {
   };
 
   return (
-    <section className="pt-14 pb-0 px-6 bg-[#F7F9F8] border-b">
+    <section className="pt-10 md:pt-14 pb-0 px-2 sm:px-4 md:px-6 bg-[#F7F9F8] border-b">
       <div className="container mx-auto max-w-7xl">
         {/* Headings */}
         <div className="text-center mb-2">
           {description && (
-            <div className="text-lg font-extrabold text-[#0a1128] tracking-wider mb-2 block">
+            <div className="text-lg font-semibold text-[#0a1128] tracking-wider mb-2 block">
               {typeof description === 'string' && (description.includes('<p>') || description.includes('<')) ? (
                 <div dangerouslySetInnerHTML={{ __html: description }} />
               ) : (
@@ -120,25 +146,49 @@ export function AssEnterprise({ content }: { content?: AssEnterpriseContent }) {
           </div>
         </div>
 
-        {/* Mobile/Tablet Layout */}
-        <div className="lg:hidden flex flex-col items-center gap-8">
+        {/* Mobile/Tablet Radial Layout */}
+        <div className="lg:hidden relative w-full max-w-[500px] sm:max-w-[640px] md:max-w-[760px] aspect-[1000/760] sm:aspect-[1000/700] mx-auto my-4 sm:my-6">
           {/* Central Image */}
-          <div className="relative w-full max-w-[420px] aspect-[1000/684]">
-            <Image
-              src={image}
-              alt="Solutions illustration"
-              fill
-              className="object-contain"
-            />
+          <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+            <div className="relative w-[65%] sm:w-[72%] md:w-[75%] h-[92%] sm:h-[90%]">
+              <Image
+                src={image}
+                alt="Solutions illustration"
+                fill
+                className="object-contain"
+                priority
+              />
+            </div>
           </div>
 
-          {/* Cards Grid */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 w-full max-w-lg mx-auto">
-            {cards.map((card, idx) => (
-              <div key={idx} className="flex justify-center w-full">
-                {renderCard(card, idx)}
-              </div>
-            ))}
+          {/* Card 0: Product Marketer (Top Left) */}
+          <div className="absolute top-[14%] sm:top-[18%] md:top-[22%] left-0 sm:left-[2%] md:left-[5%] z-10">
+            {cards[0] && renderCard(cards[0], 0, true)}
+          </div>
+
+          {/* Card 1: Content Marketer (Middle Left) */}
+          <div className="absolute top-[50%] -translate-y-1/2 left-0 sm:left-[1%] md:left-[2%] z-10">
+            {cards[1] && renderCard(cards[1], 1, true)}
+          </div>
+
+          {/* Card 2: Field Marketer (Bottom Left) */}
+          <div className="absolute bottom-[14%] sm:bottom-[18%] md:bottom-[20%] left-0 sm:left-[2%] md:left-[5%] z-10">
+            {cards[2] && renderCard(cards[2], 2, true)}
+          </div>
+
+          {/* Card 3: Brand Marketer (Top Right) */}
+          <div className="absolute top-[14%] sm:top-[18%] md:top-[22%] right-0 sm:right-[2%] md:right-[5%] z-10">
+            {cards[3] && renderCard(cards[3], 3, true)}
+          </div>
+
+          {/* Card 4: PR Marketer (Middle Right) */}
+          <div className="absolute top-[50%] -translate-y-1/2 right-0 sm:right-[1%] md:right-[2%] z-10">
+            {cards[4] && renderCard(cards[4], 4, true)}
+          </div>
+
+          {/* Card 5: Performance Marketer (Bottom Right) */}
+          <div className="absolute bottom-[14%] sm:bottom-[18%] md:bottom-[20%] right-0 sm:right-[2%] md:right-[5%] z-10">
+            {cards[5] && renderCard(cards[5], 5, true)}
           </div>
         </div>
 

@@ -29,7 +29,7 @@ export function JudicialFeatures({ content }: JudicialFeaturesProps) {
     ? rawDesc
     : "ebizframeJustice makes available most of the elegant, sophisticated and context specific search features. ebizframeJustice is born out of the understanding that Law is a serious subject and getting to relevant results in the shortest time and most convenient way is essential to the law professionals.";
   const sideImage = c.sideImage || "/Judicial Automation/image 78.png";
-  
+
   const defaultFeatures = [
     {
       title: "Intuitive & Sophisticated Search",
@@ -68,7 +68,7 @@ export function JudicialFeatures({ content }: JudicialFeaturesProps) {
   const validSideImage = isValidImageSrc(sideImage) ? sideImage : "/Judicial Automation/image 78.png";
 
   return (
-    <section className="py-14 px-6 bg-white">
+    <section className="py-12 px-6 bg-white">
       <div className="container mx-auto max-w-7xl">
         <div className="flex flex-col lg:flex-row items-stretch gap-16">
           {/* Left Image */}
@@ -80,12 +80,12 @@ export function JudicialFeatures({ content }: JudicialFeaturesProps) {
               className="object-cover"
             />
           </div>
-          <div className="lg:hidden w-full relative h-[300px]">
+          <div className="lg:hidden w-full relative h-[300px] md:h-[480px]">
             <Image
               src={validSideImage}
               alt="Features Side Graphic"
               fill
-              className="object-cover"
+              className="object-cover md:object-contain"
             />
           </div>
 

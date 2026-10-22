@@ -389,18 +389,21 @@ async function seed() {
           {
             avatar: '/Landing page1/assets/unsplash_OhKElOkQ3RE.png',
             name: 'James Pattinson',
+            designation: 'Operations Director',
             rating: 4,
             quote: '"Lobortis leo pretium facilisis amet nisl at nec. Scelerisque risus tortor donec ipsum consequat semper consequat adipiscing ultrices."'
           },
           {
             avatar: '/Landing page1/assets/unsplash_WMD64tMfc4k.png',
             name: 'Greg Stuart',
+            designation: 'Supply Chain Head',
             rating: 5,
             quote: '"Vestibulum, cum nam non amet consectetur morbi aenean condimentum eget. Ultricies integer nunc neque accumsan laoreet. Viverra nibh ultrices."'
           },
           {
             avatar: '/Landing page1/assets/unsplash_6anudmpILw4.png',
             name: 'Trevor Mitchell',
+            designation: 'Managing Director',
             rating: 3,
             quote: '"Ut tristique viverra sed porttitor senectus. A facilisis metus pretium ut habitant lorem. Velit vel bibendum eget aliquet sem nec, id sed. Tincidunt."'
           }

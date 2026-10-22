@@ -98,26 +98,26 @@ export function StaffingTechnologies({ content }: StaffingTechnologiesProps) {
           <div className="w-16 h-0.5 bg-[#2a2d7c] mx-auto"></div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 border border-slate-200 rounded-2xl overflow-hidden bg-white shadow-sm">
+        <div className="grid grid-cols-1 md:grid-cols-3 md:grid-rows-[auto_1fr] border border-slate-200 rounded-2xl overflow-hidden bg-white shadow-sm">
           {columns.map((col, idx) => {
             const headerBg = headerBgs[idx % headerBgs.length];
             const iconBg = iconBgs[idx % iconBgs.length];
             const dotColor = dotColors[idx % dotColors.length];
             return (
-              <div key={idx} className="flex flex-col border-r border-slate-200 last:border-r-0 border-b md:border-b-0 last:border-b-0">
+              <div key={idx} className="flex flex-col md:grid md:grid-rows-subgrid md:row-span-2 border-r border-slate-200 last:border-r-0 border-b md:border-b-0 last:border-b-0">
                 {/* Header */}
-                <div className={`flex items-center gap-4 px-6 py-5 border-b border-slate-200 ${headerBg}`}>
-                  <div className={`w-12 h-12 relative flex-shrink-0 rounded-xl overflow-hidden ${iconBg} p-2.5 shadow-sm`}>
-                    <Image src={col.iconImage || (col as any).icon} alt={col.title} fill className="object-contain p-2.5" />
+                <div className={`flex items-center gap-3.5 md:gap-4 px-5 md:px-5 lg:px-6 py-4 md:py-5 border-b border-slate-200 md:min-h-[116px] lg:min-h-[88px] ${headerBg}`}>
+                  <div className={`w-11 h-11 md:w-11 md:h-11 lg:w-12 lg:h-12 relative flex-shrink-0 rounded-xl overflow-hidden ${iconBg} p-2 md:p-2 lg:p-2.5 shadow-sm`}>
+                    <Image src={col.iconImage || (col as any).icon} alt={col.title} fill className="object-contain p-2 md:p-2 lg:p-2.5" />
                   </div>
-                  <h3 className="font-bold text-base md:text-lg">{col.title}</h3>
+                  <h3 className="font-bold text-base md:text-base lg:text-lg leading-snug">{col.title}</h3>
                 </div>
 
                 {/* List */}
                 <div className="flex flex-col">
                   {col.items.map((item, itemIdx) => (
-                    <div key={itemIdx} className="flex items-center gap-4 px-6 py-4 border-b border-slate-200 last:border-b-0">
-                      <span className={`w-1.5 h-1.5 rounded-full ${dotColor}`} />
+                    <div key={itemIdx} className="flex items-center gap-3.5 md:gap-4 px-5 md:px-5 lg:px-6 py-4 border-b border-slate-200 last:border-b-0 min-h-[52px]">
+                      <span className={`w-1.5 h-1.5 rounded-full ${dotColor} flex-shrink-0`} />
                       <span className="text-slate-600 text-sm font-semibold">{item.label}</span>
                     </div>
                   ))}

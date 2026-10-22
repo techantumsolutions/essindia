@@ -12,7 +12,7 @@ export default function ManufacturingDemand({ content }: { content?: any }) {
   return (
     <section className="py-14 bg-white px-6 border-b">
       <div className="container mx-auto max-w-7xl">
-        <div className="grid md:grid-cols-2 gap-16 items-center">
+        <div className="grid md:grid-cols-2 gap-4 md:gap-8 lg:gap-16 items-center">
           <motion.div
             initial={{ opacity: 0, x: -30 }}
             whileInView={{ opacity: 1, x: 0 }}
@@ -27,7 +27,7 @@ export default function ManufacturingDemand({ content }: { content?: any }) {
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6, delay: 0.2 }}
-            className="space-y-6 text-slate-500 text-[14px] leading-relaxed border-l-0 md:border-l-[1.5px] border-slate-200 pl-0 md:pl-12 py-2"
+            className="space-y-6 text-slate-500 text-[14px] leading-relaxed border-l-0 md:border-l-[1.5px] border-slate-200 pl-0 md:pl-6 lg:pl-12 py-2"
           >
             <FormattedText content={paragraph1} />
             <FormattedText content={paragraph2} />
