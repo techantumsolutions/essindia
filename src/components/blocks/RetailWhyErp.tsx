@@ -49,7 +49,7 @@ export function RetailWhyErp({ content }: { content: RetailWhyErpContent }) {
             transition={{ duration: 0.6, delay: 0.2 }}
             className="w-full md:w-1/2 space-y-4"
           >
-            <FormattedText content={title} as="h2" className="text-3xl md:text-4xl font-bold text-indigo-900 mb-6 tracking-tight" />
+            <FormattedText content={title} as="h2" className="text-3xl text-center md:text-left md:text-4xl font-bold text-indigo-900 mb-6 tracking-tight" />
             {allParagraphs.map((para, idx) => (
               <FormattedText key={idx} content={para} className="text-lg text-slate-600 leading-relaxed text-left" />
             ))}
