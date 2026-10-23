@@ -79,7 +79,7 @@ export function BiInsights({ content }: { content?: BiInsightsContent }) {
   const items = content?.items && content.items.length > 0 ? content.items : defaultItems;
 
   return (
-    <section className="py-14 bg-[#f6f6f6] overflow-hidden">
+    <section className="py-12 bg-[#f6f6f6] overflow-hidden">
       <div className="container mx-auto max-w-7xl px-6">
         <div className="flex flex-col lg:flex-row items-center gap-12 lg:gap-16">
 

@@ -23,7 +23,7 @@ export function FmcgCta({ content }: { content?: FmcgCtaContent }) {
   const pdfUrl = content?.pdfUrl;
 
   return (
-    <section className="py-14 px-6 bg-[#eff3f8] border-b border-slate-100">
+    <section className="py-12 px-6 bg-[#eff3f8] border-b border-slate-100">
       <div className="container mx-auto max-w-4xl text-center space-y-8">
 
         {/* Title */}
@@ -40,9 +40,9 @@ export function FmcgCta({ content }: { content?: FmcgCtaContent }) {
             style={
               isBtnHovered && (buttonHoverBgColor || buttonHoverTextColor)
                 ? {
-                    backgroundColor: buttonHoverBgColor || undefined,
-                    color: buttonHoverTextColor || undefined,
-                  }
+                  backgroundColor: buttonHoverBgColor || undefined,
+                  color: buttonHoverTextColor || undefined,
+                }
                 : undefined
             }
             className={`bg-[#4B2A63] ${buttonHoverBgColor ? '' : 'hover:bg-[#3A1F4D]'} text-white px-8 py-3 rounded-full font-medium transition-colors inline-flex items-center gap-2 cursor-pointer`}
@@ -52,7 +52,7 @@ export function FmcgCta({ content }: { content?: FmcgCtaContent }) {
         </div>
 
       </div>
-    
+
       <CtaLeadModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} pdfUrl={pdfUrl} />
     </section>
   );

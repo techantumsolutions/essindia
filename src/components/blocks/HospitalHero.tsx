@@ -66,7 +66,7 @@ export function HospitalHero({ content }: HospitalHeroProps) {
   const secondaryButtonHoverTextColor = content?.secondaryButtonHoverTextColor;
   const image = content?.image || '/Hospital Management/Rectangle 197.png';
 
-  
+
   const bgStyles = getHeroBackgroundStyles({
     gradientColor1: content?.gradientColor1,
     gradientColor2: content?.gradientColor2,
@@ -115,9 +115,8 @@ export function HospitalHero({ content }: HospitalHeroProps) {
                 href={primaryButtonUrl}
                 onMouseEnter={() => setIsPrimaryHovered(true)}
                 onMouseLeave={() => setIsPrimaryHovered(false)}
-                className={`inline-block px-6 py-3 rounded-full font-bold transition-all shadow-md text-sm text-center min-w-[140px] ${
-                  primaryButtonHoverBgColor ? '' : 'hover:brightness-90'
-                }`}
+                className={`inline-block px-6 py-3 rounded-full font-bold transition-all shadow-md text-sm text-center min-w-[140px] ${primaryButtonHoverBgColor ? '' : 'hover:brightness-90'
+                  }`}
                 style={{
                   backgroundColor: isPrimaryHovered && primaryButtonHoverBgColor ? primaryButtonHoverBgColor : primaryButtonBgColor,
                   color: isPrimaryHovered && primaryButtonHoverTextColor ? primaryButtonHoverTextColor : primaryButtonTextColor,
@@ -129,9 +128,8 @@ export function HospitalHero({ content }: HospitalHeroProps) {
                 href={secondaryButtonUrl}
                 onMouseEnter={() => setIsSecondaryHovered(true)}
                 onMouseLeave={() => setIsSecondaryHovered(false)}
-                className={`inline-block border px-6 py-3 rounded-full font-bold transition-colors text-sm text-center min-w-[140px] ${
-                  secondaryButtonHoverBgColor ? '' : 'hover:bg-white/10'
-                }`}
+                className={`inline-block border px-6 py-3 rounded-full font-bold transition-colors text-sm text-center min-w-[140px] ${secondaryButtonHoverBgColor ? '' : 'hover:bg-white/10'
+                  }`}
                 style={{
                   backgroundColor: isSecondaryHovered && secondaryButtonHoverBgColor ? secondaryButtonHoverBgColor : secondaryButtonBgColor,
                   color: isSecondaryHovered && secondaryButtonHoverTextColor ? secondaryButtonHoverTextColor : secondaryButtonTextColor,
@@ -144,7 +142,7 @@ export function HospitalHero({ content }: HospitalHeroProps) {
           </div>
 
           {/* Image */}
-          <div className="lg:w-1/2 flex justify-end w-full">
+          <div className="lg:w-1/2 flex justify-end md:justify-center lg:justify-end w-full">
             <div className="relative w-full aspect-[4/3] max-w-[500px] flex items-center justify-center rounded-2xl overflow-hidden shadow-2xl">
               <motion.div
                 animate={{ y: [0, -12, 0] }}
