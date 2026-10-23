@@ -1,7 +1,8 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
 import Image from 'next/image';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
 
 interface TabItem {
   tabName: string;
@@ -78,28 +79,130 @@ export function FmcgTabs({ content }: { content?: FmcgTabsContent }) {
   const [activeTabIdx, setActiveTabIdx] = useState(0); // FMCG CEO by default
   const activeTab = tabs[activeTabIdx] || tabs[0];
 
+  const tabsContainerRef = useRef<HTMLDivElement>(null);
+  const [canScrollLeft, setCanScrollLeft] = useState(false);
+  const [canScrollRight, setCanScrollRight] = useState(false);
+  const [hasOverflow, setHasOverflow] = useState(false);
+
+  const checkScroll = useCallback(() => {
+    if (tabsContainerRef.current) {
+      const { scrollLeft, scrollWidth, clientWidth } = tabsContainerRef.current;
+      const overflow = scrollWidth > clientWidth + 2;
+      setHasOverflow(overflow);
+      setCanScrollLeft(scrollLeft > 2);
+      setCanScrollRight(scrollLeft + clientWidth < scrollWidth - 2);
+    }
+  }, []);
+
+  useEffect(() => {
+    checkScroll();
+
+    const container = tabsContainerRef.current;
+    if (!container) return;
+
+    const resizeObserver = new ResizeObserver(() => {
+      checkScroll();
+    });
+    resizeObserver.observe(container);
+
+    window.addEventListener('resize', checkScroll);
+    return () => {
+      resizeObserver.disconnect();
+      window.removeEventListener('resize', checkScroll);
+    };
+  }, [checkScroll, tabs]);
+
+  useEffect(() => {
+    if (tabsContainerRef.current) {
+      const activeEl = tabsContainerRef.current.querySelector('[data-active="true"]') as HTMLElement;
+      if (activeEl) {
+        activeEl.scrollIntoView({
+          behavior: 'smooth',
+          block: 'nearest',
+          inline: 'nearest'
+        });
+      }
+    }
+  }, [activeTabIdx]);
+
+  const scrollTabs = (direction: 'left' | 'right') => {
+    if (tabsContainerRef.current) {
+      const scrollAmount = Math.max(tabsContainerRef.current.clientWidth * 0.65, 220);
+      tabsContainerRef.current.scrollBy({
+        left: direction === 'left' ? -scrollAmount : scrollAmount,
+        behavior: 'smooth'
+      });
+    }
+  };
+
   return (
     <section className="py-14 px-6 bg-[#131e3d] text-white">
       <div className="container mx-auto max-w-7xl">
 
-        {/* Tab Headers */}
-        <div className="flex border-b border-slate-700/50 overflow-x-auto scrollbar-none flex-nowrap max-w-full">
-          {tabs.map((tab, idx) => {
-            const isActive = idx === activeTabIdx;
-            return (
-              <button
-                key={idx}
-                type="button"
-                onClick={() => setActiveTabIdx(idx)}
-                className={`px-4 py-3.5 sm:px-8 sm:py-5 text-xs sm:text-sm md:text-base font-bold uppercase tracking-wider transition-all duration-300 shrink-0 whitespace-nowrap text-center border-r border-slate-700/30 ${isActive
-                  ? 'bg-[#fcc42c] text-[#131e3d]'
-                  : 'bg-[#18264d] text-white hover:bg-[#1a2b5c] cursor-pointer'
+        {/* Tab Headers with Left & Right Arrows */}
+        <div className="relative flex items-stretch border-b border-slate-700/50 bg-[#131e3d]">
+          {/* Left Arrow Button */}
+          {hasOverflow && (
+            <button
+              type="button"
+              onClick={() => scrollTabs('left')}
+              disabled={!canScrollLeft}
+              className={`px-3 sm:px-4.5 flex items-center justify-center transition-all duration-300 shrink-0 z-10 border-r border-slate-700/30 ${
+                canScrollLeft
+                  ? 'bg-[#18264d] text-white hover:bg-[#fcc42c] hover:text-[#131e3d] cursor-pointer active:scale-95'
+                  : 'bg-[#131e3d]/80 text-slate-500/40 cursor-not-allowed opacity-30'
+              }`}
+              aria-label="Scroll left to see previous tabs"
+              title="Previous tabs"
+            >
+              <ChevronLeft className="w-5 h-5 sm:w-6 sm:h-6" strokeWidth={2.5} />
+            </button>
+          )}
+
+          {/* Scrollable Tab Container */}
+          <div
+            ref={tabsContainerRef}
+            onScroll={checkScroll}
+            className="flex-1 flex overflow-x-auto scrollbar-none flex-nowrap scroll-smooth"
+            style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+          >
+            {tabs.map((tab, idx) => {
+              const isActive = idx === activeTabIdx;
+              return (
+                <button
+                  key={idx}
+                  type="button"
+                  data-active={isActive}
+                  onClick={() => setActiveTabIdx(idx)}
+                  className={`px-4 py-3.5 sm:px-8 sm:py-5 text-xs sm:text-sm md:text-base font-bold uppercase tracking-wider transition-all duration-300 shrink-0 whitespace-nowrap text-center border-r border-slate-700/30 outline-none focus-visible:ring-2 focus-visible:ring-[#fcc42c] focus-visible:z-10 ${
+                    isActive
+                      ? 'bg-[#fcc42c] text-[#131e3d]'
+                      : 'bg-[#18264d] text-white hover:bg-[#1a2b5c] cursor-pointer'
                   }`}
-              >
-                {tab.tabName || `Tab ${idx + 1}`}
-              </button>
-            );
-          })}
+                >
+                  {tab.tabName || `Tab ${idx + 1}`}
+                </button>
+              );
+            })}
+          </div>
+
+          {/* Right Arrow Button */}
+          {hasOverflow && (
+            <button
+              type="button"
+              onClick={() => scrollTabs('right')}
+              disabled={!canScrollRight}
+              className={`px-3 sm:px-4.5 flex items-center justify-center transition-all duration-300 shrink-0 z-10 border-l border-slate-700/30 ${
+                canScrollRight
+                  ? 'bg-[#18264d] text-white hover:bg-[#fcc42c] hover:text-[#131e3d] cursor-pointer active:scale-95'
+                  : 'bg-[#131e3d]/80 text-slate-500/40 cursor-not-allowed opacity-30'
+              }`}
+              aria-label="Scroll right to see next tabs"
+              title="Next tabs"
+            >
+              <ChevronRight className="w-5 h-5 sm:w-6 sm:h-6" strokeWidth={2.5} />
+            </button>
+          )}
         </div>
 
         {/* Tab Content Panels */}
