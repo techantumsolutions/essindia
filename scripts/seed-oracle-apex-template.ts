@@ -78,7 +78,9 @@ async function seed() {
       content: {
         title: 'WHY ENTERPRISES ARE MIGRATING ORACLE FORMS TO ORACLE APEX',
         description: 'The objective is not just platform replacement — it is operational optimization.',
-        tagText: 'Modern • Secure • Cloud-Native',
+        tagText1: 'Modern',
+        tagText2: 'Secure',
+        tagText3: 'Cloud-Native',
         points: [
           'Client-server limitations restrict scalability',
           'Increasing maintenance complexity',

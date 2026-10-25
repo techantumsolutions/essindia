@@ -81,7 +81,7 @@ export function AssEnterprise({ content }: { content?: AssEnterpriseContent }) {
   };
 
   return (
-    <section className="pt-10 md:pt-14 pb-0 px-2 sm:px-4 md:px-6 bg-[#F7F9F8] border-b">
+    <section className="pt-10 md:pt-12 pb-0 px-2 sm:px-4 md:px-6 bg-[#F7F9F8] border-b border-t">
       <div className="container mx-auto max-w-7xl">
         {/* Headings */}
         <div className="text-center mb-2">

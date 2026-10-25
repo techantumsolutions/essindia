@@ -39,6 +39,12 @@ export function DynamicFieldRenderer({
   const fieldLabel = humanLabel(fieldKey, { sectionType, keyPath });
 
   let fieldType = detectFieldType(fieldKey, value, sectionType, keyPath);
+  if (
+    sectionType === 'oracle-apex-why-migrate' &&
+    (fieldKey === 'tagText1' || fieldKey === 'tagText2' || fieldKey === 'tagText3' || fieldKey.toLowerCase().includes('tag'))
+  ) {
+    fieldType = 'text';
+  }
   if (sectionType === 'ass-stats' && (fieldKey === 'label' || fieldKey === 'description')) {
     fieldType = 'textarea';
   }

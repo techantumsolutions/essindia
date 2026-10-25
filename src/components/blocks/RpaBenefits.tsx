@@ -84,9 +84,9 @@ export function RpaBenefits({ content }: { content?: RpaBenefitsContent }) {
                 )}
               </div>
 
-              {/* Bottom part: Yellow Banner */}
-              <div className="bg-[#f2bd1d] flex-1 flex items-center justify-center p-5 min-h-[76px] text-center border-t border-yellow-400/20">
-                <span className="text-[#27256b] font-bold text-sm sm:text-base leading-snug px-1">
+              {/* Bottom part: Banner */}
+              <div className="bg-[#0E1A43] flex-1 flex items-center justify-center p-5 min-h-[76px] text-center">
+                <span className="text-white font-bold text-sm sm:text-base leading-snug px-1">
                   {item.title}
                 </span>
               </div>

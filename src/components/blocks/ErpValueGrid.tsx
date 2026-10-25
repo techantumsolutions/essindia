@@ -121,7 +121,7 @@ export function ErpValueGrid({ content }: ErpValueGridProps) {
               className="group transition-all duration-500 hover:-translate-y-2"
             >
               {/* Image */}
-              <div className="relative h-65">
+              <div className="relative h-62">
                 <img
                   src={card.image}
                   alt={card.title}
@@ -143,14 +143,14 @@ export function ErpValueGrid({ content }: ErpValueGridProps) {
               </div>
 
               {/* Content */}
-              <div className="py-4 px-4">
-                <h3 className="text-[28px] leading-tight mb-3 font-bold text-[#462294] group-hover:text-[#391781] transition-colors duration-300">
+              <div className="py-4 px-4 text-center">
+                <h3 className="text-[25px] leading-tight mb-3 font-semibold text-black transition-colors duration-300">
                   {card.title}
                 </h3>
 
                 {card.description?.includes('<p>') ? (
                   <div
-                    className="text-[#6E6E73] text-[15px] font-normal prose prose-sm max-w-none prose-p:my-1"
+                    className="text-[#6E6E73] text-[15px] font-normal prose prose-sm max-w-none prose-p:my-1 text-center"
                     dangerouslySetInnerHTML={{ __html: card.description }}
                   />
                 ) : (

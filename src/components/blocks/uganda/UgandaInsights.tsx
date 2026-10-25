@@ -250,7 +250,7 @@ export function UgandaInsights({ content }: { content?: UgandaInsightsContent })
 
               {/* Right Column: Mockup Dashboard Image */}
               {safeImageUrl(activeTab.image) && (
-                <div className="relative w-full aspect-[4/3] rounded-xl overflow-hidden lg:sticky lg:top-24">
+                <div className="relative w-full aspect-[4/3] rounded-xl overflow-hidden">
                   <Image
                     src={safeImageUrl(activeTab.image)}
                     alt={activeTab.contentTitle || 'Dashboard detail'}

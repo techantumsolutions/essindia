@@ -27,7 +27,7 @@ export function getImageHint(sectionType: string, fieldKey: string): string {
   if (sectionType === 'hero' && key.includes('image')) {
     return 'Recommended: 1200x800px (16:9 ratio)';
   }
-  
+
   // 2. Generic Field Name Fallbacks
   if (key.includes('icon')) {
     return 'Recommended: 64x64px (1:1 ratio) SVG or PNG';
@@ -44,7 +44,7 @@ export function getImageHint(sectionType: string, fieldKey: string): string {
   if (key.includes('image')) {
     return 'Recommended: 800x600px (4:3 ratio) optimized WebP or JPEG';
   }
-  
+
   // 3. Absolute Fallback
   return 'Max size 3MB. Optimized WebP, JPEG, or PNG recommended.';
 }

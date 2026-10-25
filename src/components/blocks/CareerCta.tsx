@@ -26,7 +26,7 @@ export default function CareerCta({ content }: { content?: any }) {
           viewport={{ once: true }}
           transition={{ duration: 0.5 }}
         >
-          <h2 className="text-3xl md:text-4xl font-bold text-[#0D1A5C] mb-4">
+          <h2 className="text-2xl md:text-4xl font-bold text-[#0D1A5C] mb-4">
             {title}
           </h2>
           <p className="max-w-2xl mx-auto text-xl font-medium leading-none mb-6">

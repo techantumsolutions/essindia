@@ -211,7 +211,7 @@ export function FmcgTabs({ content }: { content?: FmcgTabsContent }) {
           return (
             <div
               key={idx}
-              className={`pt-12 flex flex-col lg:flex-row items-center gap-12 lg:gap-16 ${isActive ? 'block' : 'hidden'}`}
+              className={`pt-5 sm:pt-6 lg:pt-12 flex flex-col lg:flex-row items-center gap-12 lg:gap-16 ${isActive ? 'block' : 'hidden'}`}
             >
               {/* Left Content Column (Questions list) */}
               <div className="flex-1 space-y-8 text-left w-full">

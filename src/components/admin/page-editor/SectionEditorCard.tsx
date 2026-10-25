@@ -1631,7 +1631,9 @@ const DEFAULT_ORACLE_APEX_INTRO_CONTENT: Record<string, any> = {
 const DEFAULT_ORACLE_APEX_WHY_MIGRATE_CONTENT: Record<string, any> = {
   title: 'WHY ENTERPRISES ARE MIGRATING ORACLE FORMS TO ORACLE APEX',
   description: 'The objective is not just platform replacement — it is operational optimization.',
-  tagText: 'Modern • Secure • Cloud-Native',
+  tagText1: 'Modern',
+  tagText2: 'Secure',
+  tagText3: 'Cloud-Native',
   points: [
     'Client-server limitations restrict scalability',
     'Increasing maintenance complexity',
@@ -2545,6 +2547,22 @@ export function SectionEditorCard({
       if (!finalMerged.description) finalMerged.description = (section.content as any)?.description || 'Trusted by organizations worldwide for practical expertise, enterprise technology, and a business-first approach to digital transformation.';
     }
 
+    if (section.type === 'oracle-apex-why-migrate') {
+      const content = (section.content as Record<string, any>) || {};
+      if (!finalMerged.tagText1 && !finalMerged.tagText2 && !finalMerged.tagText3) {
+        if (content.tagText && typeof content.tagText === 'string') {
+          const parts = content.tagText.split(/[•·|,]/).map((s: string) => s.trim()).filter(Boolean);
+          finalMerged.tagText1 = parts[0] || 'Modern';
+          finalMerged.tagText2 = parts[1] || 'Secure';
+          finalMerged.tagText3 = parts[2] || 'Cloud-Native';
+        } else {
+          finalMerged.tagText1 = 'Modern';
+          finalMerged.tagText2 = 'Secure';
+          finalMerged.tagText3 = 'Cloud-Native';
+        }
+      }
+    }
+
     if (section.type === 'erp-features') {
       if (Array.isArray(finalMerged.features)) {
         finalMerged.features = finalMerged.features.map((feat: any) => ({
@@ -2594,7 +2612,7 @@ export function SectionEditorCard({
 
     const keys = Object.keys(mergedContent);
     let finalKeys = keys;
-    if ((section.type.startsWith('landing1-') || section.type.startsWith('contact-') || section.type.startsWith('europe-') || section.type.startsWith('uganda-') || section.type.startsWith('about-us-') || section.type === 'job-detail-hero' || section.type === 'job-detail-content' || section.type === 'bi-highlight-strip' || section.type === 'bi-industries' || section.type === 'career-positions' || section.type === 'about-us-cta' || section.type === 'career-cta' || section.type === 'blog' || section.type === 'about-us-services-overview' || section.type.startsWith('oracle-') || (section.type.startsWith('rpa-') && section.type !== 'rpa-hero') || section.type.startsWith('ass-') || section.type.startsWith('aom-') || section.type.startsWith('fmcg-') || section.type.startsWith('roi-') || section.type.startsWith('retail-')) && meta?.fieldOrder) {
+    if ((section.type.startsWith('landing1-') || section.type.startsWith('landing2-') || section.type.startsWith('contact-') || section.type.startsWith('europe-') || section.type.startsWith('uganda-') || section.type.startsWith('about-us-') || section.type === 'job-detail-hero' || section.type === 'job-detail-content' || section.type === 'bi-highlight-strip' || section.type === 'bi-industries' || section.type === 'career-positions' || section.type === 'about-us-cta' || section.type === 'career-cta' || section.type === 'blog' || section.type === 'about-us-services-overview' || section.type.startsWith('oracle-') || (section.type.startsWith('rpa-') && section.type !== 'rpa-hero') || section.type.startsWith('ass-') || section.type.startsWith('aom-') || section.type.startsWith('fmcg-') || section.type.startsWith('roi-') || section.type.startsWith('retail-')) && meta?.fieldOrder) {
       finalKeys = meta.fieldOrder;
     } else if (meta?.fieldOrder) {
       finalKeys = keys.sort((a, b) => {

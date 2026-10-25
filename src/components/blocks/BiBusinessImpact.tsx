@@ -86,32 +86,50 @@ export function BiBusinessImpact({ content }: { content?: BiBusinessImpactConten
   const steps = content?.steps && content.steps.length > 0 ? content.steps : defaultSteps;
 
   return (
-    <section className="py-14 bg-white overflow-hidden font-sans border-b">
+    <section className="py-12 bg-white overflow-hidden font-sans border-b border-t">
       <div className="container mx-auto max-w-7xl px-6">
         <div className="flex flex-col lg:flex-row gap-12 lg:gap-16 items-start">
 
           {/* Left Column: Heading and Description */}
-          <div className="flex-1 space-y-6 lg:sticky lg:top-32 text-left">
-            {title && (
-              <h3 className="text-[32px] font-bold text-[#4c327f] tracking-tight leading-none mb-1">
-                {title}
-              </h3>
-            )}
+          <div className="flex-1 lg:sticky lg:top-32 text-left">
+            <div className="space-y-1.5 mb-3.5">
+              {title && (
+                <h3 className="text-[32px] font-bold text-[#4c327f] tracking-tight leading-none">
+                  {title}
+                </h3>
+              )}
 
-            <h2 className="text-3xl sm:text-4xl lg:text-[40px] font-normal text-[#1a1a1a] tracking-tight leading-tight">
-              {subtitle}
-            </h2>
+              <h2 className="bi-impact-subtitle text-3xl font-normal text-[#1a1a1a] tracking-tight leading-tight">
+                {subtitle}
+              </h2>
+            </div>
 
             {description.includes('<') && description.includes('>') ? (
               <FormattedText
                 content={description}
-                className="text-slate-500 font-light text-base sm:text-[17px] leading-relaxed max-w-xl pt-1 [&>p]:my-2 [&>p:first-child]:mt-0 [&>p:last-child]:mb-0"
+                className="text-slate-500 font-light text-base sm:text-[17px] leading-relaxed max-w-xl [&>p]:my-2 [&>p:first-child]:mt-0 [&>p:last-child]:mb-0"
               />
             ) : (
-              <p className="text-slate-500 font-light text-base sm:text-[17px] leading-relaxed max-w-xl pt-1">
+              <p className="text-slate-500 font-light text-base sm:text-[17px] leading-relaxed max-w-xl">
                 {description}
               </p>
             )}
+
+            <style dangerouslySetInnerHTML={{
+              __html: `
+              @media (min-width: 1024px) {
+                section h2.bi-impact-subtitle,
+                .bi-impact-subtitle {
+                  font-size: 24px !important;
+                }
+              }
+              @media (min-width: 640px) and (max-width: 1023px) {
+                section h2.bi-impact-subtitle,
+                .bi-impact-subtitle {
+                  font-size: 26px !important;
+                }
+              }
+            ` }} />
           </div>
 
           {/* Right Column: Stepper Timeline */}

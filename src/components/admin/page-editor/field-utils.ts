@@ -176,10 +176,16 @@ export function getHeadingTagForField(
   if (
     lower === 'badgetext' ||
     lower === 'badge' ||
+    lower.includes('badge') ||
+    lower.includes('tag') ||
     lower === 'tag' ||
     lower === 'tagtext' ||
+    lower === 'tagtext1' ||
+    lower === 'tagtext2' ||
+    lower === 'tagtext3' ||
     lower === 'tag1text' ||
     lower === 'tag2text' ||
+    lower === 'tag3text' ||
     lower === 'smalltitle'
   ) {
     return 'SPAN';
@@ -257,6 +263,9 @@ function baseHumanLabel(key: string): string {
   if (key === 'icon') return 'Icon Upload';
   if (key === 'name') return 'Item Name';
   if (key === 'subtitle' || key === 'smallTitle') return 'Tag';
+  if (key === 'tagText1' || key === 'tag1Text') return 'Tag Text 1';
+  if (key === 'tagText2' || key === 'tag2Text') return 'Tag Text 2';
+  if (key === 'tagText3' || key === 'tag3Text') return 'Tag Text 3';
   if (key === 'resultsTitle') return 'Title';
   if (key === 'resultsSubtitle') return 'Subtitle';
   if (key === 'resultsItems') return 'Points';
@@ -408,7 +417,10 @@ export function humanLabel(
 
   if (options?.sectionType === 'landing2-carousel') {
     if (key === 'badge') return 'Tag';
-    if (key === 'title') return 'Title';
+    if (key === 'title') {
+      if (options?.keyPath && options?.keyPath.includes('slides')) return 'Slide Title';
+      return 'Section Title';
+    }
     if (key === 'description') return 'Description';
     if (key === 'videoUrl' || key === 'youtubeUrl') return 'YouTube / Video Link';
     if (key === 'mediaUrl' || key === 'image') return 'Media / Video File Upload';
@@ -731,7 +743,7 @@ export function detectFieldType(
     ) {
       return 'textarea';
     }
-    if (lower !== 'badgeicon' && (lower === 'badge' || lower === 'badgetext' || lower.includes('badge') || lower === 'tagtext' || lower === 'tag1text' || lower === 'tag2text' || lower === 'tag')) {
+    if (lower !== 'badgeicon' && (lower === 'badge' || lower === 'badgetext' || lower.includes('badge') || lower.includes('tag') || lower === 'tagtext' || lower === 'tagtext1' || lower === 'tagtext2' || lower === 'tagtext3' || lower === 'tag1text' || lower === 'tag2text' || lower === 'tag3text' || lower === 'tag')) {
       return 'text';
     }
     if (sectionType === 'oracle-hero' && (lower === 'badge' || lower === 'badgetext')) {

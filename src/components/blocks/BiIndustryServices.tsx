@@ -110,6 +110,35 @@ export function BiIndustryServices({ content }: { content?: BiIndustryServicesCo
     return () => window.removeEventListener('resize', checkScroll);
   }, [checkScroll, tabs]);
 
+  const handleTabClick = (idx: number, e: React.MouseEvent<HTMLButtonElement>) => {
+    setActiveTabIdx(idx);
+    if (typeof window !== 'undefined' && window.innerWidth < 768) {
+      const btn = e.currentTarget;
+      const container = tabsRef.current;
+      if (container && btn) {
+        if (idx === 0) {
+          container.scrollTo({
+            left: 0,
+            behavior: 'smooth',
+          });
+        } else if (idx === tabs.length - 1) {
+          container.scrollTo({
+            left: container.scrollWidth,
+            behavior: 'smooth',
+          });
+        } else {
+          const containerRect = container.getBoundingClientRect();
+          const btnRect = btn.getBoundingClientRect();
+          const delta = (btnRect.left - containerRect.left + btnRect.width / 2) - (containerRect.width / 2);
+          container.scrollTo({
+            left: container.scrollLeft + delta,
+            behavior: 'smooth',
+          });
+        }
+      }
+    }
+  };
+
   return (
     <section className="py-14 bg-white font-sans">
       <div className="container mx-auto max-w-7xl px-6">
@@ -158,7 +187,7 @@ export function BiIndustryServices({ content }: { content?: BiIndustryServicesCo
                 return (
                   <button
                     key={idx}
-                    onClick={() => setActiveTabIdx(idx)}
+                    onClick={(e) => handleTabClick(idx, e)}
                     className={`shrink-0 px-5 sm:px-6 py-2.5 rounded-full text-xs sm:text-sm font-semibold tracking-wide border transition-all duration-300 cursor-pointer whitespace-nowrap ${isActive
                       ? 'bg-[#4c327f] border-[#4c327f] text-white shadow-md scale-[1.02]'
                       : 'bg-white border-slate-200 text-slate-600 hover:text-slate-900 hover:border-slate-300'

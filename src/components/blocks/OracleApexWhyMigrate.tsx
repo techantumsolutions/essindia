@@ -7,6 +7,13 @@ import { motion } from 'framer-motion';
 interface OracleApexWhyMigrateContent {
   image?: string;
   tagText?: string;
+  tagText1?: string;
+  tagText2?: string;
+  tagText3?: string;
+  tag1?: string;
+  tag2?: string;
+  tag3?: string;
+  tags?: string[];
   title?: string;
   description?: string;
   points?: string[];
@@ -14,7 +21,31 @@ interface OracleApexWhyMigrateContent {
 
 export function OracleApexWhyMigrate({ content }: { content?: OracleApexWhyMigrateContent }) {
   const sideImage = content?.image || '/Migration-Oracle Forms to Oracle APEX/43cf0cf615146177fa1157dd0ba4a24f1252918e.png';
-  const tagText = content?.tagText || 'Modern • Secure • Cloud-Native';
+  
+  // Support three tag fields (tagText1, tagText2, tagText3) with fallbacks to legacy tagText
+  const rawTags = [
+    content?.tagText1 ?? content?.tag1,
+    content?.tagText2 ?? content?.tag2,
+    content?.tagText3 ?? content?.tag3,
+  ].filter((t): t is string => typeof t === 'string' && t.trim().length > 0);
+
+  let tags: string[] = [];
+  if (rawTags.length > 0) {
+    tags = rawTags;
+  } else if (Array.isArray(content?.tags) && content.tags.length > 0) {
+    tags = content.tags.filter((t) => typeof t === 'string' && t.trim().length > 0);
+  } else if (content?.tagText) {
+    tags = content.tagText
+      .split(/[•·|,]/)
+      .map((t) => t.trim())
+      .filter(Boolean);
+    if (tags.length === 0) {
+      tags = [content.tagText.trim()];
+    }
+  } else {
+    tags = ['Modern', 'Secure', 'Cloud-Native'];
+  }
+
   const title = content?.title || 'WHY ENTERPRISES ARE MIGRATING ORACLE FORMS TO ORACLE APEX';
   const titleColor = '#27256B';
   const description = content?.description || 'The objective is not just platform replacement — it is operational optimization.';
@@ -53,7 +84,7 @@ export function OracleApexWhyMigrate({ content }: { content?: OracleApexWhyMigra
             )}
 
             {/* Tag Pill Block */}
-            {tagText && (
+            {tags.length > 0 && (
               <motion.div
                 initial={{ opacity: 0, y: 10 }}
                 whileInView={{ opacity: 1, y: 0 }}
@@ -61,11 +92,15 @@ export function OracleApexWhyMigrate({ content }: { content?: OracleApexWhyMigra
                 transition={{ duration: 0.4, delay: 0.2 }}
                 className="w-full max-w-[500px] flex justify-center lg:justify-start"
               >
-                <div className="inline-flex items-center gap-2.5 border border-slate-200/80 bg-white rounded-xl px-5 py-3 shadow-sm">
-                  <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse shrink-0" />
-                  <span className="text-sm font-semibold text-slate-700 tracking-wide">
-                    {tagText}
-                  </span>
+                <div className="inline-flex flex-wrap items-center gap-x-5 gap-y-2.5 border border-slate-200/80 bg-white rounded-xl px-5 py-3 shadow-sm">
+                  {tags.map((tag, idx) => (
+                    <div key={idx} className="inline-flex items-center gap-2.5 shrink-0">
+                      <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse shrink-0" />
+                      <span className="text-sm font-semibold text-slate-700 tracking-wide">
+                        {tag}
+                      </span>
+                    </div>
+                  ))}
                 </div>
               </motion.div>
             )}

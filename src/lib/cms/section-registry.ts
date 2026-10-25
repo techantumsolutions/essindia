@@ -1998,7 +1998,7 @@ const RAW_SECTION_REGISTRY: SectionTypeDefinition[] = [
     color: 'bg-purple-50 text-purple-600',
     defaultVariant: 'default',
     supportsVariants: false,
-    fieldOrder: ['title', 'description', 'tagText', 'points', 'image']
+    fieldOrder: ['title', 'description', 'tagText1', 'tagText2', 'tagText3', 'points', 'image']
   },
   {
     type: 'oracle-apex-deliverables',
@@ -2343,7 +2343,7 @@ const RAW_SECTION_REGISTRY: SectionTypeDefinition[] = [
     color: 'bg-[#4B2A63]/10 text-[#4B2A63]',
     defaultVariant: 'default',
     supportsVariants: false,
-    fieldOrder: ['slides']
+    fieldOrder: ['title', 'slides']
   },
   {
     type: 'landing2-boosting',

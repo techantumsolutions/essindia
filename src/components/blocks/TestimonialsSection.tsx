@@ -146,15 +146,15 @@ export function TestimonialsSection({ content }: TestimonialsSectionProps) {
           >
             {heading}
           </motion.h1>
-          <motion.p
+          <motion.div
             initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.2 }}
             className="text-sm max-w-2xl font-light leading-relaxed"
             style={{ color: subheadingColor }}
           >
-            {subheading}
-          </motion.p>
+            <FormattedText content={subheading} />
+          </motion.div>
         </div>
       </div>
 
