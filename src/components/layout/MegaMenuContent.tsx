@@ -203,9 +203,9 @@ export function MegaMenuContent({ data }: Props) {
                         <NavigationMenuLink
                           key={leaf.id}
                           render={<Link href={leaf.href} />}
-                          className="block"
+                          className="block hover:bg-muted focus:bg-transparent data-active:hover:bg-muted p-0"
                         >
-                          <span className="text-[13px] text-slate-500 hover:text-[#4B2A63] transition-colors cursor-pointer font-normal block p-2 rounded-lg hover:bg-slate-50">
+                          <span className="text-[13px] text-slate-500 hover:text-[#4B2A63] transition-colors cursor-pointer font-normal block p-2">
                             {leaf.name}
                           </span>
                         </NavigationMenuLink>

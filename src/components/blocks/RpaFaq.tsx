@@ -33,7 +33,7 @@ export function RpaFaq({ content }: { content?: RpaFaqContent }) {
 
   const faqs = content?.faqs && content.faqs.length > 0 ? content.faqs : defaultFaqs;
 
-  const [openIdx, setOpenIdx] = useState<number | null>(0);
+  const [openIdx, setOpenIdx] = useState<number | null>(-1);
 
   const toggleIdx = (idx: number) => {
     setOpenIdx(openIdx === idx ? null : idx);

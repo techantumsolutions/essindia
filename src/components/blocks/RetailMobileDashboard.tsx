@@ -52,15 +52,15 @@ export function RetailMobileDashboard({ content }: { content: RetailMobileDashbo
     ],
   } = content || {};
 
-  const [openIndex, setOpenIndex] = useState<number>(0);
+  const [openIndex, setOpenIndex] = useState<number>(-1);
 
   return (
     <section className="py-12 border-t border-b bg-[#fbfcfd]">
       <div className="container mx-auto px-4 md:px-6 max-w-7xl">
         <div className="flex flex-col gap-4">
           {modules.map((mod, idx) => (
-            <div 
-              key={idx} 
+            <div
+              key={idx}
               className={`border rounded-xl bg-white shadow-sm overflow-hidden transition-colors ${openIndex === idx ? 'border-indigo-200' : 'border-slate-200 hover:border-indigo-100'}`}
             >
               <button
@@ -74,7 +74,7 @@ export function RetailMobileDashboard({ content }: { content: RetailMobileDashbo
                   {openIndex === idx ? <ChevronUp className="w-5 h-5" /> : <ChevronDown className="w-5 h-5" />}
                 </div>
               </button>
-              
+
               <AnimatePresence>
                 {openIndex === idx && (
                   <motion.div
