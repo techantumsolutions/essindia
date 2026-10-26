@@ -17,7 +17,7 @@ export function PrivacyPolicy({ content }: { content?: PrivacyPolicyContent }) {
   `;
 
   return (
-    <section className="pt-40 pb-14 bg-slate-50 min-h-[60vh] flex items-center font-sans text-slate-800">
+    <section className="pt-6 pb-10 md:pt-40 md:pb-14 bg-slate-50 md:min-h-[60vh] flex items-start md:items-center font-sans text-slate-800">
       <div className="container mx-auto max-w-7xl px-6 bg-white rounded-3xl p-10 md:p-14 shadow-sm border border-slate-100/80">
         <FormattedText
           content={title}
