@@ -143,7 +143,7 @@ export function HospitalHero({ content }: HospitalHeroProps) {
 
           {/* Image */}
           <div className="lg:w-1/2 flex justify-end md:justify-center lg:justify-end w-full">
-            <div className="relative w-full aspect-[4/3] max-w-[500px] flex items-center justify-center rounded-2xl overflow-hidden shadow-2xl">
+            <div className="relative w-full aspect-[4/3] max-w-[500px] flex items-center justify-center">
               <motion.div
                 animate={{ y: [0, -12, 0] }}
                 transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}

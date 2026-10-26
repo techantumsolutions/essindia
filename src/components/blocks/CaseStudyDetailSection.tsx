@@ -24,14 +24,14 @@ export function CaseStudyDetailSection({ content }: CaseStudyDetailSectionProps)
 
   const heroBg = (gradientFrom && gradientTo)
     ? (gradientVia
-        ? `linear-gradient(135deg, ${gradientFrom} 0%, ${gradientVia} 50%, ${gradientTo} 100%)`
-        : `linear-gradient(135deg, ${gradientFrom} 0%, ${gradientTo} 100%)`)
+      ? `linear-gradient(135deg, ${gradientFrom} 0%, ${gradientVia} 50%, ${gradientTo} 100%)`
+      : `linear-gradient(135deg, ${gradientFrom} 0%, ${gradientTo} 100%)`)
     : (cs.bgColor || 'linear-gradient(135deg, #1e2445 0%, #292048 100%)');
 
   return (
     <article className="bg-[#fcfdfd] min-h-screen">
       {/* 1. Hero Section */}
-      <section className="relative px-6 pt-30 pb-14 overflow-hidden animate-fade-in" style={{ background: heroBg }}>
+      <section className="relative px-6 pt-30 pb-14 overflow-hidden animate-fade-in border-b" style={{ background: heroBg }}>
         <div className="relative max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
           {/* Left: Text Content */}
           <motion.div
@@ -40,7 +40,7 @@ export function CaseStudyDetailSection({ content }: CaseStudyDetailSectionProps)
             transition={{ duration: 0.6 }}
           >
             <div className="flex items-center gap-4 mb-6">
-              <div 
+              <div
                 className="px-5 py-1.5 rounded-full text-sm font-semibold shadow-sm border transition-all duration-300"
                 style={{
                   backgroundColor: cs.badgeBgColor || '#ffffff',
@@ -51,7 +51,7 @@ export function CaseStudyDetailSection({ content }: CaseStudyDetailSectionProps)
                 {cs.badgeText || cs.topic || cs.industry || 'Caetrory Name'}
               </div>
               {cs.date && (
-                <div 
+                <div
                   className="text-lg font-medium transition-colors duration-300"
                   style={{ color: cs.dateColor || '#ffffff' }}
                 >
@@ -70,7 +70,7 @@ export function CaseStudyDetailSection({ content }: CaseStudyDetailSectionProps)
                 className="text-4xl md:text-5xl lg:text-[52px] font-bold leading-tight mb-6 text-left"
               />
             ) : (
-              <h1 
+              <h1
                 className="text-4xl md:text-5xl lg:text-[52px] font-bold leading-tight mb-6 transition-colors duration-300"
                 style={{ color: cs.titleColor || '#ffffff' }}
               >
@@ -104,7 +104,7 @@ export function CaseStudyDetailSection({ content }: CaseStudyDetailSectionProps)
       </section>
 
       {/* 2. Overview Section */}
-      <section className="py-16 px-6 bg-white border-b">
+      <section className="py-12 px-6 bg-white border-b">
         <div className="max-w-7xl mx-auto">
           <h2 className="text-[40px] font-bold text-slate-900 mb-6">{cs.overviewTitle || 'Overview'}</h2>
           <div className="text-[#4b5563] text-[17px] leading-[1.8] space-y-6 max-w-none font-normal">
@@ -162,7 +162,7 @@ export function CaseStudyDetailSection({ content }: CaseStudyDetailSectionProps)
       </section>
 
       {/* 3. Challenge Section */}
-      <section className="py-16 px-6 bg-white border-b">
+      <section className="py-12 px-6 bg-white border-b">
         <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
           {/* Left Column: Challenge */}
           <div>
