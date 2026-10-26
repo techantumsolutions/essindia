@@ -23,30 +23,30 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'level and items must be provided' }, { status: 400 });
     }
 
-    await db.transaction(async (tx) => {
-      if (level === 'category') {
-        for (const item of items) {
-          if (!isValidUuid(item.id)) continue;
-          await tx.update(megaMenuCategories)
-            .set({ orderIndex: item.orderIndex })
-            .where(eq(megaMenuCategories.id, item.id));
-        }
-      } else if (level === 'sub') {
-        for (const item of items) {
-          if (!isValidUuid(item.id)) continue;
-          await tx.update(megaMenuSubCategories)
-            .set({ orderIndex: item.orderIndex })
-            .where(eq(megaMenuSubCategories.id, item.id));
-        }
-      } else if (level === 'sub-sub') {
-        for (const item of items) {
-          if (!isValidUuid(item.id)) continue;
-          await tx.update(megaMenuSubSubCategories)
-            .set({ orderIndex: item.orderIndex })
-            .where(eq(megaMenuSubSubCategories.id, item.id));
-        }
+    // Sequential updates — avoid sql.begin, which is incompatible with max_pipeline: 0
+    // required by the Supabase transaction pooler.
+    if (level === 'category') {
+      for (const item of items) {
+        if (!isValidUuid(item.id)) continue;
+        await db.update(megaMenuCategories)
+          .set({ orderIndex: item.orderIndex })
+          .where(eq(megaMenuCategories.id, item.id));
       }
-    });
+    } else if (level === 'sub') {
+      for (const item of items) {
+        if (!isValidUuid(item.id)) continue;
+        await db.update(megaMenuSubCategories)
+          .set({ orderIndex: item.orderIndex })
+          .where(eq(megaMenuSubCategories.id, item.id));
+      }
+    } else if (level === 'sub-sub') {
+      for (const item of items) {
+        if (!isValidUuid(item.id)) continue;
+        await db.update(megaMenuSubSubCategories)
+          .set({ orderIndex: item.orderIndex })
+          .where(eq(megaMenuSubSubCategories.id, item.id));
+      }
+    }
 
     // Invalidate caches if navigationItemId is provided
     if (navigationItemId) {

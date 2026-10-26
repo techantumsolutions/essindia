@@ -102,10 +102,11 @@ export async function POST(request: Request) {
     if (hasR2) {
       url = await StorageService.uploadFile(key, buffer, mimeType);
     } else {
-      const uploadDir = join(process.cwd(), 'public', 'uploads', folder);
-      await mkdir(uploadDir, { recursive: true });
+      const uploadDir = join(/* turbopackIgnore: true */ process.cwd(), 'public', 'uploads', folder);
+      await mkdir(/* turbopackIgnore: true */ uploadDir, { recursive: true });
       const filename = `${randomUUID()}.${ext}`;
-      await writeFile(join(uploadDir, filename), buffer);
+      const filePath = join(/* turbopackIgnore: true */ uploadDir, /* turbopackIgnore: true */ filename);
+      await writeFile(/* turbopackIgnore: true */ filePath, buffer);
       url = `/uploads/${folder}/${filename}`;
     }
 

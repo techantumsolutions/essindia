@@ -1,0 +1,24 @@
+2026-10-26T09:36:19: ▲ Next.js 16.2.4
+2026-10-26T09:36:19: - Local:         http://127.0.0.1:5003
+2026-10-26T09:36:19: - Network:       http://127.0.0.1:5003
+2026-10-26T09:36:19: ✓ Ready in 130ms
+2026-10-26T09:36:19: [DB] Initializing postgres client with: postgresql://postgres.hsdxevtiqoguvkfeqdwk:****@aws-1-ap-northeast-1.pooler.supabase.com:6543/postgres?pgbouncer=true
+2026-10-26T09:36:20: {
+2026-10-26T09:36:20:   severity_local: 'NOTICE',
+2026-10-26T09:36:20:   severity: 'NOTICE',
+2026-10-26T09:36:20:   code: '42P07',
+2026-10-26T09:36:20:   message: 'relation "chat_conversations" already exists, skipping',
+2026-10-26T09:36:20:   file: 'parse_utilcmd.c',
+2026-10-26T09:36:20:   line: '207',
+2026-10-26T09:36:20:   routine: 'transformCreateStmt'
+2026-10-26T09:36:20: }
+2026-10-26T09:36:21: {
+2026-10-26T09:36:21:   severity_local: 'NOTICE',
+2026-10-26T09:36:21:   severity: 'NOTICE',
+2026-10-26T09:36:21:   code: '42P07',
+2026-10-26T09:36:21:   message: 'relation "chat_messages" already exists, skipping',
+2026-10-26T09:36:21:   file: 'parse_utilcmd.c',
+2026-10-26T09:36:21:   line: '207',
+2026-10-26T09:36:21:   routine: 'transformCreateStmt'
+2026-10-26T09:36:21: }
+2026-10-26T09:36:28: [DB] Initializing postgres client with: postgresql://postgres.hsdxevtiqoguvkfeqdwk:****@aws-1-ap-northeast-1.pooler.supabase.com:6543/postgres?pgbouncer=true

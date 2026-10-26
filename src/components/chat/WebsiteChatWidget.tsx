@@ -10,11 +10,7 @@ import { io, Socket } from 'socket.io-client';
 
 export function WebsiteChatWidget() {
   const pathname = usePathname();
-
-  // Do not display chat widget inside admin pages
-  if (pathname?.startsWith('/admin')) {
-    return null;
-  }
+  const isAdmin = pathname?.startsWith('/admin');
 
   const [isOpen, setIsOpen] = useState(false);
   const [hasStarted, setHasStarted] = useState(false);
@@ -57,51 +53,23 @@ export function WebsiteChatWidget() {
     prevIsTypingRef.current = isTyping;
   }, [messages, showLeadPrompt, isTyping]);
 
-  // Ensure active conversation session exists on mount
+  // Restore an existing session from localStorage only — do not create or poll
+  // conversations until the visitor actually opens the widget.
   useEffect(() => {
-    const initSession = async () => {
-      const savedConvId = localStorage.getItem('ess_chat_conv_id');
-      if (savedConvId) {
-        try {
-          const res = await fetch(`/api/chat/messages?conversationId=${savedConvId}`);
-          if (res.ok) {
-            setConversationId(savedConvId);
-            setHasStarted(true);
-            return;
-          }
-        } catch (e) {}
-      }
+    if (isAdmin) return;
+    const savedConvId = localStorage.getItem('ess_chat_conv_id');
+    if (savedConvId) {
+      setConversationId(savedConvId);
+      setHasStarted(true);
+    }
+  }, [isAdmin]);
 
-      // Create new session if none exists
-      try {
-        const res = await fetch('/api/chat/conversations', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ userName: 'Guest User', channel: 'Website Widget' }),
-        });
-        const contentType = res.headers.get('content-type') || '';
-        if (res.ok && contentType.includes('application/json')) {
-          const data = await res.json();
-          if (data.success && data.conversation) {
-            setConversationId(data.conversation.id);
-            localStorage.setItem('ess_chat_conv_id', data.conversation.id);
-            localStorage.setItem('ess_chat_user_name', 'Guest User');
-            setHasStarted(true);
-          }
-        }
-      } catch (err) {
-        console.error('Session init error:', err);
-      }
-    };
-
-    initSession();
-  }, []);
-
-  // Fetch messages immediately when conversationId becomes active & poll as fallback
+  // Poll only while the widget is open so background traffic cannot starve the DB pool.
   useEffect(() => {
-    if (!conversationId) return;
+    if (isAdmin || !isOpen || !conversationId) return;
 
     const fetchMessages = async () => {
+      if (typeof document !== 'undefined' && document.visibilityState === 'hidden') return;
       try {
         const res = await fetch(`/api/chat/messages?conversationId=${conversationId}`);
         const contentType = res.headers.get('content-type') || '';
@@ -147,7 +115,7 @@ export function WebsiteChatWidget() {
     fetchMessages();
     const interval = setInterval(fetchMessages, 2000);
     return () => clearInterval(interval);
-  }, [conversationId]);
+  }, [isAdmin, isOpen, conversationId]);
 
   // Auto start conversation when widget opens if not started
   const handleOpenWidget = async () => {
@@ -295,6 +263,8 @@ export function WebsiteChatWidget() {
       setIsSubmittingLead(false);
     }
   };
+
+  if (isAdmin) return null;
 
   return (
     <div className="fixed bottom-6 left-6 z-50 font-sans">
