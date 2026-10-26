@@ -24,9 +24,9 @@ export function RetailClients({ content }: { content: RetailClientsContent }) {
   const duplicatedLogos = [...logos, ...logos, ...logos];
 
   return (
-    <section className="py-14 bg-white border-b border-slate-100">
+    <section className="py-10 bg-white border-b border-slate-100">
       <div className="container mx-auto px-4 md:px-6 max-w-7xl">
-        <motion.h3 
+        <motion.h3
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
@@ -34,12 +34,12 @@ export function RetailClients({ content }: { content: RetailClientsContent }) {
         >
           {title}
         </motion.h3>
-        
+
         {logos.length > 0 && (
           <div className="overflow-hidden relative">
             {autoScroll ? (
               <div className="relative w-full overflow-hidden before:absolute before:left-0 before:top-0 before:z-10 before:h-full before:w-[100px] before:bg-gradient-to-r before:from-white before:to-transparent after:absolute after:right-0 after:top-0 after:z-10 after:h-full after:w-[100px] after:bg-gradient-to-l after:from-white after:to-transparent">
-                <div 
+                <div
                   className="flex w-max items-center gap-10 md:gap-16 lg:gap-24"
                   style={{ animation: 'retail-logos-marquee 15s linear infinite' }}
                   onMouseEnter={(e) => e.currentTarget.style.animationPlayState = 'paused'}
@@ -54,7 +54,8 @@ export function RetailClients({ content }: { content: RetailClientsContent }) {
                     </div>
                   ))}
                 </div>
-                <style dangerouslySetInnerHTML={{__html: `
+                <style dangerouslySetInnerHTML={{
+                  __html: `
                   @keyframes retail-logos-marquee {
                     0% { transform: translateX(0%); }
                     100% { transform: translateX(-33.333333%); }

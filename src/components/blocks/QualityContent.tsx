@@ -46,7 +46,7 @@ export function QualityContent({ content }: QualityContentProps) {
   );
 
   return (
-    <section className="py-20 bg-white text-slate-800 relative">
+    <section className="py-12 border-t border-b bg-white text-slate-800 relative">
       <div className="container mx-auto px-6  max-w-7xl">
         <div className="space-y-12">
 

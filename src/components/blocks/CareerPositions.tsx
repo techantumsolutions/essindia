@@ -61,7 +61,7 @@ export default function CareerPositions({ content }: { content?: any }) {
   const displayPositions = dynamicPositions && dynamicPositions.length > 0 ? dynamicPositions : staticPositions;
 
   return (
-    <section className="py-14 px-6 bg-white">
+    <section className="py-12 px-6 border-t border-b bg-white">
       <div className="container mx-auto max-w-7xl">
         <div className="text-center mb-16">
           <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-4">{title}</h2>

@@ -22,10 +22,17 @@ export function isConnectionError(error: unknown): boolean {
   while (current && typeof current === 'object' && !seen.has(current)) {
     seen.add(current);
     if (current instanceof Error) parts.push(current.message);
+    if ((current as { code?: string }).code) parts.push(String((current as { code?: string }).code));
     current = (current as { cause?: unknown }).cause;
   }
   const message = parts.join(' ');
-  return /connection is closed/i.test(message) || /ECONNRESET|ECONNREFUSED|ETIMEDOUT/i.test(message);
+  return (
+    /connection is closed/i.test(message) ||
+    /ECONNRESET|ECONNREFUSED|ETIMEDOUT|EMAXCONNSESSION/i.test(message) ||
+    /max clients reached/i.test(message) ||
+    /too many clients/i.test(message) ||
+    /remaining connection slots/i.test(message)
+  );
 }
 
 export function isMissingSchemaError(error: unknown): boolean {

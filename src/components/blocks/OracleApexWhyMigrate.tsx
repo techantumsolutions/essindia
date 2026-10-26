@@ -21,7 +21,7 @@ interface OracleApexWhyMigrateContent {
 
 export function OracleApexWhyMigrate({ content }: { content?: OracleApexWhyMigrateContent }) {
   const sideImage = content?.image || '/Migration-Oracle Forms to Oracle APEX/43cf0cf615146177fa1157dd0ba4a24f1252918e.png';
-  
+
   // Support three tag fields (tagText1, tagText2, tagText3) with fallbacks to legacy tagText
   const rawTags = [
     content?.tagText1 ?? content?.tag1,
@@ -59,7 +59,7 @@ export function OracleApexWhyMigrate({ content }: { content?: OracleApexWhyMigra
   const points = content?.points && content.points.length > 0 ? content.points : defaultPoints;
 
   return (
-    <section className="py-14 bg-white font-sans relative">
+    <section className="py-12 border-t border-b bg-white font-sans relative">
       <div className="container mx-auto max-w-7xl px-6">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
 

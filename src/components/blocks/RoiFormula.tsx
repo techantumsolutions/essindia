@@ -34,7 +34,7 @@ export function RoiFormula({ content }: { content?: RoiFormulaContent }) {
   const hasCustomImages = !!(image1 || image2);
 
   return (
-    <section className="py-14 bg-white relative border-b">
+    <section className="py-12 border-b border-t bg-white relative">
       <div className="container mx-auto max-w-7xl px-4 md:px-8">
         <motion.div
           initial={{ opacity: 0, y: 30 }}

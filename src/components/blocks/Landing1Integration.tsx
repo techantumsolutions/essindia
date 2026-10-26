@@ -20,7 +20,7 @@ export function Landing1Integration({ content }: { content?: Landing1Integration
   const data = { ...DEFAULT_CONTENT, ...content };
 
   return (
-    <section className="py-20 bg-[#F8FAFC] text-slate-900 font-sans select-none border-b border-slate-200">
+    <section className="py-12 border-t border-b bg-[#F8FAFC] text-slate-900 font-sans select-none">
       <div className="container mx-auto px-6 max-w-7xl">
         
         {/* Header */}

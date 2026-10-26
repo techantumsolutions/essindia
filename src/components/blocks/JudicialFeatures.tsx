@@ -68,7 +68,7 @@ export function JudicialFeatures({ content }: JudicialFeaturesProps) {
   const validSideImage = isValidImageSrc(sideImage) ? sideImage : "/Judicial Automation/image 78.png";
 
   return (
-    <section className="py-12 px-6 bg-white">
+    <section className="py-12 px-6 border-t border-b bg-white">
       <div className="container mx-auto max-w-7xl">
         <div className="flex flex-col lg:flex-row items-stretch gap-16">
           {/* Left Image */}

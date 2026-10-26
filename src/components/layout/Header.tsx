@@ -196,7 +196,14 @@ export function Header({
           {/* Logo */}
           <Link href={logoLink || '/'} className="flex items-center group">
             <div className="relative">
-              <img src={logoUrl} alt="Eastern Software Solutions Pvt.Ltd" className="h-10 w-[160px]" />
+              <img
+                src={logoUrl}
+                onError={(e) => {
+                  e.currentTarget.src = '/footer-logo.png';
+                }}
+                alt="Eastern Software Solutions Pvt.Ltd"
+                className="h-10 w-[160px] object-contain"
+              />
             </div>
           </Link>
 

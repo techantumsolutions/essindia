@@ -88,7 +88,7 @@ export function RoiHero({ content }: { content?: RoiHeroContent }) {
 
   return (
     <section
-      className="relative min-h-[80vh] flex items-center py-14 px-6 overflow-hidden text-white"
+      className="relative min-h-[80vh] flex items-center py-12 border-b border-t px-6 overflow-hidden text-white"
       style={bgStyles}
     >
       <div className="container mx-auto max-w-7xl relative z-10">

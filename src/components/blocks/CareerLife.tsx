@@ -28,7 +28,7 @@ export default function CareerLife({ content }: { content?: any }) {
   ].filter(img => Boolean(img.src && String(img.src).trim() !== ''));
 
   return (
-    <section className="py-12 px-6 bg-white border-b">
+    <section className="py-12 px-6 border-t border-b bg-white">
       <div className="container mx-auto max-w-7xl">
         <div className="text-center mb-6 md:mb-8 lg:mb-16">
           <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-4">{title}</h2>

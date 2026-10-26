@@ -93,7 +93,7 @@ export function FmcgHero({ content }: { content?: FmcgHeroContent }) {
 
   return (
     <section
-      className="relative min-h-[80vh] flex items-center py-14 px-6 overflow-hidden text-white"
+      className="relative min-h-[80vh] flex items-center py-12 px-6 overflow-hidden text-white border-t border-b"
       style={bgStyles}
     >
       {/* Soft decorative background circles */}
