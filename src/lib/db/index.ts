@@ -18,9 +18,9 @@ const globalDb = globalThis as typeof globalThis & DbGlobals;
 function createClient() {
   return postgres(connectionString, {
     prepare: false,
-    max: Number(process.env.DB_POOL_MAX || (process.env.NODE_ENV === 'production' ? 5 : 3)),
-    idle_timeout: 5,
-    connect_timeout: 10,
+    max: Number(process.env.DB_POOL_MAX || (process.env.NODE_ENV === 'production' ? 10 : 10)),
+    idle_timeout: 20,
+    connect_timeout: 15,
     max_lifetime: 60 * 5,
   });
 }

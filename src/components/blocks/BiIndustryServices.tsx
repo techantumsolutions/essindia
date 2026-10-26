@@ -140,7 +140,7 @@ export function BiIndustryServices({ content }: { content?: BiIndustryServicesCo
   };
 
   return (
-    <section className="py-14 bg-white font-sans">
+    <section className="py-12 border-b bg-white font-sans">
       <div className="container mx-auto max-w-7xl px-6">
 
         {/* Header */}
@@ -164,11 +164,10 @@ export function BiIndustryServices({ content }: { content?: BiIndustryServicesCo
               }
             }}
             disabled={!canScrollLeft}
-            className={`w-9 h-9 sm:w-10 sm:h-10 rounded-full border border-slate-200 bg-white text-[#4c327f] transition-all duration-200 flex items-center justify-center shrink-0 shadow-sm ${
-              canScrollLeft
-                ? 'opacity-100 scale-100 hover:bg-[#4c327f] hover:text-white hover:border-[#4c327f] cursor-pointer active:scale-95'
-                : 'opacity-0 pointer-events-none scale-90'
-            }`}
+            className={`w-9 h-9 sm:w-10 sm:h-10 rounded-full border border-slate-200 bg-white text-[#4c327f] transition-all duration-200 flex items-center justify-center shrink-0 shadow-sm ${canScrollLeft
+              ? 'opacity-100 scale-100 hover:bg-[#4c327f] hover:text-white hover:border-[#4c327f] cursor-pointer active:scale-95'
+              : 'opacity-0 pointer-events-none scale-90'
+              }`}
             aria-label="Scroll left"
           >
             <ChevronLeft className="w-4 h-4 sm:w-5 sm:h-5" />
@@ -209,11 +208,10 @@ export function BiIndustryServices({ content }: { content?: BiIndustryServicesCo
               }
             }}
             disabled={!canScrollRight}
-            className={`w-9 h-9 sm:w-10 sm:h-10 rounded-full border border-slate-200 bg-white text-[#4c327f] transition-all duration-200 flex items-center justify-center shrink-0 shadow-sm ${
-              canScrollRight
-                ? 'opacity-100 scale-100 hover:bg-[#4c327f] hover:text-white hover:border-[#4c327f] cursor-pointer active:scale-95'
-                : 'opacity-0 pointer-events-none scale-90'
-            }`}
+            className={`w-9 h-9 sm:w-10 sm:h-10 rounded-full border border-slate-200 bg-white text-[#4c327f] transition-all duration-200 flex items-center justify-center shrink-0 shadow-sm ${canScrollRight
+              ? 'opacity-100 scale-100 hover:bg-[#4c327f] hover:text-white hover:border-[#4c327f] cursor-pointer active:scale-95'
+              : 'opacity-0 pointer-events-none scale-90'
+              }`}
             aria-label="Scroll right"
           >
             <ChevronRight className="w-4 h-4 sm:w-5 sm:h-5" />
@@ -306,13 +304,10 @@ export function BiIndustryServices({ content }: { content?: BiIndustryServicesCo
                           ? activeTab.buttonHoverTextColor || activeTab.buttonTextColor || undefined
                           : activeTab.buttonTextColor || undefined,
                       }}
-                      className={`inline-block ${
-                        activeTab.buttonBgColor ? '' : 'bg-white'
-                      } ${
-                        activeTab.buttonHoverBgColor ? '' : 'hover:bg-slate-50'
-                      } ${
-                        activeTab.buttonTextColor ? '' : 'text-[#4c327f]'
-                      } font-semibold text-sm sm:text-base rounded-full px-8 py-3 w-fit shadow-md transition-all duration-300 hover:shadow-lg active:scale-[0.98] text-center cursor-pointer`}
+                      className={`inline-block ${activeTab.buttonBgColor ? '' : 'bg-white'
+                        } ${activeTab.buttonHoverBgColor ? '' : 'hover:bg-slate-50'
+                        } ${activeTab.buttonTextColor ? '' : 'text-[#4c327f]'
+                        } font-semibold text-sm sm:text-base rounded-full px-8 py-3 w-fit shadow-md transition-all duration-300 hover:shadow-lg active:scale-[0.98] text-center cursor-pointer`}
                     >
                       {activeTab.buttonText || 'Case studies'}
                     </a>
