@@ -57,18 +57,18 @@ export function ErpModulesGrid({ content }: ErpModulesGridProps) {
 
   const cardVariants = {
     hidden: { opacity: 0, y: 30, scale: 0.98 },
-    show: { 
-      opacity: 1, 
-      y: 0, 
+    show: {
+      opacity: 1,
+      y: 0,
       scale: 1,
-      transition: { duration: 0.6, ease: [0.22, 1, 0.36, 1] as any } 
+      transition: { duration: 0.6, ease: [0.22, 1, 0.36, 1] as any }
     },
   };
 
   return (
     <section className="relative w-full py-16 bg-white overflow-hidden border-b border-slate-100">
       <div className="container mx-auto px-4 md:px-8 max-w-7xl">
-        
+
         {/* Header Block */}
         <div className="text-center max-w-3xl mx-auto mb-8">
           <MotionSection variant="fadeUp">
@@ -76,7 +76,7 @@ export function ErpModulesGrid({ content }: ErpModulesGridProps) {
               {heading}
             </h2>
           </MotionSection>
-          
+
           <MotionSection variant="fadeUp" delay={0.15}>
             <p className="text-[#777777] text-base font-normal">
               {subheading}
@@ -85,7 +85,7 @@ export function ErpModulesGrid({ content }: ErpModulesGridProps) {
         </div>
 
         {/* Modules Responsive Grid */}
-        <motion.div 
+        <motion.div
           variants={containerVariants}
           initial="hidden"
           whileInView="show"
@@ -102,20 +102,20 @@ export function ErpModulesGrid({ content }: ErpModulesGridProps) {
               >
                 {/* Icon Image inside a beautiful rounded card box */}
                 <div className="w-28 h-28 transition-transform duration-500 group-hover:scale-110 group-hover:rotate-3 shrink-0">
-                  <img 
-                    src={module.image || '/ErpOverview/ERP-1.png'} 
-                    alt="" 
-                    className="w-full h-full rounded-full" 
+                  <img
+                    src={module.image || '/ErpOverview/ERP-1.png'}
+                    alt=""
+                    className="w-full h-full rounded-full"
                   />
                 </div>
 
                 {/* Text details */}
                 <div className="space-y-3 flex-1 flex flex-col justify-center my-2">
-                  <h3 className="text-base font-black tracking-wide text-[#4B2A63] leading-snug group-hover:text-slate-900 transition-colors duration-300">
+                  <h3 className="text-base font-black font-semibold tracking-wide text-[#4B2A63] leading-snug group-hover:text-slate-900 transition-colors duration-300">
                     {module.title}
                   </h3>
                   {module.description?.includes('<p>') || module.description?.includes('<') ? (
-                    <div 
+                    <div
                       className="text-[#777777] text-sm font-medium prose prose-sm max-w-none prose-p:my-1"
                       dangerouslySetInnerHTML={{ __html: module.description }}
                     />
@@ -127,22 +127,21 @@ export function ErpModulesGrid({ content }: ErpModulesGridProps) {
                 </div>
 
                 {/* Read More dynamic CTA */}
-                <button 
-                  type="button" 
+                <button
+                  type="button"
                   onMouseEnter={() => setHoveredCardIdx(idx)}
                   onMouseLeave={() => setHoveredCardIdx(null)}
                   style={
                     isBtnHovered && (module.ctaHoverBgColor || module.ctaHoverTextColor)
                       ? {
-                          backgroundColor: module.ctaHoverBgColor || undefined,
-                          color: module.ctaHoverTextColor || undefined,
-                          borderColor: module.ctaHoverBgColor || undefined,
-                        }
+                        backgroundColor: module.ctaHoverBgColor || undefined,
+                        color: module.ctaHoverTextColor || undefined,
+                        borderColor: module.ctaHoverBgColor || undefined,
+                      }
                       : undefined
                   }
-                  className={`text-[10px] mt-4 font-semibold text-black bg-white ${
-                    module.ctaHoverBgColor ? '' : 'hover:bg-[#452191] hover:text-white hover:border-[#452191]'
-                  } rounded-full h-7 px-4 border border-gray-300 transition-colors duration-300 cursor-pointer`} 
+                  className={`text-[10px] mt-4 font-semibold text-black bg-white ${module.ctaHoverBgColor ? '' : 'hover:bg-[#452191] hover:text-white hover:border-[#452191]'
+                    } rounded-full h-7 px-4 border border-gray-300 transition-colors duration-300 cursor-pointer`}
                   onClick={(e) => {
                     e.stopPropagation();
                     window.open(module.ctaUrl || '#', '_blank');

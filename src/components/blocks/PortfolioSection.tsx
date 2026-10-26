@@ -155,10 +155,10 @@ export function PortfolioSection({ content }: PortfolioSectionProps) {
   return (
     <section className="py-10 lg:py-12 bg-[#F2F6F9] overflow-hidden relative">
       <div className="container mx-auto px-4 md:px-8 max-w-7xl">
-        
+
         {/* Header */}
         <div className="text-center mb-20 max-w-3xl mx-auto">
-          <TextReveal 
+          <TextReveal
             as="h2"
             text={heading}
             className="text-4xl md:text-5xl font-bold text-slate-900 mb-6 tracking-tight justify-center"
@@ -179,10 +179,10 @@ export function PortfolioSection({ content }: PortfolioSectionProps) {
           onMouseEnter={() => { pausedRef.current = true; }}
           onMouseLeave={() => { pausedRef.current = false; }}
         >
-          
+
           {/* Left Arrow */}
           {showArrows && (
-            <button 
+            <button
               onClick={() => scroll('left')}
               className="flex absolute left-2 top-[calc(75cqw+1.625rem)] md:top-1/2 md:-translate-y-1/2 xl:left-4 z-10 w-10 h-10 rounded-full border border-slate-200 bg-white items-center justify-center text-slate-600 hover:bg-[#4B2A63] hover:text-white hover:border-[#4B2A63] transition-all duration-300 shadow-sm cursor-pointer hover:scale-110 active:scale-95"
             >
@@ -191,18 +191,18 @@ export function PortfolioSection({ content }: PortfolioSectionProps) {
           )}
 
           {/* Grid / Flex Wrapper */}
-          <div 
+          <div
             ref={scrollRef}
             className={cn(
               "w-full",
               showArrows ? "overflow-x-auto snap-x snap-mandatory pb-8 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]" : ""
             )}
           >
-            <StaggerContainer 
+            <StaggerContainer
               className={cn(
                 "w-full",
-                showArrows 
-                  ? "flex gap-10" 
+                showArrows
+                  ? "flex gap-10"
                   : "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10 xl:px-24"
               )}
             >
@@ -226,7 +226,7 @@ export function PortfolioSection({ content }: PortfolioSectionProps) {
 
           {/* Right Arrow */}
           {showArrows && (
-            <button 
+            <button
               onClick={() => scroll('right')}
               className="flex absolute right-2 top-[calc(75cqw+1.625rem)] md:top-1/2 md:-translate-y-1/2 xl:right-4 z-10 w-10 h-10 rounded-full border border-slate-200 bg-white items-center justify-center text-slate-600 hover:bg-[#4B2A63] hover:text-white hover:border-[#4B2A63] transition-all duration-300 shadow-sm cursor-pointer hover:scale-110 active:scale-95"
             >
@@ -238,8 +238,8 @@ export function PortfolioSection({ content }: PortfolioSectionProps) {
 
         {/* View All Button */}
         {btnText && (
-          <MotionSection variant="fadeUp" delay={0.6} className="mt-20 text-center">
-            <Button 
+          <MotionSection variant="fadeUp" delay={0.6} className="mt-10 text-center">
+            <Button
               onClick={handleClick}
               onMouseEnter={() => setIsBtnHovered(true)}
               onMouseLeave={() => setIsBtnHovered(false)}
@@ -298,10 +298,10 @@ function ProjectCard({
       >
         {/* Image */}
         <div className="rounded-[32px] overflow-hidden bg-slate-200 aspect-[4/3] shadow-lg mb-8 relative">
-          <motion.img 
+          <motion.img
             whileHover={{ scale: 1.05 }}
             transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
-            src={portfolio.image} 
+            src={portfolio.image}
             alt={portfolio.title}
             className="w-full h-full object-cover"
             onError={(e) => {
@@ -319,12 +319,12 @@ function ProjectCard({
         )}>
           {portfolio.title}
         </h3>
-        
+
         {/* Tags */}
         <div className="flex flex-wrap gap-1.5 mb-4">
           {portfolio.tags?.map(tag => (
-            <span 
-              key={tag} 
+            <span
+              key={tag}
               className="bg-white/80 backdrop-blur-sm border border-slate-100 text-slate-500 px-3 py-1 rounded-full text-[10px] font-semibold tracking-wide uppercase"
             >
               {tag}
