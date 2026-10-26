@@ -23,7 +23,7 @@ export default function CareerExperience({ content }: { content?: any }) {
           dangerouslySetInnerHTML={{ __html: title.replace(/\n/g, '<br />') }}
         />
         <p
-          className="text-[#9CA3AF] max-w-2xl mx-auto text-2xl font-light leading-snug mb-20"
+          className="text-[#9CA3AF] max-w-2xl mx-auto text-2xl font-light leading-snug mb-8 md:mb-20"
           dangerouslySetInnerHTML={{ __html: tag.replace(/\n/g, '<br />') }}
         />
 
