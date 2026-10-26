@@ -23,8 +23,8 @@ export default function ManufacturingEfficiency({ content }: { content?: any }) 
   const capabilities = content?.metrics || defaultCapabilities;
 
   return (
-    <section className="py-14 px-6 bg-[#f1f7fe] overflow-hidden">
-      <div className="container mx-auto max-w-7xl">
+    <section className="py-14 bg-[#f1f7fe] overflow-hidden">
+      <div className="w-full max-w-7xl mx-auto px-6 md:px-8">
         <div className="flex flex-col lg:flex-row gap-12 lg:gap-20 items-center">
           <motion.div
             initial={{ opacity: 0, x: -30 }}

@@ -135,9 +135,9 @@ export function ContactLeadModal({ isOpen, onClose, pageName }: ContactLeadModal
           </div>
           <div className="space-y-2">
             <label className="text-sm font-medium text-slate-700">Phone Number *</label>
-            <div className="flex">
+            <div className="flex gap-2">
               <Select value={selectedDialCode} onValueChange={(v) => setSelectedDialCode(v || '')} onOpenChange={(open) => !open && setSearchDialQuery('')}>
-                <SelectTrigger className="w-[100px] px-3 !h-[38px] rounded-l-md rounded-r-none border border-r-0 border-slate-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#5C2B6A] focus-visible:border-transparent transition-all text-sm bg-slate-50 shadow-none z-10 relative">
+                <SelectTrigger className="w-[100px] px-3 !h-[38px] rounded-md border border-slate-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#5C2B6A] focus-visible:border-transparent transition-all text-sm bg-slate-50 shadow-none relative shrink-0">
                   <SelectValue>
                     {selectedDialCode && (
                       <span className="flex items-center gap-1.5">
@@ -146,7 +146,7 @@ export function ContactLeadModal({ isOpen, onClose, pageName }: ContactLeadModal
                     )}
                   </SelectValue>
                 </SelectTrigger>
-                <SelectContent className="w-[260px] max-h-60 p-0" alignItemWithTrigger={false} side="bottom">
+                <SelectContent className="w-[260px] max-h-48 p-0" align="start" alignItemWithTrigger={false} side="bottom">
                   <div className="p-2 sticky top-0 bg-white z-10 border-b border-slate-100">
                     <input
                       type="text"
@@ -178,7 +178,7 @@ export function ContactLeadModal({ isOpen, onClose, pageName }: ContactLeadModal
                   </div>
                 </SelectContent>
               </Select>
-              <Input required name="phone" value={formData.phone} onChange={handleChange} placeholder="Enter Mobile No" className="rounded-l-none" />
+              <Input required name="phone" value={formData.phone} onChange={handleChange} placeholder="Enter Mobile No" className="flex-1 !h-[38px] rounded-md" />
             </div>
           </div>
           <div className="space-y-2">

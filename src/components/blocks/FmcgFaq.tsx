@@ -71,12 +71,12 @@ export function FmcgFaq({ content }: { content?: FmcgFaqContent }) {
   };
 
   return (
-    <section className="py-12 px-6 bg-white">
-      <div className="container mx-auto max-w-4xl text-center space-y-6">
+    <section className="py-12 bg-white">
+      <div className="w-full max-w-7xl mx-auto px-6 md:px-8 space-y-8">
 
         {/* Title Block */}
         {(title || subtitle) && (
-          <div className="space-y-2 max-w-2xl mx-auto">
+          <div className="space-y-2 max-w-2xl mx-auto text-center">
             {title && (
               <FormattedText content={title} as="h2" className="text-3xl sm:text-4xl font-extrabold text-[#2a2b6a] leading-tight" />
             )}
