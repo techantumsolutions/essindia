@@ -4,7 +4,7 @@ import React from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
-import { ArrowRight, CheckCircle2 } from 'lucide-react';
+import { ArrowRight, CheckCircle2, ChevronLeft, ChevronRight } from 'lucide-react';
 import { useCtaAction, type CtaFormType } from '@/hooks/useCtaAction';
 
 export interface ServiceCard {
@@ -166,6 +166,52 @@ export function UgandaServices({ content }: { content?: UgandaServicesContent })
     setCurrentIndex((prev) => (prev >= cards.length - 4 ? 0 : prev + 1));
   };
 
+  // Mobile 1-card horizontal scroll state & handlers
+  const mobileScrollRef = React.useRef<HTMLDivElement>(null);
+  const [canScrollLeft, setCanScrollLeft] = React.useState(false);
+  const [canScrollRight, setCanScrollRight] = React.useState(cards.length > 1);
+  const [currentMobileIndex, setCurrentMobileIndex] = React.useState(0);
+
+  const checkMobileScroll = React.useCallback(() => {
+    if (mobileScrollRef.current) {
+      const { scrollLeft, scrollWidth, clientWidth } = mobileScrollRef.current;
+      setCanScrollLeft(scrollLeft > 10);
+      setCanScrollRight(scrollLeft + clientWidth < scrollWidth - 10);
+      const newIdx = Math.round(scrollLeft / (clientWidth || 1));
+      setCurrentMobileIndex(Math.max(0, Math.min(cards.length - 1, newIdx)));
+    }
+  }, [cards.length]);
+
+  React.useEffect(() => {
+    checkMobileScroll();
+    const timer = setTimeout(checkMobileScroll, 100);
+    window.addEventListener('resize', checkMobileScroll);
+    return () => {
+      clearTimeout(timer);
+      window.removeEventListener('resize', checkMobileScroll);
+    };
+  }, [checkMobileScroll]);
+
+  const handleMobileNext = () => {
+    if (mobileScrollRef.current) {
+      const container = mobileScrollRef.current;
+      const cardWidth = container.clientWidth;
+      const nextIdx = Math.min(cards.length - 1, currentMobileIndex + 1);
+      container.scrollTo({ left: nextIdx * cardWidth, behavior: 'smooth' });
+      setCurrentMobileIndex(nextIdx);
+    }
+  };
+
+  const handleMobilePrev = () => {
+    if (mobileScrollRef.current) {
+      const container = mobileScrollRef.current;
+      const cardWidth = container.clientWidth;
+      const prevIdx = Math.max(0, currentMobileIndex - 1);
+      container.scrollTo({ left: prevIdx * cardWidth, behavior: 'smooth' });
+      setCurrentMobileIndex(prevIdx);
+    }
+  };
+
   return (
     <section className="w-full py-12 bg-[#f8fafc] border-b border-slate-100">
       <div className="container mx-auto px-4 md:px-8 max-w-7xl text-center">
@@ -195,65 +241,130 @@ export function UgandaServices({ content }: { content?: UgandaServicesContent })
           </p>
         )}
 
-        {/* Cards Layout */}
-        {!isCarousel ? (
-          <div className={`grid gap-6 lg:gap-7 ${getGridColsClass(cards.length)}`}>
+        {/* Mobile View: 1-Card per View Horizontal Scroll Carousel with Left/Right Navigation */}
+        <div className="sm:hidden relative w-full">
+          {/* Mobile Left Arrow - disappears when at first card */}
+          {canScrollLeft && (
+            <button
+              type="button"
+              onClick={handleMobilePrev}
+              aria-label="Previous service"
+              className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-1.5 z-20 w-9 h-9 rounded-full bg-white border border-slate-200 shadow-md text-slate-700 hover:text-[#4f46e5] flex items-center justify-center cursor-pointer active:scale-95 transition-all"
+            >
+              <ChevronLeft className="w-5 h-5 stroke-[2.5]" />
+            </button>
+          )}
+
+          {/* Mobile Right Arrow - disappears when at last card */}
+          {canScrollRight && (
+            <button
+              type="button"
+              onClick={handleMobileNext}
+              aria-label="Next service"
+              className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-1.5 z-20 w-9 h-9 rounded-full bg-white border border-slate-200 shadow-md text-slate-700 hover:text-[#4f46e5] flex items-center justify-center cursor-pointer active:scale-95 transition-all"
+            >
+              <ChevronRight className="w-5 h-5 stroke-[2.5]" />
+            </button>
+          )}
+
+          {/* 1 Card Scroll Track */}
+          <div
+            ref={mobileScrollRef}
+            onScroll={checkMobileScroll}
+            className="w-full flex overflow-x-auto snap-x snap-mandatory [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden scroll-smooth py-1"
+          >
             {cards.map((card, index) => (
-              <CardItem key={index} card={card} index={index} />
+              <div key={index} className="w-full shrink-0 snap-center px-1 flex flex-col">
+                <CardItem card={card} index={index} />
+              </div>
             ))}
           </div>
-        ) : (
-          <div className="relative max-w-7xl mx-auto px-4 md:px-12">
-            {/* Carousel Track Container */}
-            <div className="overflow-hidden">
-              <div
-                className="flex transition-transform duration-500 ease-out gap-6"
-                style={{
-                  transform: `translateX(-${currentIndex * (100 / 4)}%)`,
-                }}
-              >
-                {cards.map((card, index) => (
-                  <div key={index} className="w-full sm:w-[calc(50%-12px)] lg:w-[calc(25%-18px)] shrink-0">
-                    <CardItem card={card} index={index} />
-                  </div>
-                ))}
-              </div>
-            </div>
 
-            {/* Navigation Arrows */}
-            <button
-              type="button"
-              onClick={handlePrev}
-              aria-label="Previous services"
-              className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-2 md:-translate-x-4 w-10 h-10 rounded-full bg-white border border-slate-200 shadow-md text-slate-700 hover:text-indigo-600 flex items-center justify-center transition-all cursor-pointer z-10"
-            >
-              <span className="text-lg font-bold">‹</span>
-            </button>
-            <button
-              type="button"
-              onClick={handleNext}
-              aria-label="Next services"
-              className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-2 md:translate-x-4 w-10 h-10 rounded-full bg-white border border-slate-200 shadow-md text-slate-700 hover:text-indigo-600 flex items-center justify-center transition-all cursor-pointer z-10"
-            >
-              <span className="text-lg font-bold">›</span>
-            </button>
-
-            {/* Pagination Dots */}
-            <div className="flex justify-center items-center gap-2 mt-8">
-              {Array.from({ length: cards.length - 3 }).map((_, idx) => (
+          {/* Mobile Pagination Dots */}
+          {cards.length > 1 && (
+            <div className="flex justify-center items-center gap-2 mt-6">
+              {cards.map((_, idx) => (
                 <button
                   key={idx}
                   type="button"
-                  onClick={() => setCurrentIndex(idx)}
-                  className={`h-2.5 rounded-full transition-all cursor-pointer ${
-                    currentIndex === idx ? 'w-8 bg-indigo-600' : 'w-2.5 bg-slate-300 hover:bg-slate-400'
+                  onClick={() => {
+                    if (mobileScrollRef.current) {
+                      const cardWidth = mobileScrollRef.current.clientWidth;
+                      mobileScrollRef.current.scrollTo({ left: idx * cardWidth, behavior: 'smooth' });
+                      setCurrentMobileIndex(idx);
+                    }
+                  }}
+                  className={`h-2 rounded-full transition-all cursor-pointer ${
+                    currentMobileIndex === idx ? 'w-6 bg-[#4f46e5]' : 'w-2 bg-slate-300 hover:bg-slate-400'
                   }`}
                   aria-label={`Go to slide ${idx + 1}`}
                 />
               ))}
             </div>
-          </div>
-        )}
+          )}
+        </div>
+
+        {/* Desktop & Tablet Cards Layout (Unchanged) */}
+        <div className="hidden sm:block">
+          {!isCarousel ? (
+            <div className={`grid gap-6 lg:gap-7 ${getGridColsClass(cards.length)}`}>
+              {cards.map((card, index) => (
+                <CardItem key={index} card={card} index={index} />
+              ))}
+            </div>
+          ) : (
+            <div className="relative max-w-7xl mx-auto px-4 md:px-12">
+              {/* Carousel Track Container */}
+              <div className="overflow-hidden">
+                <div
+                  className="flex transition-transform duration-500 ease-out gap-6"
+                  style={{
+                    transform: `translateX(-${currentIndex * (100 / 4)}%)`,
+                  }}
+                >
+                  {cards.map((card, index) => (
+                    <div key={index} className="w-full sm:w-[calc(50%-12px)] lg:w-[calc(25%-18px)] shrink-0">
+                      <CardItem card={card} index={index} />
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Navigation Arrows */}
+              <button
+                type="button"
+                onClick={handlePrev}
+                aria-label="Previous services"
+                className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-2 md:-translate-x-4 w-10 h-10 rounded-full bg-white border border-slate-200 shadow-md text-slate-700 hover:text-indigo-600 flex items-center justify-center transition-all cursor-pointer z-10"
+              >
+                <span className="text-lg font-bold">‹</span>
+              </button>
+              <button
+                type="button"
+                onClick={handleNext}
+                aria-label="Next services"
+                className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-2 md:translate-x-4 w-10 h-10 rounded-full bg-white border border-slate-200 shadow-md text-slate-700 hover:text-indigo-600 flex items-center justify-center transition-all cursor-pointer z-10"
+              >
+                <span className="text-lg font-bold">›</span>
+              </button>
+
+              {/* Pagination Dots */}
+              <div className="flex justify-center items-center gap-2 mt-8">
+                {Array.from({ length: cards.length - 3 }).map((_, idx) => (
+                  <button
+                    key={idx}
+                    type="button"
+                    onClick={() => setCurrentIndex(idx)}
+                    className={`h-2.5 rounded-full transition-all cursor-pointer ${
+                      currentIndex === idx ? 'w-8 bg-indigo-600' : 'w-2.5 bg-slate-300 hover:bg-slate-400'
+                    }`}
+                    aria-label={`Go to slide ${idx + 1}`}
+                  />
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
 
       </div>
     </section>

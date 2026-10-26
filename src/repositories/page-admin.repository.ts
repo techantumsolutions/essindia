@@ -819,43 +819,51 @@ export class PageAdminRepository {
     return this.getById(pageId);
   }
 
-  async deleteSection(sectionId: string): Promise<boolean> {
-    const section = await db.query.pageSections.findFirst({
-      where: eq(pageSections.id, sectionId),
-      with: { page: true },
-    }).catch(() => null);
+  async deleteSection(sectionId: string, pageId?: string): Promise<boolean> {
+    if (!sectionId?.trim()) return false;
+    const cleanSectionId = sectionId.trim();
 
-    if (!section) {
-      // Direct delete fallback from pageSections
-      const [deletedPageSec] = await db.delete(pageSections).where(eq(pageSections.id, sectionId)).returning().catch(() => []);
-      if (deletedPageSec) {
-        if (deletedPageSec.pageId) {
-          await this.saveRevision(deletedPageSec.pageId).catch(() => null);
+    try {
+      // 1. Direct atomic delete from pageSections
+      const [deleted] = await db
+        .delete(pageSections)
+        .where(eq(pageSections.id, cleanSectionId))
+        .returning();
+
+      if (deleted) {
+        const targetPageId = pageId || deleted.pageId;
+        if (deleted.sectionLibraryId) {
+          sectionLibraryRepository.decrementUsage(deleted.sectionLibraryId).catch(() => null);
+        }
+        if (targetPageId) {
+          this.saveRevision(targetPageId).catch((err) => console.error('[deleteSection] saveRevision error:', err));
+          this.getById(targetPageId)
+            .then((p) => {
+              if (p?.fullPath) this.invalidateCache(p.fullPath);
+            })
+            .catch(() => null);
         }
         return true;
       }
+    } catch (err) {
+      console.error('[deleteSection] Error deleting from pageSections:', err);
+    }
 
-      // Fallback: Check if it's a template section
-      const [deletedTemplateSec] = await db.delete(templateSections).where(eq(templateSections.id, sectionId)).returning().catch(() => []);
-      if (deletedTemplateSec) {
+    try {
+      // 2. Fallback: check if it's a template section
+      const [deletedTemplate] = await db
+        .delete(templateSections)
+        .where(eq(templateSections.id, cleanSectionId))
+        .returning();
+
+      if (deletedTemplate) {
         return true;
       }
-
-      return false;
+    } catch (err) {
+      console.error('[deleteSection] Error deleting from templateSections:', err);
     }
 
-    await db.delete(pageSections).where(eq(pageSections.id, sectionId));
-
-    if (section.sectionLibraryId) {
-      await sectionLibraryRepository.decrementUsage(section.sectionLibraryId).catch(() => null);
-    }
-
-    if (section.page) {
-      await this.saveRevision(section.pageId).catch(() => null);
-      await this.invalidateCache(section.page.fullPath).catch(() => null);
-    }
-
-    return true;
+    return false;
   }
 
   async duplicate(id: string) {

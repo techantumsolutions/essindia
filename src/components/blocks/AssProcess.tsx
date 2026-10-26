@@ -27,7 +27,7 @@ export function AssProcess({ content }: { content?: AssProcessContent }) {
   ];
 
   return (
-    <section className="p-14 px-6 bg-[#ffffff]">
+    <section className="p-12 px-6 bg-[#ffffff] border-b">
       <div className="container mx-auto max-w-7xl">
         {/* Title */}
         <FormattedText content={title} as="h2" className="text-3xl md:text-4xl lg:text-[40px] font-bold text-[#0a1128] text-center mb-6 leading-tight" />
@@ -40,7 +40,7 @@ export function AssProcess({ content }: { content?: AssProcessContent }) {
             <div className="absolute top-1/2 left-[5%] right-[5%] h-[2px] bg-[#181263] -translate-y-1/2" />
 
             {/* Step numbers aligned with grid columns */}
-            <div 
+            <div
               className="absolute inset-0 grid gap-6"
               style={{ gridTemplateColumns: `repeat(${steps.length}, minmax(0, 1fr))` }}
             >
@@ -66,11 +66,18 @@ export function AssProcess({ content }: { content?: AssProcessContent }) {
           </div>
 
           {/* Cards Grid */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-none gap-6" style={{ gridTemplateColumns: `repeat(${steps.length}, minmax(0, 1fr))` }}>
+          <style>{`
+            @media (min-width: 1024px) {
+              .ass-process-cards-grid {
+                grid-template-columns: repeat(${steps.length}, minmax(0, 1fr)) !important;
+              }
+            }
+          `}</style>
+          <div className="grid grid-cols-1 gap-6 ass-process-cards-grid">
             {steps.map((step: ProcessStep, idx: number) => {
               const validImg = safeImageUrl(step.image);
               return (
-                <div key={idx} className="flex flex-col items-center bg-white rounded-2xl border border-slate-200 pt-3 pb-6 shadow-[0_4px_25px_rgba(0,0,0,0.015)] transition-all hover:shadow-md hover:border-slate-200">
+                <div key={idx} className="flex flex-col items-center bg-white rounded-2xl border border-slate-200 pt-3 pb-6 px-4 shadow-[0_4px_25px_rgba(0,0,0,0.015)] transition-all hover:shadow-md hover:border-slate-200">
                   {/* Mobile/Tablet step number (hidden on desktop) */}
                   <div className="lg:hidden relative flex items-center justify-center w-14 h-14 mb-4">
                     <div className="absolute inset-0 rounded-full border border-dashed border-[#27256b]/40" />

@@ -15,7 +15,7 @@ export function BiIntro({ content }: { content?: BiIntroContent }) {
   const description = content?.description || 'Identify slow-moving stock, revenue gaps, expiry risks, and operational inefficiencies with\nAI-powered Business Intelligence.';
 
   return (
-    <section className="py-14 bg-white">
+    <section className="py-12 border-b bg-white">
       <div className="container mx-auto max-w-7xl px-6 text-center">
 
         {/* Yellow Badge */}

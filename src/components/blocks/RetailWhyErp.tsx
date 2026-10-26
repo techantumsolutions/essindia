@@ -22,7 +22,7 @@ export function RetailWhyErp({ content }: { content: RetailWhyErpContent }) {
   const allParagraphs = paragraphs && paragraphs.length > 0 ? paragraphs : (paragraph ? [paragraph] : []);
 
   return (
-    <section className="py-20 bg-[#fbfcfd]">
+    <section className="py-12 border-b bg-[#fbfcfd]">
       <div className="container mx-auto px-4 md:px-8 max-w-6xl">
         <div className="flex flex-col md:flex-row items-center gap-12 md:gap-16">
 
@@ -49,9 +49,9 @@ export function RetailWhyErp({ content }: { content: RetailWhyErpContent }) {
             transition={{ duration: 0.6, delay: 0.2 }}
             className="w-full md:w-1/2 space-y-4"
           >
-            <FormattedText content={title} as="h2" className="text-3xl text-center md:text-left md:text-4xl font-bold text-indigo-900 mb-6 tracking-tight" />
+            <FormattedText content={title} as="h2" className="text-3xl text-center md:text-left md:text-4xl !font-semibold text-indigo-900 mb-6 tracking-tight" />
             {allParagraphs.map((para, idx) => (
-              <FormattedText key={idx} content={para} className="text-lg text-slate-600 leading-relaxed text-justify md:text-left" />
+              <FormattedText key={idx} content={para} className="text-lg text-slate-600 leading-relaxed text-left" />
             ))}
           </motion.div>
 

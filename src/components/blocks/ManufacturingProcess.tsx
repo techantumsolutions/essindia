@@ -183,7 +183,7 @@ export default function ManufacturingProcess({ content }: { content?: any }) {
                       <img src={step.image || '/Modules-manufacturing/Production flow-1.png'} alt={step.label} className="w-[160px] max-w-full h-[160px] object-contain mx-auto" />
                     </div>
 
-                    <h3 className="text-[16px] font-extrabold text-[#27256b] uppercase mb-2">{step.label}</h3>
+                    <h3 className="text-[16px] font-semibold text-black uppercase mb-2">{step.label}</h3>
                     <p className="text-[12.5px] text-slate-500 leading-snug max-w-[210px]">
                       {step.desc}
                     </p>

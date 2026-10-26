@@ -50,7 +50,7 @@ export function AboutUsHero({ content }: AboutUsHeroProps) {
   }, { background: 'linear-gradient(to b, #1C2D4E, #111B2D)' });
 
   return (
-    <section className="relative min-h-[80vh] flex flex-col justify-between py-14 overflow-hidden bg-gradient-to-b from-[#1C2D4E] to-[#111B2D] text-white" style={bgStyles}>
+    <section className="relative min-h-0 lg:min-h-[80vh] flex flex-col justify-between py-10 sm:py-10 lg:py-14 overflow-hidden bg-gradient-to-b from-[#1C2D4E] to-[#111B2D] text-white" style={bgStyles}>
       {/* Background Image */}
       {!(content?.gradientColor1 || content?.gradientColor2 || content?.gradientColor3) && (
         <div
@@ -65,7 +65,7 @@ export function AboutUsHero({ content }: AboutUsHeroProps) {
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
-          className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-blue-400/20 bg-white text-blue-900 text-xs md:text-sm font-medium tracking-wide mb-8 capitalize"
+          className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-blue-400/20 bg-white text-blue-900 text-xs md:text-sm font-medium tracking-wide mb-4 sm:mb-6 lg:mb-8 capitalize"
         >
           {badge}
         </motion.div>
@@ -75,7 +75,7 @@ export function AboutUsHero({ content }: AboutUsHeroProps) {
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.1 }}
-          className="max-w-3xl mb-6"
+          className="max-w-3xl mb-3 sm:mb-4 lg:mb-6"
         >
           {(titleGradientFrom || titleGradientTo) && (content as any)?.enableTitleGradientAnimation !== false ? (
             <HeroTitle
@@ -98,20 +98,20 @@ export function AboutUsHero({ content }: AboutUsHeroProps) {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.2 }}
-          className="text-xs md:text-base text-white max-w-xl font-light leading-6 mb-16"
+          className="text-xs md:text-base text-white max-w-xl font-light leading-6 mb-6 sm:mb-8 lg:mb-16"
         >
           {description}
         </motion.p>
 
         {/* Statistics Grid */}
         <MotionSection variant="fadeUp" delay={0.3} className="w-full">
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 w-full max-w-5xl mx-auto">
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 lg:gap-6 w-full max-w-5xl mx-auto">
             {stats.map((stat, index) => (
               <motion.div
                 key={index}
                 whileHover={{ y: -8, scale: 1.02 }}
                 transition={{ type: "spring", stiffness: 300 }}
-                className="bg-white text-slate-800 rounded-2xl px-4 md:px-8 py-4 shadow-[0_20px_40px_rgba(0,0,0,0.05)] border border-slate-100/10 flex flex-col justify-center items-center"
+                className="bg-white text-slate-800 rounded-2xl px-4 md:px-8 py-3 lg:py-4 shadow-[0_20px_40px_rgba(0,0,0,0.05)] border border-slate-100/10 flex flex-col justify-center items-center"
               >
                 <span className="text-2xl md:text-3xl font-extrabold text-[#1C2D4E] tracking-tight mb-2">
                   {stat.title}

@@ -18,7 +18,7 @@ export function EmployeeSpotlightHero({ content }: { content?: any }) {
   }, undefined);
 
   return (
-    <section className="relative min-h-[80vh] flex items-center justify-center overflow-hidden px-6 py-14" style={bgStyles}>
+    <section className="relative min-h-0 lg:min-h-[80vh] flex items-center justify-center overflow-hidden px-6 py-8 sm:py-10 lg:py-14" style={bgStyles}>
       {/* Background Image */}
       {!(content?.gradientColor1 || content?.gradientColor2 || content?.gradientColor3) && (
         <div
@@ -29,13 +29,13 @@ export function EmployeeSpotlightHero({ content }: { content?: any }) {
         </div>
       )}
 
-      <div className="container mx-auto px-4 relative z-10 flex flex-col items-center text-center mt-10">
+      <div className="container mx-auto px-4 relative z-10 flex flex-col items-center text-center mt-2 sm:mt-4 lg:mt-10">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
         >
-          <div className="inline-flex items-center rounded-full bg-white px-8 py-2 text-sm font-medium text-[#0D1A5C] mb-8 cursor-pointer hover:bg-slate-50 transition-colors shadow-lg">
+          <div className="inline-flex items-center rounded-full bg-white px-8 py-2 text-sm font-medium text-[#0D1A5C] mb-4 sm:mb-6 lg:mb-8 cursor-pointer hover:bg-slate-50 transition-colors shadow-lg">
             {badge}
           </div>
 
@@ -46,10 +46,10 @@ export function EmployeeSpotlightHero({ content }: { content?: any }) {
               gradientFrom={content.titleGradientFrom}
               gradientTo={content.titleGradientTo}
               enableAnimation={(content as any)?.enableTitleGradientAnimation}
-              className="text-4xl md:text-5xl lg:text-[64px] font-light tracking-wide mb-6 max-w-4xl mx-auto leading-[1.2] justify-center"
+              className="text-4xl md:text-5xl lg:text-[64px] font-light tracking-wide mb-3 sm:mb-4 lg:mb-6 max-w-4xl mx-auto leading-[1.2] justify-center"
             />
           ) : (
-            <h1 className="text-4xl md:text-5xl lg:text-[64px] font-light tracking-wide text-white mb-6 max-w-4xl mx-auto leading-[1.2]" dangerouslySetInnerHTML={{ __html: title }} />
+            <h1 className="text-4xl md:text-5xl lg:text-[64px] font-light tracking-wide text-white mb-3 sm:mb-4 lg:mb-6 max-w-4xl mx-auto leading-[1.2]" dangerouslySetInnerHTML={{ __html: title }} />
           )}
 
           <p className="text-white/90 text-sm md:text-base max-w-3xl mx-auto leading-relaxed tracking-wide">

@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import Image from 'next/image';
-import { Search } from 'lucide-react';
+import { Search, ChevronLeft, ChevronRight } from 'lucide-react';
 import { useCtaAction, type CtaFormType } from '@/hooks/useCtaAction';
 import { safeImageUrl } from '@/lib/utils';
 
@@ -170,6 +170,58 @@ export function AssFeaturesGrid({ content }: { content?: AssFeaturesGridContent 
   const [activeCategoryIndex, setActiveCategoryIndex] = useState(0);
   const [searchQuery, setSearchQuery] = useState('');
 
+  const tabsScrollRef = React.useRef<HTMLDivElement>(null);
+  const [canScrollLeft, setCanScrollLeft] = useState(false);
+  const [canScrollRight, setCanScrollRight] = useState(false);
+
+  const checkScroll = React.useCallback(() => {
+    if (tabsScrollRef.current) {
+      const { scrollLeft, scrollWidth, clientWidth } = tabsScrollRef.current;
+      setCanScrollLeft(scrollLeft > 5);
+      setCanScrollRight(scrollLeft + clientWidth < scrollWidth - 5);
+    }
+  }, []);
+
+  React.useEffect(() => {
+    checkScroll();
+    const timer = setTimeout(checkScroll, 100);
+    window.addEventListener('resize', checkScroll);
+    return () => {
+      clearTimeout(timer);
+      window.removeEventListener('resize', checkScroll);
+    };
+  }, [checkScroll, categories]);
+
+  const handleScrollLeft = () => {
+    if (tabsScrollRef.current) {
+      const scrollAmount = Math.max(150, tabsScrollRef.current.clientWidth * 0.7);
+      tabsScrollRef.current.scrollBy({ left: -scrollAmount, behavior: 'smooth' });
+    }
+  };
+
+  const handleScrollRight = () => {
+    if (tabsScrollRef.current) {
+      const scrollAmount = Math.max(150, tabsScrollRef.current.clientWidth * 0.7);
+      tabsScrollRef.current.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+    }
+  };
+
+  const handleTabClick = (idx: number, e: React.MouseEvent<HTMLButtonElement>) => {
+    setActiveCategoryIndex(idx);
+    setSearchQuery('');
+    const btn = e.currentTarget;
+    const container = tabsScrollRef.current;
+    if (container && btn) {
+      const containerRect = container.getBoundingClientRect();
+      const btnRect = btn.getBoundingClientRect();
+      const delta = (btnRect.left - containerRect.left + btnRect.width / 2) - (containerRect.width / 2);
+      container.scrollTo({
+        left: container.scrollLeft + delta,
+        behavior: 'smooth',
+      });
+    }
+  };
+
   const activeCategory = categories[activeCategoryIndex] || categories[0] || { name: 'Popular', items: [] };
   const activeItems = activeCategory.items || [];
 
@@ -192,24 +244,49 @@ export function AssFeaturesGrid({ content }: { content?: AssFeaturesGridContent 
               Categories
             </h3>
 
-            {/* Mobile Category List (Scrollable Horizontal Tabs) */}
-            <div className="lg:hidden flex overflow-x-auto gap-2 py-1 scrollbar-none snap-x items-center">
-              {categories.map((cat, idx) => (
+            {/* Mobile Category List (Scrollable Horizontal Tabs with Dynamic Left/Right Navigation) */}
+            <div className="lg:hidden relative flex items-center gap-1.5 py-1">
+              {canScrollLeft && (
                 <button
-                  key={idx}
                   type="button"
-                  onClick={() => {
-                    setActiveCategoryIndex(idx);
-                    setSearchQuery('');
-                  }}
-                  className={`snap-start shrink-0 px-4 py-2.5 text-xs font-semibold rounded-xl border transition-all duration-300 cursor-pointer ${idx === activeCategoryIndex
-                    ? 'bg-[#2a2b6a] text-white border-[#2a2b6a] shadow-sm'
-                    : 'bg-slate-50 text-slate-600 border-slate-200 hover:bg-slate-100'
-                    }`}
+                  onClick={handleScrollLeft}
+                  className="p-2 rounded-xl border border-slate-200 bg-white text-[#2a2b6a] hover:bg-slate-50 transition-colors shrink-0 shadow-xs flex items-center justify-center cursor-pointer"
+                  aria-label="Previous categories"
                 >
-                  {cat.name}
+                  <ChevronLeft className="w-4 h-4" />
                 </button>
-              ))}
+              )}
+
+              <div
+                ref={tabsScrollRef}
+                onScroll={checkScroll}
+                className="flex-1 flex overflow-x-auto gap-2 py-1 scrollbar-none items-center scroll-smooth"
+              >
+                {categories.map((cat, idx) => (
+                  <button
+                    key={idx}
+                    type="button"
+                    onClick={(e) => handleTabClick(idx, e)}
+                    className={`shrink-0 px-4 py-2.5 text-xs font-semibold rounded-xl border transition-all duration-300 cursor-pointer ${idx === activeCategoryIndex
+                      ? 'bg-[#2a2b6a] text-white border-[#2a2b6a] shadow-sm'
+                      : 'bg-slate-50 text-slate-600 border-slate-200 hover:bg-slate-100'
+                      }`}
+                  >
+                    {cat.name}
+                  </button>
+                ))}
+              </div>
+
+              {canScrollRight && (
+                <button
+                  type="button"
+                  onClick={handleScrollRight}
+                  className="p-2 rounded-xl border border-slate-200 bg-white text-[#2a2b6a] hover:bg-slate-50 transition-colors shrink-0 shadow-xs flex items-center justify-center cursor-pointer"
+                  aria-label="Next categories"
+                >
+                  <ChevronRight className="w-4 h-4" />
+                </button>
+              )}
             </div>
 
             {/* Desktop Category List */}

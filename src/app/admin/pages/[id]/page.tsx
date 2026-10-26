@@ -2801,7 +2801,8 @@ export default function PageEditor() {
       });
       await fetchPage();
     } else {
-      toast.error('Failed to delete section');
+      const errData = await res.json().catch(() => null);
+      toast.error(errData?.error || 'Failed to delete section');
     }
   };
 

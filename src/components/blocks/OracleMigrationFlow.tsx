@@ -52,7 +52,7 @@ export function OracleMigrationFlow({ content }: { content?: OracleMigrationFlow
   ];
 
   return (
-    <section className="py-14 bg-white relative border-b">
+    <section className="py-12 bg-white relative border-b">
       <div className="container mx-auto max-w-7xl px-6">
         {sectionTitle && (
           <div className="text-center mb-16">

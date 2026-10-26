@@ -43,7 +43,7 @@ export function OracleFramework({ content }: { content?: OracleFrameworkContent 
   ];
 
   return (
-    <section className="py-14 bg-white">
+    <section className="py-12 bg-white">
       <div className="container mx-auto max-w-7xl px-6">
 
         {/* Header Block */}

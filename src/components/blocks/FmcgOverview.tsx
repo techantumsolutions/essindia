@@ -21,16 +21,16 @@ export function FmcgOverview({ content }: { content?: FmcgOverviewContent }) {
   const image = content?.image || '/BI-industy solution-FMGC/image 53.png';
 
   return (
-    <section className="py-14 px-6 bg-white border-b border-slate-100 font-sans">
+    <section className="py-10 px-6 bg-white border-b border-slate-100 font-sans">
       <div className="container mx-auto max-w-7xl">
         <div className="flex flex-col lg:flex-row items-center gap-12 lg:gap-16">
-          
+
           {/* Left Content Column */}
           <div className="flex-1 space-y-6 text-left">
             <h2 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-[#2a2b6a] leading-tight font-sans">
               {title}
             </h2>
-            
+
             <div className="space-y-4 text-slate-600 text-sm sm:text-base leading-relaxed">
               {paragraphs.map((para, index) => (
                 <FormattedText key={index} content={para} />

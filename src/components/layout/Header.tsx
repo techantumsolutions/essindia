@@ -91,6 +91,8 @@ export function Header({
   const [expandedMobileItems, setExpandedMobileItems] = React.useState<Record<string, boolean>>({});
   const [scrolled, setScrolled] = React.useState(false);
   const pathname = usePathname();
+  const countryRef = React.useRef<HTMLDivElement>(null);
+  const [countryClearance, setCountryClearance] = React.useState(0);
 
   const toggleMobileItem = (itemId: string) => {
     setExpandedMobileItems((prev) => ({
@@ -148,6 +150,34 @@ export function Header({
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  React.useEffect(() => {
+    const el = countryRef.current;
+    if (!el || !countryLinks || countryLinks.length === 0) {
+      setCountryClearance(0);
+      return;
+    }
+
+    const updateClearance = () => {
+      const countryWidth = el.offsetWidth;
+      const windowWidth = window.innerWidth;
+      const maxW = 1280;
+      const outsideMargin = windowWidth > maxW ? (windowWidth - maxW) / 2 : 0;
+      const needed = countryWidth + 14 - outsideMargin;
+      setCountryClearance(needed > 0 ? needed : 0);
+    };
+
+    updateClearance();
+
+    const ro = typeof ResizeObserver !== 'undefined' ? new ResizeObserver(updateClearance) : null;
+    if (ro) ro.observe(el);
+    window.addEventListener('resize', updateClearance);
+
+    return () => {
+      if (ro) ro.disconnect();
+      window.removeEventListener('resize', updateClearance);
+    };
+  }, [pathname, countryLinks]);
+
   return (
     <header className={cn(
       "fixed inset-x-0 z-50 transition-all duration-500 ease-[0.22, 1, 0.36, 1] top-0"
@@ -176,13 +206,14 @@ export function Header({
           </div>
 
           {/* Right Actions */}
-          <div className="hidden lg:flex items-center space-x-3">
-            {countryLinks && countryLinks.length > 0 && (
-              <HeaderCountryDropdown countries={countryLinks} buttonText={countryDropdownText} />
-            )}
-
+          <div
+            className="hidden lg:flex items-center space-x-3 transition-[padding] duration-200"
+            style={{
+              paddingRight: countryClearance > 0 ? `${countryClearance}px` : undefined,
+            }}
+          >
             <Link href={getStartedLink}>
-              <Button className="bg-[#111] hover:bg-black text-white rounded-none px-6 py-2 transition-all duration-300 hover:shadow-lg hover:-translate-y-0.5 active:scale-95 cursor-pointer">
+              <Button className="bg-[#111] hover:bg-black text-white rounded-none px-6 py-2 transition-all duration-300 hover:shadow-lg hover:-translate-y-0.5 active:scale-95 cursor-pointer shrink-0">
                 {getStartedText}
               </Button>
             </Link>
@@ -196,6 +227,16 @@ export function Header({
             {isMobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
           </button>
         </div>
+
+        {/* Desktop Country Selector - positioned outside the max-w-7xl layout */}
+        {countryLinks && countryLinks.length > 0 && (
+          <div
+            ref={countryRef}
+            className="hidden lg:flex items-center absolute right-6 md:right-8 top-1/2 -translate-y-1/2 shrink-0 z-20"
+          >
+            <HeaderCountryDropdown countries={countryLinks} buttonText={countryDropdownText} />
+          </div>
+        )}
       </motion.div>
 
       {/* Mobile Menu Dropdown */}
@@ -527,7 +568,9 @@ function HeaderCountryDropdown({
           {activeCountry ? (
             <>
               <CountryFlag country={activeCountry} />
-              <span className="truncate">{activeCountry.countryName}</span>
+              <span className="truncate max-w-[85px] sm:max-w-[105px] xl:max-w-[130px]" title={activeCountry.countryName}>
+                {activeCountry.countryName}
+              </span>
             </>
           ) : (
             <Globe className="w-4 h-4 text-[#5C2B6A] shrink-0" />

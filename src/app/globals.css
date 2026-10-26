@@ -254,6 +254,15 @@ section h2 {
   section h2 {
     font-size: 40px;
   }
+  section h2.bi-impact-subtitle {
+    font-size: 24px !important;
+  }
+}
+
+@media (min-width: 640px) and (max-width: 1023px) {
+  section h2.bi-impact-subtitle {
+    font-size: 26px !important;
+  }
 }
 
 /* Global Description Paragraph & <p> Tag Default Styling (18px) - Public Site Wide */

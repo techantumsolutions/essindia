@@ -10,7 +10,7 @@ export default function ManufacturingDemand({ content }: { content?: any }) {
   const paragraph2 = content?.paragraph2 || 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.';
 
   return (
-    <section className="py-14 bg-white px-6 border-b">
+    <section className="py-12 bg-white px-6 border-b border-t">
       <div className="container mx-auto max-w-7xl">
         <div className="grid md:grid-cols-2 gap-4 md:gap-8 lg:gap-16 items-center">
           <motion.div

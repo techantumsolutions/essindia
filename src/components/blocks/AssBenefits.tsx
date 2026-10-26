@@ -34,10 +34,10 @@ export function AssBenefits({ content }: { content?: AssBenefitsContent }) {
   const rightColors = ['bg-teal-600', 'bg-pink-600', 'bg-sky-600', 'bg-amber-600'];
 
   return (
-    <section className="p-14 px-6 bg-[#ffffff] border-b">
+    <section className="p-12 px-6 bg-[#ffffff] border-b">
       <div className="container mx-auto max-w-7xl">
         {/* Title */}
-        <h2 className="text-3xl md:text-4xl lg:text-[40px] font-bold text-[#0f172a] text-center mb-16 leading-tight whitespace-pre-line">
+        <h2 className="text-3xl md:text-4xl lg:text-[40px] font-bold text-[#0f172a] text-center mb-6 md:mb-8 lg:mb-16 leading-tight whitespace-pre-line">
           {title}
         </h2>
 

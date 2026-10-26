@@ -68,10 +68,10 @@ export function WhyEssSection({ content }: WhyEssSectionProps) {
         </div>
 
         {/* Content Split */}
-        <div className="flex flex-col lg:flex-row gap-6 md:gap-8 lg:gap-8 items-start">
+        <div className="flex flex-col lg:flex-row gap-6 md:gap-8 lg:gap-8 items-start lg:items-center">
 
           {/* Left Side - Image Composition */}
-          <div className="w-full lg:w-1/2 relative flex justify-center mt-2 md:mt-6 lg:mt-0 lg:sticky lg:top-24">
+          <div className="w-full lg:w-1/2 relative flex justify-center mt-2 md:mt-6 lg:mt-0 lg:self-center">
             <MotionSection variant="scaleIn" className="relative w-full max-w-[500px] pb-0 md:pb-0 lg:pb-32">
               {/* Main Top Image Container with Fixed Height & Object Cover */}
               <div className="w-full h-[280px] sm:h-[320px] md:h-[350px] rounded-[32px] overflow-hidden shadow-[0_32px_64px_-12px_rgba(0,0,0,0.15)] bg-slate-100 border border-slate-200/60">

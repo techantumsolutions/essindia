@@ -40,11 +40,11 @@ export function RpaFaq({ content }: { content?: RpaFaqContent }) {
   };
 
   return (
-    <section className="py-16 md:py-20 bg-white font-sans border-b">
+    <section className="py-12 bg-white font-sans border-b">
       <div className="container mx-auto max-w-4xl px-6">
-        
+
         {/* Header */}
-        <div className="text-center space-y-3 mb-12">
+        <div className="text-center space-y-3 mb-6">
           {title && (
             <FormattedText content={title} as="h2" className="text-3xl sm:text-4xl font-bold text-[#27256b] tracking-tight" />
           )}
@@ -58,11 +58,10 @@ export function RpaFaq({ content }: { content?: RpaFaqContent }) {
           {faqs.map((faq, idx) => {
             const isOpen = idx === openIdx;
             return (
-              <div 
-                key={idx} 
-                className={`border rounded-2xl overflow-hidden transition-all duration-300 ${
-                  isOpen ? 'border-[#27256b]/20 bg-slate-50/50 shadow-sm' : 'border-slate-100 bg-white'
-                }`}
+              <div
+                key={idx}
+                className={`border rounded-2xl overflow-hidden transition-all duration-300 ${isOpen ? 'border-[#27256b]/20 bg-slate-50/50 shadow-sm' : 'border-slate-100 bg-white'
+                  }`}
               >
                 {/* Header Button */}
                 <button

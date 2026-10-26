@@ -51,7 +51,7 @@ export function Landing2Testimonials({ content }: { content?: Landing2Testimonia
   const [activeVideoUrl, setActiveVideoUrl] = useState<string | null>(null);
 
   return (
-    <section className="py-14 bg-[#f8f9fa] font-sans select-none px-6">
+    <section className="py-12 bg-[#f8f9fa] font-sans select-none px-6">
       <div className="container mx-auto max-w-5xl text-center">
         {/* Section Title */}
         {data.title && (
@@ -85,9 +85,8 @@ export function Landing2Testimonials({ content }: { content?: Landing2Testimonia
                 {/* Image & Video Box */}
                 <div
                   onClick={() => isVideo && setActiveVideoUrl(rawMedia)}
-                  className={`relative w-full aspect-[16/10] rounded-2xl overflow-hidden shadow-sm border border-slate-200/80 mb-6 bg-slate-200 ${
-                    isVideo ? 'cursor-pointer group-hover:shadow-md' : ''
-                  } transition-all duration-300`}
+                  className={`relative w-full aspect-[16/10] rounded-2xl overflow-hidden shadow-sm border border-slate-200/80 mb-6 bg-slate-200 ${isVideo ? 'cursor-pointer group-hover:shadow-md' : ''
+                    } transition-all duration-300`}
                 >
                   {isVideo && rawMedia.toLowerCase().match(/\.(mp4|webm|ogg|mov)(\?.*)?$/) ? (
                     <video
@@ -124,7 +123,7 @@ export function Landing2Testimonials({ content }: { content?: Landing2Testimonia
                 {item.quote && (
                   <FormattedText
                     content={item.quote}
-                    className="text-slate-900 text-xl md:text-2xl font-bold leading-snug tracking-tight mb-3"
+                    className="text-slate-900 text-xl md:text-2xl font-normal leading-snug tracking-tight mb-3"
                   />
                 )}
 

@@ -92,7 +92,7 @@ export function FmcgAction({ content }: { content?: FmcgActionContent }) {
   };
 
   return (
-    <section className="py-14 px-6 bg-white border-b">
+    <section className="py-12 px-6 bg-white border-b">
       <div className="container mx-auto max-w-7xl text-center space-y-12">
 
         {/* Header Title & Description */}

@@ -41,13 +41,21 @@ export async function DELETE(
   if (!(await isAdminRequest())) return unauthorized();
 
   try {
-    const { sectionId } = await params;
-    const deleted = await pageAdminRepository.deleteSection(sectionId);
+    const rawParams = await params;
+    const sectionId = rawParams?.sectionId;
+    const pageId = rawParams?.id;
+
+    if (!sectionId) {
+      return badRequest('Missing sectionId parameter');
+    }
+
+    const deleted = await pageAdminRepository.deleteSection(sectionId, pageId);
     if (!deleted) {
-      return notFound('Section not found');
+      return notFound('Section not found or already deleted');
     }
     return NextResponse.json({ success: true });
   } catch (error) {
+    console.error('[DELETE Section Error]', error);
     return serverError(error);
   }
 }

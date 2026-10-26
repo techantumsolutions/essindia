@@ -71,7 +71,7 @@ export function FmcgFaq({ content }: { content?: FmcgFaqContent }) {
   };
 
   return (
-    <section className="py-14 px-6 bg-white">
+    <section className="py-12 px-6 bg-white">
       <div className="container mx-auto max-w-4xl text-center space-y-6">
 
         {/* Title Block */}
