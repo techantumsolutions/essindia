@@ -6,10 +6,12 @@ import { Footer } from '@/components/layout/Footer';
 import { HeaderSkeleton, FooterSkeleton } from '@/components/layout/LoadingSkeletons';
 import { GlobalScripts } from '@/components/seo/GlobalScripts';
 import { HeaderFooterGuard } from '@/components/layout/HeaderFooterGuard';
+import { ScrollToTop } from '@/components/layout/ScrollToTop';
 
 export default function PublicLayout({ children }: { children: ReactNode }) {
   return (
     <div className="flex min-h-screen flex-col">
+      <ScrollToTop />
       <GlobalScripts position="header" />
       <GlobalScripts position="body" />
       

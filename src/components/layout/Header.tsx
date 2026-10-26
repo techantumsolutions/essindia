@@ -109,6 +109,7 @@ export function Header({
   React.useEffect(() => {
     if (isMobileMenuOpen) {
       const scrollY = window.scrollY;
+      const openedPath = window.location.pathname;
       const originalBodyOverflow = document.body.style.overflow;
       const originalBodyPosition = document.body.style.position;
       const originalBodyTop = document.body.style.top;
@@ -127,7 +128,8 @@ export function Header({
         document.body.style.position = originalBodyPosition;
         document.body.style.top = originalBodyTop;
         document.body.style.width = originalBodyWidth;
-        window.scrollTo(0, scrollY);
+        const navigatedAway = window.location.pathname !== openedPath;
+        window.scrollTo(0, navigatedAway ? 0 : scrollY);
       };
     }
   }, [isMobileMenuOpen]);
