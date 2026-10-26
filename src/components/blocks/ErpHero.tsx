@@ -112,7 +112,7 @@ export function ErpHero({ content }: ErpHeroProps) {
               transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
               className="inline-block pb-6"
             >
-              <span className="text-sm font-semibold px-5 py-3.5 rounded-full" style={{ backgroundColor: badgeBgColor, color: badgeColor }}>
+              <span className="inline-block max-w-full text-sm font-semibold px-5 py-3.5 rounded-full leading-snug break-words text-left" style={{ backgroundColor: badgeBgColor, color: badgeColor }}>
                 {badgeText}
               </span>
             </motion.div>
