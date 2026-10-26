@@ -196,7 +196,7 @@ export function ContactFormFaq({ content }: { content?: ContactFormFaqContent })
                           )}
                         </SelectValue>
                       </SelectTrigger>
-                      <SelectContent className="w-[260px] max-h-60 p-0" alignItemWithTrigger={false} side="bottom">
+                      <SelectContent className="w-[260px] max-h-60 p-0" align="start" alignItemWithTrigger={false} side="bottom" collisionAvoidance={{ side: 'none' }}>
                         <div className="p-2 sticky top-0 bg-white z-10 border-b border-gray-100">
                           <input
                             type="text"
@@ -253,7 +253,7 @@ export function ContactFormFaq({ content }: { content?: ContactFormFaqContent })
                       )}
                     </SelectValue>
                   </SelectTrigger>
-                  <SelectContent className="max-h-60 p-0" alignItemWithTrigger={false} side="bottom">
+                  <SelectContent className="max-h-60 p-0" alignItemWithTrigger={false} side="bottom" collisionAvoidance={{ side: 'none' }}>
                     <div className="p-2 sticky top-0 bg-white z-10 border-b border-gray-100">
                       <input
                         type="text"
