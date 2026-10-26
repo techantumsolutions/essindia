@@ -19,6 +19,7 @@ interface AboutUsHeroContent {
   subtitle?: string; // used for the badge
   title?: string;
   description?: string;
+  descriptionColor?: string;
   bgImage?: string;
   items?: StatItem[];
 }
@@ -40,6 +41,7 @@ export function AboutUsHero({ content }: AboutUsHeroProps) {
   const titleGradientFrom = content?.titleGradientFrom;
   const titleGradientTo = content?.titleGradientTo;
   const description = content?.description || "At Eastern Software Solutions, we build technology solutions that drive transformation, create long-term value, and shape the future of business.";
+  const descriptionColor = content?.descriptionColor || '#ffffff';
   const stats = content?.items || defaultStats;
   const bgImage = content?.bgImage || "/about-us/banner.png";
 
@@ -98,7 +100,8 @@ export function AboutUsHero({ content }: AboutUsHeroProps) {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.2 }}
-          className="text-xs md:text-base text-white max-w-xl font-light leading-6 mb-6 sm:mb-8 lg:mb-16"
+          className="text-xs md:text-base max-w-xl font-light leading-6 mb-6 sm:mb-8 lg:mb-16"
+          style={{ color: descriptionColor }}
         >
           {description}
         </motion.p>

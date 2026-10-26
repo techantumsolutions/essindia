@@ -849,7 +849,7 @@ const RAW_SECTION_REGISTRY: SectionTypeDefinition[] = [
       'gradientColor1',
       'gradientColor2',
       'gradientColor3',
-      'bgImage', 'title', 'description', 'items'],
+      'bgImage', 'title', 'description', 'descriptionColor', 'items'],
   },
   {
     type: 'about-us-company-intro',

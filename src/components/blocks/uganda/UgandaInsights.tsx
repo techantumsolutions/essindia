@@ -126,6 +126,25 @@ export function UgandaInsights({ content }: { content?: UgandaInsightsContent })
     }
   };
 
+  const handleTabClick = (idx: number, event: React.MouseEvent<HTMLButtonElement>) => {
+    setActiveTabIdx(idx);
+    if (typeof window === 'undefined' || window.innerWidth >= 1024) return;
+
+    const container = tabsRef.current;
+    const tab = event.currentTarget;
+    if (!container || !tab) return;
+
+    const containerRect = container.getBoundingClientRect();
+    const tabRect = tab.getBoundingClientRect();
+    const delta =
+      tabRect.left + tabRect.width / 2 - (containerRect.left + containerRect.width / 2);
+
+    container.scrollTo({
+      left: container.scrollLeft + delta,
+      behavior: 'smooth',
+    });
+  };
+
   return (
     <section className="w-full py-8 md:py-10 bg-white flex flex-col items-center border-b">
       <div className="container mx-auto px-4 md:px-8 max-w-7xl">
@@ -160,7 +179,7 @@ export function UgandaInsights({ content }: { content?: UgandaInsightsContent })
           <div
             ref={tabsRef}
             onScroll={checkScrollState}
-            className="flex-1 flex items-center justify-start gap-2.5 overflow-x-auto no-scrollbar scroll-smooth py-2 px-2 border-b border-slate-200"
+            className="flex-1 min-w-0 flex items-center justify-start gap-2.5 overflow-x-auto no-scrollbar scroll-smooth py-2 px-2 border-b border-slate-200"
             style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
           >
             {tabs.map((tab, idx) => {
@@ -169,7 +188,7 @@ export function UgandaInsights({ content }: { content?: UgandaInsightsContent })
                 <button
                   key={idx}
                   type="button"
-                  onClick={() => setActiveTabIdx(idx)}
+                  onClick={(event) => handleTabClick(idx, event)}
                   className={`px-5 py-3 rounded-xl text-xs sm:text-sm font-semibold transition-all duration-200 whitespace-nowrap shrink-0 ${isActive
                     ? 'bg-[#1d1b4b] text-white shadow-md shadow-[#1d1b4b]/20 scale-100'
                     : 'bg-slate-100 text-slate-600 hover:bg-slate-200 hover:text-slate-900'
@@ -209,7 +228,7 @@ export function UgandaInsights({ content }: { content?: UgandaInsightsContent })
               <div className="space-y-6">
                 {/* Content Title */}
                 {activeTab.contentTitle && (
-                  <FormattedText content={activeTab.contentTitle} as="h3" className="text-xl sm:text-[28px] font-extrabold text-[#1d1b4b] leading-tight tracking-tight" />
+                  <FormattedText content={activeTab.contentTitle} as="h3" className="text-xl sm:text-[28px] font-semibold text-[#1d1b4b] leading-tight tracking-tight" />
                 )}
 
                 {/* Body Paragraphs */}
@@ -236,13 +255,13 @@ export function UgandaInsights({ content }: { content?: UgandaInsightsContent })
                 )}
 
                 {/* Subsections Rich text */}
-                {activeTab.subsections && (
-                  <FormattedText content={activeTab.subsections} className="whitespace-pre-line text-xs sm:text-sm text-slate-700 leading-relaxed space-y-6 border-t border-slate-100 pt-6" />
+                {activeTab.subsections && activeTab.subsections.trim() && (
+                  <FormattedText content={activeTab.subsections} className="whitespace-pre-line text-xs sm:text-sm text-slate-700 leading-relaxed space-y-6 border-t border-slate-100 " />
                 )}
 
                 {/* Tab CTA Action Button */}
                 {activeTab.ctaText && (
-                  <div className="pt-2">
+                  <div className="max-md:!mt-2">
                     <TabCtaButton tab={activeTab} />
                   </div>
                 )}
