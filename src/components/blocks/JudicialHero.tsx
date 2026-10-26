@@ -123,7 +123,7 @@ export function JudicialHero({ content }: JudicialHeroProps) {
               </Link>
             </div>
           </div>
-          <div className="lg:w-1/2 flex justify-end w-full">
+          <div className="lg:w-1/2 flex justify-end md:justify-center lg:justify-end w-full">
             <div className="relative w-full aspect-[4/3] max-w-[500px] rounded-2xl overflow-hidden">
               <motion.div
                 animate={{ y: [0, -12, 0] }}
