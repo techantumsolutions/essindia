@@ -2,8 +2,15 @@ import type { NextConfig } from "next";
 import { getPreferredHost, getSiteUrl, shouldForceHttps } from "./src/lib/seo/site-url";
 
 const nextConfig: NextConfig = {
+  // Uploaded media is read and written at runtime. Do not trace it into the server bundle.
+  outputFileTracingExcludes: {
+    '/*': ['./public/uploads/**/*'],
+  },
   experimental: {
     optimizePackageImports: ['lucide-react', 'framer-motion'],
+    // This host has 2 CPUs and 4 GB RAM. The default worker count OOMs `next build`.
+    cpus: 1,
+    staticGenerationMaxConcurrency: 1,
   },
   images: {
     formats: ['image/avif', 'image/webp'],
