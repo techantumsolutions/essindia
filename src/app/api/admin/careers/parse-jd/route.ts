@@ -24,10 +24,11 @@ export async function POST(request: Request) {
 
     // Save the JD document to local uploads folder
     const ext = file.name.split('.').pop() || 'pdf';
-    const uploadDir = join(process.cwd(), 'public', 'uploads', 'jds');
-    await mkdir(uploadDir, { recursive: true });
+    const uploadDir = join(/* turbopackIgnore: true */ process.cwd(), 'public', 'uploads', 'jds');
+    await mkdir(/* turbopackIgnore: true */ uploadDir, { recursive: true });
     const filename = `${randomUUID()}.${ext}`;
-    await writeFile(join(uploadDir, filename), buffer);
+    const filePath = join(/* turbopackIgnore: true */ uploadDir, /* turbopackIgnore: true */ filename);
+    await writeFile(/* turbopackIgnore: true */ filePath, buffer);
     const jdUrl = `/uploads/jds/${filename}`;
 
     try {

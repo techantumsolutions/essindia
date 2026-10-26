@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { readFile, stat } from 'fs/promises';
 import { join, resolve } from 'path';
 
-const UPLOADS_ROOT = join(process.cwd(), 'public', 'uploads');
+const UPLOADS_ROOT = join(/* turbopackIgnore: true */ process.cwd(), 'public', 'uploads');
 
 const MIME_TYPES: Record<string, string> = {
   '.png': 'image/png',
@@ -29,19 +29,19 @@ export async function GET(
   { params }: { params: Promise<{ path: string[] }> },
 ) {
   const { path } = await params;
-  const filePath = resolve(UPLOADS_ROOT, ...path);
+  const filePath = resolve(/* turbopackIgnore: true */ UPLOADS_ROOT, /* turbopackIgnore: true */ ...path);
 
   if (!filePath.startsWith(UPLOADS_ROOT)) {
     return NextResponse.json({ error: 'Invalid path' }, { status: 400 });
   }
 
   try {
-    const fileStat = await stat(filePath);
+    const fileStat = await stat(/* turbopackIgnore: true */ filePath);
     if (!fileStat.isFile()) {
       return NextResponse.json({ error: 'Not found' }, { status: 404 });
     }
 
-    const buffer = await readFile(filePath);
+    const buffer = await readFile(/* turbopackIgnore: true */ filePath);
     const filename = path[path.length - 1];
 
     return new NextResponse(buffer, {

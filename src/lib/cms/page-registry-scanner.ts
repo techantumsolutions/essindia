@@ -9,7 +9,7 @@ export type DiscoveredRoute = {
   filePath: string;
 };
 
-const APP_DIR = path.join(process.cwd(), 'src/app');
+const APP_DIR = path.join(/* turbopackIgnore: true */ process.cwd(), 'src/app');
 const SKIP_SEGMENTS = new Set(['admin', 'api', 'login']);
 
 function titleFromRoute(routePath: string): string {
@@ -31,7 +31,7 @@ function buildRoutePath(segments: string[]): string | null {
 }
 
 async function walk(dir: string, segments: string[], results: DiscoveredRoute[]) {
-  const entries = await readdir(dir, { withFileTypes: true });
+  const entries = await readdir(/* turbopackIgnore: true */ dir, { withFileTypes: true });
 
   for (const entry of entries) {
     if (entry.name.startsWith('_') || entry.name === 'layout.tsx' || entry.name === 'loading.tsx') {
