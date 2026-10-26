@@ -119,7 +119,7 @@ export function Landing1Showcase({ content }: { content?: Landing1ShowcaseConten
   );
 
   return (
-    <section className="py-14 bg-[#FAF9FD] font-sans select-none border-b border-slate-100">
+    <section className="py-12 border-t border-b bg-[#FAF9FD] font-sans select-none">
       <div className="container mx-auto px-6 max-w-7xl space-y-12">
         {/* Title */}
         {data.title && (

@@ -37,7 +37,7 @@ export function JudicialOverview({ content }: JudicialOverviewProps) {
   const cards = content?.cards || defaultCards;
 
   return (
-    <section className="py-12 px-6 bg-white border-b border">
+    <section className="py-12 px-6 border-t border-b bg-white">
       <div className="container mx-auto max-w-7xl">
         <h2 className="text-3xl md:text-4xl font-bold text-[#2a2d7c] mb-6 text-center">
           {heading}

@@ -149,7 +149,7 @@ export function Landing1Works({ content }: { content?: Landing1WorksContent }) {
   }, [shouldLoop, works.length]);
 
   return (
-    <section className="py-10 lg:py-12 bg-slate-50 text-slate-900 font-sans select-none border-b border-t border-slate-200">
+    <section className="py-12 border-t border-b bg-slate-50 text-slate-900 font-sans select-none border-slate-200">
       <div className="container mx-auto px-6 max-w-7xl">
 
         {/* Header */}

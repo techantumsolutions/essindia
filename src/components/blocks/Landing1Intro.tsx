@@ -92,7 +92,7 @@ export function Landing1Intro({ content }: { content?: Landing1IntroContent }) {
   );
 
   return (
-    <section className="py-14 bg-white font-sans select-none border-b border-slate-100">
+    <section className="py-12 border-t border-b bg-white font-sans select-none">
       <div className="container mx-auto px-6 max-w-7xl">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
           
