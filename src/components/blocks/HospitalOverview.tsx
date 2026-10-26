@@ -60,7 +60,7 @@ export function HospitalOverview({ content }: HospitalOverviewProps) {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {cards.map((card, idx) => (
             <div key={idx} className="flex flex-col items-center">
-              <div className="relative w-full aspect-[16/9] mb-6 rounded-xl overflow-hidden shadow-sm">
+              <div className="relative w-full aspect-[16/9] mb-6">
                 <Image
                   src={card.image}
                   alt={card.title}
