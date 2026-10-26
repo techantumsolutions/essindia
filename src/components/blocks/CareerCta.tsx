@@ -18,7 +18,7 @@ export default function CareerCta({ content }: { content?: any }) {
   } = content || {};
 
   return (
-    <section className="py-12 px-6 bg-white">
+    <section className="py-12 px-6 border-t border-b bg-white">
       <div className="container mx-auto max-w-7xl text-center">
         <motion.div
           initial={{ opacity: 0, y: 20 }}

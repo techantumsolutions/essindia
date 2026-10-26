@@ -66,7 +66,7 @@ export function Landing1Process({ content }: { content?: Landing1ProcessContent 
   const processList = (data.process || []).slice(0, 7);
 
   return (
-    <section className="py-20 bg-[#ecf4ff] text-slate-900 font-sans select-none border-b border-slate-200">
+    <section className="py-12 border-t border-b bg-[#ecf4ff] text-slate-900 font-sans select-none">
       <div className="container mx-auto px-6 max-w-7xl">
         
         {/* Header */}

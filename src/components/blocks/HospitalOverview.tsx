@@ -43,7 +43,7 @@ export function HospitalOverview({ content }: HospitalOverviewProps) {
   const cards = content?.cards || defaultCards;
 
   return (
-    <section className="py-14 px-6 bg-white border-b">
+    <section className="py-12 px-6 border-t border-b bg-white">
       <div className="container mx-auto max-w-7xl">
         <div className=" mb-16">
           <FormattedText

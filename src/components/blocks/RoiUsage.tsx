@@ -48,9 +48,9 @@ export function RoiUsage({ content }: { content?: RoiUsageContent }) {
   ];
 
   return (
-    <section className="py-14 bg-white relative border-t border-slate-100">
-      <div className="container mx-auto max-w-7xl px-4 md:px-8 space-y-16">
-        
+    <section className="py-12 bg-white relative border-t border-b border-slate-200">
+      <div className="container mx-auto max-w-7xl px-4 md:px-8 space-y-12 lg:space-y-14">
+
         {/* Subsection 1: How and when to use ROI */}
         <div className="flex flex-col lg:flex-row items-center gap-12 lg:gap-16">
           {/* Left Column - Text */}
@@ -103,7 +103,7 @@ export function RoiUsage({ content }: { content?: RoiUsageContent }) {
           <h2 className="text-3xl md:text-4xl font-bold text-[#2b2a6c] tracking-tight">
             {limitationsTitle}
           </h2>
-          
+
           {limitationsDescription && (
             <FormattedText
               content={limitationsDescription}
@@ -145,7 +145,7 @@ export function RoiUsage({ content }: { content?: RoiUsageContent }) {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: '-100px' }}
           transition={{ duration: 0.6 }}
-          className="space-y-6 text-left max-w-5xl pt-4"
+          className="space-y-6 text-left max-w-5xl !mt-6 lg:!mt-8"
         >
           <FormattedText content={faqTitle} as="h2" className="text-3xl md:text-4xl font-bold text-[#2b2a6c] tracking-tight" />
 

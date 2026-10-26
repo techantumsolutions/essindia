@@ -55,7 +55,7 @@ export function RetailMobileDashboard({ content }: { content: RetailMobileDashbo
   const [openIndex, setOpenIndex] = useState<number>(0);
 
   return (
-    <section className="py-14 bg-[#fbfcfd]">
+    <section className="py-12 border-t border-b bg-[#fbfcfd]">
       <div className="container mx-auto px-4 md:px-6 max-w-7xl">
         <div className="flex flex-col gap-4">
           {modules.map((mod, idx) => (

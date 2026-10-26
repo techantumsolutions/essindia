@@ -40,7 +40,7 @@ export function RpaFaq({ content }: { content?: RpaFaqContent }) {
   };
 
   return (
-    <section className="py-12 bg-white font-sans border-b">
+    <section className="py-12 border-t border-b bg-white font-sans">
       <div className="container mx-auto max-w-4xl px-6">
 
         {/* Header */}

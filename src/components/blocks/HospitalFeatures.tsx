@@ -42,7 +42,7 @@ export function HospitalFeatures({ content }: HospitalFeaturesProps) {
   const image3 = content?.image3 || "/Hospital Management/image 70.png";
 
   return (
-    <section className="py-14 px-6 bg-white border-b">
+    <section className="py-12 px-6 border-t border-b bg-white">
       <div className="container mx-auto max-w-7xl">
         <div className="flex flex-col lg:flex-row items-stretch gap-12 lg:gap-20">
 

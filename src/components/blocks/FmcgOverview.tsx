@@ -21,7 +21,7 @@ export function FmcgOverview({ content }: { content?: FmcgOverviewContent }) {
   const image = content?.image || '/BI-industy solution-FMGC/image 53.png';
 
   return (
-    <section className="py-10 px-6 bg-white border-b border-slate-100 font-sans">
+    <section className="py-12 px-6 border-t border-b bg-white font-sans">
       <div className="container mx-auto max-w-7xl">
         <div className="flex flex-col lg:flex-row items-center gap-12 lg:gap-16">
 

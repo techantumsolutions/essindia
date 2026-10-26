@@ -45,8 +45,8 @@ export function EuropeGlobalPresence({ content }: { content?: EuropeGlobalPresen
       content={{
         ...content,
         backgroundColor: '#111827',
-        sectionPaddingTop: content?.sectionPaddingTop || 'pt-16',
-        sectionPaddingBottom: content?.sectionPaddingBottom || 'pb-16',
+        sectionPaddingTop: content?.sectionPaddingTop || 'pt-12',
+        sectionPaddingBottom: content?.sectionPaddingBottom || 'pb-12',
       }}
     >
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">

@@ -33,7 +33,7 @@ export function RoiExplanation({ content }: { content?: RoiExplanationContent })
   ];
 
   return (
-    <section className="py-14 bg-white relative border-b">
+    <section className="py-12 border-b border-t bg-white relative">
       <div className="container mx-auto max-w-7xl px-4 md:px-8">
         <div className="flex flex-col lg:flex-row items-stretch gap-12 lg:gap-16">
 
