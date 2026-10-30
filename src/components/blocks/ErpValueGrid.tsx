@@ -121,14 +121,14 @@ export function ErpValueGrid({ content }: ErpValueGridProps) {
               className="group transition-all duration-500 hover:-translate-y-2"
             >
               {/* Image */}
-              <div className="relative h-62">
+              <div className="relative h-60">
                 <img
                   src={card.image}
                   alt={card.title}
                   onError={(e) => {
                     (e.target as HTMLImageElement).style.display = 'none';
                   }}
-                  className="w-full h-full transition-transform hover:rounded-2xl rounded-2xl duration-700 group-hover:scale-105"
+                  className="w-full h-full transition-transform hover:rounded-2xl rounded-2xl duration-700 group-hover:scale-95"
                 />
 
                 {/* Overlay */}
@@ -144,7 +144,7 @@ export function ErpValueGrid({ content }: ErpValueGridProps) {
 
               {/* Content */}
               <div className="py-4 px-4 text-center">
-                <h3 className="text-[25px] leading-tight mb-3 font-semibold text-black transition-colors duration-300">
+                <h3 className="text-[18px] leading-tight mb-3 font-semibold text-black transition-colors duration-300">
                   {card.title}
                 </h3>
 

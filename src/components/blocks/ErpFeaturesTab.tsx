@@ -21,6 +21,15 @@ interface ErpFeaturesTabContent {
   headingSecondaryColor?: string;
   highlightedWordIndices?: number[];
   subheading?: string;
+  subheadingTextColor?: string;
+  bgColor?: string;
+  cardBgColor?: string;
+  contentTextColor?: string;
+  descriptionTextColor?: string;
+  activeTabBgColor?: string;
+  activeTabTextColor?: string;
+  inactiveTabBgColor?: string;
+  inactiveTabTextColor?: string;
   features?: ErpFeature[];
 }
 
@@ -38,6 +47,15 @@ export function ErpFeaturesTab({ content }: ErpFeaturesTabProps) {
     ? content.highlightedWordIndices
     : undefined;
   const subheading = content?.subheading || 'Select standard version or customizable version';
+  const bgColor = content?.bgColor || '#F8F5FE';
+  const cardBgColor = content?.cardBgColor || '#ffffff';
+  const subheadingTextColor = content?.subheadingTextColor || '#64748b';
+  const descriptionTextColor =
+    content?.descriptionTextColor || content?.contentTextColor || '#334155';
+  const activeTabBgColor = content?.activeTabBgColor || '#c7d2fe';
+  const activeTabTextColor = content?.activeTabTextColor || '#ffffff';
+  const inactiveTabBgColor = content?.inactiveTabBgColor || '#ffffff';
+  const inactiveTabTextColor = content?.inactiveTabTextColor || '#1e293b';
 
   const features: ErpFeature[] = (content?.features && content.features.length > 0)
     ? content.features
@@ -80,7 +98,10 @@ export function ErpFeaturesTab({ content }: ErpFeaturesTabProps) {
   const activeTab = features.find((f, idx) => (f.id || idx.toString()) === activeTabId) || features[0];
 
   return (
-    <section className="relative w-full py-12 md:py-16 bg-[#F8F5FE] text-slate-900 overflow-hidden border-b border-purple-100 font-sans">
+    <section
+      className="relative w-full py-12 md:py-16 overflow-hidden border-b border-purple-100 font-sans"
+      style={{ backgroundColor: bgColor, color: headingColor }}
+    >
       {/* Background soft ambient glow */}
       <div className="absolute top-1/4 -left-32 w-[500px] h-[500px] bg-purple-200/30 rounded-full blur-[140px] pointer-events-none" />
       <div className="absolute bottom-10 -right-32 w-[500px] h-[500px] bg-indigo-200/30 rounded-full blur-[140px] pointer-events-none" />
@@ -96,14 +117,20 @@ export function ErpFeaturesTab({ content }: ErpFeaturesTabProps) {
           </MotionSection>
 
           <MotionSection variant="fadeUp" delay={0.15}>
-            <p className="text-slate-500 text-base md:text-lg font-normal leading-relaxed">
+            <p
+              className="text-base md:text-lg font-normal leading-relaxed"
+              style={{ color: subheadingTextColor }}
+            >
               {subheading}
             </p>
           </MotionSection>
         </div>
 
-        {/* Main White Card Container */}
-        <div className="max-w-6xl mx-auto bg-white rounded-[28px] p-6 sm:p-7 lg:p-8 border border-purple-100/80 shadow-[0_15px_45px_rgba(147,51,234,0.06)] relative overflow-hidden grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-10 items-center">
+        {/* Main Card Container */}
+        <div
+          className="max-w-6xl mx-auto rounded-[28px] p-6 sm:p-7 lg:p-8 border border-purple-100/80 shadow-[0_15px_45px_rgba(147,51,234,0.06)] relative overflow-hidden grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-10 items-center"
+          style={{ backgroundColor: cardBgColor }}
+        >
 
           {/* Left Column: Sidebar Tab Pill Buttons */}
           <div className="lg:col-span-5 flex flex-col gap-2.5 w-full relative z-10">
@@ -112,6 +139,7 @@ export function ErpFeaturesTab({ content }: ErpFeaturesTabProps) {
               const isActive = currentId === activeTabId;
               const iconSrc = typeof feature.icon === 'string' ? feature.icon.trim() : '';
               const DefaultIcon = defaultIcons[idx % defaultIcons.length] || Check;
+              const tabTextColor = isActive ? activeTabTextColor : inactiveTabTextColor;
 
               return (
                 <motion.button
@@ -122,16 +150,21 @@ export function ErpFeaturesTab({ content }: ErpFeaturesTabProps) {
                   transition={{ duration: 0.4, delay: idx * 0.06 }}
                   onClick={() => setActiveTabId(currentId)}
                   className={`w-full text-left p-3 md:p-3.5 rounded-xl transition-all duration-300 cursor-pointer flex items-center gap-3 group border ${isActive
-                      ? 'bg-gradient-to-r from-[#6B26D9] via-[#7E35E3] to-[#8F43EE] text-white border-purple-400/50 shadow-md shadow-purple-600/20 scale-[1.01]'
-                      : 'bg-white hover:bg-purple-50/50 border-slate-100 shadow-[0_2px_8px_rgba(0,0,0,0.02)] text-slate-700'
+                      ? 'border-purple-200/50 shadow-md scale-[1.01]'
+                      : 'border-slate-100 shadow-[0_2px_8px_rgba(0,0,0,0.02)] hover:opacity-90'
                     }`}
+                  style={{
+                    backgroundColor: isActive ? activeTabBgColor : inactiveTabBgColor,
+                    color: tabTextColor,
+                  }}
                 >
                   {/* Icon Badge */}
                   <div
                     className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 transition-all duration-300 ${isActive
-                        ? 'bg-white/20 text-white backdrop-blur-xs'
-                        : 'bg-purple-50 border border-purple-100 text-purple-600 group-hover:scale-105'
+                        ? 'bg-white/20 backdrop-blur-xs'
+                        : 'bg-purple-50 border border-purple-100 group-hover:scale-105'
                       }`}
+                    style={{ color: tabTextColor }}
                   >
                     {iconSrc ? (
                       /* eslint-disable-next-line @next/next/no-img-element */
@@ -141,14 +174,17 @@ export function ErpFeaturesTab({ content }: ErpFeaturesTabProps) {
                         className={`w-4 h-4 object-contain ${isActive ? 'invert brightness-200' : ''}`}
                       />
                     ) : isActive ? (
-                      <Check className="w-4 h-4 text-white stroke-[2.5]" />
+                      <Check className="w-4 h-4 stroke-[2.5]" style={{ color: activeTabTextColor }} />
                     ) : (
-                      <DefaultIcon className="w-4 h-4 text-purple-600" />
+                      <DefaultIcon className="w-4 h-4" style={{ color: inactiveTabTextColor }} />
                     )}
                   </div>
 
                   {/* Tab Title Text */}
-                  <span className={`font-bold text-xs md:text-sm leading-snug line-clamp-2 ${isActive ? 'text-white' : 'text-slate-800'}`}>
+                  <span
+                    className="font-bold text-xs md:text-sm leading-snug line-clamp-2"
+                    style={{ color: tabTextColor }}
+                  >
                     {feature.title}
                   </span>
                 </motion.button>
@@ -168,7 +204,7 @@ export function ErpFeaturesTab({ content }: ErpFeaturesTabProps) {
                 className="flex flex-col items-center lg:items-start text-center lg:text-left"
               >
                 {/* Top Circular Illustration Container */}
-                <div className="w-28 h-28 md:w-36 md:h-36 rounded-full bg-gradient-to-br from-purple-50 via-purple-100/40 to-indigo-50 border border-purple-100 flex items-center justify-center mb-4 p-3 shadow-xs shrink-0">
+                <div className="flex items-center justify-center mb-4 p-3 shrink-0">
                   <img
                     src={activeTab?.image || '/ErpOverview/featureTav1.png'}
                     alt={activeTab.title || 'Feature Illustration'}
@@ -177,14 +213,17 @@ export function ErpFeaturesTab({ content }: ErpFeaturesTabProps) {
                 </div>
 
                 {/* Content Descriptions */}
-                <div className="space-y-3 max-w-lg">
+                <div
+                  className="space-y-3 max-w-lg [&_*]:!text-inherit"
+                  style={{ color: descriptionTextColor }}
+                >
                   {activeTab.desc && (
-                    <div className="text-slate-700 text-sm md:text-base font-normal leading-relaxed">
+                    <div className="text-sm md:text-base font-normal leading-relaxed">
                       {renderHighlightedText(activeTab.desc)}
                     </div>
                   )}
                   {activeTab.desc2 && (
-                    <div className="text-slate-600 text-sm md:text-base font-normal leading-relaxed">
+                    <div className="text-sm md:text-base font-normal leading-relaxed opacity-90">
                       {renderHighlightedText(activeTab.desc2)}
                     </div>
                   )}

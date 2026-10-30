@@ -22,12 +22,49 @@ interface BiIndustryServicesContent {
   title?: string;
   subtitle?: string;
   tabs?: ServiceTab[];
+  bgColor?: string;
+  titleTextColor?: string;
+  subtitleTextColor?: string;
+  activeTabBgColor?: string;
+  activeTabTextColor?: string;
+  inactiveTabBgColor?: string;
+  inactiveTabTextColor?: string;
+  arrowBgColor?: string;
+  arrowTextColor?: string;
+  arrowHoverBgColor?: string;
+  arrowHoverTextColor?: string;
+  cardBgColor?: string;
+  contentPanelBgColor?: string;
+  tabTitleTextColor?: string;
+  pointTextColor?: string;
+  checkIconBgColor?: string;
+  checkIconColor?: string;
 }
 
 export function BiIndustryServices({ content }: { content?: BiIndustryServicesContent }) {
   const [isCardBtnHovered, setIsCardBtnHovered] = useState(false);
+  const [hoveredArrow, setHoveredArrow] = useState<'left' | 'right' | null>(null);
+
   const title = content?.title || 'Tailored Services Across Industries';
   const subtitle = content?.subtitle || 'BI services deliver value across industries, but its real impact comes from how well insights are aligned with industry-specific challenges, metrics, and decision cycles. Our BI solutions built on Power BI are designed to reflect how each industry actually operates.';
+
+  const bgColor = content?.bgColor || '#ffffff';
+  const titleTextColor = content?.titleTextColor || '#4c327f';
+  const subtitleTextColor = content?.subtitleTextColor || '#6b7280';
+  const activeTabBgColor = content?.activeTabBgColor || '#4c327f';
+  const activeTabTextColor = content?.activeTabTextColor || '#ffffff';
+  const inactiveTabBgColor = content?.inactiveTabBgColor || '#ffffff';
+  const inactiveTabTextColor = content?.inactiveTabTextColor || '#475569';
+  const arrowBgColor = content?.arrowBgColor || '#ffffff';
+  const arrowTextColor = content?.arrowTextColor || '#4c327f';
+  const arrowHoverBgColor = content?.arrowHoverBgColor || '#4c327f';
+  const arrowHoverTextColor = content?.arrowHoverTextColor || '#ffffff';
+  const cardBgColor = content?.cardBgColor || '#ffffff';
+  const contentPanelBgColor = content?.contentPanelBgColor || '#4c327f';
+  const tabTitleTextColor = content?.tabTitleTextColor || '#ffffff';
+  const pointTextColor = content?.pointTextColor || 'rgba(255,255,255,0.9)';
+  const checkIconBgColor = content?.checkIconBgColor || '#ffffff';
+  const checkIconColor = content?.checkIconColor || '#4c327f';
 
   const defaultTabs: ServiceTab[] = [
     {
@@ -139,23 +176,36 @@ export function BiIndustryServices({ content }: { content?: BiIndustryServicesCo
     }
   };
 
+  const arrowStyle = (side: 'left' | 'right', enabled: boolean) => {
+    if (!enabled) return undefined;
+    const hovered = hoveredArrow === side;
+    return {
+      backgroundColor: hovered ? arrowHoverBgColor : arrowBgColor,
+      color: hovered ? arrowHoverTextColor : arrowTextColor,
+      borderColor: hovered ? arrowHoverBgColor : '#e2e8f0',
+    };
+  };
+
   return (
-    <section className="py-12 border-b bg-white font-sans">
+    <section className="py-12 border-b font-sans" style={{ backgroundColor: bgColor }}>
       <div className="container mx-auto max-w-7xl px-6">
 
-        {/* Header */}
         <div className="text-center max-w-4xl mx-auto mb-4 space-y-2">
-          <h2 className="text-3xl sm:text-4xl lg:text-[40px] font-bold text-[#4c327f] tracking-tight leading-tight">
+          <h2
+            className="text-3xl sm:text-4xl lg:text-[40px] font-bold tracking-tight leading-tight"
+            style={{ color: titleTextColor }}
+          >
             {title}
           </h2>
-          <p className="text-[#6b7280] font-light text-sm sm:text-base leading-relaxed max-w-3xl mx-auto">
+          <p
+            className="font-light text-sm sm:text-base leading-relaxed max-w-3xl mx-auto"
+            style={{ color: subtitleTextColor }}
+          >
             {subtitle}
           </p>
         </div>
 
-        {/* Tab Switcher */}
         <div className="relative flex items-center justify-center max-w-5xl mx-auto mb-6 gap-2 sm:gap-3 px-1 sm:px-4">
-          {/* Left Arrow */}
           <button
             type="button"
             onClick={() => {
@@ -163,17 +213,19 @@ export function BiIndustryServices({ content }: { content?: BiIndustryServicesCo
                 tabsRef.current.scrollBy({ left: -240, behavior: 'smooth' });
               }
             }}
+            onMouseEnter={() => setHoveredArrow('left')}
+            onMouseLeave={() => setHoveredArrow(null)}
             disabled={!canScrollLeft}
-            className={`w-9 h-9 sm:w-10 sm:h-10 rounded-full border border-slate-200 bg-white text-[#4c327f] transition-all duration-200 flex items-center justify-center shrink-0 shadow-sm ${canScrollLeft
-              ? 'opacity-100 scale-100 hover:bg-[#4c327f] hover:text-white hover:border-[#4c327f] cursor-pointer active:scale-95'
+            className={`w-9 h-9 sm:w-10 sm:h-10 rounded-full border transition-all duration-200 flex items-center justify-center shrink-0 shadow-sm ${canScrollLeft
+              ? 'opacity-100 scale-100 cursor-pointer active:scale-95'
               : 'opacity-0 pointer-events-none scale-90'
               }`}
+            style={arrowStyle('left', canScrollLeft)}
             aria-label="Scroll left"
           >
             <ChevronLeft className="w-4 h-4 sm:w-5 sm:h-5" />
           </button>
 
-          {/* Horizontal Scrollable Tabs */}
           <div
             ref={tabsRef}
             onScroll={checkScroll}
@@ -186,11 +238,17 @@ export function BiIndustryServices({ content }: { content?: BiIndustryServicesCo
                 return (
                   <button
                     key={idx}
+                    type="button"
                     onClick={(e) => handleTabClick(idx, e)}
                     className={`shrink-0 px-5 sm:px-6 py-2.5 rounded-full text-xs sm:text-sm font-semibold tracking-wide border transition-all duration-300 cursor-pointer whitespace-nowrap ${isActive
-                      ? 'bg-[#4c327f] border-[#4c327f] text-white shadow-md scale-[1.02]'
-                      : 'bg-white border-slate-200 text-slate-600 hover:text-slate-900 hover:border-slate-300'
+                      ? 'shadow-md scale-[1.02]'
+                      : 'border-slate-200 hover:opacity-90'
                       }`}
+                    style={{
+                      backgroundColor: isActive ? activeTabBgColor : inactiveTabBgColor,
+                      color: isActive ? activeTabTextColor : inactiveTabTextColor,
+                      borderColor: isActive ? activeTabBgColor : undefined,
+                    }}
                   >
                     {tab.tabName}
                   </button>
@@ -199,7 +257,6 @@ export function BiIndustryServices({ content }: { content?: BiIndustryServicesCo
             </div>
           </div>
 
-          {/* Right Arrow */}
           <button
             type="button"
             onClick={() => {
@@ -207,22 +264,26 @@ export function BiIndustryServices({ content }: { content?: BiIndustryServicesCo
                 tabsRef.current.scrollBy({ left: 240, behavior: 'smooth' });
               }
             }}
+            onMouseEnter={() => setHoveredArrow('right')}
+            onMouseLeave={() => setHoveredArrow(null)}
             disabled={!canScrollRight}
-            className={`w-9 h-9 sm:w-10 sm:h-10 rounded-full border border-slate-200 bg-white text-[#4c327f] transition-all duration-200 flex items-center justify-center shrink-0 shadow-sm ${canScrollRight
-              ? 'opacity-100 scale-100 hover:bg-[#4c327f] hover:text-white hover:border-[#4c327f] cursor-pointer active:scale-95'
+            className={`w-9 h-9 sm:w-10 sm:h-10 rounded-full border transition-all duration-200 flex items-center justify-center shrink-0 shadow-sm ${canScrollRight
+              ? 'opacity-100 scale-100 cursor-pointer active:scale-95'
               : 'opacity-0 pointer-events-none scale-90'
               }`}
+            style={arrowStyle('right', canScrollRight)}
             aria-label="Scroll right"
           >
             <ChevronRight className="w-4 h-4 sm:w-5 sm:h-5" />
           </button>
         </div>
 
-        {/* Tab Content Box */}
-        <div className="relative rounded-[32px] overflow-hidden border border-slate-100 shadow-xl bg-white min-h-[500px]">
+        <div
+          className="relative rounded-[32px] overflow-hidden border border-slate-100 shadow-xl min-h-[500px]"
+          style={{ backgroundColor: cardBgColor }}
+        >
           <div className="grid grid-cols-1 md:grid-cols-12 min-h-[500px] w-full">
 
-            {/* Left Image Side */}
             <div className="md:col-span-6 relative min-h-[300px] md:min-h-[500px] w-full">
               <AnimatePresence mode="wait">
                 <motion.div
@@ -251,8 +312,10 @@ export function BiIndustryServices({ content }: { content?: BiIndustryServicesCo
               </AnimatePresence>
             </div>
 
-            {/* Right Purple Text Side */}
-            <div className="md:col-span-6 bg-[#4c327f] p-8 sm:p-12 lg:p-14 flex flex-col justify-between text-left text-white">
+            <div
+              className="md:col-span-6 p-8 sm:p-12 lg:p-14 flex flex-col justify-between text-left"
+              style={{ backgroundColor: contentPanelBgColor, color: tabTitleTextColor }}
+            >
               <AnimatePresence mode="wait">
                 <motion.div
                   key={activeTabIdx}
@@ -262,23 +325,35 @@ export function BiIndustryServices({ content }: { content?: BiIndustryServicesCo
                   transition={{ duration: 0.3 }}
                   className="space-y-8 flex-1 flex flex-col justify-between"
                 >
-                  {/* Heading & Points */}
                   <div className="space-y-8">
-                    <h3 className="text-2xl sm:text-3xl lg:text-[34px] font-bold leading-tight whitespace-pre-line tracking-tight">
+                    <h3
+                      className="text-2xl sm:text-3xl lg:text-[34px] font-bold leading-tight whitespace-pre-line tracking-tight"
+                      style={{ color: tabTitleTextColor }}
+                    >
                       {activeTab.tabTitle}
                     </h3>
 
-                    {/* Bullet List */}
                     <ul className="space-y-4">
                       {activeTab.points.map((point, pIdx) => (
                         <li key={pIdx} className="flex items-start space-x-3.5">
-                          {/* Checked Icon */}
-                          <div className="w-5 h-5 rounded-full bg-white flex items-center justify-center flex-shrink-0 mt-0.5">
-                            <svg className="w-3.5 h-3.5 text-[#4c327f] stroke-[3]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <div
+                            className="w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5"
+                            style={{ backgroundColor: checkIconBgColor }}
+                          >
+                            <svg
+                              className="w-3.5 h-3.5 stroke-[3]"
+                              fill="none"
+                              viewBox="0 0 24 24"
+                              stroke="currentColor"
+                              style={{ color: checkIconColor }}
+                            >
                               <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
                             </svg>
                           </div>
-                          <span className="text-sm sm:text-base font-light text-white/90">
+                          <span
+                            className="text-sm sm:text-base font-light"
+                            style={{ color: pointTextColor }}
+                          >
                             {typeof point === 'string' && (point.includes('<p>') || point.includes('<')) ? (
                               <span dangerouslySetInnerHTML={{ __html: point }} />
                             ) : (
@@ -290,7 +365,6 @@ export function BiIndustryServices({ content }: { content?: BiIndustryServicesCo
                     </ul>
                   </div>
 
-                  {/* Button CTA (Inside Card Only) */}
                   <div className="pt-8">
                     <a
                       href={activeTab.buttonUrl || '#'}

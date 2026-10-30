@@ -23,7 +23,7 @@ export function FmcgOverview({ content }: { content?: FmcgOverviewContent }) {
   return (
     <section className="py-12 px-6 border-t border-b bg-white font-sans">
       <div className="container mx-auto max-w-7xl">
-        <div className="flex flex-col lg:flex-row items-center gap-12 lg:gap-16">
+        <div className="flex flex-col lg:flex-row items-center gap-8 lg:gap-16">
 
           {/* Left Content Column */}
           <div className="flex-1 space-y-6 text-left">
@@ -40,7 +40,7 @@ export function FmcgOverview({ content }: { content?: FmcgOverviewContent }) {
 
           {/* Right Image Column */}
           {image && (
-            <div className="flex-1 w-full max-w-md lg:max-w-xl relative aspect-square lg:aspect-auto lg:h-[450px] shrink-0 flex justify-center items-center">
+            <div className="flex-1 w-full max-w-md lg:max-w-xl relative lg:aspect-auto lg:h-[450px] shrink-0 flex justify-center items-center">
               <div className="w-full h-full relative">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img

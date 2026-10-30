@@ -15,12 +15,35 @@ interface OracleApexDeliverablesContent {
   leftItems?: DeliverableItem[];
   rightTitle?: string;
   rightItems?: DeliverableItem[];
+  bgColor?: string;
+  leftTitleTextColor?: string;
+  leftItemBgColor?: string;
+  leftItemTextColor?: string;
+  leftIconBgColor?: string;
+  leftIconColor?: string;
+  rightTitleTextColor?: string;
+  rightItemBgColor?: string;
+  rightItemTextColor?: string;
+  rightIconBgColor?: string;
+  rightIconColor?: string;
+  dividerColor?: string;
 }
 
 export function OracleApexDeliverables({ content }: { content?: OracleApexDeliverablesContent }) {
-  const bgColor = '#2D1A70';
+  const bgColor = content?.bgColor || '#2D1A70';
   const leftTitle = content?.leftTitle || 'WHAT WE DELIVER';
   const rightTitle = content?.rightTitle || 'BUSINESS IMPACT';
+  const leftTitleTextColor = content?.leftTitleTextColor || '#ffffff';
+  const leftItemBgColor = content?.leftItemBgColor || '#ffffff';
+  const leftItemTextColor = content?.leftItemTextColor || '#2D1A70';
+  const leftIconBgColor = content?.leftIconBgColor || '#f1f5f9';
+  const leftIconColor = content?.leftIconColor || '#2D1A70';
+  const rightTitleTextColor = content?.rightTitleTextColor || '#ffffff';
+  const rightItemBgColor = content?.rightItemBgColor || '#d4dafa';
+  const rightItemTextColor = content?.rightItemTextColor || '#2D1A70';
+  const rightIconBgColor = content?.rightIconBgColor || '#f1f5f9';
+  const rightIconColor = content?.rightIconColor || '#2D1A70';
+  const dividerColor = content?.dividerColor || '#ffffff';
 
   const defaultLeftItems: DeliverableItem[] = [
     { icon: '/Migration-Oracle Forms to Oracle APEX/Frame 267.png', text: 'Complete Oracle Forms to Oracle APEX migration' },
@@ -41,14 +64,11 @@ export function OracleApexDeliverables({ content }: { content?: OracleApexDelive
   const leftItems = content?.leftItems && content.leftItems.length > 0 ? content.leftItems : defaultLeftItems;
   const rightItems = content?.rightItems && content.rightItems.length > 0 ? content.rightItems : defaultRightItems;
 
-  // Helper to render icon
-  const renderIcon = (icon: string) => {
-    if (!icon) return <Icons.Eye className="w-5 h-5 text-[#2D1A70]" />;
+  const renderIcon = (icon: string, iconColor: string) => {
+    if (!icon) return <Icons.Eye className="w-5 h-5" style={{ color: iconColor }} />;
 
-    // Check if it's a path/url
     const isPath = icon.startsWith('/') || icon.includes('.') || icon.includes('://') || icon.includes('\\');
     if (isPath) {
-      // Normalize slashes for safety
       const srcPath = icon.replace(/\\/g, '/');
       return (
         <div className="relative w-6 h-6 flex items-center justify-center shrink-0">
@@ -63,45 +83,52 @@ export function OracleApexDeliverables({ content }: { content?: OracleApexDelive
       );
     }
 
-    // Otherwise, resolve Lucide icon dynamically
     const LucideIcon = (Icons as any)[icon];
     if (LucideIcon) {
-      return <LucideIcon className="w-5 h-5 text-[#2D1A70]" />;
+      return <LucideIcon className="w-5 h-5" style={{ color: iconColor }} />;
     }
 
-    // Default fallback
-    return <Icons.Eye className="w-5 h-5 text-[#2D1A70]" />;
+    return <Icons.Eye className="w-5 h-5" style={{ color: iconColor }} />;
   };
 
   return (
     <section className="py-14 font-sans relative overflow-hidden" style={{ backgroundColor: bgColor }}>
       <div className="container mx-auto max-w-7xl px-6 relative z-10">
 
-        {/* Desktop Section Header Row */}
         <div className="hidden lg:grid lg:grid-cols-2 text-center items-center pb-5">
           <div>
-            <h2 className="text-xl sm:text-2xl font-extrabold text-white tracking-wider uppercase">
+            <h2
+              className="text-xl sm:text-2xl font-extrabold tracking-wider uppercase"
+              style={{ color: leftTitleTextColor }}
+            >
               {leftTitle}
             </h2>
           </div>
           <div>
-            <h2 className="text-xl sm:text-2xl font-extrabold text-white tracking-wider uppercase">
+            <h2
+              className="text-xl sm:text-2xl font-extrabold tracking-wider uppercase"
+              style={{ color: rightTitleTextColor }}
+            >
               {rightTitle}
             </h2>
           </div>
         </div>
 
-        {/* Desktop Horizontal Divider Line */}
-        <div className="hidden lg:block border-t border-white w-full mb-8" />
+        <div
+          className="hidden lg:block border-t w-full mb-8"
+          style={{ borderColor: dividerColor }}
+        />
 
-        {/* Main Content Side-by-Side Lists */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-0 lg:divide-x lg:divide-white">
-
-          {/* Left Column: What We Deliver */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-0">
           <div className="space-y-4 lg:pr-12">
-            {/* Mobile Title */}
-            <div className="block lg:hidden text-center pb-2 border-b border-white/40 mb-4">
-              <h2 className="text-xl font-extrabold text-white tracking-wider uppercase">
+            <div
+              className="block lg:hidden text-center pb-2 border-b mb-4"
+              style={{ borderColor: `${dividerColor}66` }}
+            >
+              <h2
+                className="text-xl font-extrabold tracking-wider uppercase"
+                style={{ color: leftTitleTextColor }}
+              >
                 {leftTitle}
               </h2>
             </div>
@@ -112,23 +139,37 @@ export function OracleApexDeliverables({ content }: { content?: OracleApexDelive
                 whileInView={{ opacity: 1, x: 0 }}
                 viewport={{ once: true, margin: '-50px' }}
                 transition={{ duration: 0.4, delay: index * 0.08 }}
-                className="flex items-center gap-4 bg-white p-3 rounded-2xl shadow-sm hover:shadow-md hover:scale-[1.01] transition-all duration-300"
+                className="flex items-center gap-4 p-3 rounded-2xl shadow-sm hover:shadow-md hover:scale-[1.01] transition-all duration-300"
+                style={{ backgroundColor: leftItemBgColor }}
               >
-                <div className="w-12 h-12 rounded-full bg-slate-100 flex items-center justify-center shrink-0 border border-slate-200/50">
-                  {renderIcon(item.icon)}
+                <div
+                  className="w-12 h-12 rounded-full flex items-center justify-center shrink-0 border border-slate-200/50"
+                  style={{ backgroundColor: leftIconBgColor }}
+                >
+                  {renderIcon(item.icon, leftIconColor)}
                 </div>
-                <span className="text-sm sm:text-base font-semibold text-[#2D1A70] leading-snug">
+                <span
+                  className="text-sm sm:text-base font-semibold leading-snug"
+                  style={{ color: leftItemTextColor }}
+                >
                   {item.text}
                 </span>
               </motion.div>
             ))}
           </div>
 
-          {/* Right Column: Business Impact */}
-          <div className="space-y-4 lg:pl-12">
-            {/* Mobile Title */}
-            <div className="block lg:hidden text-center pb-2 border-b border-white/40 mb-4 pt-4 lg:pt-0">
-              <h2 className="text-xl font-extrabold text-white tracking-wider uppercase">
+          <div
+            className="space-y-4 lg:pl-12 lg:border-l"
+            style={{ borderColor: dividerColor }}
+          >
+            <div
+              className="block lg:hidden text-center pb-2 border-b mb-4 pt-4 lg:pt-0"
+              style={{ borderColor: `${dividerColor}66` }}
+            >
+              <h2
+                className="text-xl font-extrabold tracking-wider uppercase"
+                style={{ color: rightTitleTextColor }}
+              >
                 {rightTitle}
               </h2>
             </div>
@@ -140,18 +181,23 @@ export function OracleApexDeliverables({ content }: { content?: OracleApexDelive
                 viewport={{ once: true, margin: '-50px' }}
                 transition={{ duration: 0.4, delay: index * 0.08 }}
                 className="flex items-center gap-4 p-3 rounded-2xl shadow-sm hover:shadow-md hover:scale-[1.01] transition-all duration-300"
-                style={{ backgroundColor: '#d4dafa' }}
+                style={{ backgroundColor: rightItemBgColor }}
               >
-                <div className="w-12 h-12 rounded-full bg-slate-100 flex items-center justify-center shrink-0 border border-slate-200/50">
-                  {renderIcon(item.icon)}
+                <div
+                  className="w-12 h-12 rounded-full flex items-center justify-center shrink-0 border border-slate-200/50"
+                  style={{ backgroundColor: rightIconBgColor }}
+                >
+                  {renderIcon(item.icon, rightIconColor)}
                 </div>
-                <span className="text-sm sm:text-base font-semibold text-[#2D1A70] leading-snug">
+                <span
+                  className="text-sm sm:text-base font-semibold leading-snug"
+                  style={{ color: rightItemTextColor }}
+                >
                   {item.text}
                 </span>
               </motion.div>
             ))}
           </div>
-
         </div>
 
       </div>

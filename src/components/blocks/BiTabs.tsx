@@ -23,6 +23,14 @@ interface TabItem {
 interface BiTabsContent {
   title?: string;
   tabs?: TabItem[];
+  tabsBgColor?: string;
+  bgColor?: string;
+  titleTextColor?: string;
+  tabNameTextColor?: string;
+  tabDescTextColor?: string;
+  headingTextColor?: string;
+  subheadingTextColor?: string;
+  questionTextColor?: string;
 }
 
 export function BiTabs({ content }: { content?: BiTabsContent }) {
@@ -72,40 +80,29 @@ export function BiTabs({ content }: { content?: BiTabsContent }) {
     }
   ];
 
-  const title = content?.title || '';
+  const rawTitle = typeof content?.title === 'string' ? content.title.trim() : '';
+  const title =
+    rawTitle &&
+    rawTitle.replace(/<[^>]*>/g, '').replace(/&nbsp;/gi, ' ').trim()
+      ? rawTitle
+      : '';
   const tabs = content?.tabs && content.tabs.length > 0 ? content.tabs : defaultTabs;
+  const tabsBgColor = content?.tabsBgColor || '#0e1a43';
+  const bgColor = content?.bgColor || '#F4F0FD';
+  const titleTextColor = content?.titleTextColor || '#ffffff';
+  const tabNameTextColor = content?.tabNameTextColor || '#ffffff';
+  const tabDescTextColor = content?.tabDescTextColor || '#ffffff';
+  const headingTextColor = content?.headingTextColor || '#0f172a';
+  const subheadingTextColor = content?.subheadingTextColor || '#475569';
+  const questionTextColor = content?.questionTextColor || '#1e293b';
 
   const [activeTabIdx, setActiveTabIdx] = useState(0);
   const activeTab = tabs[activeTabIdx] || tabs[0];
-
-  const [startIndex, setStartIndex] = useState(0);
-  const maxStartIndex = Math.max(0, tabs.length - 3);
+  const showArrows = tabs.length > 1;
+  const canGoPrev = activeTabIdx > 0;
+  const canGoNext = activeTabIdx < tabs.length - 1;
 
   const scrollRef = React.useRef<HTMLDivElement>(null);
-  const [canScrollLeft, setCanScrollLeft] = useState(false);
-  const [canScrollRight, setCanScrollRight] = useState(false);
-
-  const [isMobile, setIsMobile] = useState(false);
-
-  useEffect(() => {
-    const handleResize = () => setIsMobile(window.innerWidth < 768);
-    handleResize();
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, []);
-
-  const checkScroll = React.useCallback(() => {
-    if (scrollRef.current) {
-      if (isMobile) {
-        setCanScrollLeft(activeTabIdx > 0);
-        setCanScrollRight(activeTabIdx < tabs.length - 1);
-      } else {
-        const { scrollLeft, scrollWidth, clientWidth } = scrollRef.current;
-        setCanScrollLeft(scrollLeft > 5);
-        setCanScrollRight(scrollLeft + clientWidth < scrollWidth - 5);
-      }
-    }
-  }, [isMobile, activeTabIdx, tabs.length]);
 
   const scrollToTab = React.useCallback((index: number) => {
     if (!scrollRef.current) return;
@@ -125,78 +122,57 @@ export function BiTabs({ content }: { content?: BiTabsContent }) {
   }, []);
 
   useEffect(() => {
-    checkScroll();
-    window.addEventListener('resize', checkScroll);
-    return () => window.removeEventListener('resize', checkScroll);
-  }, [checkScroll, tabs]);
+    const timer = setTimeout(() => {
+      scrollToTab(activeTabIdx);
+    }, 50);
+    return () => clearTimeout(timer);
+  }, [activeTabIdx, scrollToTab]);
 
-  useEffect(() => {
-    if (isMobile) {
-      const timer = setTimeout(() => {
-        scrollToTab(activeTabIdx);
-      }, 50);
-      return () => clearTimeout(timer);
-    }
-  }, [activeTabIdx, isMobile, scrollToTab]);
-
-  const handlePrev = () => {
-    if (isMobile) {
-      const nextIdx = Math.max(0, activeTabIdx - 1);
-      setActiveTabIdx(nextIdx);
-      scrollToTab(nextIdx);
-    } else if (scrollRef.current) {
-      const scrollAmount = scrollRef.current.clientWidth * 0.8;
-      scrollRef.current.scrollBy({ left: -scrollAmount, behavior: 'smooth' });
-    }
+  const goToPrevTab = () => {
+    setActiveTabIdx((prev) => Math.max(0, prev - 1));
   };
 
-  const handleNext = () => {
-    if (isMobile) {
-      const nextIdx = Math.min(tabs.length - 1, activeTabIdx + 1);
-      setActiveTabIdx(nextIdx);
-      scrollToTab(nextIdx);
-    } else if (scrollRef.current) {
-      const scrollAmount = scrollRef.current.clientWidth * 0.8;
-      scrollRef.current.scrollBy({ left: scrollAmount, behavior: 'smooth' });
-    }
+  const goToNextTab = () => {
+    setActiveTabIdx((prev) => Math.min(tabs.length - 1, prev + 1));
   };
 
   return (
-    <section className="bg-[#F4F0FD] text-slate-900 overflow-hidden font-sans">
+    <section className="overflow-hidden font-sans" style={{ backgroundColor: bgColor }}>
 
-      {/* Top Part: Tab Headers with dark background color #0e1a43 */}
-      <div className="bg-[#0e1a43] py-3 md:pt-14 md:pb-0 text-white">
+      <div className="py-3 md:pt-14 md:pb-0" style={{ backgroundColor: tabsBgColor, color: titleTextColor }}>
         <div className="container mx-auto max-w-7xl px-6">
-          {title && (
-            <h2 className="text-3xl font-bold text-white text-center mb-6">
+          {title !== '' && title !== null && title !== undefined && (
+            <h2
+              className="text-3xl font-bold text-center mb-6"
+              style={{ color: titleTextColor }}
+            >
               {title}
             </h2>
           )}
 
-          {/* Tab Headers Navigation */}
           <div className="flex items-center gap-2 sm:gap-4 pb-0 border-b border-white/15">
-            {/* Backward Arrow */}
-            <button
-              type="button"
-              onClick={handlePrev}
-              disabled={!canScrollLeft}
-              className={`p-2 sm:p-2.5 rounded-full border border-white/20 text-white transition-all duration-300 flex items-center justify-center shrink-0 ${
-                canScrollLeft
-                  ? 'opacity-100 scale-100 hover:bg-white/10 hover:border-white/50 cursor-pointer active:scale-95'
-                  : 'opacity-0 pointer-events-none scale-90 md:hidden'
-              }`}
-              aria-label="Previous tabs"
-            >
-              <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M15 19l-7-7 7-7" />
-              </svg>
-            </button>
+            {showArrows && (
+              <button
+                type="button"
+                onClick={goToPrevTab}
+                disabled={!canGoPrev}
+                className={`p-2 sm:p-2.5 rounded-full border border-white/20 transition-all duration-300 flex items-center justify-center shrink-0 ${
+                  canGoPrev
+                    ? 'opacity-100 scale-100 hover:bg-white/10 hover:border-white/50 cursor-pointer active:scale-95'
+                    : 'opacity-30 cursor-not-allowed'
+                }`}
+                style={{ color: tabNameTextColor }}
+                aria-label="Previous tab"
+              >
+                <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M15 19l-7-7 7-7" />
+                </svg>
+              </button>
+            )}
 
-            {/* Tabs List */}
             <div
               ref={scrollRef}
-              onScroll={checkScroll}
-              className="flex-1 min-w-0 flex gap-6 md:gap-12 overflow-x-auto scrollbar-none pb-2 md:pb-0 scroll-smooth snap-x snap-mandatory"
+              className="flex-1 min-w-0 flex gap-6 md:gap-12 overflow-x-auto pb-2 md:pb-0 scroll-smooth snap-x snap-mandatory [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"
             >
               {tabs.map((tab, actualIdx) => {
                 const isActive = actualIdx === activeTabIdx;
@@ -205,21 +181,28 @@ export function BiTabs({ content }: { content?: BiTabsContent }) {
                     key={actualIdx}
                     type="button"
                     data-tab-button="true"
-                    onClick={() => {
-                      setActiveTabIdx(actualIdx);
-                      if (isMobile) {
-                        scrollToTab(actualIdx);
-                      }
-                    }}
+                    data-active={isActive}
+                    onClick={() => setActiveTabIdx(actualIdx)}
                     className="text-center md:text-left shrink-0 transition-all duration-300 select-none cursor-pointer outline-none focus:outline-none py-1 block w-full flex-none max-w-full sm:max-w-[320px] md:max-w-[calc((100%-6rem)/3)] px-2 snap-center relative group"
                   >
-                    <div className={`text-base sm:text-lg font-bold transition-colors duration-300 ${isActive ? 'text-white' : 'text-white/60 group-hover:text-white'}`}>
+                    <div
+                      className="text-base sm:text-lg font-bold transition-opacity duration-300"
+                      style={{
+                        color: tabNameTextColor,
+                        opacity: isActive ? 1 : 0.6,
+                      }}
+                    >
                       {tab.tabName}
                     </div>
-                    <div className={`text-xs sm:text-sm mt-0.5 font-light transition-colors duration-300 ${isActive ? 'text-white/90' : 'text-white/40 group-hover:text-white/70'}`}>
+                    <div
+                      className="text-xs sm:text-sm mt-0.5 font-light transition-opacity duration-300"
+                      style={{
+                        color: tabDescTextColor,
+                        opacity: isActive ? 0.9 : 0.4,
+                      }}
+                    >
                       {tab.tabDesc}
                     </div>
-                    {/* Active Underline */}
                     <div className="relative mt-3 h-[3px] w-full bg-white/10 rounded-full overflow-hidden">
                       {isActive && (
                         <motion.div
@@ -234,28 +217,29 @@ export function BiTabs({ content }: { content?: BiTabsContent }) {
               })}
             </div>
 
-            {/* Forward Arrow */}
-            <button
-              type="button"
-              onClick={handleNext}
-              disabled={!canScrollRight}
-              className={`p-2 sm:p-2.5 rounded-full border border-white/20 text-white transition-all duration-300 flex items-center justify-center shrink-0 ${
-                canScrollRight
-                  ? 'opacity-100 scale-100 hover:bg-white/10 hover:border-white/50 cursor-pointer active:scale-95'
-                  : 'opacity-0 pointer-events-none scale-90 md:hidden'
-              }`}
-              aria-label="Next tabs"
-            >
-              <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 5l7 7-7 7" />
-              </svg>
-            </button>
+            {showArrows && (
+              <button
+                type="button"
+                onClick={goToNextTab}
+                disabled={!canGoNext}
+                className={`p-2 sm:p-2.5 rounded-full border border-white/20 transition-all duration-300 flex items-center justify-center shrink-0 ${
+                  canGoNext
+                    ? 'opacity-100 scale-100 hover:bg-white/10 hover:border-white/50 cursor-pointer active:scale-95'
+                    : 'opacity-30 cursor-not-allowed'
+                }`}
+                style={{ color: tabNameTextColor }}
+                aria-label="Next tab"
+              >
+                <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 5l7 7-7 7" />
+                </svg>
+              </button>
+            )}
           </div>
         </div>
       </div>
 
-      {/* Bottom Part: Content Panel with light soft background #F4F0FD */}
-      <div className="pt-6 sm:pt-8 lg:pt-14 pb-14 bg-[#F4F0FD]">
+      <div className="pt-6 sm:pt-8 lg:pt-14 pb-14" style={{ backgroundColor: bgColor }}>
         <div className="container mx-auto max-w-7xl px-6">
           <AnimatePresence mode="wait">
             <motion.div
@@ -268,7 +252,10 @@ export function BiTabs({ content }: { content?: BiTabsContent }) {
             >
               <div className="flex-1 space-y-6 text-left w-full">
                 <div className="space-y-3">
-                  <h3 className="text-3xl sm:text-4xl font-bold text-slate-900 tracking-tight leading-tight">
+                  <h3
+                    className="text-3xl sm:text-4xl font-bold tracking-tight leading-tight"
+                    style={{ color: headingTextColor }}
+                  >
                     {typeof activeTab.heading === 'string' && (activeTab.heading.includes('<p>') || activeTab.heading.includes('<')) ? (
                       <span dangerouslySetInnerHTML={{ __html: activeTab.heading }} />
                     ) : (
@@ -276,7 +263,10 @@ export function BiTabs({ content }: { content?: BiTabsContent }) {
                     )}
                   </h3>
                   {activeTab.subheading && (
-                    <p className="text-slate-600 text-base sm:text-lg font-normal tracking-wide">
+                    <p
+                      className="text-base sm:text-lg font-normal tracking-wide"
+                      style={{ color: subheadingTextColor }}
+                    >
                       {typeof activeTab.subheading === 'string' && (activeTab.subheading.includes('<p>') || activeTab.subheading.includes('<')) ? (
                         <span dangerouslySetInnerHTML={{ __html: activeTab.subheading }} />
                       ) : (
@@ -286,7 +276,6 @@ export function BiTabs({ content }: { content?: BiTabsContent }) {
                   )}
                 </div>
 
-                {/* Questions List (Matching light rounded pills with chevron icon) */}
                 {activeTab.questions && activeTab.questions.length > 0 && (
                   <div className="space-y-3 w-full max-w-xl">
                     {activeTab.questions.map((question, qIdx) => {
@@ -307,9 +296,10 @@ export function BiTabs({ content }: { content?: BiTabsContent }) {
                           onMouseLeave={() => {
                             setHoveredQuestionImage(null);
                           }}
-                          className={`bg-white border border-slate-200/80 hover:border-purple-400 text-slate-800 font-medium text-[15px] sm:text-base px-6 py-4 rounded-2xl shadow-[0_2px_8px_rgba(0,0,0,0.03)] transition-all duration-300 hover:shadow-md hover:translate-x-1 flex items-center justify-between gap-4 group cursor-pointer ${
+                          className={`bg-white border border-slate-200/80 hover:border-purple-400 font-medium text-[15px] sm:text-base px-6 py-4 rounded-2xl shadow-[0_2px_8px_rgba(0,0,0,0.03)] transition-all duration-300 hover:shadow-md hover:translate-x-1 flex items-center justify-between gap-4 group cursor-pointer ${
                             qImage ? 'hover:bg-purple-50/50' : ''
                           }`}
+                          style={{ color: questionTextColor }}
                         >
                           <span className="flex-1">
                             {typeof qText === 'string' && (qText.includes('<p>') || qText.includes('<')) ? (
@@ -326,7 +316,6 @@ export function BiTabs({ content }: { content?: BiTabsContent }) {
                 )}
               </div>
 
-              {/* Right Image Column */}
               {(() => {
                 let rawSrc = hoveredQuestionImage || activeTab.image || '';
                 let imgSrc = rawSrc.trim();

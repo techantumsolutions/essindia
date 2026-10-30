@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import Image from 'next/image';
-import { ChevronLeft, ChevronRight, Play, X } from 'lucide-react';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
 
 export interface CarouselSlide {
   badge?: string;
@@ -15,6 +15,19 @@ export interface CarouselSlide {
 export interface Landing2CarouselContent {
   title?: string;
   slides?: CarouselSlide[];
+  bgColor?: string;
+  titleTextColor?: string;
+  cardGradientFrom?: string;
+  cardGradientTo?: string;
+  contentBoxBgColor?: string;
+  badgeTextColor?: string;
+  slideTitleTextColor?: string;
+  descriptionTextColor?: string;
+  arrowBgColor?: string;
+  arrowHoverBgColor?: string;
+  arrowTextColor?: string;
+  dotActiveColor?: string;
+  dotInactiveColor?: string;
 }
 
 const DEFAULT_SLIDES: CarouselSlide[] = [
@@ -43,8 +56,22 @@ export function Landing2Carousel({ content }: { content?: Landing2CarouselConten
   const title = content?.title;
   const slides = content?.slides && content.slides.length > 0 ? content.slides : DEFAULT_SLIDES;
 
+  const bgColor = content?.bgColor || '#ffffff';
+  const titleTextColor = content?.titleTextColor || '#0f172a';
+  const cardGradientFrom = content?.cardGradientFrom || '#6e22d9';
+  const cardGradientTo = content?.cardGradientTo || '#8c2bee';
+  const contentBoxBgColor = content?.contentBoxBgColor || '#ffcc29';
+  const badgeTextColor = content?.badgeTextColor || '#0f172a';
+  const slideTitleTextColor = content?.slideTitleTextColor || '#ffffff';
+  const descriptionTextColor = content?.descriptionTextColor || '#0f172a';
+  const arrowBgColor = content?.arrowBgColor || '#5d2bb9';
+  const arrowHoverBgColor = content?.arrowHoverBgColor || '#4d229e';
+  const arrowTextColor = content?.arrowTextColor || '#ffffff';
+  const dotActiveColor = content?.dotActiveColor || '#5d2bb9';
+  const dotInactiveColor = content?.dotInactiveColor || '#e9d5ff';
+
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [isVideoModalOpen, setIsVideoModalOpen] = useState(false);
+  const [hoveredArrow, setHoveredArrow] = useState<'prev' | 'next' | null>(null);
 
   const activeSlide = slides[currentIndex] || slides[0];
 
@@ -96,24 +123,34 @@ export function Landing2Carousel({ content }: { content?: Landing2CarouselConten
     }
   };
 
+  const arrowStyle = (side: 'prev' | 'next') => ({
+    backgroundColor: hoveredArrow === side ? arrowHoverBgColor : arrowBgColor,
+    color: arrowTextColor,
+  });
+
   return (
-    <section className="py-10 md:py-14 bg-white font-sans select-none px-4 sm:px-6">
+    <section className="py-10 md:py-14 font-sans border-t border-b border-slate-100 select-none px-4 sm:px-6" style={{ backgroundColor: bgColor }}>
       {title && (
         <div className="container mx-auto max-w-6xl mb-8 md:mb-12">
-          <h2 className="text-slate-900 text-3xl md:text-4xl lg:text-[40px] font-semibold text-center tracking-tight max-w-4xl mx-auto whitespace-pre-line">
+          <h2
+            className="text-3xl md:text-4xl lg:text-[40px] font-semibold text-center tracking-tight max-w-4xl mx-auto whitespace-pre-line"
+            style={{ color: titleTextColor }}
+          >
             {title}
           </h2>
         </div>
       )}
 
       <div className="container mx-auto max-w-6xl relative flex items-center justify-center">
-        {/* Previous Arrow Button (Desktop) */}
         {currentIndex > 0 ? (
           <button
             type="button"
             onClick={handlePrev}
+            onMouseEnter={() => setHoveredArrow('prev')}
+            onMouseLeave={() => setHoveredArrow(null)}
             aria-label="Previous Slide"
-            className="hidden lg:flex w-12 h-12 rounded-full bg-[#5d2bb9] hover:bg-[#4d229e] text-white items-center justify-center shadow-lg transition-all transform hover:scale-105 shrink-0 z-20 cursor-pointer mr-4 md:mr-8"
+            className="hidden lg:flex w-12 h-12 rounded-full items-center justify-center shadow-lg transition-all transform hover:scale-105 shrink-0 z-20 cursor-pointer mr-4 md:mr-8"
+            style={arrowStyle('prev')}
           >
             <ChevronLeft className="w-6 h-6 stroke-[2.5]" />
           </button>
@@ -121,14 +158,15 @@ export function Landing2Carousel({ content }: { content?: Landing2CarouselConten
           <div className="hidden lg:block w-12 h-12 shrink-0 mr-4 md:mr-8 invisible" aria-hidden="true" />
         )}
 
-        {/* Main Card Container */}
         <div
           onTouchStart={onTouchStart}
           onTouchMove={onTouchMove}
           onTouchEnd={onTouchEnd}
-          className="w-full max-w-4xl relative rounded-[28px] overflow-hidden bg-gradient-to-r from-[#6e22d9] to-[#8c2bee] shadow-2xl border border-purple-400/20 grid grid-cols-1 md:grid-cols-12 min-h-[380px] md:min-h-[420px]"
+          className="w-full max-w-4xl relative rounded-[28px] overflow-hidden shadow-2xl border border-purple-400/20 grid grid-cols-1 md:grid-cols-12 min-h-[380px] md:min-h-[420px]"
+          style={{
+            backgroundImage: `linear-gradient(to right, ${cardGradientFrom}, ${cardGradientTo})`,
+          }}
         >
-          {/* Left Side: Media Upload (Image/Video) - Embedded Inline */}
           <div className="md:col-span-7 relative p-2 sm:p-2.5 md:p-3 flex items-center justify-center overflow-hidden min-h-[260px] md:min-h-[420px]">
             {(() => {
               const video = ((activeSlide as any).youtubeUrl || activeSlide.videoUrl || '').trim();
@@ -208,38 +246,48 @@ export function Landing2Carousel({ content }: { content?: Landing2CarouselConten
             })()}
           </div>
 
-          {/* Right Side: Yellow Content Box */}
-          <div className="md:col-span-5 bg-[#ffcc29] p-6 sm:p-8 rounded-2xl md:rounded-l-2xl flex flex-col justify-center text-slate-900 shadow-lg my-2 mx-2 md:ml-0 md:my-3 md:mr-3 overflow-hidden min-w-0">
-            {/* Small Badge */}
+          <div
+            className="md:col-span-5 p-6 sm:p-8 rounded-2xl md:rounded-l-2xl flex flex-col justify-center shadow-lg my-2 mx-2 md:ml-0 md:my-3 md:mr-3 overflow-hidden min-w-0"
+            style={{ backgroundColor: contentBoxBgColor }}
+          >
             {activeSlide.badge && (
-              <span className="text-[11px] sm:text-xs font-black uppercase tracking-wider text-slate-900/90 mb-3 block break-words">
+              <span
+                className="text-[11px] sm:text-xs font-black uppercase tracking-wider mb-3 block break-words opacity-90"
+                style={{ color: badgeTextColor }}
+              >
                 {activeSlide.badge}
               </span>
             )}
 
-            {/* Big Title */}
             {activeSlide.title && (
-              <h3 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-white leading-[1.1] mb-4 tracking-tight whitespace-pre-line break-words drop-shadow-[0_2px_4px_rgba(0,0,0,0.15)]">
+              <h3
+                className="text-2xl sm:text-3xl lg:text-4xl font-extrabold leading-[1.1] mb-4 tracking-tight whitespace-pre-line break-words drop-shadow-[0_2px_4px_rgba(0,0,0,0.15)]"
+                style={{ color: slideTitleTextColor }}
+              >
                 {activeSlide.title}
               </h3>
             )}
 
-            {/* Subtitle / Description */}
             {activeSlide.description && (
-              <p className="text-slate-900 font-semibold text-xs sm:text-[13px] leading-relaxed opacity-95 break-words">
+              <p
+                className="font-semibold text-xs sm:text-[13px] leading-relaxed opacity-95 break-words"
+                style={{ color: descriptionTextColor }}
+              >
                 {activeSlide.description}
               </p>
             )}
           </div>
         </div>
 
-        {/* Next Arrow Button (Desktop) */}
         {currentIndex < slides.length - 1 ? (
           <button
             type="button"
             onClick={handleNext}
+            onMouseEnter={() => setHoveredArrow('next')}
+            onMouseLeave={() => setHoveredArrow(null)}
             aria-label="Next Slide"
-            className="hidden lg:flex w-12 h-12 rounded-full bg-[#5d2bb9] hover:bg-[#4d229e] text-white items-center justify-center shadow-lg transition-all transform hover:scale-105 shrink-0 z-20 cursor-pointer ml-4 md:ml-8"
+            className="hidden lg:flex w-12 h-12 rounded-full items-center justify-center shadow-lg transition-all transform hover:scale-105 shrink-0 z-20 cursor-pointer ml-4 md:ml-8"
+            style={arrowStyle('next')}
           >
             <ChevronRight className="w-6 h-6 stroke-[2.5]" />
           </button>
@@ -248,14 +296,16 @@ export function Landing2Carousel({ content }: { content?: Landing2CarouselConten
         )}
       </div>
 
-      {/* Mobile & Tablet Controls: Arrows + Dots */}
       <div className="flex lg:hidden items-center justify-center gap-4 mt-6">
         {currentIndex > 0 ? (
           <button
             type="button"
             onClick={handlePrev}
+            onMouseEnter={() => setHoveredArrow('prev')}
+            onMouseLeave={() => setHoveredArrow(null)}
             aria-label="Previous Slide"
-            className="w-10 h-10 rounded-full bg-[#5d2bb9] hover:bg-[#4d229e] active:scale-95 text-white flex items-center justify-center shadow-md transition-all cursor-pointer"
+            className="w-10 h-10 rounded-full active:scale-95 flex items-center justify-center shadow-md transition-all cursor-pointer"
+            style={arrowStyle('prev')}
           >
             <ChevronLeft className="w-5 h-5 stroke-[2.5]" />
           </button>
@@ -272,10 +322,11 @@ export function Landing2Carousel({ content }: { content?: Landing2CarouselConten
                 onClick={() => setCurrentIndex(idx)}
                 aria-label={`Go to slide ${idx + 1}`}
                 className={`rounded-full transition-all cursor-pointer ${
-                  currentIndex === idx
-                    ? 'w-3.5 h-3.5 bg-[#5d2bb9] shadow-sm'
-                    : 'w-2.5 h-2.5 bg-purple-200 hover:bg-purple-300'
+                  currentIndex === idx ? 'w-3.5 h-3.5 shadow-sm' : 'w-2.5 h-2.5'
                 }`}
+                style={{
+                  backgroundColor: currentIndex === idx ? dotActiveColor : dotInactiveColor,
+                }}
               />
             ))}
           </div>
@@ -285,8 +336,11 @@ export function Landing2Carousel({ content }: { content?: Landing2CarouselConten
           <button
             type="button"
             onClick={handleNext}
+            onMouseEnter={() => setHoveredArrow('next')}
+            onMouseLeave={() => setHoveredArrow(null)}
             aria-label="Next Slide"
-            className="w-10 h-10 rounded-full bg-[#5d2bb9] hover:bg-[#4d229e] active:scale-95 text-white flex items-center justify-center shadow-md transition-all cursor-pointer"
+            className="w-10 h-10 rounded-full active:scale-95 flex items-center justify-center shadow-md transition-all cursor-pointer"
+            style={arrowStyle('next')}
           >
             <ChevronRight className="w-5 h-5 stroke-[2.5]" />
           </button>
@@ -295,7 +349,6 @@ export function Landing2Carousel({ content }: { content?: Landing2CarouselConten
         )}
       </div>
 
-      {/* Desktop Pagination Dots */}
       {slides.length > 1 && (
         <div className="hidden lg:flex items-center justify-center gap-2.5 mt-8">
           {slides.map((_, idx) => (
@@ -305,10 +358,11 @@ export function Landing2Carousel({ content }: { content?: Landing2CarouselConten
               onClick={() => setCurrentIndex(idx)}
               aria-label={`Go to slide ${idx + 1}`}
               className={`rounded-full transition-all cursor-pointer ${
-                currentIndex === idx
-                  ? 'w-4 h-4 bg-[#5d2bb9] shadow-sm'
-                  : 'w-3 h-3 bg-purple-200 hover:bg-purple-300'
+                currentIndex === idx ? 'w-4 h-4 shadow-sm' : 'w-3 h-3'
               }`}
+              style={{
+                backgroundColor: currentIndex === idx ? dotActiveColor : dotInactiveColor,
+              }}
             />
           ))}
         </div>

@@ -198,8 +198,9 @@ export function AomWorkspace({ content }: { content?: AomWorkspaceContent }) {
                 <div key={catIdx} className="space-y-2 border-b border-slate-50 last:border-b-0 pb-3 last:pb-0">
                   {/* Category Header */}
                   <button
+                    type="button"
                     onClick={() => toggleCategory(catIdx)}
-                    className="w-full flex items-center justify-between py-2 text-[#0a1128] font-black text-[13px] tracking-wider uppercase text-left group hover:text-indigo-600 transition-colors"
+                    className="w-full flex items-center justify-between py-2 text-[#0a1128] font-black text-[13px] tracking-wider uppercase text-left group cursor-pointer hover:text-indigo-600 transition-colors"
                   >
                     <FormattedText content={category.name} as="span" />
                     <div className="w-5 h-5 relative shrink-0">
@@ -220,12 +221,13 @@ export function AomWorkspace({ content }: { content?: AomWorkspaceContent }) {
                         const validTabIcon = safeImageUrl(tab.icon);
                         return (
                           <button
+                            type="button"
                             key={tabIdx}
                             onClick={() => selectTab(catIdx, tabIdx)}
-                            className={`w-full text-left p-3 rounded-2xl flex items-center gap-3 transition-all duration-300 border-l-4 ${
+                            className={`w-full text-left p-3 rounded-2xl flex items-center gap-3 transition-all duration-300 border-l-4 cursor-pointer ${
                               isSelected
                                 ? 'bg-indigo-50/60 border-indigo-600 text-[#0a1128]'
-                                : 'bg-transparent border-transparent text-slate-500 hover:bg-slate-50'
+                                : 'bg-transparent border-transparent text-slate-500 hover:bg-violet-50'
                             }`}
                           >
                             {validTabIcon && (
@@ -240,7 +242,7 @@ export function AomWorkspace({ content }: { content?: AomWorkspaceContent }) {
                                 />
                               </div>
                             )}
-                            <div>
+                            <div className="min-w-0">
                               <FormattedText content={tab.label} className="text-xs font-bold" />
                               <FormattedText content={tab.desc} className="text-[10px] text-slate-400 font-medium leading-tight mt-0.5" />
                             </div>

@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useRef, useEffect, useCallback } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import Image from 'next/image';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 
@@ -15,6 +15,15 @@ interface TabItem {
 interface FmcgTabsContent {
   title?: string;
   tabs?: TabItem[];
+  bgColor?: string;
+  titleTextColor?: string;
+  headingTextColor?: string;
+  subheadingTextColor?: string;
+  questionTextColor?: string;
+  tabBgColor?: string;
+  tabTextColor?: string;
+  activeTabBgColor?: string;
+  activeTabTextColor?: string;
 }
 
 export function FmcgTabs({ content }: { content?: FmcgTabsContent }) {
@@ -75,42 +84,22 @@ export function FmcgTabs({ content }: { content?: FmcgTabsContent }) {
 
   const title = content?.title || 'FMCG BI Personas';
   const tabs = content?.tabs && content.tabs.length > 0 ? content.tabs : defaultTabs;
+  const bgColor = content?.bgColor || '#131e3d';
+  const titleTextColor = content?.titleTextColor || '#ffffff';
+  const headingTextColor = content?.headingTextColor || '#ffffff';
+  const subheadingTextColor = content?.subheadingTextColor || '#cbd5e1';
+  const questionTextColor = content?.questionTextColor || '#2a2b6a';
+  const tabBgColor = content?.tabBgColor || '#18264d';
+  const tabTextColor = content?.tabTextColor || '#ffffff';
+  const activeTabBgColor = content?.activeTabBgColor || '#fcc42c';
+  const activeTabTextColor = content?.activeTabTextColor || '#131e3d';
 
-  const [activeTabIdx, setActiveTabIdx] = useState(0); // FMCG CEO by default
-  const activeTab = tabs[activeTabIdx] || tabs[0];
+  const [activeTabIdx, setActiveTabIdx] = useState(0);
+  const showArrows = tabs.length > 1;
+  const canGoPrev = activeTabIdx > 0;
+  const canGoNext = activeTabIdx < tabs.length - 1;
 
   const tabsContainerRef = useRef<HTMLDivElement>(null);
-  const [canScrollLeft, setCanScrollLeft] = useState(false);
-  const [canScrollRight, setCanScrollRight] = useState(false);
-  const [hasOverflow, setHasOverflow] = useState(false);
-
-  const checkScroll = useCallback(() => {
-    if (tabsContainerRef.current) {
-      const { scrollLeft, scrollWidth, clientWidth } = tabsContainerRef.current;
-      const overflow = scrollWidth > clientWidth + 2;
-      setHasOverflow(overflow);
-      setCanScrollLeft(scrollLeft > 2);
-      setCanScrollRight(scrollLeft + clientWidth < scrollWidth - 2);
-    }
-  }, []);
-
-  useEffect(() => {
-    checkScroll();
-
-    const container = tabsContainerRef.current;
-    if (!container) return;
-
-    const resizeObserver = new ResizeObserver(() => {
-      checkScroll();
-    });
-    resizeObserver.observe(container);
-
-    window.addEventListener('resize', checkScroll);
-    return () => {
-      resizeObserver.disconnect();
-      window.removeEventListener('resize', checkScroll);
-    };
-  }, [checkScroll, tabs]);
 
   useEffect(() => {
     if (tabsContainerRef.current) {
@@ -125,44 +114,50 @@ export function FmcgTabs({ content }: { content?: FmcgTabsContent }) {
     }
   }, [activeTabIdx]);
 
-  const scrollTabs = (direction: 'left' | 'right') => {
-    if (tabsContainerRef.current) {
-      const scrollAmount = Math.max(tabsContainerRef.current.clientWidth * 0.65, 220);
-      tabsContainerRef.current.scrollBy({
-        left: direction === 'left' ? -scrollAmount : scrollAmount,
-        behavior: 'smooth'
-      });
-    }
+  const goToPrevTab = () => {
+    setActiveTabIdx((prev) => Math.max(0, prev - 1));
+  };
+
+  const goToNextTab = () => {
+    setActiveTabIdx((prev) => Math.min(tabs.length - 1, prev + 1));
   };
 
   return (
-    <section className="py-14 px-6 bg-[#131e3d] text-white">
+    <section className="py-14 px-6 text-white" style={{ backgroundColor: bgColor }}>
       <div className="container mx-auto max-w-7xl">
+        {title && (
+          <h2
+            className="text-2xl sm:text-3xl font-extrabold tracking-tight text-center mb-8"
+            style={{ color: titleTextColor }}
+          >
+            {title}
+          </h2>
+        )}
 
         {/* Tab Headers with Left & Right Arrows */}
-        <div className="relative flex items-stretch border-b border-slate-700/50 bg-[#131e3d]">
-          {/* Left Arrow Button */}
-          {hasOverflow && (
+        <div
+          className="relative flex items-stretch border-b border-slate-700/50"
+          style={{ backgroundColor: bgColor }}
+        >
+          {showArrows && (
             <button
               type="button"
-              onClick={() => scrollTabs('left')}
-              disabled={!canScrollLeft}
+              onClick={goToPrevTab}
+              disabled={!canGoPrev}
               className={`px-3 sm:px-4.5 flex items-center justify-center transition-all duration-300 shrink-0 z-10 border-r border-slate-700/30 ${
-                canScrollLeft
+                canGoPrev
                   ? 'bg-[#18264d] text-white hover:bg-[#fcc42c] hover:text-[#131e3d] cursor-pointer active:scale-95'
                   : 'bg-[#131e3d]/80 text-slate-500/40 cursor-not-allowed opacity-30'
               }`}
-              aria-label="Scroll left to see previous tabs"
-              title="Previous tabs"
+              aria-label="Previous tab"
+              title="Previous tab"
             >
               <ChevronLeft className="w-5 h-5 sm:w-6 sm:h-6" strokeWidth={2.5} />
             </button>
           )}
 
-          {/* Scrollable Tab Container */}
           <div
             ref={tabsContainerRef}
-            onScroll={checkScroll}
             className="flex-1 flex overflow-x-auto scrollbar-none flex-nowrap scroll-smooth"
             style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
           >
@@ -174,11 +169,14 @@ export function FmcgTabs({ content }: { content?: FmcgTabsContent }) {
                   type="button"
                   data-active={isActive}
                   onClick={() => setActiveTabIdx(idx)}
-                  className={`px-4 py-3.5 sm:px-8 sm:py-5 text-xs sm:text-sm md:text-base font-bold uppercase tracking-wider transition-all duration-300 shrink-0 whitespace-nowrap text-center border-r border-slate-700/30 outline-none focus-visible:ring-2 focus-visible:ring-[#fcc42c] focus-visible:z-10 ${
-                    isActive
-                      ? 'bg-[#fcc42c] text-[#131e3d]'
-                      : 'bg-[#18264d] text-white hover:bg-[#1a2b5c] cursor-pointer'
+                  className={`px-4 py-3.5 sm:px-8 sm:py-5 text-xs sm:text-sm md:text-base font-bold uppercase tracking-wider transition-all duration-300 shrink-0 whitespace-nowrap text-center border-r border-slate-700/30 outline-none focus-visible:ring-2 focus-visible:ring-offset-0 focus-visible:z-10 ${
+                    isActive ? '' : 'cursor-pointer hover:opacity-90'
                   }`}
+                  style={{
+                    backgroundColor: isActive ? activeTabBgColor : tabBgColor,
+                    color: isActive ? activeTabTextColor : tabTextColor,
+                    outlineColor: activeTabBgColor,
+                  }}
                 >
                   {tab.tabName || `Tab ${idx + 1}`}
                 </button>
@@ -186,26 +184,24 @@ export function FmcgTabs({ content }: { content?: FmcgTabsContent }) {
             })}
           </div>
 
-          {/* Right Arrow Button */}
-          {hasOverflow && (
+          {showArrows && (
             <button
               type="button"
-              onClick={() => scrollTabs('right')}
-              disabled={!canScrollRight}
+              onClick={goToNextTab}
+              disabled={!canGoNext}
               className={`px-3 sm:px-4.5 flex items-center justify-center transition-all duration-300 shrink-0 z-10 border-l border-slate-700/30 ${
-                canScrollRight
+                canGoNext
                   ? 'bg-[#18264d] text-white hover:bg-[#fcc42c] hover:text-[#131e3d] cursor-pointer active:scale-95'
                   : 'bg-[#131e3d]/80 text-slate-500/40 cursor-not-allowed opacity-30'
               }`}
-              aria-label="Scroll right to see next tabs"
-              title="Next tabs"
+              aria-label="Next tab"
+              title="Next tab"
             >
               <ChevronRight className="w-5 h-5 sm:w-6 sm:h-6" strokeWidth={2.5} />
             </button>
           )}
         </div>
 
-        {/* Tab Content Panels */}
         {tabs.map((tab, idx) => {
           const isActive = idx === activeTabIdx;
           return (
@@ -213,10 +209,12 @@ export function FmcgTabs({ content }: { content?: FmcgTabsContent }) {
               key={idx}
               className={`pt-5 sm:pt-6 lg:pt-12 flex flex-col lg:flex-row items-center gap-12 lg:gap-16 ${isActive ? 'block' : 'hidden'}`}
             >
-              {/* Left Content Column (Questions list) */}
               <div className="flex-1 space-y-8 text-left w-full">
                 <div className="space-y-3">
-                  <h3 className="text-3xl sm:text-4xl font-extrabold tracking-tight">
+                  <h3
+                    className="text-3xl sm:text-4xl font-extrabold tracking-tight"
+                    style={{ color: headingTextColor }}
+                  >
                     {typeof tab.heading === 'string' && (tab.heading.includes('<p>') || tab.heading.includes('<')) ? (
                       <span dangerouslySetInnerHTML={{ __html: tab.heading }} />
                     ) : (
@@ -224,7 +222,10 @@ export function FmcgTabs({ content }: { content?: FmcgTabsContent }) {
                     )}
                   </h3>
                   {tab.subheading && (
-                    <p className="text-slate-300 text-sm sm:text-base font-medium">
+                    <p
+                      className="text-sm sm:text-base font-medium"
+                      style={{ color: subheadingTextColor }}
+                    >
                       {typeof tab.subheading === 'string' && (tab.subheading.includes('<p>') || tab.subheading.includes('<')) ? (
                         <span dangerouslySetInnerHTML={{ __html: tab.subheading }} />
                       ) : (
@@ -234,13 +235,13 @@ export function FmcgTabs({ content }: { content?: FmcgTabsContent }) {
                   )}
                 </div>
 
-                {/* Questions List */}
                 {tab.questions && tab.questions.length > 0 && (
                   <div className="space-y-4">
                     {tab.questions.map((question, qIdx) => (
                       <div
                         key={qIdx}
-                        className="bg-white text-[#2a2b6a] font-semibold text-sm sm:text-base px-6 py-4 rounded-xl border-l-4 border-[#2b2a6c] shadow-md transition-all duration-300 hover:translate-x-1"
+                        className="bg-white font-semibold text-sm sm:text-base px-6 py-4 rounded-xl border-l-4 border-[#2b2a6c] shadow-md transition-all duration-300 hover:translate-x-1"
+                        style={{ color: questionTextColor }}
                       >
                         {typeof question === 'string' && (question.includes('<p>') || question.includes('<')) ? (
                           <span dangerouslySetInnerHTML={{ __html: question }} />
@@ -253,7 +254,6 @@ export function FmcgTabs({ content }: { content?: FmcgTabsContent }) {
                 )}
               </div>
 
-              {/* Right Image Column (Mockup) */}
               {tab.image && (
                 <div className="flex-1 w-full max-w-md lg:max-w-xl shrink-0 flex justify-center items-center">
                   <div className="w-full relative aspect-[4/3] sm:aspect-[1.4] rounded-2xl overflow-hidden shadow-2xl border border-slate-700/30">
@@ -271,7 +271,6 @@ export function FmcgTabs({ content }: { content?: FmcgTabsContent }) {
             </div>
           );
         })}
-
       </div>
     </section>
   );

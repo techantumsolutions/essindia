@@ -54,7 +54,6 @@ export function ArrayFieldEditor({
 
   const duplicateItem = (index: number) => {
     if (sectionType === 'landing1-process' && fieldKey === 'process' && safeValue.length >= 7) return;
-    if (sectionType === 'landing2-testimonials' && fieldKey === 'testimonials' && safeValue.length >= 2) return;
     if (sectionType === 'staffing-technologies' && fieldKey === 'columns' && safeValue.length >= 3) return;
     const copy = [...safeValue];
     copy.splice(index + 1, 0, structuredClone(safeValue[index]));
@@ -63,7 +62,6 @@ export function ArrayFieldEditor({
 
   const addItem = () => {
     if (sectionType === 'landing1-process' && fieldKey === 'process' && safeValue.length >= 7) return;
-    if (sectionType === 'landing2-testimonials' && fieldKey === 'testimonials' && safeValue.length >= 2) return;
     if (sectionType === 'staffing-technologies' && fieldKey === 'columns' && safeValue.length >= 3) return;
     if (fieldKey === 'challengePoints' || fieldKey === 'challengepoints') {
       onChange([...safeValue, { title: '', description: '' }]);
@@ -377,7 +375,7 @@ export function ArrayFieldEditor({
                 );
               })}
 
-              {!isLocked && !(sectionType === 'landing1-process' && fieldKey === 'process' && safeValue.length >= 7) && !(sectionType === 'landing2-testimonials' && fieldKey === 'testimonials' && safeValue.length >= 2) && !(sectionType === 'staffing-technologies' && fieldKey === 'columns' && safeValue.length >= 3) && (
+              {!isLocked && !(sectionType === 'landing1-process' && fieldKey === 'process' && safeValue.length >= 7) && !(sectionType === 'staffing-technologies' && fieldKey === 'columns' && safeValue.length >= 3) && (
                 <Button
                   variant="outline"
                   size="sm"

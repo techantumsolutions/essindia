@@ -289,6 +289,65 @@ function baseHumanLabel(key: string): string {
   if (key === 'button1Color') return 'Button 1 Text Color';
   if (key === 'button2Color') return 'Button 2 Text Color';
   if (key === 'bgColor') return 'Background Color';
+  if (key === 'tabsBgColor') return 'Tabs Background Color';
+  if (key === 'headingTextColor') return 'Heading Text Color';
+  if (key === 'subheadingTextColor') return 'Subheading Text Color';
+  if (key === 'questionTextColor') return 'Question Text Color';
+  if (key === 'tabNameTextColor') return 'Tab Name Text Color';
+  if (key === 'tabDescTextColor') return 'Tab Description Text Color';
+  if (key === 'tabBgColor') return 'Tab Background Color';
+  if (key === 'tabTextColor') return 'Tab Text Color';
+  if (key === 'activeTabBgColor') return 'Active Tab Background Color';
+  if (key === 'activeTabTextColor') return 'Active Tab Text Color';
+  if (key === 'inactiveTabBgColor') return 'Inactive Tab Background Color';
+  if (key === 'inactiveTabTextColor') return 'Inactive Tab Text Color';
+  if (key === 'contentTextColor') return 'Description Text Color';
+  if (key === 'cardBgColor') return 'Card Background Color';
+  if (key === 'cardGradientFrom') return 'Card Gradient Start Color';
+  if (key === 'cardGradientTo') return 'Card Gradient End Color';
+  if (key === 'contentBoxBgColor') return 'Content Box Background Color';
+  if (key === 'contentPanelBgColor') return 'Content Panel Background Color';
+  if (key === 'slideTitleTextColor') return 'Slide Title Text Color';
+  if (key === 'tabTitleTextColor') return 'Tab Title Text Color';
+  if (key === 'pointTextColor') return 'Bullet Point Text Color';
+  if (key === 'checkIconBgColor') return 'Check Icon Background Color';
+  if (key === 'checkIconColor') return 'Check Icon Color';
+  if (key === 'subtitleTextColor') return 'Subtitle Text Color';
+  if (key === 'hubSubtitleTextColor') return 'Hub Subtitle Text Color';
+  if (key === 'hubTitleTextColor') return 'Hub Title Text Color';
+  if (key === 'hubBgColor') return 'Hub Background Color';
+  if (key === 'hubBorderColor') return 'Hub Border Color';
+  if (key === 'mobileHubGradientFrom') return 'Mobile Hub Gradient Start';
+  if (key === 'mobileHubGradientTo') return 'Mobile Hub Gradient End';
+  if (key === 'mobileHubSubtitleTextColor') return 'Mobile Hub Subtitle Text Color';
+  if (key === 'mobileHubTitleTextColor') return 'Mobile Hub Title Text Color';
+  if (key === 'cardTitleTextColor') return 'Card Title Text Color';
+  if (key === 'cardDescriptionTextColor') return 'Card Description Text Color';
+  if (key === 'cardIconBgColor') return 'Card Icon Background Color';
+  if (key === 'cardIconBorderColor') return 'Card Icon Border Color';
+  if (key === 'cardAccentFrom') return 'Card Accent Gradient Start';
+  if (key === 'cardAccentVia') return 'Card Accent Gradient Middle';
+  if (key === 'cardAccentTo') return 'Card Accent Gradient End';
+  if (key === 'connectorLineColor') return 'Connector Line Color';
+  if (key === 'connectorDotColor') return 'Connector Dot Color';
+  if (key === 'connectorDotStrokeColor') return 'Connector Dot Stroke Color';
+  if (key === 'dividerColor') return 'Divider Color';
+  if (key === 'leftTitleTextColor') return 'Left Title Text Color';
+  if (key === 'leftItemBgColor') return 'Left Item Background Color';
+  if (key === 'leftItemTextColor') return 'Left Item Text Color';
+  if (key === 'leftIconBgColor') return 'Left Icon Background Color';
+  if (key === 'leftIconColor') return 'Left Icon Color';
+  if (key === 'rightTitleTextColor') return 'Right Title Text Color';
+  if (key === 'rightItemBgColor') return 'Right Item Background Color';
+  if (key === 'rightItemTextColor') return 'Right Item Text Color';
+  if (key === 'rightIconBgColor') return 'Right Icon Background Color';
+  if (key === 'rightIconColor') return 'Right Icon Color';
+  if (key === 'arrowBgColor') return 'Arrow Background Color';
+  if (key === 'arrowHoverBgColor') return 'Arrow Hover Background Color';
+  if (key === 'arrowTextColor') return 'Arrow Text Color';
+  if (key === 'arrowHoverTextColor') return 'Arrow Hover Text Color';
+  if (key === 'dotActiveColor') return 'Active Dot Color';
+  if (key === 'dotInactiveColor') return 'Inactive Dot Color';
   if (key === 'dateColor') return 'Date Color';
   if (key === 'contact') return 'Contact (Email/Phone No.)';
   if (key === 'qutation' || key === 'quotation') return 'Question';
@@ -649,9 +708,9 @@ export function detectFieldType(
       return 'text';
     }
 
-    if (sectionType === 'erp-hero' || sectionType === 'blog-list-block') {
+    if (sectionType === 'erp-hero' || sectionType === 'blog-list-block' || sectionType === 'case-study-list') {
       if (lower === 'title' || lower === 'titletext' || lower === 'heading' || lower === 'headingtext') return 'text';
-      if (lower.includes('description') || lower.includes('desc')) return 'textarea';
+      if (lower.includes('description') || lower.includes('desc') || lower === 'subheadingtext') return 'textarea';
     }
 
     if (sectionType === 'erp-transform') {

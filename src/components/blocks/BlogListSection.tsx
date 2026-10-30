@@ -213,7 +213,7 @@ export function BlogListSection({ content }: BlogListSectionProps) {
               {/* Header */}
               <div className="flex items-center gap-2 pb-4 border-b border-slate-100">
                 <SlidersHorizontal className="w-4 h-4 text-[#103D38]" />
-                <h3 className="text-sm font-black text-slate-800 uppercase tracking-wider">Filters</h3>
+                <h3 className="text-sm font-black text-slate-800 tracking-wider">Filters</h3>
               </div>
 
               {/* Topics Filter */}
