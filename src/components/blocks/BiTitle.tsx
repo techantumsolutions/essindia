@@ -15,14 +15,14 @@ export function BiTitle({ content }: { content?: BiTitleContent }) {
 
   return (
     <section
-      className="py-4 w-full font-sans transition-colors border-t border-b border-slate-100"
+      className="py-8 w-full font-sans transition-colors border-t border-b border-slate-100"
       style={{ backgroundColor: bgColor }}
     >
       <div className="container mx-auto max-w-7xl px-6">
         <div className="flex flex-col text-center items-center">
           {title && (
             <h2
-              className="text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight leading-tight"
+              className="text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tight leading-tight"
               style={{ color: titleColor }}
             >
               {title}

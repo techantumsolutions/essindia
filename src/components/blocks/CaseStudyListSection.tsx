@@ -199,7 +199,7 @@ export function CaseStudyListSection({ content }: CaseStudyListSectionProps) {
               {/* Header */}
               <div className="flex items-center gap-2 pb-4 border-b border-slate-100">
                 <SlidersHorizontal className="w-4 h-4 text-[#4a2c5a]" />
-                <h3 className="text-sm font-black text-slate-800 uppercase tracking-wider font-semibold">Filters</h3>
+                <h3 className="text-sm font-black text-slate-800 tracking-wider font-semibold">Filters</h3>
               </div>
 
               {/* Topics Filter */}

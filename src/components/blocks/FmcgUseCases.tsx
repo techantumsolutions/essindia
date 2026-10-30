@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { safeImageUrl } from '@/lib/utils';
 
 interface UseCaseTab {
   tabName: string;
@@ -125,74 +126,48 @@ export function FmcgUseCases({ content }: { content?: FmcgUseCasesContent }) {
 
   const [activeTabIdx, setActiveTabIdx] = useState(0);
   const activeTab = tabs[activeTabIdx] || tabs[0];
+  const activeImage = safeImageUrl(activeTab?.image);
+  const showArrows = tabs.length > 1;
+  const canGoPrev = activeTabIdx > 0;
+  const canGoNext = activeTabIdx < tabs.length - 1;
 
   const tabsRef = React.useRef<HTMLDivElement>(null);
-  const [canScrollLeft, setCanScrollLeft] = useState(false);
-  const [canScrollRight, setCanScrollRight] = useState(false);
-  const [isOverflowing, setIsOverflowing] = useState(false);
-
-  const checkScroll = React.useCallback(() => {
-    if (tabsRef.current) {
-      const { scrollLeft, scrollWidth, clientWidth } = tabsRef.current;
-      const hasOverflow = scrollWidth > clientWidth + 5;
-      setIsOverflowing(hasOverflow);
-      setCanScrollLeft(hasOverflow && scrollLeft > 5);
-      setCanScrollRight(hasOverflow && scrollLeft + clientWidth < scrollWidth - 5);
-    }
-  }, []);
 
   React.useEffect(() => {
-    checkScroll();
-    const timer1 = setTimeout(checkScroll, 50);
-    const timer2 = setTimeout(checkScroll, 300);
-    window.addEventListener('resize', checkScroll);
-    return () => {
-      clearTimeout(timer1);
-      clearTimeout(timer2);
-      window.removeEventListener('resize', checkScroll);
-    };
-  }, [checkScroll, tabs]);
+    if (!tabsRef.current) return;
+    const activeEl = tabsRef.current.querySelector('[data-active="true"]') as HTMLElement | null;
+    if (!activeEl) return;
 
-  const handleScrollLeft = () => {
-    if (tabsRef.current) {
-      const scrollAmount = Math.max(150, tabsRef.current.clientWidth * 0.7);
-      tabsRef.current.scrollBy({ left: -scrollAmount, behavior: 'smooth' });
+    const container = tabsRef.current;
+    if (activeTabIdx === tabs.length - 1) {
+      container.scrollTo({ left: container.scrollWidth, behavior: 'smooth' });
+    } else if (activeTabIdx === 0) {
+      container.scrollTo({ left: 0, behavior: 'smooth' });
+    } else {
+      const containerRect = container.getBoundingClientRect();
+      const btnRect = activeEl.getBoundingClientRect();
+      const delta =
+        btnRect.left - containerRect.left + btnRect.width / 2 - containerRect.width / 2;
+      container.scrollTo({
+        left: container.scrollLeft + delta,
+        behavior: 'smooth',
+      });
     }
+  }, [activeTabIdx, tabs.length]);
+
+  const goToPrevTab = () => {
+    setActiveTabIdx((prev) => Math.max(0, prev - 1));
+    setIsCardBtnHovered(false);
   };
 
-  const handleScrollRight = () => {
-    if (tabsRef.current) {
-      const scrollAmount = Math.max(150, tabsRef.current.clientWidth * 0.7);
-      tabsRef.current.scrollBy({ left: scrollAmount, behavior: 'smooth' });
-    }
+  const goToNextTab = () => {
+    setActiveTabIdx((prev) => Math.min(tabs.length - 1, prev + 1));
+    setIsCardBtnHovered(false);
   };
 
-  const handleTabClick = (idx: number, e: React.MouseEvent<HTMLButtonElement>) => {
+  const handleTabClick = (idx: number) => {
     setActiveTabIdx(idx);
     setIsCardBtnHovered(false);
-    const btn = e.currentTarget;
-    const container = tabsRef.current;
-    if (container && btn) {
-      if (idx === tabs.length - 1) {
-        container.scrollTo({
-          left: container.scrollWidth,
-          behavior: 'smooth',
-        });
-      } else if (idx === 0) {
-        container.scrollTo({
-          left: 0,
-          behavior: 'smooth',
-        });
-      } else {
-        const containerRect = container.getBoundingClientRect();
-        const btnRect = btn.getBoundingClientRect();
-        const delta = (btnRect.left - containerRect.left + btnRect.width / 2) - (containerRect.width / 2);
-        container.scrollTo({
-          left: container.scrollLeft + delta,
-          behavior: 'smooth',
-        });
-      }
-    }
   };
 
   return (
@@ -211,17 +186,17 @@ export function FmcgUseCases({ content }: { content?: FmcgUseCasesContent }) {
 
         {/* Tab Selection Bar with Left & Right Arrows */}
         <div className="relative flex items-center justify-center gap-2 max-w-full w-full">
-          {isOverflowing && (
+          {showArrows && (
             <button
               type="button"
-              onClick={handleScrollLeft}
-              disabled={!canScrollLeft}
-              aria-hidden={!canScrollLeft}
-              tabIndex={canScrollLeft ? 0 : -1}
-              className={`w-9 h-9 rounded-full border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 hover:text-slate-900 transition-all flex items-center justify-center shrink-0 shadow-xs cursor-pointer z-10 ${
-                canScrollLeft ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'
+              onClick={goToPrevTab}
+              disabled={!canGoPrev}
+              className={`w-9 h-9 rounded-full border border-slate-200 bg-white text-slate-700 transition-all flex items-center justify-center shrink-0 shadow-xs z-10 ${
+                canGoPrev
+                  ? 'hover:bg-slate-50 hover:text-slate-900 cursor-pointer opacity-100'
+                  : 'opacity-30 cursor-not-allowed'
               }`}
-              aria-label="Previous tabs"
+              aria-label="Previous tab"
             >
               <ChevronLeft className="w-4 h-4" />
             </button>
@@ -229,10 +204,7 @@ export function FmcgUseCases({ content }: { content?: FmcgUseCasesContent }) {
 
           <div
             ref={tabsRef}
-            onScroll={checkScroll}
-            className={`flex-1 min-w-0 flex items-center gap-3 overflow-x-auto py-2 px-3 sm:px-4 flex-nowrap scroll-smooth [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden ${
-              isOverflowing ? 'justify-start' : 'justify-center'
-            }`}
+            className="flex-1 min-w-0 flex items-center gap-3 overflow-x-auto py-2 px-3 sm:px-4 flex-nowrap scroll-smooth justify-start [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"
           >
             {tabs.map((tab, idx) => {
               const isActive = idx === activeTabIdx;
@@ -240,7 +212,8 @@ export function FmcgUseCases({ content }: { content?: FmcgUseCasesContent }) {
                 <button
                   key={idx}
                   type="button"
-                  onClick={(e) => handleTabClick(idx, e)}
+                  data-active={isActive}
+                  onClick={() => handleTabClick(idx)}
                   className={`px-5 py-2.5 rounded-full text-xs sm:text-sm font-bold border transition-all duration-300 shrink-0 whitespace-nowrap cursor-pointer ${isActive
                       ? 'bg-slate-900 text-white border-slate-900'
                       : 'bg-white text-slate-700 border-slate-200 hover:bg-slate-50'
@@ -252,17 +225,17 @@ export function FmcgUseCases({ content }: { content?: FmcgUseCasesContent }) {
             })}
           </div>
 
-          {isOverflowing && (
+          {showArrows && (
             <button
               type="button"
-              onClick={handleScrollRight}
-              disabled={!canScrollRight}
-              aria-hidden={!canScrollRight}
-              tabIndex={canScrollRight ? 0 : -1}
-              className={`w-9 h-9 rounded-full border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 hover:text-slate-900 transition-all flex items-center justify-center shrink-0 shadow-xs cursor-pointer z-10 ${
-                canScrollRight ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'
+              onClick={goToNextTab}
+              disabled={!canGoNext}
+              className={`w-9 h-9 rounded-full border border-slate-200 bg-white text-slate-700 transition-all flex items-center justify-center shrink-0 shadow-xs z-10 ${
+                canGoNext
+                  ? 'hover:bg-slate-50 hover:text-slate-900 cursor-pointer opacity-100'
+                  : 'opacity-30 cursor-not-allowed'
               }`}
-              aria-label="Next tabs"
+              aria-label="Next tab"
             >
               <ChevronRight className="w-4 h-4" />
             </button>
@@ -274,13 +247,14 @@ export function FmcgUseCases({ content }: { content?: FmcgUseCasesContent }) {
           <div className="pt-4 flex flex-col lg:flex-row items-stretch rounded-3xl overflow-hidden shadow-lg border border-slate-100 min-h-[500px]">
 
             {/* Left Column (Image) */}
-            {activeTab.image && (
+            {activeImage && (
               <div className="flex-1 min-h-[300px] lg:min-h-auto relative overflow-hidden shrink-0">
                 <Image
-                  src={activeTab.image}
-                  alt={activeTab.heading}
+                  src={activeImage}
+                  alt={activeTab.heading || ''}
                   fill
                   className="object-cover"
+                  unoptimized={activeImage.startsWith('http://') || activeImage.startsWith('https://')}
                 />
               </div>
             )}

@@ -141,11 +141,11 @@ export function BlogSection({ content }: BlogSectionProps) {
                 animate: { opacity: 1, y: 0, filter: 'blur(0px)', transition: { duration: 0.8, ease: [0.22, 1, 0.36, 1] } }
               }}
               whileHover={{ y: -8, transition: { duration: 0.4, ease: [0.22, 1, 0.36, 1] } }}
-              className="flex flex-col group cursor-pointer"
+              className="flex flex-col group cursor-pointer border border-slate-200 bg-white p-4"
               onClick={() => blog.ctaUrl && blog.ctaUrl !== '#' && (window.location.href = blog.ctaUrl)}
             >
               {/* Image */}
-              <div className="rounded-[32px] overflow-hidden bg-slate-200 aspect-[16/10] mb-6 shadow-sm relative">
+              <div className="overflow-hidden bg-slate-200 aspect-[16/10] mb-4 shadow-sm relative">
                 <motion.img 
                   whileHover={{ scale: 1.05 }}
                   transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
@@ -175,7 +175,7 @@ export function BlogSection({ content }: BlogSectionProps) {
               </div>
 
               {/* Title - Black color */}
-              <h3 className="text-[20px] font-bold text-slate-900 mb-3 leading-tight tracking-tight group-hover:text-[#4A3AFF] transition-colors pr-2">
+              <h3 className="text-[20px] font-bold text-slate-900 mb-3 leading-tight tracking-tight group-hover:text-[#462294] transition-colors">
                 {blog.title}
               </h3>
               
@@ -184,8 +184,8 @@ export function BlogSection({ content }: BlogSectionProps) {
                 {blog.description}
               </p>
 
-              {/* Link */}
-              <div className="text-[#FF3B3B] text-[15px] font-bold group-hover:text-[#CC2E2E] transition-all flex items-center mt-auto cursor-pointer">
+              {/* Read More Button */}
+              <div className="mt-auto">
                 <span
                   onClick={(e) => {
                     e.stopPropagation();
@@ -193,7 +193,7 @@ export function BlogSection({ content }: BlogSectionProps) {
                       window.location.href = blog.ctaUrl;
                     }
                   }}
-                  className="flex items-center"
+                  className="inline-flex items-center text-[#462294]  text-[15px] font-bold px-5 py-2.5 cursor-pointer hover:bg-[#3a1d7a] hover:text-white transition-colors"
                 >
                   {blog.ctaText || 'Read More'}
                   <svg className="ml-2 w-4 h-4 transform group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" /></svg>

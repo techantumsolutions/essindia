@@ -150,7 +150,7 @@ export function Landing1Testimonials({ content }: { content?: Landing1Testimonia
   }, [shouldLoop, testimonials.length]);
 
   return (
-    <section className="py-20 bg-slate-50 text-slate-900 font-sans select-none border-b border-slate-200">
+    <section className="py-12 bg-slate-50 text-slate-900 font-sans select-none border-t border-b border-slate-200">
       <div className="container mx-auto px-6 max-w-5xl">
 
         {/* Header */}

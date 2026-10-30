@@ -15,9 +15,41 @@ export interface RpaCapabilitiesContent {
   primaryTitleColor?: string;
   secondaryTitleColor?: string;
   description?: string;
+  descriptionTextColor?: string;
+  bgColor?: string;
   hubSubtitle?: string;
+  hubSubtitleTextColor?: string;
   hubTitle?: string;
+  hubTitleTextColor?: string;
+  hubBgColor?: string;
+  hubBorderColor?: string;
+  mobileHubGradientFrom?: string;
+  mobileHubGradientTo?: string;
+  mobileHubSubtitleTextColor?: string;
+  mobileHubTitleTextColor?: string;
+  cardBgColor?: string;
+  cardTitleTextColor?: string;
+  cardDescriptionTextColor?: string;
+  cardIconBgColor?: string;
+  cardIconBorderColor?: string;
+  cardAccentFrom?: string;
+  cardAccentVia?: string;
+  cardAccentTo?: string;
+  connectorLineColor?: string;
+  connectorDotColor?: string;
+  connectorDotStrokeColor?: string;
   items?: CapabilityItem[];
+}
+
+interface CardColors {
+  cardBgColor: string;
+  cardTitleTextColor: string;
+  cardDescriptionTextColor: string;
+  cardIconBgColor: string;
+  cardIconBorderColor: string;
+  cardAccentFrom: string;
+  cardAccentVia: string;
+  cardAccentTo: string;
 }
 
 function renderFormattedTitle(titleText: string, primaryColor: string, secondaryColor: string) {
@@ -48,9 +80,34 @@ export function RpaCapabilities({ content }: { content?: RpaCapabilitiesContent 
   const description =
     content?.description ||
     "We don't force your processes into a rigid automation template. Our AI automation solutions are built around the way you already work, where RPA and AI operate as a spectrum, not a choice.";
+  const descriptionTextColor = content?.descriptionTextColor || '#64748b';
+  const bgColor = content?.bgColor || '#FAFAFD';
 
   const hubSubtitle = content?.hubSubtitle !== undefined && content?.hubSubtitle !== '' ? content.hubSubtitle : 'ESS INDIA';
   const hubTitle = content?.hubTitle !== undefined && content?.hubTitle !== '' ? content.hubTitle : 'RPA Core Offerings';
+  const hubSubtitleTextColor = content?.hubSubtitleTextColor || '#9333EA';
+  const hubTitleTextColor = content?.hubTitleTextColor || '#1E1B4B';
+  const hubBgColor = content?.hubBgColor || '#ffffff';
+  const hubBorderColor = content?.hubBorderColor || '#f3e8ff';
+  const mobileHubGradientFrom = content?.mobileHubGradientFrom || '#581c87';
+  const mobileHubGradientTo = content?.mobileHubGradientTo || '#1e1b4b';
+  const mobileHubSubtitleTextColor = content?.mobileHubSubtitleTextColor || '#d8b4fe';
+  const mobileHubTitleTextColor = content?.mobileHubTitleTextColor || '#ffffff';
+
+  const cardColors: CardColors = {
+    cardBgColor: content?.cardBgColor || '#ffffff',
+    cardTitleTextColor: content?.cardTitleTextColor || '#0f172a',
+    cardDescriptionTextColor: content?.cardDescriptionTextColor || '#64748b',
+    cardIconBgColor: content?.cardIconBgColor || '#faf5ff',
+    cardIconBorderColor: content?.cardIconBorderColor || '#f3e8ff',
+    cardAccentFrom: content?.cardAccentFrom || '#9333ea',
+    cardAccentVia: content?.cardAccentVia || '#6366f1',
+    cardAccentTo: content?.cardAccentTo || '#7e22ce',
+  };
+
+  const connectorLineColor = content?.connectorLineColor || '#C084FC';
+  const connectorDotColor = content?.connectorDotColor || '#9333EA';
+  const connectorDotStrokeColor = content?.connectorDotStrokeColor || '#F3E8FF';
 
   const defaultItems: CapabilityItem[] = [
     {
@@ -96,10 +153,12 @@ export function RpaCapabilities({ content }: { content?: RpaCapabilitiesContent 
   const rightBottomItem = items[5];
 
   return (
-    <section className="py-14 bg-[#FAFAFD] font-sans border-b overflow-hidden relative">
+    <section
+      className="py-14 font-sans border-t border-b border-slate-100 overflow-hidden relative"
+      style={{ backgroundColor: bgColor }}
+    >
       <div className="container mx-auto max-w-7xl px-4 sm:px-6">
 
-        {/* Header Block */}
         <div className="max-w-4xl mx-auto text-center space-y-4 mb-14 md:mb-20">
           {title && (
             <motion.h2
@@ -118,102 +177,100 @@ export function RpaCapabilities({ content }: { content?: RpaCapabilitiesContent 
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.4, delay: 0.1 }}
-              className="text-slate-500 font-normal text-xs sm:text-sm md:text-base leading-relaxed max-w-2xl mx-auto"
+              className="font-normal text-xs sm:text-sm md:text-base leading-relaxed max-w-2xl mx-auto [&_*]:!text-inherit"
+              style={{ color: descriptionTextColor }}
             >
               <FormattedText content={description} />
             </motion.div>
           )}
         </div>
 
-        {/* Desktop View: Perfectly Aligned 6-Orbital Hub & Spoke Layout */}
         <div className="hidden lg:block relative w-full max-w-[1020px] h-[680px] mx-auto select-none">
 
-          {/* SVG Connecting Lines Overlay */}
           <div className="absolute inset-0 pointer-events-none z-0">
             <svg className="w-full h-full" viewBox="0 0 1020 680" fill="none">
-              {/* Line 1: Center (510, 340) -> Top Center Card Bottom (510, 180) */}
-              <line x1="510" y1="340" x2="510" y2="180" stroke="#C084FC" strokeWidth="1.5" strokeDasharray="5 5" />
-              <circle cx="510" cy="180" r="4.5" fill="#9333EA" stroke="#F3E8FF" strokeWidth="2" />
+              <line x1="510" y1="340" x2="510" y2="180" stroke={connectorLineColor} strokeWidth="1.5" strokeDasharray="5 5" />
+              <circle cx="510" cy="180" r="4.5" fill={connectorDotColor} stroke={connectorDotStrokeColor} strokeWidth="2" />
 
-              {/* Line 2: Center (510, 340) -> Left Top Card Right (320, 210) */}
-              <line x1="510" y1="340" x2="320" y2="210" stroke="#C084FC" strokeWidth="1.5" strokeDasharray="5 5" />
-              <circle cx="320" cy="210" r="4.5" fill="#9333EA" stroke="#F3E8FF" strokeWidth="2" />
+              <line x1="510" y1="340" x2="320" y2="210" stroke={connectorLineColor} strokeWidth="1.5" strokeDasharray="5 5" />
+              <circle cx="320" cy="210" r="4.5" fill={connectorDotColor} stroke={connectorDotStrokeColor} strokeWidth="2" />
 
-              {/* Line 3: Center (510, 340) -> Right Top Card Left (700, 210) */}
-              <line x1="510" y1="340" x2="700" y2="210" stroke="#C084FC" strokeWidth="1.5" strokeDasharray="5 5" />
-              <circle cx="700" cy="210" r="4.5" fill="#9333EA" stroke="#F3E8FF" strokeWidth="2" />
+              <line x1="510" y1="340" x2="700" y2="210" stroke={connectorLineColor} strokeWidth="1.5" strokeDasharray="5 5" />
+              <circle cx="700" cy="210" r="4.5" fill={connectorDotColor} stroke={connectorDotStrokeColor} strokeWidth="2" />
 
-              {/* Line 4: Center (510, 340) -> Left Bottom Card Right (320, 470) */}
-              <line x1="510" y1="340" x2="320" y2="470" stroke="#C084FC" strokeWidth="1.5" strokeDasharray="5 5" />
-              <circle cx="320" cy="470" r="4.5" fill="#9333EA" stroke="#F3E8FF" strokeWidth="2" />
+              <line x1="510" y1="340" x2="320" y2="470" stroke={connectorLineColor} strokeWidth="1.5" strokeDasharray="5 5" />
+              <circle cx="320" cy="470" r="4.5" fill={connectorDotColor} stroke={connectorDotStrokeColor} strokeWidth="2" />
 
-              {/* Line 5: Center (510, 340) -> Bottom Center Card Top (510, 500) */}
-              <line x1="510" y1="340" x2="510" y2="500" stroke="#C084FC" strokeWidth="1.5" strokeDasharray="5 5" />
-              <circle cx="510" cy="500" r="4.5" fill="#9333EA" stroke="#F3E8FF" strokeWidth="2" />
+              <line x1="510" y1="340" x2="510" y2="500" stroke={connectorLineColor} strokeWidth="1.5" strokeDasharray="5 5" />
+              <circle cx="510" cy="500" r="4.5" fill={connectorDotColor} stroke={connectorDotStrokeColor} strokeWidth="2" />
 
-              {/* Line 6: Center (510, 340) -> Right Bottom Card Left (700, 470) */}
-              <line x1="510" y1="340" x2="700" y2="470" stroke="#C084FC" strokeWidth="1.5" strokeDasharray="5 5" />
-              <circle cx="700" cy="470" r="4.5" fill="#9333EA" stroke="#F3E8FF" strokeWidth="2" />
+              <line x1="510" y1="340" x2="700" y2="470" stroke={connectorLineColor} strokeWidth="1.5" strokeDasharray="5 5" />
+              <circle cx="700" cy="470" r="4.5" fill={connectorDotColor} stroke={connectorDotStrokeColor} strokeWidth="2" />
             </svg>
           </div>
 
-          {/* Center Hub Node */}
-          <div className="absolute top-[50%] left-[50%] -translate-x-1/2 -translate-y-1/2 w-48 h-48 rounded-full bg-white border border-purple-150 shadow-[0_0_40px_rgba(147,51,234,0.12)] flex flex-col items-center justify-center p-4 text-center z-20 group hover:scale-105 transition-transform duration-300">
+          <div
+            className="absolute top-[50%] left-[50%] -translate-x-1/2 -translate-y-1/2 w-48 h-48 rounded-full shadow-[0_0_40px_rgba(147,51,234,0.12)] flex flex-col items-center justify-center p-4 text-center z-20 group hover:scale-105 transition-transform duration-300 border"
+            style={{ backgroundColor: hubBgColor, borderColor: hubBorderColor }}
+          >
             {hubSubtitle && (
-              <span className="text-[10px] uppercase font-black tracking-widest text-[#9333EA] mb-1">
+              <span
+                className="text-[10px] uppercase font-black tracking-widest mb-1"
+                style={{ color: hubSubtitleTextColor }}
+              >
                 {hubSubtitle}
               </span>
             )}
             {hubTitle && (
-              <h3 className="text-lg font-black text-[#1E1B4B] leading-tight text-center">
+              <h3
+                className="text-lg font-black leading-tight text-center"
+                style={{ color: hubTitleTextColor }}
+              >
                 {hubTitle}
               </h3>
             )}
           </div>
 
-          {/* Card 1: Top Center */}
           <div className="absolute top-0 left-[50%] -translate-x-1/2 z-10 w-[340px] h-[180px]">
-            <OrbitalCard item={topCenterItem} index={1} />
+            <OrbitalCard item={topCenterItem} index={1} colors={cardColors} />
           </div>
-
-          {/* Card 2: Left Top */}
           <div className="absolute top-[120px] left-0 z-10 w-[320px] h-[180px]">
-            <OrbitalCard item={leftTopItem} index={2} />
+            <OrbitalCard item={leftTopItem} index={2} colors={cardColors} />
           </div>
-
-          {/* Card 3: Right Top */}
           <div className="absolute top-[120px] right-0 z-10 w-[320px] h-[180px]">
-            <OrbitalCard item={rightTopItem} index={3} />
+            <OrbitalCard item={rightTopItem} index={3} colors={cardColors} />
           </div>
-
-          {/* Card 4: Left Bottom */}
           <div className="absolute bottom-[120px] left-0 z-10 w-[320px] h-[180px]">
-            <OrbitalCard item={leftBottomItem} index={4} />
+            <OrbitalCard item={leftBottomItem} index={4} colors={cardColors} />
           </div>
-
-          {/* Card 5: Bottom Center */}
           <div className="absolute bottom-0 left-[50%] -translate-x-1/2 z-10 w-[340px] h-[180px]">
-            <OrbitalCard item={bottomCenterItem} index={5} />
+            <OrbitalCard item={bottomCenterItem} index={5} colors={cardColors} />
           </div>
-
-          {/* Card 6: Right Bottom */}
           <div className="absolute bottom-[120px] right-0 z-10 w-[320px] h-[180px]">
-            <OrbitalCard item={rightBottomItem} index={6} />
+            <OrbitalCard item={rightBottomItem} index={6} colors={cardColors} />
           </div>
-
         </div>
 
-        {/* Mobile & Tablet View: Clean Card Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 lg:hidden">
-          {/* Mobile Center Hub Banner */}
-          <div className="sm:col-span-2 bg-gradient-to-r from-purple-900 to-indigo-950 rounded-2xl p-6 text-center text-white shadow-lg mb-2">
+          <div
+            className="sm:col-span-2 rounded-2xl p-6 text-center shadow-lg mb-2"
+            style={{
+              backgroundImage: `linear-gradient(to right, ${mobileHubGradientFrom}, ${mobileHubGradientTo})`,
+            }}
+          >
             {hubSubtitle && (
-              <span className="text-[10px] uppercase font-black tracking-widest text-purple-300 block mb-1">
+              <span
+                className="text-[10px] uppercase font-black tracking-widest block mb-1"
+                style={{ color: mobileHubSubtitleTextColor }}
+              >
                 {hubSubtitle}
               </span>
             )}
             {hubTitle && (
-              <h3 className="text-xl font-extrabold text-white">
+              <h3
+                className="text-xl font-extrabold"
+                style={{ color: mobileHubTitleTextColor }}
+              >
                 {hubTitle}
               </h3>
             )}
@@ -221,7 +278,7 @@ export function RpaCapabilities({ content }: { content?: RpaCapabilitiesContent 
 
           {items.map((item, idx) => (
             <div key={idx} className="h-[200px]">
-              <OrbitalCard item={item} index={idx + 1} />
+              <OrbitalCard item={item} index={idx + 1} colors={cardColors} />
             </div>
           ))}
         </div>
@@ -231,7 +288,15 @@ export function RpaCapabilities({ content }: { content?: RpaCapabilitiesContent 
   );
 }
 
-function OrbitalCard({ item, index }: { item: CapabilityItem; index: number }) {
+function OrbitalCard({
+  item,
+  index,
+  colors,
+}: {
+  item: CapabilityItem;
+  index: number;
+  colors: CardColors;
+}) {
   const iconSrc = typeof item?.icon === 'string' ? item.icon.trim() : '';
 
   return (
@@ -240,10 +305,20 @@ function OrbitalCard({ item, index }: { item: CapabilityItem; index: number }) {
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
       transition={{ duration: 0.4, delay: index * 0.05 }}
-      className="bg-white rounded-2xl p-5 border border-purple-100/80 shadow-[0_8px_25px_-5px_rgba(107,33,168,0.06)] relative overflow-hidden flex flex-col items-center text-center transition-all duration-300 hover:shadow-[0_20px_40px_-5px_rgba(107,33,168,0.14)] hover:-translate-y-1 group z-10 h-full justify-between"
+      className="rounded-2xl p-5 border shadow-[0_8px_25px_-5px_rgba(107,33,168,0.06)] relative overflow-hidden flex flex-col items-center text-center transition-all duration-300 hover:shadow-[0_20px_40px_-5px_rgba(107,33,168,0.14)] hover:-translate-y-1 group z-10 h-full justify-between"
+      style={{
+        backgroundColor: colors.cardBgColor,
+        borderColor: colors.cardIconBorderColor,
+      }}
     >
-      {/* Icon Box */}
-      <div className="w-11 h-11 rounded-2xl bg-purple-50 border border-purple-100 flex items-center justify-center text-purple-600 mb-2.5 shadow-sm group-hover:scale-110 group-hover:bg-purple-100/60 transition-all duration-300 shrink-0">
+      <div
+        className="w-11 h-11 rounded-2xl flex items-center justify-center mb-2.5 shadow-sm group-hover:scale-110 transition-all duration-300 shrink-0 border"
+        style={{
+          backgroundColor: colors.cardIconBgColor,
+          borderColor: colors.cardIconBorderColor,
+          color: colors.cardAccentFrom,
+        }}
+      >
         {iconSrc ? (
           /* eslint-disable-next-line @next/next/no-img-element */
           <img
@@ -252,25 +327,36 @@ function OrbitalCard({ item, index }: { item: CapabilityItem; index: number }) {
             className="w-5 h-5 object-contain"
           />
         ) : (
-          <DefaultCapabilityIcon index={index} />
+          <DefaultCapabilityIcon index={index} color={colors.cardAccentFrom} />
         )}
       </div>
 
-      {/* Title & Description */}
       <div className="space-y-1 mb-1 flex-1 flex flex-col justify-center">
-        <h4 className="text-sm font-extrabold text-slate-900 leading-snug line-clamp-1">
+        <h4
+          className="text-sm font-extrabold leading-snug line-clamp-1"
+          style={{ color: colors.cardTitleTextColor }}
+        >
           {item.title}
         </h4>
-        <FormattedText content={item.description} className="text-xs text-slate-500 font-normal leading-relaxed line-clamp-3" />
+        <div
+          className="text-xs font-normal leading-relaxed line-clamp-3 [&_*]:!text-inherit"
+          style={{ color: colors.cardDescriptionTextColor }}
+        >
+          <FormattedText content={item.description} />
+        </div>
       </div>
 
-      {/* Absolute Bottom Purple Gradient Accent Line */}
-      <div className="absolute bottom-0 left-0 right-0 h-1.5 bg-gradient-to-r from-purple-600 via-indigo-500 to-purple-700 rounded-b-2xl opacity-90 group-hover:opacity-100 transition-opacity duration-300" />
+      <div
+        className="absolute bottom-0 left-0 right-0 h-1.5 rounded-b-2xl opacity-90 group-hover:opacity-100 transition-opacity duration-300"
+        style={{
+          backgroundImage: `linear-gradient(to right, ${colors.cardAccentFrom}, ${colors.cardAccentVia}, ${colors.cardAccentTo})`,
+        }}
+      />
     </motion.div>
   );
 }
 
-function DefaultCapabilityIcon({ index }: { index: number }) {
+function DefaultCapabilityIcon({ index, color }: { index: number; color: string }) {
   const iconPaths = [
     <path key="1" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z M15 12a3 3 0 11-6 0 3 3 0 016 0z" />,
     <path key="2" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />,
@@ -281,7 +367,7 @@ function DefaultCapabilityIcon({ index }: { index: number }) {
   ];
 
   return (
-    <svg className="w-5 h-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" style={{ color }}>
       {iconPaths[(index - 1) % iconPaths.length]}
     </svg>
   );

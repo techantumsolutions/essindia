@@ -55,7 +55,7 @@ export function RpaOverviewLogos({ content }: { content?: RpaOverviewLogosConten
               {duplicatedLogos.map((logo, idx) => (
                 <div
                   key={idx}
-                  className="relative w-36 h-14 sm:w-44 sm:h-16 md:w-52 md:h-20 shrink-0 select-none flex items-center justify-center"
+                  className="relative w-32 h-16 shrink-0 select-none flex items-center justify-center"
                 >
                   {logo.image && (
                     <img

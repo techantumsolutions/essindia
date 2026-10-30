@@ -20,6 +20,10 @@ interface IndustryContent {
   subheading?: string;
   description?: string;
   industries?: Industry[];
+  bgColor?: string;
+  headingTextColor?: string;
+  subheadingTextColor?: string;
+  descriptionTextColor?: string;
   buttonText?: string;
   buttonBgColor?: string;
   buttonHoverBgColor?: string;
@@ -69,6 +73,11 @@ export function IndustrySection({ content }: IndustrySectionProps) {
   const description = content?.description || "From manufacturing to services, ESS understands the workflows behind real business operations. We infuse our extensive industry expertise into every solution, tailoring our approach to the specific realities of each industry rather than relying on generic software thinking.";
   const industries = content?.industries || defaultIndustries;
 
+  const bgColor = content?.bgColor || '#462885';
+  const headingTextColor = content?.headingTextColor || '#ffffff';
+  const subheadingTextColor = content?.subheadingTextColor || 'rgba(255,255,255,0.9)';
+  const descriptionTextColor = content?.descriptionTextColor || 'rgba(255,255,255,0.7)';
+
   const btnText = content?.buttonText || content?.viewAllCta?.label || "View all INDUSTRIES";
   const btnUrl = content?.buttonUrl || content?.viewAllCta?.url || "/industries";
   const btnFormType = (content?.buttonFormType || content?.viewAllCta?.formType || '') as CtaFormType;
@@ -116,26 +125,33 @@ export function IndustrySection({ content }: IndustrySectionProps) {
   };
 
   return (
-    <section className="py-14 bg-[#462885] relative z-10 overflow-hidden">
+    <section className="py-14 relative z-10 overflow-hidden" style={{ backgroundColor: bgColor }}>
       {/* Background Pattern */}
       <div className="absolute inset-0 opacity-5 pointer-events-none" style={{ backgroundImage: 'radial-gradient(white 1px, transparent 1px)', backgroundSize: '30px 30px' }} />
       
       <div className="container mx-auto px-4 md:px-8 max-w-7xl relative z-10">
         
         {/* Text Header Content */}
-        <div className="flex flex-col items-center text-center mb-12 max-w-4xl mx-auto text-white">
+        <div className="flex flex-col items-center text-center mb-12 max-w-4xl mx-auto">
           <TextReveal 
             as="h2"
             text={heading}
             className="text-4xl md:text-5xl font-bold tracking-tight mb-6 justify-center"
+            style={{ color: headingTextColor }}
           />
           <MotionSection variant="fadeUp" delay={0.3}>
-            <h3 className="text-xl md:text-[24px] font-medium mb-6 text-white/90">
+            <h3
+              className="text-xl md:text-[24px] font-medium mb-6"
+              style={{ color: subheadingTextColor }}
+            >
               {subheading}
             </h3>
           </MotionSection>
           <MotionSection variant="fadeUp" delay={0.4}>
-            <p className="text-[14px] md:text-[15px] font-normal leading-relaxed text-white/70 max-w-3xl tracking-wide">
+            <p
+              className="text-[14px] md:text-[15px] font-normal leading-relaxed max-w-3xl tracking-wide"
+              style={{ color: descriptionTextColor }}
+            >
               {description}
             </p>
           </MotionSection>
@@ -148,7 +164,8 @@ export function IndustrySection({ content }: IndustrySectionProps) {
             <button
               onClick={() => scroll('left')}
               aria-label="Scroll Left"
-              className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-3 md:-translate-x-4 lg:-translate-x-8 xl:-translate-x-14 z-20 w-11 h-11 rounded-full bg-white/90 hover:bg-white text-[#462885] shadow-lg flex items-center justify-center transition-all duration-300 hover:scale-110 active:scale-95 cursor-pointer border border-slate-100"
+              className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-3 md:-translate-x-4 lg:-translate-x-8 xl:-translate-x-14 z-20 w-11 h-11 rounded-full bg-white/90 hover:bg-white shadow-lg flex items-center justify-center transition-all duration-300 hover:scale-110 active:scale-95 cursor-pointer border border-slate-100"
+              style={{ color: bgColor }}
             >
               <ChevronLeft className="w-6 h-6" />
             </button>
@@ -159,7 +176,8 @@ export function IndustrySection({ content }: IndustrySectionProps) {
             <button
               onClick={() => scroll('right')}
               aria-label="Scroll Right"
-              className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-3 md:translate-x-4 lg:translate-x-8 xl:translate-x-14 z-20 w-11 h-11 rounded-full bg-white/90 hover:bg-white text-[#462885] shadow-lg flex items-center justify-center transition-all duration-300 hover:scale-110 active:scale-95 cursor-pointer border border-slate-100"
+              className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-3 md:translate-x-4 lg:translate-x-8 xl:translate-x-14 z-20 w-11 h-11 rounded-full bg-white/90 hover:bg-white shadow-lg flex items-center justify-center transition-all duration-300 hover:scale-110 active:scale-95 cursor-pointer border border-slate-100"
+              style={{ color: bgColor }}
             >
               <ChevronRight className="w-6 h-6" />
             </button>
@@ -203,7 +221,11 @@ export function IndustrySection({ content }: IndustrySectionProps) {
                 
                 {/* Text Container */}
                 <div className="p-8 flex flex-col flex-1">
-                  <h4 className="text-[17px] font-bold text-slate-900 mb-3 group-hover:text-[#462885] transition-colors">
+                  <h4
+                    className="text-[17px] font-bold text-slate-900 mb-3 transition-colors"
+                    onMouseEnter={(e) => { e.currentTarget.style.color = bgColor; }}
+                    onMouseLeave={(e) => { e.currentTarget.style.color = ''; }}
+                  >
                     {ind.name}
                   </h4>
                   <p className="text-[13px] text-slate-500 leading-relaxed">

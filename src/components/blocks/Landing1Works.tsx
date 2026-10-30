@@ -155,8 +155,8 @@ export function Landing1Works({ content }: { content?: Landing1WorksContent }) {
         {/* Header */}
         <div className="text-center max-w-3xl mx-auto mb-16 space-y-4">
           {data.badge && (
-            <span className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full text-xs font-semibold tracking-wider text-indigo-600 bg-indigo-50 border border-indigo-100 uppercase">
-              <span className="w-1.5 h-1.5 rounded-full bg-indigo-600 animate-pulse" />
+            <span className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full text-xs font-semibold tracking-wider text-[#462294] bg-indigo-50 border border-indigo-100 uppercase">
+              <span className="w-1.5 h-1.5 rounded-full bg-[#462294] animate-pulse" />
               {data.badge}
             </span>
           )}
@@ -183,7 +183,7 @@ export function Landing1Works({ content }: { content?: Landing1WorksContent }) {
               type="button"
               onClick={() => scrollByCard('left')}
               aria-label="Previous works"
-              className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-1 md:-translate-x-3 lg:-translate-x-14 xl:-translate-x-16 z-20 w-10 h-10 rounded-full bg-white border border-indigo-100 text-indigo-600 shadow-md flex items-center justify-center hover:bg-indigo-600 hover:text-white transition-colors cursor-pointer"
+              className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-1 md:-translate-x-3 lg:-translate-x-14 xl:-translate-x-16 z-20 w-10 h-10 rounded-full bg-white border border-indigo-100 text-[#462294] shadow-md flex items-center justify-center hover:bg-[#462294] hover:text-white transition-colors cursor-pointer"
             >
               <ChevronLeft className="w-5 h-5" />
             </button>
@@ -193,7 +193,7 @@ export function Landing1Works({ content }: { content?: Landing1WorksContent }) {
               type="button"
               onClick={() => scrollByCard('right')}
               aria-label="Next works"
-              className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-1 md:translate-x-3 lg:translate-x-14 xl:translate-x-16 z-20 w-10 h-10 rounded-full bg-white border border-indigo-100 text-indigo-600 shadow-md flex items-center justify-center hover:bg-indigo-600 hover:text-white transition-colors cursor-pointer"
+              className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-1 md:translate-x-3 lg:translate-x-14 xl:translate-x-16 z-20 w-10 h-10 rounded-full bg-white border border-indigo-100 text-[#462294] shadow-md flex items-center justify-center hover:bg-[#462294] hover:text-white transition-colors cursor-pointer"
             >
               <ChevronRight className="w-5 h-5" />
             </button>
@@ -226,7 +226,7 @@ export function Landing1Works({ content }: { content?: Landing1WorksContent }) {
                 {/* Details */}
                 <div className="flex flex-col flex-grow">
                   {/* Category Pill */}
-                  <span className="inline-flex px-3 py-1 rounded-full text-[10px] font-semibold text-white bg-indigo-600 uppercase w-fit mb-3.5 tracking-wide">
+                  <span className="inline-flex px-3 py-1 rounded-full text-[10px] font-semibold text-white bg-[#462294] uppercase w-fit mb-3.5 tracking-wide">
                     {item.category}
                   </span>
 
@@ -240,7 +240,7 @@ export function Landing1Works({ content }: { content?: Landing1WorksContent }) {
                     <span className="text-xs text-slate-400 font-medium tracking-wide">
                       {item.date}
                     </span>
-                    <ArrowRight className="w-5 h-5 text-indigo-500 group-hover:translate-x-1.5 transition-transform duration-300" />
+                    <ArrowRight className="w-5 h-5 text-[#462294] group-hover:translate-x-1.5 transition-transform duration-300" />
                   </div>
                 </div>
               </Link>

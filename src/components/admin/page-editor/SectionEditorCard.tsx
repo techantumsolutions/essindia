@@ -242,6 +242,14 @@ const DEFAULT_BLOG_CONTENT: Record<string, any> = {
   ]
 };
 
+const DEFAULT_CASE_STUDY_LIST_CONTENT: Record<string, any> = {
+  badgeText: 'Case Studies',
+  headingText: 'Explore our knowledge hub',
+  subheadingText:
+    'Explore how Maathra has helped enterprises worldwide transform their operations with Oracle APEX and Cloud solutions.',
+  bgImage: '/Case-studies/banner.png',
+};
+
 const DEFAULT_BLOG_LIST_CONTENT: Record<string, any> = {
   badgeText: 'Latest Blogs',
   headingText: 'Press & Media Resources',
@@ -521,7 +529,16 @@ const DEFAULT_FMCG_OVERVIEW_CONTENT: Record<string, any> = {
 };
 
 const DEFAULT_FMCG_TABS_CONTENT: Record<string, any> = {
+  bgColor: '#131e3d',
   title: 'FMCG BI Personas',
+  titleTextColor: '#ffffff',
+  headingTextColor: '#ffffff',
+  subheadingTextColor: '#cbd5e1',
+  questionTextColor: '#2a2b6a',
+  tabBgColor: '#18264d',
+  tabTextColor: '#ffffff',
+  activeTabBgColor: '#fcc42c',
+  activeTabTextColor: '#131e3d',
   tabs: [
     {
       tabName: 'FMCG CEO',
@@ -1152,6 +1169,15 @@ const DEFAULT_BI_TITLE_CONTENT: Record<string, any> = {
 };
 
 const DEFAULT_BI_TABS_CONTENT: Record<string, any> = {
+  tabsBgColor: '#0e1a43',
+  bgColor: '#F4F0FD',
+  title: '',
+  titleTextColor: '#ffffff',
+  tabNameTextColor: '#ffffff',
+  tabDescTextColor: '#ffffff',
+  headingTextColor: '#0f172a',
+  subheadingTextColor: '#475569',
+  questionTextColor: '#1e293b',
   tabs: [
     {
       tabName: 'Leadership (CEOs / Directors)',
@@ -1340,8 +1366,25 @@ const DEFAULT_BI_INDUSTRIES_CONTENT: Record<string, any> = {
 };
 
 const DEFAULT_BI_INDUSTRY_SERVICES_CONTENT: Record<string, any> = {
+  bgColor: '#ffffff',
   title: 'Tailored Services Across Industries',
+  titleTextColor: '#4c327f',
   subtitle: 'BI services deliver value across industries, but its real impact comes from how well insights are aligned with industry-specific challenges, metrics, and decision cycles. Our BI solutions built on Power BI are designed to reflect how each industry actually operates.',
+  subtitleTextColor: '#6b7280',
+  activeTabBgColor: '#4c327f',
+  activeTabTextColor: '#ffffff',
+  inactiveTabBgColor: '#ffffff',
+  inactiveTabTextColor: '#475569',
+  arrowBgColor: '#ffffff',
+  arrowTextColor: '#4c327f',
+  arrowHoverBgColor: '#4c327f',
+  arrowHoverTextColor: '#ffffff',
+  cardBgColor: '#ffffff',
+  contentPanelBgColor: '#4c327f',
+  tabTitleTextColor: '#ffffff',
+  pointTextColor: '#f3e8ff',
+  checkIconBgColor: '#ffffff',
+  checkIconColor: '#4c327f',
   tabs: [
     {
       tabName: 'Retail',
@@ -1563,10 +1606,33 @@ const DEFAULT_RPA_BENEFITS_CONTENT: Record<string, any> = {
 };
 
 const DEFAULT_RPA_CAPABILITIES_CONTENT: Record<string, any> = {
+  bgColor: '#FAFAFD',
   title: 'ESS RPA Offerings / Capabilities',
+  primaryTitleColor: '#6B21A8',
+  secondaryTitleColor: '#1E1B4B',
   description: 'From consulting and design to bot deployment and maintenance, we offer end-to-end RPA capabilities.',
-  hubTitle: 'RPA Core Offerings',
+  descriptionTextColor: '#64748b',
   hubSubtitle: 'ESS INDIA',
+  hubSubtitleTextColor: '#9333EA',
+  hubTitle: 'RPA Core Offerings',
+  hubTitleTextColor: '#1E1B4B',
+  hubBgColor: '#ffffff',
+  hubBorderColor: '#f3e8ff',
+  mobileHubGradientFrom: '#581c87',
+  mobileHubGradientTo: '#1e1b4b',
+  mobileHubSubtitleTextColor: '#d8b4fe',
+  mobileHubTitleTextColor: '#ffffff',
+  cardBgColor: '#ffffff',
+  cardTitleTextColor: '#0f172a',
+  cardDescriptionTextColor: '#64748b',
+  cardIconBgColor: '#faf5ff',
+  cardIconBorderColor: '#f3e8ff',
+  cardAccentFrom: '#9333ea',
+  cardAccentVia: '#6366f1',
+  cardAccentTo: '#7e22ce',
+  connectorLineColor: '#C084FC',
+  connectorDotColor: '#9333EA',
+  connectorDotStrokeColor: '#F3E8FF',
   items: [
     { title: 'RPA Advisory', description: 'Identify and analyze workflows to construct a feasibility roadmap for robotic automation.', icon: '/RPA-Robotic Process Automation (RPA)/problem-process-solution_svgrepo.com.png' },
     { title: 'Bot Development', description: 'Build resilient software bots using modern RPA tools to mimic user clicks and actions.', icon: '/RPA-Robotic Process Automation (RPA)/exchange-personel_svgrepo.com.png' },
@@ -1645,7 +1711,14 @@ const DEFAULT_ORACLE_APEX_WHY_MIGRATE_CONTENT: Record<string, any> = {
 };
 
 const DEFAULT_ORACLE_APEX_DELIVERABLES_CONTENT: Record<string, any> = {
+  bgColor: '#2D1A70',
+  dividerColor: '#ffffff',
   leftTitle: 'WHAT WE DELIVER',
+  leftTitleTextColor: '#ffffff',
+  leftItemBgColor: '#ffffff',
+  leftItemTextColor: '#2D1A70',
+  leftIconBgColor: '#f1f5f9',
+  leftIconColor: '#2D1A70',
   leftItems: [
     { icon: '/Migration-Oracle Forms to Oracle APEX/Frame 267.png', text: 'Complete Oracle Forms to Oracle APEX migration' },
     { icon: '/Migration-Oracle Forms to Oracle APEX/database-02_svgrepo.com.png', text: 'Secure and optimized Database migration' },
@@ -1654,6 +1727,11 @@ const DEFAULT_ORACLE_APEX_DELIVERABLES_CONTENT: Record<string, any> = {
     { icon: '/Migration-Oracle Forms to Oracle APEX/cloud-upload_svgrepo.com.png', text: 'Seamless Cloud deployment' }
   ],
   rightTitle: 'BUSINESS IMPACT',
+  rightTitleTextColor: '#ffffff',
+  rightItemBgColor: '#d4dafa',
+  rightItemTextColor: '#2D1A70',
+  rightIconBgColor: '#f1f5f9',
+  rightIconColor: '#2D1A70',
   rightItems: [
     { icon: '/Migration-Oracle Forms to Oracle APEX/settings_svgrepo.com.png', text: 'Reduced maintenance overhead' },
     { icon: 'Eye', text: 'Improved operational visibility' },
@@ -1680,8 +1758,18 @@ const DEFAULT_ABOUT_US_WHY_ESS_CONTENT: Record<string, any> = {
 };
 
 const DEFAULT_ERP_FEATURES_CONTENT: Record<string, any> = {
+  bgColor: '#F8F5FE',
+  cardBgColor: '#ffffff',
   heading: 'Why 1,500+ Enterprises Chose ebizframe.ai',
+  headingColor: '#0f172a',
+  headingSecondaryColor: '#6B26D9',
   subheading: 'Select standard version or customizable version',
+  subheadingTextColor: '#64748b',
+  descriptionTextColor: '#334155',
+  activeTabBgColor: '#c7d2fe',
+  activeTabTextColor: '#ffffff',
+  inactiveTabBgColor: '#ffffff',
+  inactiveTabTextColor: '#1e293b',
   features: [
     {
       id: 'live-90-days',
@@ -2312,6 +2400,8 @@ export function SectionEditorCard({
         baseSchema = DEFAULT_PRIVACY_POLICY_CONTENT as Record<string, JsonValue>;
       } else if (section.type === 'blog-list-block') {
         baseSchema = DEFAULT_BLOG_LIST_CONTENT as Record<string, JsonValue>;
+      } else if (section.type === 'case-study-list') {
+        baseSchema = DEFAULT_CASE_STUDY_LIST_CONTENT as Record<string, JsonValue>;
       } else if (section.type === 'testimonials-block') {
         baseSchema = DEFAULT_TESTIMONIALS_CONTENT as Record<string, JsonValue>;
       } else if (section.type === 'contact-hero') {
@@ -2509,6 +2599,128 @@ export function SectionEditorCard({
       });
     }
 
+    if (section.type === 'industries') {
+      if (!finalMerged.bgColor) finalMerged.bgColor = '#462885';
+      if (!finalMerged.headingTextColor) finalMerged.headingTextColor = '#ffffff';
+      if (!finalMerged.subheadingTextColor) finalMerged.subheadingTextColor = '#f3eefc';
+      if (!finalMerged.descriptionTextColor) finalMerged.descriptionTextColor = '#d8d0ea';
+    }
+
+    if (section.type === 'landing2-carousel') {
+      if (!finalMerged.bgColor) finalMerged.bgColor = '#ffffff';
+      if (!finalMerged.titleTextColor) finalMerged.titleTextColor = '#0f172a';
+      if (!finalMerged.cardGradientFrom) finalMerged.cardGradientFrom = '#6e22d9';
+      if (!finalMerged.cardGradientTo) finalMerged.cardGradientTo = '#8c2bee';
+      if (!finalMerged.contentBoxBgColor) finalMerged.contentBoxBgColor = '#ffcc29';
+      if (!finalMerged.badgeTextColor) finalMerged.badgeTextColor = '#0f172a';
+      if (!finalMerged.slideTitleTextColor) finalMerged.slideTitleTextColor = '#ffffff';
+      if (!finalMerged.descriptionTextColor) finalMerged.descriptionTextColor = '#0f172a';
+      if (!finalMerged.arrowBgColor) finalMerged.arrowBgColor = '#5d2bb9';
+      if (!finalMerged.arrowHoverBgColor) finalMerged.arrowHoverBgColor = '#4d229e';
+      if (!finalMerged.arrowTextColor) finalMerged.arrowTextColor = '#ffffff';
+      if (!finalMerged.dotActiveColor) finalMerged.dotActiveColor = '#5d2bb9';
+      if (!finalMerged.dotInactiveColor) finalMerged.dotInactiveColor = '#e9d5ff';
+    }
+
+    if (section.type === 'bi-industry-services') {
+      const d = DEFAULT_BI_INDUSTRY_SERVICES_CONTENT;
+      if (!finalMerged.bgColor) finalMerged.bgColor = d.bgColor;
+      if (!finalMerged.titleTextColor) finalMerged.titleTextColor = d.titleTextColor;
+      if (!finalMerged.subtitleTextColor) finalMerged.subtitleTextColor = d.subtitleTextColor;
+      if (!finalMerged.activeTabBgColor) finalMerged.activeTabBgColor = d.activeTabBgColor;
+      if (!finalMerged.activeTabTextColor) finalMerged.activeTabTextColor = d.activeTabTextColor;
+      if (!finalMerged.inactiveTabBgColor) finalMerged.inactiveTabBgColor = d.inactiveTabBgColor;
+      if (!finalMerged.inactiveTabTextColor) finalMerged.inactiveTabTextColor = d.inactiveTabTextColor;
+      if (!finalMerged.arrowBgColor) finalMerged.arrowBgColor = d.arrowBgColor;
+      if (!finalMerged.arrowTextColor) finalMerged.arrowTextColor = d.arrowTextColor;
+      if (!finalMerged.arrowHoverBgColor) finalMerged.arrowHoverBgColor = d.arrowHoverBgColor;
+      if (!finalMerged.arrowHoverTextColor) finalMerged.arrowHoverTextColor = d.arrowHoverTextColor;
+      if (!finalMerged.cardBgColor) finalMerged.cardBgColor = d.cardBgColor;
+      if (!finalMerged.contentPanelBgColor) finalMerged.contentPanelBgColor = d.contentPanelBgColor;
+      if (!finalMerged.tabTitleTextColor) finalMerged.tabTitleTextColor = d.tabTitleTextColor;
+      if (!finalMerged.pointTextColor) finalMerged.pointTextColor = d.pointTextColor;
+      if (!finalMerged.checkIconBgColor) finalMerged.checkIconBgColor = d.checkIconBgColor;
+      if (!finalMerged.checkIconColor) finalMerged.checkIconColor = d.checkIconColor;
+    }
+
+    if (section.type === 'rpa-capabilities') {
+      const d = DEFAULT_RPA_CAPABILITIES_CONTENT;
+      (
+        [
+          'bgColor',
+          'primaryTitleColor',
+          'secondaryTitleColor',
+          'descriptionTextColor',
+          'hubSubtitleTextColor',
+          'hubTitleTextColor',
+          'hubBgColor',
+          'hubBorderColor',
+          'mobileHubGradientFrom',
+          'mobileHubGradientTo',
+          'mobileHubSubtitleTextColor',
+          'mobileHubTitleTextColor',
+          'cardBgColor',
+          'cardTitleTextColor',
+          'cardDescriptionTextColor',
+          'cardIconBgColor',
+          'cardIconBorderColor',
+          'cardAccentFrom',
+          'cardAccentVia',
+          'cardAccentTo',
+          'connectorLineColor',
+          'connectorDotColor',
+          'connectorDotStrokeColor',
+        ] as const
+      ).forEach((key) => {
+        if (!finalMerged[key]) finalMerged[key] = d[key];
+      });
+    }
+
+    if (section.type === 'oracle-apex-deliverables') {
+      const d = DEFAULT_ORACLE_APEX_DELIVERABLES_CONTENT;
+      (
+        [
+          'bgColor',
+          'dividerColor',
+          'leftTitleTextColor',
+          'leftItemBgColor',
+          'leftItemTextColor',
+          'leftIconBgColor',
+          'leftIconColor',
+          'rightTitleTextColor',
+          'rightItemBgColor',
+          'rightItemTextColor',
+          'rightIconBgColor',
+          'rightIconColor',
+        ] as const
+      ).forEach((key) => {
+        if (!finalMerged[key]) finalMerged[key] = d[key];
+      });
+    }
+
+    if (section.type === 'fmcg-tabs') {
+      if (!finalMerged.bgColor) finalMerged.bgColor = DEFAULT_FMCG_TABS_CONTENT.bgColor;
+      if (!finalMerged.titleTextColor) finalMerged.titleTextColor = DEFAULT_FMCG_TABS_CONTENT.titleTextColor;
+      if (!finalMerged.headingTextColor) finalMerged.headingTextColor = DEFAULT_FMCG_TABS_CONTENT.headingTextColor;
+      if (!finalMerged.subheadingTextColor) finalMerged.subheadingTextColor = DEFAULT_FMCG_TABS_CONTENT.subheadingTextColor;
+      if (!finalMerged.questionTextColor) finalMerged.questionTextColor = DEFAULT_FMCG_TABS_CONTENT.questionTextColor;
+      if (!finalMerged.tabBgColor) finalMerged.tabBgColor = DEFAULT_FMCG_TABS_CONTENT.tabBgColor;
+      if (!finalMerged.tabTextColor) finalMerged.tabTextColor = DEFAULT_FMCG_TABS_CONTENT.tabTextColor;
+      if (!finalMerged.activeTabBgColor) finalMerged.activeTabBgColor = DEFAULT_FMCG_TABS_CONTENT.activeTabBgColor;
+      if (!finalMerged.activeTabTextColor) finalMerged.activeTabTextColor = DEFAULT_FMCG_TABS_CONTENT.activeTabTextColor;
+    }
+
+    if (section.type === 'bi-tabs') {
+      if (!finalMerged.tabsBgColor) finalMerged.tabsBgColor = DEFAULT_BI_TABS_CONTENT.tabsBgColor;
+      if (!finalMerged.bgColor) finalMerged.bgColor = DEFAULT_BI_TABS_CONTENT.bgColor;
+      if (!finalMerged.titleTextColor) finalMerged.titleTextColor = DEFAULT_BI_TABS_CONTENT.titleTextColor;
+      if (!finalMerged.tabNameTextColor) finalMerged.tabNameTextColor = DEFAULT_BI_TABS_CONTENT.tabNameTextColor;
+      if (!finalMerged.tabDescTextColor) finalMerged.tabDescTextColor = DEFAULT_BI_TABS_CONTENT.tabDescTextColor;
+      if (!finalMerged.headingTextColor) finalMerged.headingTextColor = DEFAULT_BI_TABS_CONTENT.headingTextColor;
+      if (!finalMerged.subheadingTextColor) finalMerged.subheadingTextColor = DEFAULT_BI_TABS_CONTENT.subheadingTextColor;
+      if (!finalMerged.questionTextColor) finalMerged.questionTextColor = DEFAULT_BI_TABS_CONTENT.questionTextColor;
+    }
+
     if (section.type === 'about-us-mission-vision') {
       const items = (section.content as any)?.items || [];
       if (!finalMerged.badge) finalMerged.badge = (section.content as any)?.badge || 'OUR PURPOSE';
@@ -2564,6 +2776,19 @@ export function SectionEditorCard({
     }
 
     if (section.type === 'erp-features') {
+      if (!finalMerged.bgColor) finalMerged.bgColor = DEFAULT_ERP_FEATURES_CONTENT.bgColor;
+      if (!finalMerged.cardBgColor) finalMerged.cardBgColor = DEFAULT_ERP_FEATURES_CONTENT.cardBgColor;
+      if (!finalMerged.headingColor) finalMerged.headingColor = DEFAULT_ERP_FEATURES_CONTENT.headingColor;
+      if (!finalMerged.headingSecondaryColor) finalMerged.headingSecondaryColor = DEFAULT_ERP_FEATURES_CONTENT.headingSecondaryColor;
+      if (!finalMerged.subheadingTextColor) finalMerged.subheadingTextColor = DEFAULT_ERP_FEATURES_CONTENT.subheadingTextColor;
+      if (!finalMerged.descriptionTextColor) {
+        finalMerged.descriptionTextColor =
+          (finalMerged as any).contentTextColor || DEFAULT_ERP_FEATURES_CONTENT.descriptionTextColor;
+      }
+      if (!finalMerged.activeTabBgColor) finalMerged.activeTabBgColor = DEFAULT_ERP_FEATURES_CONTENT.activeTabBgColor;
+      if (!finalMerged.activeTabTextColor) finalMerged.activeTabTextColor = DEFAULT_ERP_FEATURES_CONTENT.activeTabTextColor;
+      if (!finalMerged.inactiveTabBgColor) finalMerged.inactiveTabBgColor = DEFAULT_ERP_FEATURES_CONTENT.inactiveTabBgColor;
+      if (!finalMerged.inactiveTabTextColor) finalMerged.inactiveTabTextColor = DEFAULT_ERP_FEATURES_CONTENT.inactiveTabTextColor;
       if (Array.isArray(finalMerged.features)) {
         finalMerged.features = finalMerged.features.map((feat: any) => ({
           icon: '',
