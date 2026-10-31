@@ -91,52 +91,48 @@ async function seed() {
             heading: 'FMCG CEO',
             subheading: 'Drive Overall Profitability and Brand Market Share',
             questions: [
-              'How can we increase our overall FMCG operating margins?',
-              'Which product categories are gaining market share and which are lagging?',
-              'How is our new product launch performing across different states?',
-              'Are we meeting our sustainability and governance targets?',
-              'Where should we allocate capital for maximum ROI next quarter?'
-            ],
-            image: '/BI-industy solution-FMGC/image 54.png'
+              { text: 'How can we increase our overall FMCG operating margins?', image: '/BI-industy solution-FMGC/image 54.png' },
+              { text: 'Which product categories are gaining market share and which are lagging?', image: '/BI-industy solution-FMGC/image 54.png' },
+              { text: 'How is our new product launch performing across different states?', image: '/BI-industy solution-FMGC/image 54.png' },
+              { text: 'Are we meeting our sustainability and governance targets?', image: '/BI-industy solution-FMGC/image 54.png' },
+              { text: 'Where should we allocate capital for maximum ROI next quarter?', image: '/BI-industy solution-FMGC/image 54.png' }
+            ]
           },
           {
             tabName: 'FMCG CFO',
             heading: 'FMCG CFO',
             subheading: 'How Much Profit Is Lost in Schemes and Inventory?',
             questions: [
-              'What is the real margin after discounts and trade schemes?',
-              'How much inventory is slow-moving or aging?',
-              'What is the cost of holding excess stock?',
-              'Is capital blocked at distributor or warehouse level?',
-              'Where are we losing margin without visibility?'
-            ],
-            image: '/BI-industy solution-FMGC/image 54.png'
+              { text: 'What is the real margin after discounts and trade schemes?', image: '/BI-industy solution-FMGC/image 54.png' },
+              { text: 'How much inventory is slow-moving or aging?', image: '/BI-industy solution-FMGC/image 54.png' },
+              { text: 'What is the cost of holding excess stock?', image: '/BI-industy solution-FMGC/image 54.png' },
+              { text: 'Is capital blocked at distributor or warehouse level?', image: '/BI-industy solution-FMGC/image 54.png' },
+              { text: 'Where are we losing margin without visibility?', image: '/BI-industy solution-FMGC/image 54.png' }
+            ]
           },
           {
             tabName: 'Sales Director',
             heading: 'Sales Director',
             subheading: 'Optimize Route-to-Market and Sales Executive Performance',
             questions: [
-              'Which distributors are consistently failing to meet sales targets?',
-              'How effective are our trade promotion schemes by region?',
-              'Are sales representatives visiting their planned routes daily?',
-              'What is the order fill rate across modern trade vs general trade?',
-              'Which stock-keeping units (SKUs) have the highest velocity?'
-            ],
-            image: '/BI-industy solution-FMGC/image 54.png'
+              { text: 'Which distributors are consistently failing to meet sales targets?', image: '/BI-industy solution-FMGC/image 54.png' },
+              { text: 'How effective are our trade promotion schemes by region?', image: '/BI-industy solution-FMGC/image 54.png' },
+              { text: 'Are sales representatives visiting their planned routes daily?', image: '/BI-industy solution-FMGC/image 54.png' },
+              { text: 'What is the order fill rate across modern trade vs general trade?', image: '/BI-industy solution-FMGC/image 54.png' },
+              { text: 'Which stock-keeping units (SKUs) have the highest velocity?', image: '/BI-industy solution-FMGC/image 54.png' }
+            ]
           },
           {
             tabName: 'Supply Chain Head',
             heading: 'Supply Chain Head',
             subheading: 'Improve Order Fill Rates and Logistics Efficiencies',
             questions: [
-              'What is our on-time-in-full (OTIF) delivery rate to distributors?',
-              'Where are the bottlenecks in our warehouse dispatch workflow?',
-              'How can we reduce transport cost per case for key lanes?',
-              'Which raw material suppliers are causing production delays?',
-              'How accurate are our demand forecasts compared to actual sales?'
-            ],
-            image: '/BI-industy solution-FMGC/image 54.png'
+              { text: 'What is our on-time-in-full (OTIF) delivery rate to distributors?', image: '/BI-industy solution-FMGC/image 54.png' },
+              { text: 'Where are the bottlenecks in our warehouse dispatch workflow?', image: '/BI-industy solution-FMGC/image 54.png' },
+              { text: 'How can we reduce transport cost per case for key lanes?', image: '/BI-industy solution-FMGC/image 54.png' },
+              { text: 'Which raw material suppliers are causing production delays?', image: '/BI-industy solution-FMGC/image 54.png' },
+              { text: 'How accurate are our demand forecasts compared to actual sales?', image: '/BI-industy solution-FMGC/image 54.png' }
+            ]
           }
         ]
       },

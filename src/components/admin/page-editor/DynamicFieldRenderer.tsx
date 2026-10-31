@@ -40,6 +40,12 @@ export function DynamicFieldRenderer({
 
   let fieldType = detectFieldType(fieldKey, value, sectionType, keyPath);
   if (
+    sectionType === 'fmcg-tabs' &&
+    (fieldKey === 'text' || fieldKey === 'question' || fieldKey === 'quotation')
+  ) {
+    fieldType = 'text';
+  }
+  if (
     sectionType === 'oracle-apex-why-migrate' &&
     (fieldKey === 'tagText1' || fieldKey === 'tagText2' || fieldKey === 'tagText3' || fieldKey.toLowerCase().includes('tag'))
   ) {
@@ -879,6 +885,35 @@ function ArrayField({
       }
       return item;
     });
+  } else if (sectionType === 'fmcg-tabs' && fieldKey === 'tabs' && Array.isArray(value)) {
+    normalizedValue = value.map(item => {
+      if (item && typeof item === 'object' && !Array.isArray(item)) {
+        const rawQuestions = Array.isArray(item.questions) ? item.questions : [];
+        const normalizedQuestions = rawQuestions.map((q: any) => {
+          if (typeof q === 'string') {
+            return { text: q, image: item.image || '' };
+          }
+          if (q && typeof q === 'object') {
+            return {
+              text: q.text || q.question || q.quotation || '',
+              image: q.image || item.image || '',
+              ...q
+            };
+          }
+          return { text: '', image: '' };
+        });
+        const tabCopy = { ...item };
+        delete tabCopy.image;
+        return {
+          tabName: '',
+          heading: '',
+          subheading: '',
+          ...tabCopy,
+          questions: normalizedQuestions
+        };
+      }
+      return item;
+    });
   } else if (sectionType === 'ass-stats' && fieldKey === 'stats' && Array.isArray(value)) {
     normalizedValue = value.map((item: any) => {
       if (item && typeof item === 'object' && !Array.isArray(item)) {
@@ -1195,6 +1230,18 @@ function ArrayField({
               for (const k of ['text', 'image']) {
                 if (!(k in objItem)) objItem[k] = '';
               }
+            } else if (sectionType === 'fmcg-tabs') {
+              if ('question' in objItem && !('text' in objItem)) {
+                objItem.text = objItem.question;
+              } else if ('quotation' in objItem && !('text' in objItem)) {
+                objItem.text = objItem.quotation;
+              }
+              delete objItem.question;
+              delete objItem.quotation;
+              qOrder = ['text', 'image'];
+              for (const k of ['text', 'image']) {
+                if (!(k in objItem)) objItem[k] = '';
+              }
             }
             sortedKeys = qOrder.filter(k => k in objItem);
           } else if (fieldKey === 'challengePoints' || fieldKey === 'challengepoints') {
@@ -1370,7 +1417,10 @@ function ArrayField({
             }
           } else if (fieldKey === 'tabs') {
             let tabOrder = ['tabName', 'heading', 'subheading', 'questions', 'image'];
-            if (sectionType === 'bi-tabs') {
+            if (sectionType === 'fmcg-tabs') {
+              tabOrder = ['tabName', 'heading', 'subheading', 'questions'];
+              delete objItem.image;
+            } else if (sectionType === 'bi-tabs') {
               tabOrder = ['tabName', 'tabDesc', 'heading', 'subheading', 'questions', 'image'];
             } else if (sectionType === 'fmcg-use-cases') {
               tabOrder = ['tabName', 'tag', 'heading', 'points', 'buttonText', 'buttonHoverBgColor', 'buttonHoverTextColor', 'buttonUrl', 'image'];

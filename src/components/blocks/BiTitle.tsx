@@ -22,7 +22,7 @@ export function BiTitle({ content }: { content?: BiTitleContent }) {
         <div className="flex flex-col text-center items-center">
           {title && (
             <h2
-              className="text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tight leading-tight"
+              className="text-xl sm:text-2xl lg:text-3xl font-bold tracking-tight leading-tight"
               style={{ color: titleColor }}
             >
               {title}
