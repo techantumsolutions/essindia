@@ -203,6 +203,8 @@ export function ArrayFieldEditor({
         defaultObj = { iconImage: '', title: '', items: [] };
       } else if (lowerKey === 'projects' && sectionType === 'portfolio') {
         defaultObj = { title: '', tags: [], image: '', ctaText: '', ctaUrl: '', ctaFormType: '' };
+      } else if (lowerKey === 'questions') {
+        defaultObj = { text: '', image: '' };
       }
       
       onChange([...safeValue, defaultObj]);
@@ -227,7 +229,7 @@ export function ArrayFieldEditor({
   };
 
   const isPrimitive = safeValue.length > 0 && typeof safeValue[0] !== 'object';
-  const singularLabel = humanLabel(fieldKey).replace(/s$/i, '');
+  const singularLabel = humanLabel(fieldKey, { sectionType, keyPath: keyPathPrefix }).replace(/s$/i, '');
   const isLocked = (sectionType === 'bi-highlight-strip') || 
                    (sectionType === 'bi-business-impact') ||
                    (sectionType === 'rpa-overview' && fieldKey === 'cards') ||
@@ -255,7 +257,7 @@ export function ArrayFieldEditor({
           <ChevronUp className="w-4 h-4 text-slate-400" />
         )}
         <span className="text-xs font-bold text-slate-600 uppercase tracking-wider">
-          {humanLabel(fieldKey)}
+          {humanLabel(fieldKey, { sectionType, keyPath: keyPathPrefix })}
         </span>
         <span className="text-[10px] font-semibold text-slate-400 bg-white px-2 py-0.5 rounded-full border border-slate-100">
           {safeValue.length} {safeValue.length === 1 ? 'item' : 'items'}

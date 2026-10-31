@@ -108,8 +108,11 @@ export function isHiddenCmsField(key: string, sectionType?: string, keyPath?: st
     if (lower === 'alt' || key === 'alt') return true;
   }
 
-  if (sectionType === 'fmcg-tabs' && lower === 'title') {
-    return true;
+  if (sectionType === 'fmcg-tabs') {
+    if (lower === 'title') return true;
+    if (lower === 'image' && (!keyPath || !keyPath.includes('questions'))) {
+      return true;
+    }
   }
 
   if (sectionType === 'europe-hero') {
@@ -496,6 +499,14 @@ export function humanLabel(
     if (key === 'image') return 'Question Image Upload';
   }
 
+  if (options?.sectionType === 'fmcg-tabs') {
+    if (key === 'questions') return 'Quotations';
+    if (options?.keyPath?.includes('questions')) {
+      if (key === 'text' || key === 'question' || key === 'quotation') return 'Quotation Text';
+      if (key === 'image') return 'Quotation Image Upload';
+    }
+  }
+
   if (options?.sectionType === 'fmcg-hero') {
     if (key === 'button2Text') return 'Button 2 Text';
     if (key === 'button2Url') return 'Button 2 URL';
@@ -678,6 +689,10 @@ export function detectFieldType(
 
   if (typeof value === 'string') {
     const lower = key.toLowerCase();
+
+    if (sectionType === 'fmcg-tabs' && (lower === 'text' || lower === 'question' || lower === 'quotation')) {
+      return 'text';
+    }
 
     if (sectionType === 'landing1-works' && lower === 'date' && keyPath?.includes('works')) {
       return 'date';

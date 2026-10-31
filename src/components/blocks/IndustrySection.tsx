@@ -162,10 +162,10 @@ export function IndustrySection({ content }: IndustrySectionProps) {
           {/* Scroll Left Button - Only visible if canScrollLeft */}
           {canScrollLeft && (
             <button
+              type="button"
               onClick={() => scroll('left')}
               aria-label="Scroll Left"
-              className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-3 md:-translate-x-4 lg:-translate-x-8 xl:-translate-x-14 z-20 w-11 h-11 rounded-full bg-white/90 hover:bg-white shadow-lg flex items-center justify-center transition-all duration-300 hover:scale-110 active:scale-95 cursor-pointer border border-slate-100"
-              style={{ color: bgColor }}
+              className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-3 md:-translate-x-4 lg:-translate-x-8 xl:-translate-x-14 z-20 w-11 h-11 rounded-full bg-white/90 hover:bg-white text-slate-600 hover:text-slate-900 shadow-lg flex items-center justify-center transition-all duration-300 hover:scale-110 active:scale-95 cursor-pointer border border-slate-100"
             >
               <ChevronLeft className="w-6 h-6" />
             </button>
@@ -174,10 +174,10 @@ export function IndustrySection({ content }: IndustrySectionProps) {
           {/* Scroll Right Button - Only visible if canScrollRight */}
           {canScrollRight && (
             <button
+              type="button"
               onClick={() => scroll('right')}
               aria-label="Scroll Right"
-              className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-3 md:translate-x-4 lg:translate-x-8 xl:translate-x-14 z-20 w-11 h-11 rounded-full bg-white/90 hover:bg-white shadow-lg flex items-center justify-center transition-all duration-300 hover:scale-110 active:scale-95 cursor-pointer border border-slate-100"
-              style={{ color: bgColor }}
+              className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-3 md:translate-x-4 lg:translate-x-8 xl:translate-x-14 z-20 w-11 h-11 rounded-full bg-white/90 hover:bg-white text-slate-600 hover:text-slate-900 shadow-lg flex items-center justify-center transition-all duration-300 hover:scale-110 active:scale-95 cursor-pointer border border-slate-100"
             >
               <ChevronRight className="w-6 h-6" />
             </button>
