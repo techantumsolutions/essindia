@@ -31,10 +31,15 @@ interface BiTabsContent {
   headingTextColor?: string;
   subheadingTextColor?: string;
   questionTextColor?: string;
+  activeTabBorderColor?: string;
+  pointHoverBorderColor?: string;
+  pointHoverBgColor?: string;
+  pointArrowColor?: string;
 }
 
 export function BiTabs({ content }: { content?: BiTabsContent }) {
   const [hoveredQuestionImage, setHoveredQuestionImage] = useState<string | null>(null);
+  const [hoveredPointIdx, setHoveredPointIdx] = useState<number | null>(null);
   const defaultTabs: TabItem[] = [
     {
       tabName: 'Leadership (CEOs / Directors)',
@@ -95,6 +100,10 @@ export function BiTabs({ content }: { content?: BiTabsContent }) {
   const headingTextColor = content?.headingTextColor || '#0f172a';
   const subheadingTextColor = content?.subheadingTextColor || '#475569';
   const questionTextColor = content?.questionTextColor || '#1e293b';
+  const activeTabBorderColor = content?.activeTabBorderColor || '#A855F7';
+  const pointHoverBorderColor = content?.pointHoverBorderColor || '#C084FC';
+  const pointHoverBgColor = content?.pointHoverBgColor || '#FAF5FF';
+  const pointArrowColor = content?.pointArrowColor || '#9333EA';
 
   const [activeTabIdx, setActiveTabIdx] = useState(0);
   const activeTab = tabs[activeTabIdx] || tabs[0];
@@ -127,6 +136,11 @@ export function BiTabs({ content }: { content?: BiTabsContent }) {
     }, 50);
     return () => clearTimeout(timer);
   }, [activeTabIdx, scrollToTab]);
+
+  useEffect(() => {
+    setHoveredPointIdx(null);
+    setHoveredQuestionImage(null);
+  }, [activeTabIdx]);
 
   const goToPrevTab = () => {
     setActiveTabIdx((prev) => Math.max(0, prev - 1));
@@ -207,7 +221,8 @@ export function BiTabs({ content }: { content?: BiTabsContent }) {
                       {isActive && (
                         <motion.div
                           layoutId="activeTabUnderline"
-                          className="absolute inset-0 bg-[#A855F7]"
+                          className="absolute inset-0"
+                          style={{ backgroundColor: activeTabBorderColor }}
                           transition={{ type: 'spring', stiffness: 380, damping: 30 }}
                         />
                       )}
@@ -281,6 +296,7 @@ export function BiTabs({ content }: { content?: BiTabsContent }) {
                     {activeTab.questions.map((question, qIdx) => {
                       const qText = typeof question === 'string' ? question : (question.text || question.question || '');
                       const qImage = typeof question === 'object' ? question.image : undefined;
+                      const isPointHovered = hoveredPointIdx === qIdx;
 
                       return (
                         <motion.div
@@ -289,17 +305,21 @@ export function BiTabs({ content }: { content?: BiTabsContent }) {
                           animate={{ opacity: 1, x: 0 }}
                           transition={{ delay: qIdx * 0.04 }}
                           onMouseEnter={() => {
+                            setHoveredPointIdx(qIdx);
                             if (qImage && qImage.trim() !== '') {
                               setHoveredQuestionImage(qImage);
                             }
                           }}
                           onMouseLeave={() => {
+                            setHoveredPointIdx(null);
                             setHoveredQuestionImage(null);
                           }}
-                          className={`bg-white border border-slate-200/80 hover:border-purple-400 font-medium text-[15px] sm:text-base px-6 py-4 rounded-2xl shadow-[0_2px_8px_rgba(0,0,0,0.03)] transition-all duration-300 hover:shadow-md hover:translate-x-1 flex items-center justify-between gap-4 group cursor-pointer ${
-                            qImage ? 'hover:bg-purple-50/50' : ''
-                          }`}
-                          style={{ color: questionTextColor }}
+                          className="bg-white border font-medium text-[15px] sm:text-base px-6 py-4 rounded-2xl shadow-[0_2px_8px_rgba(0,0,0,0.03)] transition-all duration-300 hover:shadow-md hover:translate-x-1 flex items-center justify-between gap-4 group cursor-pointer"
+                          style={{
+                            color: questionTextColor,
+                            borderColor: isPointHovered ? pointHoverBorderColor : 'rgba(226, 232, 240, 0.8)',
+                            backgroundColor: isPointHovered ? pointHoverBgColor : '#ffffff',
+                          }}
                         >
                           <span className="flex-1">
                             {typeof qText === 'string' && (qText.includes('<p>') || qText.includes('<')) ? (
@@ -308,7 +328,10 @@ export function BiTabs({ content }: { content?: BiTabsContent }) {
                               qText
                             )}
                           </span>
-                          <ChevronRight className="w-5 h-5 text-purple-600 shrink-0 group-hover:translate-x-0.5 transition-transform" />
+                          <ChevronRight
+                            className="w-5 h-5 shrink-0 group-hover:translate-x-0.5 transition-transform"
+                            style={{ color: pointArrowColor }}
+                          />
                         </motion.div>
                       );
                     })}

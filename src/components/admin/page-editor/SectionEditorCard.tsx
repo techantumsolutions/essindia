@@ -1178,6 +1178,10 @@ const DEFAULT_BI_TABS_CONTENT: Record<string, any> = {
   headingTextColor: '#0f172a',
   subheadingTextColor: '#475569',
   questionTextColor: '#1e293b',
+  activeTabBorderColor: '#A855F7',
+  pointHoverBorderColor: '#C084FC',
+  pointHoverBgColor: '#FAF5FF',
+  pointArrowColor: '#9333EA',
   tabs: [
     {
       tabName: 'Leadership (CEOs / Directors)',
@@ -2238,6 +2242,18 @@ Implementing an ERP system for finance and accounting offers several key benefit
   ],
 };
 
+const DEFAULT_EMPLOYEE_SPOTLIGHT_HERO_CONTENT: Record<string, any> = {
+  badge: 'Employee Spotlight',
+  badgeBgColor: '#ffffff',
+  badgeTextColor: '#0D1A5C',
+  title: 'Everyday Heroes. Greener<br />Tomorrow.',
+  titleColor: '#ffffff',
+  description:
+    "At ESS, sustainability isn't just a choice—it's a lifestyle. Meet the trailblazers among us who are leading the charge for a cleaner planet. From daily cycles to inspiring runs, discover how our team is turning eco-conscious choices into habits that matter.",
+  descriptionColor: 'rgba(255,255,255,0.9)',
+  image: '/About-employee spot light/banner.png',
+};
+
 const DEFAULT_NOT_FOUND_HERO_CONTENT: Record<string, any> = {
   badgeText: 'Page not found',
   badgeBgColor: '#ede9fe',
@@ -2387,8 +2403,26 @@ export function SectionEditorCard({
   const [activeTab, setActiveTab] = React.useState<string>('basic');
   const meta = getSectionDefinition(section.type);
 
-  const mergedContent = React.useMemo(() => {
+  const { mergedContent, colorDefaults } = React.useMemo(() => {
     let baseSchema = schema as Record<string, JsonValue> | undefined;
+    const colorDefaults: Record<string, string> = {};
+
+    const rememberColorDefaults = (source?: Record<string, any> | null) => {
+      if (!source) return;
+      Object.entries(source).forEach(([key, val]) => {
+        if (typeof val !== 'string' || !val.trim()) return;
+        const lower = key.toLowerCase();
+        if (
+          lower.endsWith('color') ||
+          lower.includes('gradient') ||
+          lower.endsWith('from') ||
+          lower.endsWith('via') ||
+          lower.endsWith('to')
+        ) {
+          if (!colorDefaults[key]) colorDefaults[key] = val.trim();
+        }
+      });
+    };
 
     // Inject defaults if schema is missing or empty
     if (!baseSchema || Object.keys(baseSchema).length === 0) {
@@ -2564,12 +2598,16 @@ export function SectionEditorCard({
         baseSchema = DEFAULT_THANK_YOU_HERO_CONTENT as Record<string, JsonValue>;
       } else if (section.type === 'about-us-why-ess') {
         baseSchema = DEFAULT_ABOUT_US_WHY_ESS_CONTENT as Record<string, JsonValue>;
+      } else if (section.type === 'employee-spotlight-hero') {
+        baseSchema = DEFAULT_EMPLOYEE_SPOTLIGHT_HERO_CONTENT as Record<string, JsonValue>;
       } else if (section.type === 'erp-features') {
         baseSchema = DEFAULT_ERP_FEATURES_CONTENT as Record<string, JsonValue>;
       } else if (section.type === 'landing1-testimonials') {
         baseSchema = DEFAULT_LANDING1_TESTIMONIALS_CONTENT as Record<string, JsonValue>;
       }
     }
+
+    rememberColorDefaults(baseSchema as Record<string, any>);
 
     const merged = mergeSchemaWithContent(
       baseSchema,
@@ -2600,30 +2638,54 @@ export function SectionEditorCard({
     }
 
     if (section.type === 'industries') {
-      if (!finalMerged.bgColor) finalMerged.bgColor = '#462885';
-      if (!finalMerged.headingTextColor) finalMerged.headingTextColor = '#ffffff';
-      if (!finalMerged.subheadingTextColor) finalMerged.subheadingTextColor = '#f3eefc';
-      if (!finalMerged.descriptionTextColor) finalMerged.descriptionTextColor = '#d8d0ea';
+      const industriesDefaults = {
+        bgColor: '#462885',
+        headingTextColor: '#ffffff',
+        subheadingTextColor: '#f3eefc',
+        descriptionTextColor: '#d8d0ea',
+      };
+      rememberColorDefaults(industriesDefaults);
+      if (!finalMerged.bgColor) finalMerged.bgColor = industriesDefaults.bgColor;
+      if (!finalMerged.headingTextColor) finalMerged.headingTextColor = industriesDefaults.headingTextColor;
+      if (!finalMerged.subheadingTextColor) finalMerged.subheadingTextColor = industriesDefaults.subheadingTextColor;
+      if (!finalMerged.descriptionTextColor) finalMerged.descriptionTextColor = industriesDefaults.descriptionTextColor;
     }
 
     if (section.type === 'landing2-carousel') {
-      if (!finalMerged.bgColor) finalMerged.bgColor = '#ffffff';
-      if (!finalMerged.titleTextColor) finalMerged.titleTextColor = '#0f172a';
-      if (!finalMerged.cardGradientFrom) finalMerged.cardGradientFrom = '#6e22d9';
-      if (!finalMerged.cardGradientTo) finalMerged.cardGradientTo = '#8c2bee';
-      if (!finalMerged.contentBoxBgColor) finalMerged.contentBoxBgColor = '#ffcc29';
-      if (!finalMerged.badgeTextColor) finalMerged.badgeTextColor = '#0f172a';
-      if (!finalMerged.slideTitleTextColor) finalMerged.slideTitleTextColor = '#ffffff';
-      if (!finalMerged.descriptionTextColor) finalMerged.descriptionTextColor = '#0f172a';
-      if (!finalMerged.arrowBgColor) finalMerged.arrowBgColor = '#5d2bb9';
-      if (!finalMerged.arrowHoverBgColor) finalMerged.arrowHoverBgColor = '#4d229e';
-      if (!finalMerged.arrowTextColor) finalMerged.arrowTextColor = '#ffffff';
-      if (!finalMerged.dotActiveColor) finalMerged.dotActiveColor = '#5d2bb9';
-      if (!finalMerged.dotInactiveColor) finalMerged.dotInactiveColor = '#e9d5ff';
+      const carouselDefaults = {
+        bgColor: '#ffffff',
+        titleTextColor: '#0f172a',
+        cardGradientFrom: '#6e22d9',
+        cardGradientTo: '#8c2bee',
+        contentBoxBgColor: '#ffcc29',
+        badgeTextColor: '#0f172a',
+        slideTitleTextColor: '#ffffff',
+        descriptionTextColor: '#0f172a',
+        arrowBgColor: '#5d2bb9',
+        arrowHoverBgColor: '#4d229e',
+        arrowTextColor: '#ffffff',
+        dotActiveColor: '#5d2bb9',
+        dotInactiveColor: '#e9d5ff',
+      };
+      rememberColorDefaults(carouselDefaults);
+      if (!finalMerged.bgColor) finalMerged.bgColor = carouselDefaults.bgColor;
+      if (!finalMerged.titleTextColor) finalMerged.titleTextColor = carouselDefaults.titleTextColor;
+      if (!finalMerged.cardGradientFrom) finalMerged.cardGradientFrom = carouselDefaults.cardGradientFrom;
+      if (!finalMerged.cardGradientTo) finalMerged.cardGradientTo = carouselDefaults.cardGradientTo;
+      if (!finalMerged.contentBoxBgColor) finalMerged.contentBoxBgColor = carouselDefaults.contentBoxBgColor;
+      if (!finalMerged.badgeTextColor) finalMerged.badgeTextColor = carouselDefaults.badgeTextColor;
+      if (!finalMerged.slideTitleTextColor) finalMerged.slideTitleTextColor = carouselDefaults.slideTitleTextColor;
+      if (!finalMerged.descriptionTextColor) finalMerged.descriptionTextColor = carouselDefaults.descriptionTextColor;
+      if (!finalMerged.arrowBgColor) finalMerged.arrowBgColor = carouselDefaults.arrowBgColor;
+      if (!finalMerged.arrowHoverBgColor) finalMerged.arrowHoverBgColor = carouselDefaults.arrowHoverBgColor;
+      if (!finalMerged.arrowTextColor) finalMerged.arrowTextColor = carouselDefaults.arrowTextColor;
+      if (!finalMerged.dotActiveColor) finalMerged.dotActiveColor = carouselDefaults.dotActiveColor;
+      if (!finalMerged.dotInactiveColor) finalMerged.dotInactiveColor = carouselDefaults.dotInactiveColor;
     }
 
     if (section.type === 'bi-industry-services') {
       const d = DEFAULT_BI_INDUSTRY_SERVICES_CONTENT;
+      rememberColorDefaults(d);
       if (!finalMerged.bgColor) finalMerged.bgColor = d.bgColor;
       if (!finalMerged.titleTextColor) finalMerged.titleTextColor = d.titleTextColor;
       if (!finalMerged.subtitleTextColor) finalMerged.subtitleTextColor = d.subtitleTextColor;
@@ -2645,6 +2707,7 @@ export function SectionEditorCard({
 
     if (section.type === 'rpa-capabilities') {
       const d = DEFAULT_RPA_CAPABILITIES_CONTENT;
+      rememberColorDefaults(d);
       (
         [
           'bgColor',
@@ -2678,6 +2741,7 @@ export function SectionEditorCard({
 
     if (section.type === 'oracle-apex-deliverables') {
       const d = DEFAULT_ORACLE_APEX_DELIVERABLES_CONTENT;
+      rememberColorDefaults(d);
       (
         [
           'bgColor',
@@ -2699,6 +2763,7 @@ export function SectionEditorCard({
     }
 
     if (section.type === 'fmcg-tabs') {
+      rememberColorDefaults(DEFAULT_FMCG_TABS_CONTENT);
       if (!finalMerged.bgColor) finalMerged.bgColor = DEFAULT_FMCG_TABS_CONTENT.bgColor;
       if (!finalMerged.titleTextColor) finalMerged.titleTextColor = DEFAULT_FMCG_TABS_CONTENT.titleTextColor;
       if (!finalMerged.headingTextColor) finalMerged.headingTextColor = DEFAULT_FMCG_TABS_CONTENT.headingTextColor;
@@ -2711,6 +2776,7 @@ export function SectionEditorCard({
     }
 
     if (section.type === 'bi-tabs') {
+      rememberColorDefaults(DEFAULT_BI_TABS_CONTENT);
       if (!finalMerged.tabsBgColor) finalMerged.tabsBgColor = DEFAULT_BI_TABS_CONTENT.tabsBgColor;
       if (!finalMerged.bgColor) finalMerged.bgColor = DEFAULT_BI_TABS_CONTENT.bgColor;
       if (!finalMerged.titleTextColor) finalMerged.titleTextColor = DEFAULT_BI_TABS_CONTENT.titleTextColor;
@@ -2719,6 +2785,10 @@ export function SectionEditorCard({
       if (!finalMerged.headingTextColor) finalMerged.headingTextColor = DEFAULT_BI_TABS_CONTENT.headingTextColor;
       if (!finalMerged.subheadingTextColor) finalMerged.subheadingTextColor = DEFAULT_BI_TABS_CONTENT.subheadingTextColor;
       if (!finalMerged.questionTextColor) finalMerged.questionTextColor = DEFAULT_BI_TABS_CONTENT.questionTextColor;
+      if (!finalMerged.activeTabBorderColor) finalMerged.activeTabBorderColor = DEFAULT_BI_TABS_CONTENT.activeTabBorderColor;
+      if (!finalMerged.pointHoverBorderColor) finalMerged.pointHoverBorderColor = DEFAULT_BI_TABS_CONTENT.pointHoverBorderColor;
+      if (!finalMerged.pointHoverBgColor) finalMerged.pointHoverBgColor = DEFAULT_BI_TABS_CONTENT.pointHoverBgColor;
+      if (!finalMerged.pointArrowColor) finalMerged.pointArrowColor = DEFAULT_BI_TABS_CONTENT.pointArrowColor;
     }
 
     if (section.type === 'about-us-mission-vision') {
@@ -2775,7 +2845,17 @@ export function SectionEditorCard({
       }
     }
 
+    if (section.type === 'employee-spotlight-hero') {
+      const d = DEFAULT_EMPLOYEE_SPOTLIGHT_HERO_CONTENT;
+      rememberColorDefaults(d);
+      if (!finalMerged.badgeBgColor) finalMerged.badgeBgColor = d.badgeBgColor;
+      if (!finalMerged.badgeTextColor) finalMerged.badgeTextColor = d.badgeTextColor;
+      if (!finalMerged.titleColor) finalMerged.titleColor = d.titleColor;
+      if (!finalMerged.descriptionColor) finalMerged.descriptionColor = d.descriptionColor;
+    }
+
     if (section.type === 'erp-features') {
+      rememberColorDefaults(DEFAULT_ERP_FEATURES_CONTENT);
       if (!finalMerged.bgColor) finalMerged.bgColor = DEFAULT_ERP_FEATURES_CONTENT.bgColor;
       if (!finalMerged.cardBgColor) finalMerged.cardBgColor = DEFAULT_ERP_FEATURES_CONTENT.cardBgColor;
       if (!finalMerged.headingColor) finalMerged.headingColor = DEFAULT_ERP_FEATURES_CONTENT.headingColor;
@@ -2824,7 +2904,7 @@ export function SectionEditorCard({
       );
     }
 
-    return finalMerged;
+    return { mergedContent: finalMerged, colorDefaults };
   }, [schema, section.content, section.type]);
 
   const contentKeys = React.useMemo(() => {
@@ -3128,6 +3208,7 @@ export function SectionEditorCard({
                         value={mergedContent[key] as JsonValue}
                         onChange={(kp, val) => onContentChange(section.id, kp, val)}
                         sectionType={section.type}
+                        colorDefaults={colorDefaults}
                       />
                     );
                   });
@@ -3144,6 +3225,7 @@ export function SectionEditorCard({
                 onChange={(kp, val) => onContentChange(section.id, kp, val)}
                 sectionType={section.type}
                 allSectionValues={mergedContent as Record<string, JsonValue>}
+                colorDefaults={colorDefaults}
               />
             ))
           )}

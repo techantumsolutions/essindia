@@ -331,6 +331,10 @@ function baseHumanLabel(key: string): string {
   if (key === 'connectorLineColor') return 'Connector Line Color';
   if (key === 'connectorDotColor') return 'Connector Dot Color';
   if (key === 'connectorDotStrokeColor') return 'Connector Dot Stroke Color';
+  if (key === 'activeTabBorderColor') return 'Selected Tab Bottom Border Color';
+  if (key === 'pointHoverBorderColor') return 'Point Hover Border Color';
+  if (key === 'pointHoverBgColor') return 'Point Hover Background Color';
+  if (key === 'pointArrowColor') return 'Point Arrow Icon Color';
   if (key === 'dividerColor') return 'Divider Color';
   if (key === 'leftTitleTextColor') return 'Left Title Text Color';
   if (key === 'leftItemBgColor') return 'Left Item Background Color';
@@ -820,7 +824,7 @@ export function detectFieldType(
     if ((lower === 'topic' || lower === 'category') && sectionType !== 'landing1-works') return 'topicSelect';
     if (lower === 'industry' || lower === 'industries') return 'industrySelect';
     if (lower === 'badgeicon' || (sectionType === 'ass-functionalities' && lower === 'icon')) return 'image';
-    if (lower === 'icon' && (sectionType === 'bi-highlight-strip' || sectionType === 'landing1-cta' || sectionType === 'bi-business-impact' || sectionType === 'rpa-overview' || sectionType === 'rpa-capabilities' || sectionType === 'rpa-industries' || value.startsWith('/') || value.includes('.') || value.includes('://'))) return 'image';
+    if (lower === 'icon' && (sectionType === 'bi-highlight-strip' || sectionType === 'landing1-cta' || sectionType === 'bi-business-impact' || sectionType === 'rpa-overview' || sectionType === 'rpa-capabilities' || sectionType === 'rpa-industries' || sectionType === 'erp-features' || value.startsWith('/') || value.includes('.') || value.includes('://'))) return 'image';
     if (IMAGE_PATTERNS.some((p) => lower.includes(p)) && !lower.endsWith('alt')) return 'image';
     if (lower === 'color' || lower.endsWith('color') || lower.startsWith('color') || lower.includes('accent') || lower.startsWith('gradient')) {
       return 'color';
@@ -869,6 +873,17 @@ export function setNestedValue(obj: Record<string, unknown>, path: string, value
   return copy;
 }
 
+function isColorLikeFieldKey(key: string): boolean {
+  const lower = key.toLowerCase();
+  return (
+    lower.endsWith('color') ||
+    lower.includes('gradient') ||
+    lower.endsWith('from') ||
+    lower.endsWith('via') ||
+    lower.endsWith('to')
+  );
+}
+
 export function mergeSchemaWithContent(
   schema: Record<string, JsonValue> | undefined,
   content: Record<string, JsonValue>
@@ -880,7 +895,20 @@ export function mergeSchemaWithContent(
 
   for (const key of allKeys) {
     if (key in content) {
-      merged[key] = content[key];
+      const contentVal = content[key];
+      // Empty color fields should fall back to schema defaults so admin Clear/default
+      // matches what the frontend uses (not a blank or #ffffff placeholder).
+      if (
+        isColorLikeFieldKey(key) &&
+        (contentVal === '' || contentVal === null || contentVal === undefined) &&
+        key in schema &&
+        typeof schema[key] === 'string' &&
+        (schema[key] as string).trim() !== ''
+      ) {
+        merged[key] = schema[key];
+      } else {
+        merged[key] = contentVal;
+      }
     } else if (key in schema) {
       merged[key] = schema[key];
     }
