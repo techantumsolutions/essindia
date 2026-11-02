@@ -21,6 +21,7 @@ interface DynamicFieldRendererProps {
   depth?: number;
   sectionType?: string;
   allSectionValues?: Record<string, JsonValue>;
+  colorDefaults?: Record<string, string>;
 }
 
 import { getImageHint } from '@/lib/cms/image-dimensions';
@@ -33,6 +34,7 @@ export function DynamicFieldRenderer({
   depth = 0,
   sectionType,
   allSectionValues,
+  colorDefaults,
 }: DynamicFieldRendererProps) {
   if (isHiddenCmsField(fieldKey, sectionType, keyPath)) return null;
 
@@ -151,6 +153,7 @@ export function DynamicFieldRenderer({
           fieldKey={fieldKey}
           label={fieldLabel}
           value={value as string}
+          defaultValue={colorDefaults?.[fieldKey] || ''}
           onChange={(v) => onChange(keyPath, v)}
         />
       );
@@ -1392,7 +1395,10 @@ function ArrayField({
             if (sectionType === 'hospital-features') {
               featureOrder = ['label'];
             } else if (sectionType === 'erp-features') {
-              featureOrder = ['id', 'image', 'title', 'desc', 'desc2'];
+              featureOrder = ['id', 'icon', 'image', 'title', 'desc', 'desc2'];
+              for (const k of ['id', 'icon', 'image', 'title', 'desc', 'desc2']) {
+                if (!(k in objItem)) objItem[k] = '';
+              }
             } else if (sectionType === 'landing1-features') {
               featureOrder = ['icon', 'title', 'desc'];
               delete objItem.image;

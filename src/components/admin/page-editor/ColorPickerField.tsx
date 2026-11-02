@@ -7,11 +7,37 @@ interface ColorPickerFieldProps {
   fieldKey: string;
   label?: string;
   value: string;
+  defaultValue?: string;
   onChange: (value: string) => void;
 }
 
-export function ColorPickerField({ fieldKey, label, value, onChange }: ColorPickerFieldProps) {
+function normalizeHex(color: string | undefined): string {
+  if (!color || typeof color !== 'string') return '';
+  const trimmed = color.trim();
+  if (!trimmed) return '';
+  // Native <input type="color"> only accepts #rrggbb
+  if (/^#[0-9a-fA-F]{6}$/.test(trimmed)) return trimmed;
+  if (/^#[0-9a-fA-F]{3}$/.test(trimmed)) {
+    const r = trimmed[1];
+    const g = trimmed[2];
+    const b = trimmed[3];
+    return `#${r}${r}${g}${g}${b}${b}`;
+  }
+  return '';
+}
+
+export function ColorPickerField({
+  fieldKey,
+  label,
+  value,
+  defaultValue = '',
+  onChange,
+}: ColorPickerFieldProps) {
   const currentValue = value || '';
+  const resolvedDefault = defaultValue || '';
+  const displayValue = currentValue || resolvedDefault;
+  const pickerValue = normalizeHex(displayValue) || '#ffffff';
+  const isUsingDefault = !currentValue && !!resolvedDefault;
 
   return (
     <div className="space-y-1.5">
@@ -20,7 +46,7 @@ export function ColorPickerField({ fieldKey, label, value, onChange }: ColorPick
         {currentValue && (
           <button
             type="button"
-            onClick={() => onChange('')}
+            onClick={() => onChange(resolvedDefault)}
             className="text-[10px] font-bold text-slate-400 hover:text-red-500 transition-colors"
           >
             Clear (Use Default)
@@ -31,22 +57,23 @@ export function ColorPickerField({ fieldKey, label, value, onChange }: ColorPick
         <div className="relative">
           <input
             type="color"
-            value={currentValue || '#ffffff'}
+            value={pickerValue}
             onChange={(e) => onChange(e.target.value)}
             className="w-10 h-10 rounded-xl border border-slate-200 cursor-pointer p-0.5"
           />
         </div>
         <input
           type="text"
-          value={currentValue}
+          value={displayValue}
           onChange={(e) => onChange(e.target.value)}
-          placeholder="Please enter color code (e.g. #7C3AED)"
+          placeholder={resolvedDefault || 'Please enter color code (e.g. #7C3AED)'}
           className="flex-1 bg-slate-50 rounded-xl px-4 py-2.5 text-xs font-mono outline-none focus:ring-2 focus:ring-[#4B2A63]/10 border border-transparent focus:border-[#4B2A63]/20"
         />
-        {currentValue ? (
+        {displayValue ? (
           <div
-            className="w-10 h-10 rounded-xl border border-slate-200 shrink-0 shadow-sm"
-            style={{ backgroundColor: currentValue }}
+            className="w-10 h-10 rounded-xl border border-slate-200 shrink-0 shadow-sm relative"
+            style={{ backgroundColor: displayValue }}
+            title={isUsingDefault ? `Default: ${resolvedDefault}` : displayValue}
           />
         ) : (
           <div className="w-10 h-10 rounded-xl border border-dashed border-slate-300 bg-slate-100 flex items-center justify-center shrink-0">

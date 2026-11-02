@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { FormattedText } from '@/components/ui/FormattedText';
 import { MotionSection } from '@/components/animations/MotionSection';
 import { Check, Calendar, Zap, Layers, BarChart3 } from 'lucide-react';
+import { safeImageUrl } from '@/lib/utils';
 
 interface ErpFeature {
   id?: string;
@@ -38,6 +39,21 @@ interface ErpFeaturesTabProps {
 }
 
 const defaultIcons = [Calendar, Zap, Layers, BarChart3];
+
+function resolveTabIconSrc(icon?: string): string {
+  if (!icon || typeof icon !== 'string') return '';
+  const trimmed = icon.trim();
+  if (!trimmed) return '';
+  // Lucide/name-only values are not image paths — avoid rendering a broken <img>
+  const looksLikeImage =
+    trimmed.startsWith('/') ||
+    trimmed.startsWith('http://') ||
+    trimmed.startsWith('https://') ||
+    trimmed.startsWith('data:') ||
+    /\.(png|jpe?g|gif|svg|webp|ico|avif)(\?.*)?$/i.test(trimmed);
+  if (!looksLikeImage) return '';
+  return safeImageUrl(trimmed);
+}
 
 export function ErpFeaturesTab({ content }: ErpFeaturesTabProps) {
   const heading = content?.heading || 'Why 1,500+ Enterprises Chose ebizframe.ai';
@@ -137,7 +153,7 @@ export function ErpFeaturesTab({ content }: ErpFeaturesTabProps) {
             {features.map((feature, idx) => {
               const currentId = feature.id || idx.toString();
               const isActive = currentId === activeTabId;
-              const iconSrc = typeof feature.icon === 'string' ? feature.icon.trim() : '';
+              const iconSrc = resolveTabIconSrc(feature.icon);
               const DefaultIcon = defaultIcons[idx % defaultIcons.length] || Check;
               const tabTextColor = isActive ? activeTabTextColor : inactiveTabTextColor;
 
@@ -158,7 +174,7 @@ export function ErpFeaturesTab({ content }: ErpFeaturesTabProps) {
                     color: tabTextColor,
                   }}
                 >
-                  {/* Icon Badge */}
+                  {/* Icon Badge — active tab always uses Check; uploaded icon only for inactive */}
                   <div
                     className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 transition-all duration-300 ${isActive
                         ? 'bg-white/20 backdrop-blur-xs'
@@ -166,17 +182,25 @@ export function ErpFeaturesTab({ content }: ErpFeaturesTabProps) {
                       }`}
                     style={{ color: tabTextColor }}
                   >
-                    {iconSrc ? (
+                    {isActive ? (
+                      <Check className="w-4 h-4 stroke-[2.5]" style={{ color: tabTextColor }} />
+                    ) : iconSrc ? (
                       /* eslint-disable-next-line @next/next/no-img-element */
                       <img
                         src={encodeURI(iconSrc)}
                         alt={feature.title || 'Tab Icon'}
-                        className={`w-4 h-4 object-contain ${isActive ? 'invert brightness-200' : ''}`}
+                        className="w-4 h-4 object-contain"
+                        onError={(e) => {
+                          (e.currentTarget as HTMLImageElement).style.display = 'none';
+                          const fallback = e.currentTarget.nextElementSibling as HTMLElement | null;
+                          if (fallback) fallback.style.display = 'block';
+                        }}
                       />
-                    ) : isActive ? (
-                      <Check className="w-4 h-4 stroke-[2.5]" style={{ color: activeTabTextColor }} />
-                    ) : (
-                      <DefaultIcon className="w-4 h-4" style={{ color: inactiveTabTextColor }} />
+                    ) : null}
+                    {!isActive && (
+                      <span style={{ display: iconSrc ? 'none' : 'block' }}>
+                        <DefaultIcon className="w-4 h-4" style={{ color: tabTextColor }} />
+                      </span>
                     )}
                   </div>
 

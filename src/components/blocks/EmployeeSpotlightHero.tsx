@@ -10,6 +10,10 @@ export function EmployeeSpotlightHero({ content }: { content?: any }) {
   const title = content?.title || 'Everyday Heroes. Greener<br />Tomorrow.';
   const description = content?.description || 'At ESS, sustainability isn\'t just a choice—it\'s a lifestyle. Meet the trailblazers among us who are leading the charge for a cleaner planet. From daily cycles to inspiring runs, discover how our team is turning eco-conscious choices into habits that matter.';
   const image = content?.image || '/About-employee spot light/banner.png';
+  const badgeBgColor = content?.badgeBgColor || '#ffffff';
+  const badgeTextColor = content?.badgeTextColor || '#0D1A5C';
+  const titleColor = content?.titleColor || '#ffffff';
+  const descriptionColor = content?.descriptionColor || 'rgba(255,255,255,0.9)';
 
   const bgStyles = getHeroBackgroundStyles({
     gradientColor1: content?.gradientColor1,
@@ -35,7 +39,10 @@ export function EmployeeSpotlightHero({ content }: { content?: any }) {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
         >
-          <div className="inline-flex items-center rounded-full bg-white px-8 py-2 text-sm font-medium text-[#0D1A5C] mb-4 sm:mb-6 lg:mb-8 cursor-pointer hover:bg-slate-50 transition-colors shadow-lg">
+          <div
+            className="inline-flex items-center rounded-full px-8 py-2 text-sm font-medium mb-4 sm:mb-6 lg:mb-8 cursor-pointer hover:opacity-90 transition-colors shadow-lg"
+            style={{ backgroundColor: badgeBgColor, color: badgeTextColor }}
+          >
             {badge}
           </div>
 
@@ -49,10 +56,17 @@ export function EmployeeSpotlightHero({ content }: { content?: any }) {
               className="text-4xl md:text-5xl lg:text-[64px] font-light tracking-wide mb-3 sm:mb-4 lg:mb-6 max-w-4xl mx-auto leading-[1.2] justify-center"
             />
           ) : (
-            <h1 className="text-4xl md:text-5xl lg:text-[64px] font-light tracking-wide text-white mb-3 sm:mb-4 lg:mb-6 max-w-4xl mx-auto leading-[1.2]" dangerouslySetInnerHTML={{ __html: title }} />
+            <h1
+              className="text-4xl md:text-5xl lg:text-[64px] font-light tracking-wide mb-3 sm:mb-4 lg:mb-6 max-w-4xl mx-auto leading-[1.2]"
+              style={{ color: titleColor }}
+              dangerouslySetInnerHTML={{ __html: title }}
+            />
           )}
 
-          <p className="text-white/90 text-sm md:text-base max-w-3xl mx-auto leading-relaxed tracking-wide">
+          <p
+            className="text-sm md:text-base max-w-3xl mx-auto leading-relaxed tracking-wide"
+            style={{ color: descriptionColor }}
+          >
             {description}
           </p>
         </motion.div>
