@@ -192,7 +192,7 @@ export function FmcgTabs({ content }: { content?: FmcgTabsContent }) {
 
         {/* Tab Headers with Left & Right Arrows */}
         <div
-          className="relative flex items-stretch border-b border-slate-700/50"
+          className="relative flex items-stretch"
           style={{ backgroundColor: bgColor }}
         >
           {showArrows && (
@@ -228,7 +228,7 @@ export function FmcgTabs({ content }: { content?: FmcgTabsContent }) {
                   type="button"
                   data-active={isActive}
                   onClick={() => setActiveTabIdx(idx)}
-                  className={`px-4 py-3.5 sm:px-8 sm:py-5 text-xs sm:text-sm md:text-base font-bold uppercase tracking-wider transition-all duration-300 shrink-0 whitespace-nowrap text-center border-r border-slate-700/30 outline-none focus-visible:ring-2 focus-visible:ring-offset-0 focus-visible:z-10 ${
+                  className={`px-4 py-3.5 sm:px-8 sm:py-5 text-xs sm:text-sm md:text-base font-bold uppercase tracking-wider transition-all duration-300 shrink-0 whitespace-nowrap text-center border-r border-slate-700/30 outline-none focus-visible:ring-2 focus-visible:ring-offset-0 focus-visible:z-10 border-b border-slate-700/50 ${
                     isActive ? '' : 'cursor-pointer hover:opacity-90'
                   }`}
                   style={{
