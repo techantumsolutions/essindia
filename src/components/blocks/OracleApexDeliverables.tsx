@@ -98,7 +98,7 @@ export function OracleApexDeliverables({ content }: { content?: OracleApexDelive
         <div className="hidden lg:grid lg:grid-cols-2 text-center items-center pb-5">
           <div>
             <h2
-              className="text-xl sm:text-2xl font-extrabold tracking-wider uppercase"
+              className="!text-3xl !font-semibold tracking-wide uppercase !leading-snug"
               style={{ color: leftTitleTextColor }}
             >
               {leftTitle}
@@ -106,7 +106,7 @@ export function OracleApexDeliverables({ content }: { content?: OracleApexDelive
           </div>
           <div>
             <h2
-              className="text-xl sm:text-2xl font-extrabold tracking-wider uppercase"
+              className="!text-3xl !font-semibold tracking-wide uppercase !leading-snug"
               style={{ color: rightTitleTextColor }}
             >
               {rightTitle}
@@ -126,7 +126,7 @@ export function OracleApexDeliverables({ content }: { content?: OracleApexDelive
               style={{ borderColor: `${dividerColor}66` }}
             >
               <h2
-                className="text-xl font-extrabold tracking-wider uppercase"
+                className="!text-3xl !font-semibold tracking-wide uppercase !leading-snug"
                 style={{ color: leftTitleTextColor }}
               >
                 {leftTitle}
@@ -167,7 +167,7 @@ export function OracleApexDeliverables({ content }: { content?: OracleApexDelive
               style={{ borderColor: `${dividerColor}66` }}
             >
               <h2
-                className="text-xl font-extrabold tracking-wider uppercase"
+                className="!text-3xl !font-semibold tracking-wide uppercase !leading-snug"
                 style={{ color: rightTitleTextColor }}
               >
                 {rightTitle}

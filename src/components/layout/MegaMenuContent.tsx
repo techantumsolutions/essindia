@@ -66,7 +66,7 @@ export function MegaMenuContent({ data }: Props) {
                     href={tab.href || '#'}
                     onMouseEnter={() => setActiveTabId(tab.id)}
                     className={cn(
-                      'pb-4 text-[11px] font-bold transition-colors relative tracking-[0.05em] uppercase cursor-pointer whitespace-nowrap',
+                      'pb-4 text-[11px] font-bold transition-colors relative tracking-[0.05em] cursor-pointer whitespace-nowrap',
                       activeTabId === tab.id ? 'text-[#4B2A63]' : 'text-slate-600 hover:text-[#4B2A63]'
                     )}
                   >
@@ -85,7 +85,7 @@ export function MegaMenuContent({ data }: Props) {
                 return (
                   <span
                     key={tab.id}
-                    className="pb-4 text-[11px] font-bold tracking-[0.05em] uppercase whitespace-nowrap text-slate-400"
+                    className="pb-4 text-[11px] font-bold tracking-[0.05em] whitespace-nowrap text-slate-400"
                   >
                     {tab.name}
                   </span>
@@ -98,7 +98,7 @@ export function MegaMenuContent({ data }: Props) {
                   type="button"
                   onMouseEnter={() => setActiveTabId(tab.id)}
                   className={cn(
-                    'pb-4 text-[11px] font-bold transition-colors relative tracking-[0.05em] uppercase cursor-pointer whitespace-nowrap',
+                    'pb-4 text-[11px] font-bold transition-colors relative tracking-[0.05em] cursor-pointer whitespace-nowrap',
                     activeTabId === tab.id ? 'text-[#4B2A63]' : 'text-slate-600 hover:text-[#4B2A63]'
                   )}
                 >
