@@ -1225,6 +1225,12 @@ const DEFAULT_BI_TABS_CONTENT: Record<string, any> = {
 };
 
 const DEFAULT_BI_HIGHLIGHT_STRIP_CONTENT: Record<string, any> = {
+  bgColor: '#fcc42c',
+  textColor: '#1f2937',
+  boldTextColor: '#1f2937',
+  circleBgColor: '#4c327f',
+  circleIconColor: '#ffffff',
+  borderColor: 'rgba(0, 0, 0, 0.15)',
   items: [
     {
       icon: 'wand',
@@ -1235,6 +1241,73 @@ const DEFAULT_BI_HIGHLIGHT_STRIP_CONTENT: Record<string, any> = {
       text: 'Make strategic decisions with confidence, not assumptions.'
     }
   ]
+};
+
+const DEFAULT_CAREER_PERKS_CONTENT: Record<string, any> = {
+  bgGradientFrom: '#F5F0FF',
+  bgGradientVia: '#EDE9FE',
+  bgGradientTo: '#E0E7FF',
+  title: 'Perks & Benefits',
+  titleColor: '#0f172a',
+  tag: 'We care about our people so they can take care of our clients',
+  tagTextColor: '#475569',
+  cardBgColor: 'rgba(255,255,255,0.95)',
+  cardBorderColor: 'rgba(226,232,240,0.8)',
+  cardTextColor: '#1e293b',
+  cardHoverBorderColor: 'rgba(75,42,99,0.8)',
+  cardHoverBgFrom: '#4B2A63',
+  cardHoverBgVia: '#5B3179',
+  cardHoverBgTo: '#6B3A8E',
+  cardHoverTextColor: '#ffffff',
+  perks: [
+    { text: 'Health & Wellness Benefits' },
+    { text: 'Performance Bonuses' },
+    { text: 'Life Skill Certification Support' },
+    { text: 'International Project Exposure' },
+    { text: 'Flexible Work Arrangements' },
+    { text: 'Fast-Track Growth Path' },
+  ],
+};
+
+const DEFAULT_ABOUT_US_MISSION_VISION_CONTENT: Record<string, any> = {
+  bgGradientFrom: '#F3E8FF',
+  bgGradientVia: '#F8F3FF',
+  bgGradientTo: '#FAF8FF',
+  badge: 'OUR PURPOSE',
+  badgeTextColor: '#9333EA',
+  badgeLineColor: '#d8b4fe',
+  title: 'Building technology that transforms businesses.',
+  titlePrimaryColor: '#1E1B4B',
+  titleSecondaryColor: '#9333EA',
+  cardBgColor: '#ffffff',
+  cardBorderColor: 'rgba(243, 232, 255, 0.7)',
+  cardHoverBorderColor: 'rgba(168, 85, 247, 0.45)',
+  cardTitleTextColor: '#1E1B4B',
+  cardDescriptionTextColor: '#64748b',
+  pointTextColor: '#334155',
+  visionAccentColor: '#a855f7',
+  missionAccentColor: '#3b82f6',
+  visionCheckColor: '#9333EA',
+  missionCheckColor: '#2563eb',
+  iconOuterBgFrom: 'rgba(243, 232, 255, 0.8)',
+  iconOuterBgTo: '#eef2ff',
+  iconInnerBgColor: '#ffffff',
+  visionTitle: 'Our Vision',
+  visionDescription:
+    'To be the trusted digital transformation partner enabling enterprises globally to grow through smarter, adaptive, future-ready technology solutions.',
+  visionPoints: [
+    'Leadership through technological excellence',
+    'Foster a culture of collaboration and continuous learning',
+    'Partner with clients to drive sustainable business growth',
+  ],
+  missionTitle: 'Our Mission',
+  missionDescription:
+    'We enable organizations run, scale, and transform their businesses by delivering AI-powered ERP solutions, BI, RPA, Mobility solutions on Cloud-ready technologies backed by our deep industry expertise.',
+  missionPoints: [
+    'Focus on delivering measurable business value',
+    'Commitment to continuous innovation and quality',
+    'Customer-centric approach to software development',
+  ],
 };
 
 const DEFAULT_BI_BUSINESS_IMPACT_CONTENT: Record<string, any> = {
@@ -1742,11 +1815,25 @@ const DEFAULT_ORACLE_APEX_DELIVERABLES_CONTENT: Record<string, any> = {
 };
 
 const DEFAULT_ABOUT_US_WHY_ESS_CONTENT: Record<string, any> = {
+  bgColor: '#0B0424',
+  sectionBorderColor: 'rgba(59, 7, 100, 0.6)',
   badge: 'Trusted. Proven. Preferred.',
+  badgeBgColor: 'rgba(28, 15, 69, 0.9)',
+  badgeBorderColor: 'rgba(168, 85, 247, 0.35)',
+  badgeTextColor: '#D8C4FE',
+  badgeIconColor: '#C084FC',
   title: 'Why Businesses Trust ESS',
   primaryTitleColor: '#FFFFFF',
   secondaryTitleColor: '#C084FC',
   description: 'Trusted by organizations worldwide for practical expertise, enterprise technology, and a business-first approach to digital transformation.',
+  descriptionTextColor: 'rgba(255,255,255,0.8)',
+  cardBgColor: 'rgba(21, 10, 55, 0.8)',
+  cardBorderColor: 'rgba(168, 85, 247, 0.25)',
+  cardTitleTextColor: '#ffffff',
+  cardDescriptionTextColor: 'rgba(255,255,255,0.75)',
+  cardIconBgColor: 'rgba(32, 13, 82, 0.8)',
+  cardIconBorderColor: 'rgba(192, 132, 252, 0.4)',
+  cardIconColor: '#C084FC',
   items: [
     { title: 'Business-First Implementation', description: 'We build around your business and not the other way around. Every solution starts with understanding your processes, goals, and the way your teams actually work.', image: '' },
     { title: 'Faster Deployment, Product-Focused', description: 'We leverage proven frameworks and pre-built accelerators to shorten implementation timelines, reduce complexity, and help you realize value sooner.', image: '' },
@@ -2512,6 +2599,10 @@ export function SectionEditorCard({
         baseSchema = DEFAULT_BI_TABS_CONTENT as Record<string, JsonValue>;
       } else if (section.type === 'bi-highlight-strip') {
         baseSchema = DEFAULT_BI_HIGHLIGHT_STRIP_CONTENT as Record<string, JsonValue>;
+      } else if (section.type === 'career-perks') {
+        baseSchema = DEFAULT_CAREER_PERKS_CONTENT as Record<string, JsonValue>;
+      } else if (section.type === 'about-us-mission-vision') {
+        baseSchema = DEFAULT_ABOUT_US_MISSION_VISION_CONTENT as Record<string, JsonValue>;
       } else if (section.type === 'bi-business-impact') {
         baseSchema = DEFAULT_BI_BUSINESS_IMPACT_CONTENT as Record<string, JsonValue>;
       } else if (section.type === 'bi-architecture') {
@@ -2787,42 +2878,120 @@ export function SectionEditorCard({
       if (!finalMerged.pointArrowColor) finalMerged.pointArrowColor = DEFAULT_BI_TABS_CONTENT.pointArrowColor;
     }
 
-    if (section.type === 'about-us-mission-vision') {
-      const items = (section.content as any)?.items || [];
-      if (!finalMerged.badge) finalMerged.badge = (section.content as any)?.badge || 'OUR PURPOSE';
-      if (!finalMerged.title) finalMerged.title = (section.content as any)?.title || 'Building technology that transforms businesses.';
-      if (!finalMerged.titlePrimaryColor) finalMerged.titlePrimaryColor = (section.content as any)?.titlePrimaryColor || '#1E1B4B';
-      if (!finalMerged.titleSecondaryColor) finalMerged.titleSecondaryColor = (section.content as any)?.titleSecondaryColor || '#9333EA';
+    if (section.type === 'bi-highlight-strip') {
+      rememberColorDefaults(DEFAULT_BI_HIGHLIGHT_STRIP_CONTENT);
+      (
+        ['bgColor', 'textColor', 'boldTextColor', 'circleBgColor', 'circleIconColor', 'borderColor'] as const
+      ).forEach((key) => {
+        if (!finalMerged[key]) finalMerged[key] = DEFAULT_BI_HIGHLIGHT_STRIP_CONTENT[key];
+      });
+    }
 
-      if (!finalMerged.visionTitle) finalMerged.visionTitle = (section.content as any)?.visionTitle || items[0]?.title || 'Our Vision';
-      if (!finalMerged.visionDescription) finalMerged.visionDescription = (section.content as any)?.visionDescription || items[0]?.description || 'To be the trusted digital transformation partner enabling enterprises globally to grow through smarter, adaptive, future-ready technology solutions.';
+    if (section.type === 'career-perks') {
+      rememberColorDefaults(DEFAULT_CAREER_PERKS_CONTENT);
+      (
+        [
+          'bgGradientFrom',
+          'bgGradientVia',
+          'bgGradientTo',
+          'titleColor',
+          'tagTextColor',
+          'cardBgColor',
+          'cardBorderColor',
+          'cardTextColor',
+          'cardHoverBorderColor',
+          'cardHoverBgFrom',
+          'cardHoverBgVia',
+          'cardHoverBgTo',
+          'cardHoverTextColor',
+        ] as const
+      ).forEach((key) => {
+        if (!finalMerged[key]) finalMerged[key] = DEFAULT_CAREER_PERKS_CONTENT[key];
+      });
+    }
+
+    if (section.type === 'about-us-mission-vision') {
+      const d = DEFAULT_ABOUT_US_MISSION_VISION_CONTENT;
+      rememberColorDefaults(d);
+      const items = (section.content as any)?.items || [];
+      if (!finalMerged.badge) finalMerged.badge = (section.content as any)?.badge || d.badge;
+      if (!finalMerged.title) finalMerged.title = (section.content as any)?.title || d.title;
+      (
+        [
+          'bgGradientFrom',
+          'bgGradientVia',
+          'bgGradientTo',
+          'badgeTextColor',
+          'badgeLineColor',
+          'titlePrimaryColor',
+          'titleSecondaryColor',
+          'cardBgColor',
+          'cardBorderColor',
+          'cardHoverBorderColor',
+          'cardTitleTextColor',
+          'cardDescriptionTextColor',
+          'pointTextColor',
+          'visionAccentColor',
+          'missionAccentColor',
+          'visionCheckColor',
+          'missionCheckColor',
+          'iconOuterBgFrom',
+          'iconOuterBgTo',
+          'iconInnerBgColor',
+        ] as const
+      ).forEach((key) => {
+        if (!finalMerged[key]) finalMerged[key] = d[key];
+      });
+
+      if (!finalMerged.visionTitle) finalMerged.visionTitle = (section.content as any)?.visionTitle || items[0]?.title || d.visionTitle;
+      if (!finalMerged.visionDescription) finalMerged.visionDescription = (section.content as any)?.visionDescription || items[0]?.description || d.visionDescription;
       if (!finalMerged.visionIcon) finalMerged.visionIcon = (section.content as any)?.visionIcon || items[0]?.image || '';
       if (!finalMerged.visionPoints || (Array.isArray(finalMerged.visionPoints) && finalMerged.visionPoints.length === 0)) {
-        finalMerged.visionPoints = (section.content as any)?.visionPoints || items[0]?.subItems || [
-          'Leadership through technological excellence',
-          'Foster a culture of collaboration and continuous learning',
-          'Partner with clients to drive sustainable business growth'
-        ];
+        finalMerged.visionPoints = (section.content as any)?.visionPoints || items[0]?.subItems || d.visionPoints;
       }
 
-      if (!finalMerged.missionTitle) finalMerged.missionTitle = (section.content as any)?.missionTitle || items[1]?.title || 'Our Mission';
-      if (!finalMerged.missionDescription) finalMerged.missionDescription = (section.content as any)?.missionDescription || items[1]?.description || 'We enable organizations run, scale, and transform their businesses by delivering AI-powered ERP solutions, BI, RPA, Mobility solutions on Cloud-ready technologies backed by our deep industry expertise.';
+      if (!finalMerged.missionTitle) finalMerged.missionTitle = (section.content as any)?.missionTitle || items[1]?.title || d.missionTitle;
+      if (!finalMerged.missionDescription) finalMerged.missionDescription = (section.content as any)?.missionDescription || items[1]?.description || d.missionDescription;
       if (!finalMerged.missionIcon) finalMerged.missionIcon = (section.content as any)?.missionIcon || items[1]?.image || '';
       if (!finalMerged.missionPoints || (Array.isArray(finalMerged.missionPoints) && finalMerged.missionPoints.length === 0)) {
-        finalMerged.missionPoints = (section.content as any)?.missionPoints || items[1]?.subItems || [
-          'Focus on delivering measurable business value',
-          'Commitment to continuous innovation and quality',
-          'Customer-centric approach to software development'
-        ];
+        finalMerged.missionPoints = (section.content as any)?.missionPoints || items[1]?.subItems || d.missionPoints;
       }
     }
 
     if (section.type === 'about-us-why-ess') {
-      if (!finalMerged.badge) finalMerged.badge = (section.content as any)?.badge || 'Trusted. Proven. Preferred.';
-      if (!finalMerged.title) finalMerged.title = (section.content as any)?.title || 'Why Businesses Trust ESS';
-      if (!finalMerged.primaryTitleColor) finalMerged.primaryTitleColor = (section.content as any)?.primaryTitleColor || (section.content as any)?.titlePrimaryColor || '#FFFFFF';
-      if (!finalMerged.secondaryTitleColor) finalMerged.secondaryTitleColor = (section.content as any)?.secondaryTitleColor || (section.content as any)?.titleSecondaryColor || '#C084FC';
-      if (!finalMerged.description) finalMerged.description = (section.content as any)?.description || 'Trusted by organizations worldwide for practical expertise, enterprise technology, and a business-first approach to digital transformation.';
+      const d = DEFAULT_ABOUT_US_WHY_ESS_CONTENT;
+      rememberColorDefaults(d);
+      if (!finalMerged.badge) finalMerged.badge = (section.content as any)?.badge || d.badge;
+      if (!finalMerged.title) finalMerged.title = (section.content as any)?.title || d.title;
+      if (!finalMerged.description) finalMerged.description = (section.content as any)?.description || d.description;
+      (
+        [
+          'bgColor',
+          'sectionBorderColor',
+          'badgeBgColor',
+          'badgeBorderColor',
+          'badgeTextColor',
+          'badgeIconColor',
+          'primaryTitleColor',
+          'secondaryTitleColor',
+          'descriptionTextColor',
+          'cardBgColor',
+          'cardBorderColor',
+          'cardTitleTextColor',
+          'cardDescriptionTextColor',
+          'cardIconBgColor',
+          'cardIconBorderColor',
+          'cardIconColor',
+        ] as const
+      ).forEach((key) => {
+        if (!finalMerged[key]) {
+          finalMerged[key] =
+            (section.content as any)?.[key] ||
+            (key === 'primaryTitleColor' ? (section.content as any)?.titlePrimaryColor : undefined) ||
+            (key === 'secondaryTitleColor' ? (section.content as any)?.titleSecondaryColor : undefined) ||
+            d[key];
+        }
+      });
     }
 
     if (section.type === 'oracle-apex-why-migrate') {
@@ -2908,12 +3077,33 @@ export function SectionEditorCard({
       return ['image', 'title', 'description', 'buttonText', 'documentUrl', 'redirectUrl'];
     }
     if (section.type === 'about-us-why-ess') {
-      return ['badge', 'title', 'primaryTitleColor', 'secondaryTitleColor', 'description', 'items'];
+      return meta?.fieldOrder || [
+        'bgColor',
+        'sectionBorderColor',
+        'badge',
+        'badgeBgColor',
+        'badgeBorderColor',
+        'badgeTextColor',
+        'badgeIconColor',
+        'title',
+        'primaryTitleColor',
+        'secondaryTitleColor',
+        'description',
+        'descriptionTextColor',
+        'cardBgColor',
+        'cardBorderColor',
+        'cardTitleTextColor',
+        'cardDescriptionTextColor',
+        'cardIconBgColor',
+        'cardIconBorderColor',
+        'cardIconColor',
+        'items',
+      ];
     }
 
     const keys = Object.keys(mergedContent);
     let finalKeys = keys;
-    if ((section.type.startsWith('landing1-') || section.type.startsWith('landing2-') || section.type.startsWith('contact-') || section.type.startsWith('europe-') || section.type.startsWith('uganda-') || section.type.startsWith('about-us-') || section.type === 'job-detail-hero' || section.type === 'job-detail-content' || section.type === 'bi-highlight-strip' || section.type === 'bi-industries' || section.type === 'career-positions' || section.type === 'about-us-cta' || section.type === 'career-cta' || section.type === 'blog' || section.type === 'about-us-services-overview' || section.type.startsWith('oracle-') || (section.type.startsWith('rpa-') && section.type !== 'rpa-hero') || section.type.startsWith('ass-') || section.type.startsWith('aom-') || section.type.startsWith('fmcg-') || section.type.startsWith('roi-') || section.type.startsWith('retail-')) && meta?.fieldOrder) {
+    if ((section.type.startsWith('landing1-') || section.type.startsWith('landing2-') || section.type.startsWith('contact-') || section.type.startsWith('europe-') || section.type.startsWith('uganda-') || section.type.startsWith('about-us-') || section.type === 'job-detail-hero' || section.type === 'job-detail-content' || section.type === 'bi-highlight-strip' || section.type === 'bi-industries' || section.type === 'career-positions' || section.type === 'career-perks' || section.type === 'about-us-cta' || section.type === 'career-cta' || section.type === 'blog' || section.type === 'about-us-services-overview' || section.type.startsWith('oracle-') || (section.type.startsWith('rpa-') && section.type !== 'rpa-hero') || section.type.startsWith('ass-') || section.type.startsWith('aom-') || section.type.startsWith('fmcg-') || section.type.startsWith('roi-') || section.type.startsWith('retail-')) && meta?.fieldOrder) {
       finalKeys = meta.fieldOrder;
     } else if (meta?.fieldOrder) {
       finalKeys = keys.sort((a, b) => {

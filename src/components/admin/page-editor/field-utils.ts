@@ -338,6 +338,30 @@ function baseHumanLabel(key: string): string {
   if (key === 'pointHoverBorderColor') return 'Point Hover Border Color';
   if (key === 'pointHoverBgColor') return 'Point Hover Background Color';
   if (key === 'pointArrowColor') return 'Point Arrow Icon Color';
+  if (key === 'boldTextColor') return 'Bold Text Color';
+  if (key === 'circleBgColor') return 'Icon Circle Background Color';
+  if (key === 'circleIconColor') return 'Icon Circle Icon Color';
+  if (key === 'borderColor') return 'Border Color';
+  if (key === 'sectionBorderColor') return 'Section Border Color';
+  if (key === 'badgeIconColor') return 'Badge Icon Color';
+  if (key === 'badgeLineColor') return 'Badge Line Color';
+  if (key === 'tagTextColor') return 'Tag / Subtitle Text Color';
+  if (key === 'cardHoverBorderColor') return 'Card Hover Border Color';
+  if (key === 'cardHoverBgFrom') return 'Card Hover Gradient Start Color';
+  if (key === 'cardHoverBgVia') return 'Card Hover Gradient Middle Color';
+  if (key === 'cardHoverBgTo') return 'Card Hover Gradient End Color';
+  if (key === 'cardHoverTextColor') return 'Card Hover Text Color';
+  if (key === 'cardTextColor') return 'Card Text Color';
+  if (key === 'visionAccentColor') return 'Vision Accent Color';
+  if (key === 'missionAccentColor') return 'Mission Accent Color';
+  if (key === 'visionCheckColor') return 'Vision Check / Icon Color';
+  if (key === 'missionCheckColor') return 'Mission Check / Icon Color';
+  if (key === 'iconOuterBgFrom') return 'Icon Outer Gradient Start Color';
+  if (key === 'iconOuterBgTo') return 'Icon Outer Gradient End Color';
+  if (key === 'iconInnerBgColor') return 'Icon Inner Background Color';
+  if (key === 'bgGradientFrom') return 'Background Gradient Start Color';
+  if (key === 'bgGradientVia') return 'Background Gradient Middle Color';
+  if (key === 'bgGradientTo') return 'Background Gradient End Color';
   if (key === 'dividerColor') return 'Divider Color';
   if (key === 'leftTitleTextColor') return 'Left Title Text Color';
   if (key === 'leftItemBgColor') return 'Left Item Background Color';
@@ -841,7 +865,17 @@ export function detectFieldType(
     if (lower === 'badgeicon' || (sectionType === 'ass-functionalities' && lower === 'icon')) return 'image';
     if (lower === 'icon' && (sectionType === 'bi-highlight-strip' || sectionType === 'landing1-cta' || sectionType === 'bi-business-impact' || sectionType === 'rpa-overview' || sectionType === 'rpa-capabilities' || sectionType === 'rpa-industries' || sectionType === 'erp-features' || value.startsWith('/') || value.includes('.') || value.includes('://'))) return 'image';
     if (IMAGE_PATTERNS.some((p) => lower.includes(p)) && !lower.endsWith('alt')) return 'image';
-    if (lower === 'color' || lower.endsWith('color') || lower.startsWith('color') || lower.includes('accent') || lower.startsWith('gradient')) {
+    if (
+      lower === 'color' ||
+      lower.endsWith('color') ||
+      lower.startsWith('color') ||
+      lower.includes('accent') ||
+      lower.includes('gradient') ||
+      lower.endsWith('bgfrom') ||
+      lower.endsWith('bgvia') ||
+      lower.endsWith('bgto') ||
+      lower.includes('hoverbg')
+    ) {
       return 'color';
     }
     if (COLOR_PATTERN.test(value)) return 'color';

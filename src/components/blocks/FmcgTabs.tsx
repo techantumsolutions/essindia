@@ -382,17 +382,16 @@ export function FmcgTabs({ content }: { content?: FmcgTabsContent }) {
                           </div>
 
                           {mobileExpandedIdx === qIdx && itemImage && (
-                            <div className="block lg:hidden w-full py-1">
-                              <div className="w-full relative aspect-[4/3] sm:aspect-[1.4] rounded-2xl overflow-hidden shadow-2xl border border-slate-700/30">
-                                <Image
-                                  src={itemImage}
-                                  alt={typeof qText === 'string' ? qText : 'Quotation image'}
-                                  fill
-                                  sizes="100vw"
-                                  className="object-cover"
-                                  unoptimized={itemImage.startsWith('http://') || itemImage.startsWith('https://')}
-                                />
-                              </div>
+                            <div className="block lg:hidden w-full leading-none">
+                              <Image
+                                src={itemImage}
+                                alt={typeof qText === 'string' ? qText : 'Quotation image'}
+                                width={728}
+                                height={486}
+                                sizes="100vw"
+                                className="w-full h-auto block"
+                                unoptimized={itemImage.startsWith('http://') || itemImage.startsWith('https://')}
+                              />
                             </div>
                           )}
                         </React.Fragment>
@@ -403,19 +402,22 @@ export function FmcgTabs({ content }: { content?: FmcgTabsContent }) {
               </div>
 
               {displayImage && (
-                <div className="hidden lg:flex flex-1 w-full max-w-md lg:max-w-xl shrink-0 justify-center items-center">
-                  <div className="w-full relative aspect-[4/3] sm:aspect-[1.4] rounded-2xl overflow-hidden shadow-2xl border border-slate-700/30">
-                    <Image
-                      key={displayImage}
-                      src={displayImage}
-                      alt={typeof tab.heading === 'string' ? tab.heading : 'FMCG Persona'}
-                      fill
-                      sizes="(max-width: 1024px) 100vw, 50vw"
-                      className="object-cover"
-                      priority={idx === 0}
-                      unoptimized={displayImage.startsWith('http://') || displayImage.startsWith('https://')}
-                    />
-                  </div>
+                <div className="hidden lg:block w-full max-w-md lg:max-w-xl shrink-0 self-center leading-none">
+                  <Image
+                    key={displayImage}
+                    src={displayImage}
+                    alt={
+                      typeof tab.heading === 'string'
+                        ? tab.heading.replace(/<[^>]*>/g, '') || 'FMCG Persona'
+                        : 'FMCG Persona'
+                    }
+                    width={728}
+                    height={486}
+                    sizes="(max-width: 1024px) 100vw, 36rem"
+                    className="w-full h-auto block"
+                    priority={idx === 0}
+                    unoptimized={displayImage.startsWith('http://') || displayImage.startsWith('https://')}
+                  />
                 </div>
               )}
             </div>

@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Wand2, ShieldCheck, HelpCircle, LucideIcon } from 'lucide-react';
+import { Wand2, ShieldCheck, LucideIcon } from 'lucide-react';
 
 const iconMap: Record<string, LucideIcon> = {
   wand: Wand2,
@@ -19,6 +19,7 @@ interface StripItem {
 interface BiHighlightStripContent {
   bgColor?: string;
   textColor?: string;
+  boldTextColor?: string;
   circleBgColor?: string;
   circleIconColor?: string;
   borderColor?: string;
@@ -28,6 +29,7 @@ interface BiHighlightStripContent {
 export function BiHighlightStrip({ content }: { content?: BiHighlightStripContent }) {
   const bgColor = content?.bgColor || '#fcc42c';
   const textColor = content?.textColor || '#1f2937';
+  const boldTextColor = content?.boldTextColor || textColor;
   const circleBgColor = content?.circleBgColor || '#4c327f';
   const circleIconColor = content?.circleIconColor || '#ffffff';
   const borderColor = content?.borderColor || 'rgba(0, 0, 0, 0.15)';
@@ -45,34 +47,47 @@ export function BiHighlightStrip({ content }: { content?: BiHighlightStripConten
 
   const items = content?.items && content.items.length >= 2 ? content.items : defaultItems;
 
-  // Helper to parse double asterisks ** for bold text
   const renderFormattedText = (text: string) => {
     if (!text) return '';
     const parts = text.split('**');
     return parts.map((part, index) => {
-      // Odd indices are between asterisks, so they are bold
       if (index % 2 === 1) {
-        return <strong key={index} className="font-bold">{part}</strong>;
+        return (
+          <strong key={index} className="font-bold" style={{ color: boldTextColor }}>
+            {part}
+          </strong>
+        );
       }
       return part;
     });
   };
 
+  const renderIcon = (iconVal: string, fallback: LucideIcon) => {
+    const trimmed = iconVal?.trim() || '';
+    const isUploadedImage = trimmed.startsWith('/') || trimmed.startsWith('http') || trimmed.includes('.');
+    if (isUploadedImage) {
+      return (
+        /* eslint-disable-next-line @next/next/no-img-element */
+        <img src={encodeURI(trimmed)} alt="Icon" className="w-full h-full object-contain" />
+      );
+    }
+    const Icon = iconMap[trimmed.toLowerCase()] || fallback;
+    return <Icon className="w-6 h-6" />;
+  };
+
   return (
-    <section 
+    <section
       className="py-8 overflow-hidden font-sans border-t border-b"
-      style={{ 
-        backgroundColor: bgColor, 
+      style={{
+        backgroundColor: bgColor,
         borderColor: borderColor,
         color: textColor
       }}
     >
       <div className="container mx-auto max-w-7xl px-6">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-0 items-center">
-          
-          {/* Item 1 */}
           {items[0] && (
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0, y: 10 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
@@ -80,75 +95,37 @@ export function BiHighlightStrip({ content }: { content?: BiHighlightStripConten
               className="flex items-center gap-5 md:pr-12 md:border-r"
               style={{ borderColor: borderColor }}
             >
-              {/* Round icon circle */}
-              <div 
+              <div
                 className="flex-shrink-0 w-14 h-14 rounded-full flex items-center justify-center shadow-sm overflow-hidden p-3"
                 style={{ backgroundColor: circleBgColor, color: circleIconColor }}
               >
-                {(() => {
-                  const iconVal = items[0].icon?.trim() || '';
-                  const isUploadedImage = iconVal.startsWith('/') || iconVal.startsWith('http') || iconVal.includes('.');
-                  if (isUploadedImage) {
-                    return (
-                      /* eslint-disable-next-line @next/next/no-img-element */
-                      <img
-                        src={encodeURI(iconVal)}
-                        alt="Icon"
-                        className="w-full h-full object-contain"
-                      />
-                    );
-                  }
-                  const Icon = iconMap[iconVal.toLowerCase()] || Wand2;
-                  return <Icon className="w-6 h-6" />;
-                })()}
+                {renderIcon(items[0].icon || '', Wand2)}
               </div>
-              
-              {/* Text */}
-              <p className="text-sm sm:text-base md:text-lg font-normal leading-relaxed text-left">
+              <p className="text-sm sm:text-base md:text-lg font-normal leading-relaxed text-left" style={{ color: textColor }}>
                 {renderFormattedText(items[0].text || '')}
               </p>
             </motion.div>
           )}
 
-          {/* Item 2 */}
           {items[1] && (
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0, y: 10 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.4, delay: 0.1 }}
               className="flex items-center gap-5 md:pl-12"
             >
-              {/* Round icon circle */}
-              <div 
+              <div
                 className="flex-shrink-0 w-14 h-14 rounded-full flex items-center justify-center shadow-sm overflow-hidden p-3"
                 style={{ backgroundColor: circleBgColor, color: circleIconColor }}
               >
-                {(() => {
-                  const iconVal = items[1].icon?.trim() || '';
-                  const isUploadedImage = iconVal.startsWith('/') || iconVal.startsWith('http') || iconVal.includes('.');
-                  if (isUploadedImage) {
-                    return (
-                      /* eslint-disable-next-line @next/next/no-img-element */
-                      <img
-                        src={encodeURI(iconVal)}
-                        alt="Icon"
-                        className="w-full h-full object-contain"
-                      />
-                    );
-                  }
-                  const Icon = iconMap[iconVal.toLowerCase()] || ShieldCheck;
-                  return <Icon className="w-6 h-6" />;
-                })()}
+                {renderIcon(items[1].icon || '', ShieldCheck)}
               </div>
-              
-              {/* Text */}
-              <p className="text-sm sm:text-base md:text-lg font-normal leading-relaxed text-left">
+              <p className="text-sm sm:text-base md:text-lg font-normal leading-relaxed text-left" style={{ color: textColor }}>
                 {renderFormattedText(items[1].text || '')}
               </p>
             </motion.div>
           )}
-
         </div>
       </div>
     </section>
