@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FormattedText } from '@/components/ui/FormattedText';
 import { MotionSection } from '@/components/animations/MotionSection';
-import { Check, Calendar, Zap, Layers, BarChart3 } from 'lucide-react';
+import { Calendar, Zap, Layers, BarChart3 } from 'lucide-react';
 import { safeImageUrl } from '@/lib/utils';
 
 interface ErpFeature {
@@ -63,15 +63,16 @@ export function ErpFeaturesTab({ content }: ErpFeaturesTabProps) {
     ? content.highlightedWordIndices
     : undefined;
   const subheading = content?.subheading || 'Select standard version or customizable version';
-  const bgColor = content?.bgColor || '#F8F5FE';
-  const cardBgColor = content?.cardBgColor || '#ffffff';
-  const subheadingTextColor = content?.subheadingTextColor || '#64748b';
+  // Use nullish coalescing so admin values like #ffffff / #000000 always apply
+  const bgColor = content?.bgColor ?? '#F8F5FE';
+  const cardBgColor = content?.cardBgColor ?? '#ffffff';
+  const subheadingTextColor = content?.subheadingTextColor ?? '#64748b';
   const descriptionTextColor =
-    content?.descriptionTextColor || content?.contentTextColor || '#334155';
-  const activeTabBgColor = content?.activeTabBgColor || '#c7d2fe';
-  const activeTabTextColor = content?.activeTabTextColor || '#ffffff';
-  const inactiveTabBgColor = content?.inactiveTabBgColor || '#ffffff';
-  const inactiveTabTextColor = content?.inactiveTabTextColor || '#1e293b';
+    content?.descriptionTextColor ?? content?.contentTextColor ?? '#334155';
+  const activeTabBgColor = content?.activeTabBgColor ?? '#c7d2fe';
+  const activeTabTextColor = content?.activeTabTextColor ?? '#ffffff';
+  const inactiveTabBgColor = content?.inactiveTabBgColor ?? '#ffffff';
+  const inactiveTabTextColor = content?.inactiveTabTextColor ?? '#1e293b';
 
   const features: ErpFeature[] = (content?.features && content.features.length > 0)
     ? content.features
@@ -115,13 +116,9 @@ export function ErpFeaturesTab({ content }: ErpFeaturesTabProps) {
 
   return (
     <section
-      className="relative w-full py-12 md:py-16 overflow-hidden border-b border-purple-100 font-sans"
-      style={{ backgroundColor: bgColor, color: headingColor }}
+      className="relative w-full py-12 md:py-16 overflow-hidden border-b border-slate-200/80 font-sans"
+      style={{ backgroundColor: bgColor || '#F8F5FE', color: headingColor }}
     >
-      {/* Background soft ambient glow */}
-      <div className="absolute top-1/4 -left-32 w-[500px] h-[500px] bg-purple-200/30 rounded-full blur-[140px] pointer-events-none" />
-      <div className="absolute bottom-10 -right-32 w-[500px] h-[500px] bg-indigo-200/30 rounded-full blur-[140px] pointer-events-none" />
-
       <div className="container mx-auto px-4 md:px-8 max-w-7xl relative z-10">
 
         {/* Header Block */}
@@ -144,7 +141,7 @@ export function ErpFeaturesTab({ content }: ErpFeaturesTabProps) {
 
         {/* Main Card Container */}
         <div
-          className="max-w-6xl mx-auto rounded-[28px] p-6 sm:p-7 lg:p-8 border border-purple-100/80 shadow-[0_15px_45px_rgba(147,51,234,0.06)] relative overflow-hidden grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-10 items-center"
+          className="max-w-6xl mx-auto rounded-[28px] p-6 sm:p-7 lg:p-8 relative overflow-hidden grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-10 items-center"
           style={{ backgroundColor: cardBgColor }}
         >
 
@@ -154,7 +151,7 @@ export function ErpFeaturesTab({ content }: ErpFeaturesTabProps) {
               const currentId = feature.id || idx.toString();
               const isActive = currentId === activeTabId;
               const iconSrc = resolveTabIconSrc(feature.icon);
-              const DefaultIcon = defaultIcons[idx % defaultIcons.length] || Check;
+              const DefaultIcon = defaultIcons[idx % defaultIcons.length];
               const tabTextColor = isActive ? activeTabTextColor : inactiveTabTextColor;
 
               return (
@@ -174,7 +171,7 @@ export function ErpFeaturesTab({ content }: ErpFeaturesTabProps) {
                     color: tabTextColor,
                   }}
                 >
-                  {/* Icon Badge — active tab always uses Check; uploaded icon only for inactive */}
+                  {/* Icon Badge — keep the tab's own icon for active and inactive */}
                   <div
                     className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 transition-all duration-300 ${isActive
                         ? 'bg-white/20 backdrop-blur-xs'
@@ -182,9 +179,7 @@ export function ErpFeaturesTab({ content }: ErpFeaturesTabProps) {
                       }`}
                     style={{ color: tabTextColor }}
                   >
-                    {isActive ? (
-                      <Check className="w-4 h-4 stroke-[2.5]" style={{ color: tabTextColor }} />
-                    ) : iconSrc ? (
+                    {iconSrc ? (
                       /* eslint-disable-next-line @next/next/no-img-element */
                       <img
                         src={encodeURI(iconSrc)}
@@ -197,11 +192,9 @@ export function ErpFeaturesTab({ content }: ErpFeaturesTabProps) {
                         }}
                       />
                     ) : null}
-                    {!isActive && (
-                      <span style={{ display: iconSrc ? 'none' : 'block' }}>
-                        <DefaultIcon className="w-4 h-4" style={{ color: tabTextColor }} />
-                      </span>
-                    )}
+                    <span style={{ display: iconSrc ? 'none' : 'block' }}>
+                      <DefaultIcon className="w-4 h-4" style={{ color: tabTextColor }} />
+                    </span>
                   </div>
 
                   {/* Tab Title Text */}
@@ -254,14 +247,6 @@ export function ErpFeaturesTab({ content }: ErpFeaturesTabProps) {
                 </div>
               </motion.div>
             </AnimatePresence>
-          </div>
-
-          {/* Bottom Wave Decorative Background SVG Pattern */}
-          <div className="absolute bottom-0 right-0 w-80 h-32 opacity-25 pointer-events-none -mb-4 -mr-4">
-            <svg viewBox="0 0 400 160" fill="none" className="w-full h-full text-purple-300">
-              <path d="M0 120C100 140 200 80 300 110C400 140 500 90 600 120V160H0V120Z" fill="currentColor" opacity="0.5" />
-              <path d="M0 140C120 160 240 100 360 130C480 160 600 110 720 140V160H0V140Z" fill="currentColor" opacity="0.8" />
-            </svg>
           </div>
 
         </div>

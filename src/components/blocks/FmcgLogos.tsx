@@ -28,7 +28,7 @@ export function FmcgLogos({ content }: { content?: FmcgLogosContent }) {
   const duplicatedLogos = [...logos, ...logos, ...logos];
 
   return (
-    <section className="py-14 px-6 bg-white border-b">
+    <section className="py-8 md:py-14 px-6 bg-white border-b">
       <div className="container mx-auto max-w-7xl">
         {logos.length > 0 && (
           <div className="overflow-hidden relative">

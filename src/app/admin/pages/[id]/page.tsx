@@ -25,6 +25,8 @@ import {
   BarChart3,
   Search,
   ChevronDown,
+  ChevronLeft,
+  ChevronRight,
   Check,
   Monitor,
   Smartphone,
@@ -47,6 +49,7 @@ import type { PageSection, JsonValue } from '@/components/admin/page-editor';
 import { RichTextField } from '@/components/admin/page-editor/RichTextField';
 import { MediaField } from '@/components/admin/page-editor/MediaField';
 import { ColorPickerField } from '@/components/admin/page-editor/ColorPickerField';
+import { defaultCaseStudies } from '@/lib/case-studies-data';
 
 // ---------------------------------------------------------------------------
 // Types
@@ -144,6 +147,9 @@ export function CaseStudyManager({ pageId, onRefresh }: { pageId?: string; onRef
   const [editingStudyId, setEditingStudyId] = React.useState<string | null>(null);
   const [isFetchingDetail, setIsFetchingDetail] = React.useState(false);
   const [activeTab, setActiveTab] = React.useState('basic');
+  const [currentPage, setCurrentPage] = React.useState(1);
+  const [importingSlug, setImportingSlug] = React.useState<string | null>(null);
+  const itemsPerPage = 10;
 
   // Basic Info
   const [title, setTitle] = React.useState('');
@@ -178,51 +184,63 @@ export function CaseStudyManager({ pageId, onRefresh }: { pageId?: string; onRef
   const [resultsTitle, setResultsTitle] = React.useState('');
   const [resultsItems, setResultsItems] = React.useState(['']);
 
+  const totalPages = Math.max(1, Math.ceil(studies.length / itemsPerPage));
+  const paginatedStudies = React.useMemo(
+    () => studies.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage),
+    [studies, currentPage]
+  );
+
+  React.useEffect(() => {
+    const maxPage = Math.max(1, Math.ceil(studies.length / itemsPerPage));
+    if (currentPage > maxPage) setCurrentPage(maxPage);
+  }, [studies.length, currentPage]);
+
   const fetchStudies = React.useCallback(async () => {
     setIsLoading(true);
     try {
       const res = await fetch('/api/admin/pages');
       if (res.ok) {
         const tree = await res.json();
-        let targetPageId = pageId;
-        if (!targetPageId) {
-          const findCaseStudiesNode = (nodes: any[]): any => {
-            for (const node of nodes) {
-              if (node.fullPath === '/case-studies' || node.slug === 'case-studies') return node;
-              if (node.children) {
-                const found = findCaseStudiesNode(node.children);
-                if (found) return found;
-              }
-            }
-            return null;
-          };
-          const csNode = findCaseStudiesNode(tree);
-          if (csNode) targetPageId = csNode.id;
-        }
 
-        const findNode = (nodes: any[]): any => {
+        const collectCaseStudyPages = (nodes: any[], acc: any[] = []) => {
           for (const node of nodes) {
-            if (node.id === targetPageId) return node;
-            if (node.children) {
-              const found = findNode(node.children);
-              if (found) return found;
+            const path = node.fullPath || '';
+            if (path.startsWith('/case-studies/') && path !== '/case-studies') {
+              acc.push(node);
             }
+            if (node.children?.length) collectCaseStudyPages(node.children, acc);
           }
-          return null;
+          return acc;
         };
-        const node = findNode(tree);
-        if (node && node.children) {
-          setStudies(node.children);
-        } else {
-          setStudies([]);
-        }
+
+        const cmsStudies = collectCaseStudyPages(tree);
+        const cmsSlugs = new Set(cmsStudies.map((s: any) => s.slug).filter(Boolean));
+
+        // Include static/default case studies that appear on the public site but are not yet CMS pages
+        const staticStudies = defaultCaseStudies
+          .filter((cs) => !cmsSlugs.has(cs.slug))
+          .map((cs) => ({
+            id: null,
+            title: cs.title,
+            slug: cs.slug,
+            fullPath: `/case-studies/${cs.slug}`,
+            status: 'static',
+            isStatic: true,
+            staticData: cs,
+          }));
+
+        const merged = [...cmsStudies, ...staticStudies].sort((a, b) =>
+          String(a.title || '').localeCompare(String(b.title || ''))
+        );
+        setStudies(merged);
+        setCurrentPage(1);
       }
     } catch (err) {
       console.error('Failed to fetch case studies', err);
     } finally {
       setIsLoading(false);
     }
-  }, [pageId]);
+  }, []);
 
   const fetchTemplates = React.useCallback(async () => {
     try {
@@ -321,6 +339,111 @@ export function CaseStudyManager({ pageId, onRefresh }: { pageId?: string; onRef
       }
     } catch (err) {
       toast.error('Failed to delete case study');
+    }
+  };
+
+  const resolveCaseStudiesParentId = async (): Promise<string | null> => {
+    if (pageId) return pageId;
+    const pagesRes = await fetch('/api/admin/pages');
+    if (!pagesRes.ok) return null;
+    const tree = await pagesRes.json();
+    const findCaseStudiesNode = (nodes: any[]): any => {
+      for (const node of nodes) {
+        if (node.fullPath === '/case-studies' || node.slug === 'case-studies') return node;
+        if (node.children) {
+          const found = findCaseStudiesNode(node.children);
+          if (found) return found;
+        }
+      }
+      return null;
+    };
+    return findCaseStudiesNode(tree)?.id || null;
+  };
+
+  const handleImportStatic = async (study: any) => {
+    const cs = study?.staticData;
+    if (!cs?.slug) return;
+    setImportingSlug(cs.slug);
+    try {
+      let detailTemplate = templates.find((t: any) =>
+        t.templateSections?.some((ts: any) => ts.type === 'case-study-detail')
+      );
+      if (!detailTemplate) {
+        const tmplRes = await fetch('/api/admin/templates');
+        if (tmplRes.ok) {
+          const allTmpls = await tmplRes.json();
+          setTemplates(allTmpls);
+          detailTemplate = allTmpls.find((t: any) =>
+            t.templateSections?.some((ts: any) => ts.type === 'case-study-detail')
+          );
+        }
+      }
+      if (!detailTemplate) throw new Error('Case Study Detail template not found');
+
+      const parentTargetId = await resolveCaseStudiesParentId();
+      const createPageRes = await fetch('/api/admin/pages', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          title: cs.title,
+          slug: cs.slug,
+          parentId: parentTargetId,
+          templateId: detailTemplate.id || null,
+          pageType: 'standard',
+          status: 'draft',
+        }),
+      });
+      if (!createPageRes.ok) {
+        const errBody = await createPageRes.json().catch(() => ({}));
+        throw new Error(errBody.error || errBody.message || 'Failed to import case study');
+      }
+      const pageData = await createPageRes.json();
+      const detailSection = pageData.sections?.find((s: any) => s.type === 'case-study-detail');
+      if (detailSection) {
+        const defaultContent =
+          detailSection.content ||
+          detailTemplate.templateSections?.find((ts: any) => ts.type === 'case-study-detail')?.contentJson ||
+          {};
+        await fetch(`/api/admin/pages/${pageData.id}/sections/${detailSection.id}`, {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            content: {
+              ...defaultContent,
+              title: cs.title,
+              badgeText: cs.badgeText || cs.topic || cs.badge || 'Case Study',
+              topic: cs.topic,
+              industry: cs.industry || cs.industries?.[0] || '',
+              industries: cs.industries || [],
+              date: cs.date,
+              image: cs.image,
+              description: cs.description,
+              overview: cs.overview || cs.overviewHtml,
+              overviewParagraphs: cs.overviewParagraphs,
+              overviewImages: cs.overviewImages,
+              challengeTitle: cs.challengeTitle,
+              challengeDescription: cs.challengeDescription || cs.challengeHtml,
+              challengeImage: cs.challengeImage,
+              challengePoints: cs.challengePoints,
+              solutionsTitle: cs.solutionsTitle,
+              solutionsDescription: cs.solutionsDescription || cs.solutionHtml,
+              solutionModules: cs.solutionModules,
+              resultsTitle: cs.resultsTitle,
+              resultsItems: cs.resultsItems,
+              gradientFrom: cs.gradientFrom || '#1e2445',
+              gradientTo: cs.gradientTo || '#292048',
+            },
+          }),
+        });
+      }
+      toast.success('Case study imported into CMS');
+      await fetchStudies();
+      onRefresh?.();
+      await handleOpenEdit(pageData.id);
+    } catch (err: any) {
+      toast.error(err.message || 'Failed to import case study');
+    } finally {
+      setImportingSlug(null);
     }
   };
 
@@ -513,76 +636,138 @@ export function CaseStudyManager({ pageId, onRefresh }: { pageId?: string; onRef
           <p className="text-slate-400 font-medium text-sm">No case studies found</p>
         </div>
       ) : (
-        <div className="overflow-x-auto">
-          <table className="w-full text-left border-collapse">
-            <thead>
-              <tr className="border-b border-slate-100 text-slate-400 text-xs font-black uppercase tracking-wider">
-                <th className="py-3 px-2">Case Study</th>
-                <th className="py-3 px-2">Status</th>
-                <th className="py-3 px-2 text-right">Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {studies.map((study: any) => (
-                <tr key={study.id} className="border-b border-slate-50 hover:bg-slate-50/50 transition-colors text-sm font-medium">
-                  <td className="py-3.5 px-2">
-                    <span className="font-bold text-slate-800 block truncate">{study.title}</span>
-                    <span className="text-[10px] font-mono text-slate-400 block truncate">{study.fullPath}</span>
-                  </td>
-                  <td className="py-3.5 px-2">
-                    <div className="relative inline-block">
-                      <select
-                        value={study.status || 'draft'}
-                        onChange={async (e) => {
-                          const newStatus = e.target.value;
-                          if (newStatus === study.status) return;
-                          try {
-                            const action = newStatus === 'published' ? 'publish' : 'unpublish';
-                            const res = await fetch(`/api/admin/pages/${study.id}/actions`, {
-                              method: 'POST',
-                              headers: { 'Content-Type': 'application/json' },
-                              body: JSON.stringify({ action }),
-                            });
-                            if (res.ok) {
-                              toast.success(`Status updated to ${newStatus}`);
-                              setStudies(prev =>
-                                prev.map(s => (s.id === study.id ? { ...s, status: newStatus } : s))
-                              );
-                              onRefresh?.();
-                            } else {
-                              toast.error('Failed to update status');
-                            }
-                          } catch (err) {
-                            toast.error('Failed to update status');
-                          }
-                        }}
-                        className={cn(
-                          'appearance-none bg-none [background-image:none] text-[8px] font-black pl-2 pr-4 py-0 rounded-full uppercase tracking-tighter cursor-pointer border transition-all focus:outline-none h-4.5 leading-none',
-                          study.status === 'published'
-                            ? 'bg-emerald-50 text-emerald-700 border-emerald-200/80 hover:bg-emerald-100/80'
-                            : 'bg-amber-50 text-amber-700 border-amber-200/80 hover:bg-amber-100/80'
-                        )}
-                      >
-                        <option value="published" className="bg-white text-slate-800 font-semibold text-xs">Published</option>
-                        <option value="draft" className="bg-white text-slate-800 font-semibold text-xs">Draft</option>
-                      </select>
-                      <ChevronDown className={cn(
-                        'w-2 h-2 absolute right-1 top-1/2 -translate-y-1/2 pointer-events-none transition-colors opacity-75',
-                        study.status === 'published' ? 'text-emerald-700' : 'text-amber-700'
-                      )} />
-                    </div>
-                  </td>
-                  <td className="py-3.5 px-2 text-right">
-                    <div className="flex justify-end gap-1">
-                      <Button variant="ghost" size="icon" className="h-8 w-8 text-[#4B2A63] hover:bg-[#4B2A63]/5" onClick={() => handleOpenEdit(study.id)} disabled={isFetchingDetail}>
-                        <Edit className="w-4 h-4" />
-                      </Button>
-                    </div>
-                  </td>
+        <div className="space-y-0">
+          <div className="overflow-x-auto">
+            <table className="w-full text-left border-collapse">
+              <thead>
+                <tr className="border-b border-slate-100 text-slate-400 text-xs font-black uppercase tracking-wider">
+                  <th className="py-3 px-2">Case Study</th>
+                  <th className="py-3 px-2">Status</th>
+                  <th className="py-3 px-2 text-right">Actions</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {paginatedStudies.map((study: any) => (
+                  <tr key={study.id || `static-${study.slug}`} className="border-b border-slate-50 hover:bg-slate-50/50 transition-colors text-sm font-medium">
+                    <td className="py-3.5 px-2">
+                      <span className="font-bold text-slate-800 block truncate">{study.title}</span>
+                      <span className="text-[10px] font-mono text-slate-400 block truncate">{study.fullPath}</span>
+                    </td>
+                    <td className="py-3.5 px-2">
+                      {study.isStatic ? (
+                        <span className="inline-flex text-[8px] font-black pl-2 pr-2 py-0.5 rounded-full uppercase tracking-tighter bg-slate-100 text-slate-500 border border-slate-200">
+                          Static
+                        </span>
+                      ) : (
+                        <div className="relative inline-block">
+                          <select
+                            value={study.status || 'draft'}
+                            onChange={async (e) => {
+                              const newStatus = e.target.value;
+                              if (newStatus === study.status) return;
+                              try {
+                                const action = newStatus === 'published' ? 'publish' : 'unpublish';
+                                const res = await fetch(`/api/admin/pages/${study.id}/actions`, {
+                                  method: 'POST',
+                                  headers: { 'Content-Type': 'application/json' },
+                                  body: JSON.stringify({ action }),
+                                });
+                                if (res.ok) {
+                                  toast.success(`Status updated to ${newStatus}`);
+                                  setStudies(prev =>
+                                    prev.map(s => (s.id === study.id ? { ...s, status: newStatus } : s))
+                                  );
+                                  onRefresh?.();
+                                } else {
+                                  toast.error('Failed to update status');
+                                }
+                              } catch (err) {
+                                toast.error('Failed to update status');
+                              }
+                            }}
+                            className={cn(
+                              'appearance-none bg-none [background-image:none] text-[8px] font-black pl-2 pr-4 py-0 rounded-full uppercase tracking-tighter cursor-pointer border transition-all focus:outline-none h-4.5 leading-none',
+                              study.status === 'published'
+                                ? 'bg-emerald-50 text-emerald-700 border-emerald-200/80 hover:bg-emerald-100/80'
+                                : 'bg-amber-50 text-amber-700 border-amber-200/80 hover:bg-amber-100/80'
+                            )}
+                          >
+                            <option value="published" className="bg-white text-slate-800 font-semibold text-xs">Published</option>
+                            <option value="draft" className="bg-white text-slate-800 font-semibold text-xs">Draft</option>
+                          </select>
+                          <ChevronDown className={cn(
+                            'w-2 h-2 absolute right-1 top-1/2 -translate-y-1/2 pointer-events-none transition-colors opacity-75',
+                            study.status === 'published' ? 'text-emerald-700' : 'text-amber-700'
+                          )} />
+                        </div>
+                      )}
+                    </td>
+                    <td className="py-3.5 px-2 text-right">
+                      <div className="flex justify-end gap-1">
+                        {study.isStatic ? (
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            className="h-8 rounded-full text-[11px] font-bold px-3 text-[#4B2A63] border-[#4B2A63]/20 hover:bg-[#4B2A63]/5"
+                            onClick={() => handleImportStatic(study)}
+                            disabled={importingSlug === study.slug}
+                          >
+                            {importingSlug === study.slug ? (
+                              <Loader2 className="w-3.5 h-3.5 animate-spin mr-1" />
+                            ) : (
+                              <Plus className="w-3.5 h-3.5 mr-1" />
+                            )}
+                            Import to CMS
+                          </Button>
+                        ) : (
+                          <Button variant="ghost" size="icon" className="h-8 w-8 text-[#4B2A63] hover:bg-[#4B2A63]/5" onClick={() => handleOpenEdit(study.id)} disabled={isFetchingDetail}>
+                            <Edit className="w-4 h-4" />
+                          </Button>
+                        )}
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+
+          {studies.length > 0 && (
+            <div className="border-t border-slate-100 pt-3 flex items-center justify-between gap-3">
+              <p className="text-[11px] text-slate-500">
+                Showing{' '}
+                <span className="font-medium text-slate-900">
+                  {studies.length === 0 ? 0 : (currentPage - 1) * itemsPerPage + 1}
+                </span>{' '}
+                to{' '}
+                <span className="font-medium text-slate-900">
+                  {Math.min(currentPage * itemsPerPage, studies.length)}
+                </span>{' '}
+                of <span className="font-medium text-slate-900">{studies.length}</span> case studies
+              </p>
+              <div className="flex items-center gap-1.5">
+                <Button
+                  variant="outline"
+                  size="xs"
+                  onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+                  disabled={currentPage === 1}
+                >
+                  <ChevronLeft className="w-3 h-3 mr-1" /> Previous
+                </Button>
+                <span className="text-[11px] text-slate-600 font-medium px-2">
+                  {currentPage} / {totalPages}
+                </span>
+                <Button
+                  variant="outline"
+                  size="xs"
+                  onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+                  disabled={currentPage === totalPages}
+                >
+                  Next <ChevronRight className="w-3 h-3 ml-1" />
+                </Button>
+              </div>
+            </div>
+          )}
         </div>
       )}
 

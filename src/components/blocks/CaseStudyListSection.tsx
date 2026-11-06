@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import { useInternalNavigate } from '@/hooks/useInternalNavigate';
 import { HeroTitle } from '@/components/ui/HeroTitle';
 
-import { defaultCaseStudies, type CaseStudyPost } from '@/lib/case-studies-data';
+import { type CaseStudyPost } from '@/lib/case-studies-data';
 
 interface CaseStudyListContent {
   badgeText?: string;
@@ -58,24 +58,20 @@ export function CaseStudyListSection({ content }: CaseStudyListSectionProps) {
   const [topicsOpen, setTopicsOpen] = React.useState(false);
   const [industriesOpen, setIndustriesOpen] = React.useState(false);
 
-  // Fetch case studies from API
+  // Fetch published case studies only (API excludes drafts)
   React.useEffect(() => {
     async function fetchCaseStudies() {
       try {
         const res = await fetch('/api/case-studies');
         if (res.ok) {
           const data = await res.json();
-          if (data && data.length > 0) {
-            setCaseStudies(data);
-          } else {
-            setCaseStudies(defaultCaseStudies);
-          }
+          setCaseStudies(Array.isArray(data) ? data : []);
         } else {
-          setCaseStudies(defaultCaseStudies);
+          setCaseStudies([]);
         }
       } catch (err) {
-        console.error('Failed to load dynamic case studies, using fallback', err);
-        setCaseStudies(defaultCaseStudies);
+        console.error('Failed to load case studies', err);
+        setCaseStudies([]);
       } finally {
         setLoading(false);
       }

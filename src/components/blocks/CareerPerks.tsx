@@ -69,8 +69,8 @@ export default function CareerPerks({ content }: CareerPerksProps) {
         borderColor: 'rgba(233, 213, 255, 0.6)',
       }}
     >
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[650px] h-[650px] bg-purple-300/35 rounded-full blur-[140px] pointer-events-none" />
-      <div className="absolute -top-24 -right-24 w-96 h-96 bg-indigo-300/30 rounded-full blur-[120px] pointer-events-none" />
+      {/* <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[650px] h-[650px] bg-purple-300/35 rounded-full blur-[140px] pointer-events-none" />
+      <div className="absolute -top-24 -right-24 w-96 h-96 bg-indigo-300/30 rounded-full blur-[120px] pointer-events-none" /> */}
 
       <div className="container mx-auto max-w-7xl relative z-10 text-center">
         <div className="max-w-3xl mx-auto mb-14">

@@ -51,149 +51,94 @@ const DEFAULT_CONTENT: Landing1TestimonialsContent = {
   testimonials: DEFAULT_TESTIMONIALS
 };
 
-function getSlideStep(el: HTMLElement) {
-  const card = el.firstElementChild as HTMLElement | null;
-  const next = card?.nextElementSibling as HTMLElement | null;
-  if (card && next) return next.offsetLeft - card.offsetLeft;
-  return card?.offsetWidth || el.clientWidth;
-}
-
 export function Landing1Testimonials({ content }: { content?: Landing1TestimonialsContent }) {
   const data = { ...DEFAULT_CONTENT, ...content };
   const testimonials = data.testimonials || [];
   const scrollRef = useRef<HTMLDivElement>(null);
-  const pausedRef = useRef(false);
-  const loopingRef = useRef(false);
-  const [perView, setPerView] = useState(3);
-  const [canScroll, setCanScroll] = useState(false);
-
-  const shouldLoop = testimonials.length > perView;
-  loopingRef.current = shouldLoop;
-  const slides = shouldLoop ? [...testimonials, ...testimonials] : testimonials;
+  const [canScrollLeft, setCanScrollLeft] = useState(false);
+  const [canScrollRight, setCanScrollRight] = useState(false);
 
   const checkScroll = useCallback(() => {
-    const el = scrollRef.current;
-    if (!el) return;
-    setCanScroll(el.scrollWidth - el.clientWidth > 8);
-  }, []);
-
-  const normalizeLoop = useCallback(() => {
-    const el = scrollRef.current;
-    if (!el || !loopingRef.current || testimonials.length === 0) return;
-    const cycle = getSlideStep(el) * testimonials.length;
-    if (cycle <= 0 || el.scrollLeft < cycle - 1) return;
-    const previous = el.style.scrollBehavior;
-    el.style.scrollBehavior = 'auto';
-    el.scrollLeft = el.scrollLeft - cycle;
-    el.style.scrollBehavior = previous;
-  }, [testimonials.length]);
-
-  const scrollByCard = useCallback((direction: 'left' | 'right') => {
-    const el = scrollRef.current;
-    if (!el) return;
-    const step = getSlideStep(el);
-    const maxScroll = el.scrollWidth - el.clientWidth;
-    if (maxScroll <= 8 || step <= 0) return;
-
-    if (direction === 'left' && loopingRef.current && el.scrollLeft <= 8) {
-      const cycle = step * testimonials.length;
-      const previous = el.style.scrollBehavior;
-      el.style.scrollBehavior = 'auto';
-      el.scrollLeft = el.scrollLeft + cycle;
-      el.style.scrollBehavior = previous;
+    if (scrollRef.current) {
+      const { scrollLeft, scrollWidth, clientWidth } = scrollRef.current;
+      setCanScrollLeft(scrollLeft > 5);
+      setCanScrollRight(scrollLeft < scrollWidth - clientWidth - 5);
     }
-
-    el.scrollBy({ left: direction === 'right' ? step : -step, behavior: 'smooth' });
-  }, [testimonials.length]);
-
-  useEffect(() => {
-    const media = window.matchMedia('(min-width: 768px)');
-    const update = () => setPerView(media.matches ? 3 : 1);
-    update();
-    media.addEventListener('change', update);
-    return () => media.removeEventListener('change', update);
   }, []);
 
   useEffect(() => {
     checkScroll();
+    const timer = setTimeout(checkScroll, 100);
     const el = scrollRef.current;
-    if (!el) return;
-
-    let settleTimer = 0;
-    const onScroll = () => {
-      checkScroll();
-      window.clearTimeout(settleTimer);
-      settleTimer = window.setTimeout(() => normalizeLoop(), 80);
-    };
-
-    el.addEventListener('scroll', onScroll, { passive: true });
-    window.addEventListener('resize', checkScroll);
+    if (el) {
+      el.addEventListener('scroll', checkScroll);
+      window.addEventListener('resize', checkScroll);
+    }
     return () => {
-      window.clearTimeout(settleTimer);
-      el.removeEventListener('scroll', onScroll);
+      clearTimeout(timer);
+      if (el) {
+        el.removeEventListener('scroll', checkScroll);
+      }
       window.removeEventListener('resize', checkScroll);
     };
-  }, [checkScroll, normalizeLoop, slides.length]);
+  }, [checkScroll, testimonials]);
 
-  useEffect(() => {
-    const el = scrollRef.current;
-    if (!el || !shouldLoop) return;
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-
-    const id = window.setInterval(() => {
-      if (pausedRef.current) return;
-      if (el.scrollWidth - el.clientWidth <= 8) return;
-      el.scrollBy({ left: getSlideStep(el), behavior: 'smooth' });
-    }, 4500);
-
-    return () => window.clearInterval(id);
-  }, [shouldLoop, testimonials.length]);
+  const scroll = (direction: 'left' | 'right') => {
+    if (scrollRef.current) {
+      const card = scrollRef.current.firstElementChild as HTMLElement | null;
+      const next = card?.nextElementSibling as HTMLElement | null;
+      const cardWidth = card && next
+        ? next.offsetLeft - card.offsetLeft
+        : card
+          ? card.offsetWidth + 32
+          : 340;
+      const scrollAmount = direction === 'left' ? -cardWidth : cardWidth;
+      scrollRef.current.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+    }
+  };
 
   return (
     <section className="py-12 bg-slate-50 text-slate-900 font-sans select-none border-t border-b border-slate-200">
-      <div className="container mx-auto px-6 max-w-5xl">
+      <div className="container mx-auto px-6 max-w-7xl">
 
         {/* Header */}
-        <div className="text-center max-w-3xl mx-auto mb-12 space-y-3">
+        <div className="text-center max-w-3xl mx-auto mb-16 space-y-4">
           {data.badge && (
-            <span className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full text-xs font-semibold tracking-wider text-indigo-600 bg-indigo-50 border border-indigo-100 uppercase">
-              <span className="w-1.5 h-1.5 rounded-full bg-indigo-600 animate-pulse" />
+            <span className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full text-xs font-semibold tracking-wider text-[#462294] bg-indigo-50 border border-indigo-100 uppercase">
+              <span className="w-1.5 h-1.5 rounded-full bg-[#462294] animate-pulse" />
               {data.badge}
             </span>
           )}
           {data.title && (
-            <h2 className="text-2xl md:text-3xl font-extrabold tracking-tight text-slate-900 leading-tight">
+            <h2 className="text-3xl md:text-[40px] font-extrabold tracking-tight text-slate-900 leading-tight">
               {data.title}
             </h2>
           )}
           {data.description && (
-            <p className="text-slate-500 text-xs md:text-sm max-w-xl mx-auto leading-relaxed">
+            <p className="text-slate-500 text-sm md:text-base max-w-2xl mx-auto leading-relaxed">
               {data.description}
             </p>
           )}
         </div>
 
-        <div
-          className="relative"
-          onMouseEnter={() => { pausedRef.current = true; }}
-          onMouseLeave={() => { pausedRef.current = false; }}
-        >
-          {canScroll && (
+        {/* Testimonials carousel — same arrow placement / scroll logic as Landing1Works */}
+        <div className="relative group/carousel">
+          {canScrollLeft && (
             <button
               type="button"
-              onClick={() => scrollByCard('left')}
+              onClick={() => scroll('left')}
               aria-label="Previous testimonials"
-              className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-1 md:-translate-x-3 z-20 w-10 h-10 rounded-full bg-white border border-indigo-100 text-indigo-600 shadow-md flex items-center justify-center hover:bg-indigo-600 hover:text-white transition-colors cursor-pointer"
+              className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-1 md:-translate-x-3 lg:-translate-x-14 xl:-translate-x-16 z-20 w-10 h-10 rounded-full bg-white border border-indigo-100 text-[#462294] shadow-md flex items-center justify-center hover:bg-[#462294] hover:text-white transition-colors cursor-pointer"
             >
               <ChevronLeft className="w-5 h-5" />
             </button>
           )}
-          {canScroll && (
+          {canScrollRight && (
             <button
               type="button"
-              onClick={() => scrollByCard('right')}
+              onClick={() => scroll('right')}
               aria-label="Next testimonials"
-              className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-1 md:translate-x-3 z-20 w-10 h-10 rounded-full bg-white border border-indigo-100 text-indigo-600 shadow-md flex items-center justify-center hover:bg-indigo-600 hover:text-white transition-colors cursor-pointer"
+              className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-1 md:translate-x-3 lg:translate-x-14 xl:translate-x-16 z-20 w-10 h-10 rounded-full bg-white border border-indigo-100 text-[#462294] shadow-md flex items-center justify-center hover:bg-[#462294] hover:text-white transition-colors cursor-pointer"
             >
               <ChevronRight className="w-5 h-5" />
             </button>
@@ -201,15 +146,14 @@ export function Landing1Testimonials({ content }: { content?: Landing1Testimonia
 
           <div
             ref={scrollRef}
-            className="flex items-stretch gap-6 overflow-x-auto snap-x snap-mandatory py-3 -my-3 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"
+            className="flex items-stretch gap-8 overflow-x-auto scroll-smooth snap-x snap-mandatory py-3 -my-3 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"
             role="region"
             aria-label="Testimonials carousel"
           >
-            {slides.map((test, idx) => (
+            {testimonials.map((test, idx) => (
               <div
                 key={`${test.name}-${idx}`}
-                aria-hidden={shouldLoop && idx >= testimonials.length ? true : undefined}
-                className="snap-start shrink-0 w-full md:w-[calc((100%-3rem)/3)] bg-white p-5 md:p-6 rounded-[24px] border border-[#FF9F1C] shadow-sm flex flex-col items-center text-center transition-all duration-300 hover:shadow-md hover:-translate-y-1"
+                className="snap-start shrink-0 w-full md:w-[calc((100%-4rem)/3)] bg-white p-5 md:p-6 rounded-[24px] border border-[#FF9F1C] shadow-sm flex flex-col items-center text-center transition-all duration-300 hover:shadow-md hover:-translate-y-1"
               >
                 {/* Avatar */}
                 {test.avatar && (

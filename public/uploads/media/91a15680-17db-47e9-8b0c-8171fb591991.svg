@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512" fill="none">
+  <title>Responsible AI and secure mobile workflows</title>
+  <desc>Minimal navy outline shield with a lavender fill and a check mark, surrounded by small data nodes.</desc>
+  <g stroke="#303451" stroke-width="18" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M256 65 385 115V224c0 91-53 157-129 204-76-47-129-113-129-204V115L256 65Z" fill="#E4E2F7"/>
+    <path d="m197 250 42 42 82-91" stroke-width="21"/>
+    <path d="M118 166H82v-36" stroke-width="14"/>
+    <path d="M394 166h36v-36" stroke-width="14"/>
+    <path d="M118 345H82v36" stroke-width="14"/>
+    <path d="M394 345h36v36" stroke-width="14"/>
+  </g>
+  <g fill="#8B83C8" stroke="#303451" stroke-width="8">
+    <circle cx="82" cy="130" r="17"/>
+    <circle cx="430" cy="130" r="17"/>
+    <circle cx="82" cy="381" r="17"/>
+    <circle cx="430" cy="381" r="17"/>
+  </g>
+</svg>

@@ -139,6 +139,13 @@ async function main() {
         title: 'Complete Retail Operations Control',
         subtitle: 'From POS to Head Office',
         paragraph: 'Take complete command of your retail landscape. Our ERP covers every touchpoint of retail operations, offering real-time visibility and central control.',
+        bgColor: '#ffffff',
+        borderColor: '#e5e7eb',
+        titleColor: '#2b2a63',
+        subtitleColor: '#5c77ff',
+        paragraphColor: '#888888',
+        itemTitleColor: '#2b2a63',
+        itemDescriptionColor: '#888888',
         operations: [
           { title: 'Point of Sales (POS)', description: 'High-velocity billing system with offline capabilities.', iconImage: '/industry-solution-Retail/Icon-.png' },
           { title: 'Promotions & Discounts', description: 'Set dynamic pricing and cross-store loyalty discounts.', iconImage: '/industry-solution-Retail/Icon-1.png' },

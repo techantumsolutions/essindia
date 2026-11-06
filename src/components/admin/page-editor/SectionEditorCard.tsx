@@ -539,6 +539,10 @@ const DEFAULT_FMCG_TABS_CONTENT: Record<string, any> = {
   tabTextColor: '#ffffff',
   activeTabBgColor: '#fcc42c',
   activeTabTextColor: '#131e3d',
+  arrowBgColor: '#18264d',
+  arrowTextColor: '#ffffff',
+  arrowHoverBgColor: '#fcc42c',
+  arrowHoverTextColor: '#131e3d',
   tabs: [
     {
       tabName: 'FMCG CEO',
@@ -1162,6 +1166,16 @@ const DEFAULT_BI_TITLE_CONTENT: Record<string, any> = {
   title: 'Business Intelligence',
   titleColor: '#1a1a1a',
   bgColor: '#ffffff',
+};
+
+const DEFAULT_RETAIL_OPERATIONS_CONTENT: Record<string, any> = {
+  bgColor: '#ffffff',
+  borderColor: '#e5e7eb',
+  titleColor: '#2b2a63',
+  subtitleColor: '#5c77ff',
+  paragraphColor: '#888888',
+  itemTitleColor: '#2b2a63',
+  itemDescriptionColor: '#888888',
 };
 
 const DEFAULT_BI_TABS_CONTENT: Record<string, any> = {
@@ -2062,6 +2076,8 @@ const DEFAULT_EUROPE_GLOBAL_PRESENCE_CONTENT: Record<string, any> = {
   titleColor: '#ffffff',
   description: "Meet the network that powers other networks. It's the most direct, secure, and reliable tier-1 network for messaging, voice, and email.",
   descriptionColor: '#94a3b8',
+  statNumberColor: '#f5c234',
+  statLabelColor: '#ffffff',
   statistics: [
     { number: '30+', label: 'Years of Expertise' },
     { number: '15+', label: 'Industry Sectors' },
@@ -2691,10 +2707,15 @@ export function SectionEditorCard({
         baseSchema = DEFAULT_ERP_FEATURES_CONTENT as Record<string, JsonValue>;
       } else if (section.type === 'landing1-testimonials') {
         baseSchema = DEFAULT_LANDING1_TESTIMONIALS_CONTENT as Record<string, JsonValue>;
+      } else if (section.type === 'retail-operations') {
+        baseSchema = DEFAULT_RETAIL_OPERATIONS_CONTENT as Record<string, JsonValue>;
       }
     }
 
     rememberColorDefaults(baseSchema as Record<string, any>);
+    if (section.type === 'europe-global-presence') {
+      rememberColorDefaults(DEFAULT_EUROPE_GLOBAL_PRESENCE_CONTENT);
+    }
 
     const merged = mergeSchemaWithContent(
       baseSchema,
@@ -2722,6 +2743,18 @@ export function SectionEditorCard({
           }
         }
       });
+    }
+
+    if (section.type === 'retail-operations') {
+      const d = DEFAULT_RETAIL_OPERATIONS_CONTENT;
+      rememberColorDefaults(d);
+      if (!finalMerged.bgColor) finalMerged.bgColor = d.bgColor;
+      if (!finalMerged.borderColor) finalMerged.borderColor = d.borderColor;
+      if (!finalMerged.titleColor) finalMerged.titleColor = d.titleColor;
+      if (!finalMerged.subtitleColor) finalMerged.subtitleColor = d.subtitleColor;
+      if (!finalMerged.paragraphColor) finalMerged.paragraphColor = d.paragraphColor;
+      if (!finalMerged.itemTitleColor) finalMerged.itemTitleColor = d.itemTitleColor;
+      if (!finalMerged.itemDescriptionColor) finalMerged.itemDescriptionColor = d.itemDescriptionColor;
     }
 
     if (section.type === 'industries') {
@@ -2849,6 +2882,16 @@ export function SectionEditorCard({
       });
     }
 
+    if (section.type === 'europe-global-presence') {
+      const d = DEFAULT_EUROPE_GLOBAL_PRESENCE_CONTENT;
+      if (!finalMerged.backgroundColor) finalMerged.backgroundColor = d.backgroundColor;
+      if (!finalMerged.subtitleColor) finalMerged.subtitleColor = d.subtitleColor;
+      if (!finalMerged.titleColor) finalMerged.titleColor = d.titleColor;
+      if (!finalMerged.descriptionColor) finalMerged.descriptionColor = d.descriptionColor;
+      if (!finalMerged.statNumberColor) finalMerged.statNumberColor = d.statNumberColor;
+      if (!finalMerged.statLabelColor) finalMerged.statLabelColor = d.statLabelColor;
+    }
+
     if (section.type === 'fmcg-tabs') {
       rememberColorDefaults(DEFAULT_FMCG_TABS_CONTENT);
       if (!finalMerged.bgColor) finalMerged.bgColor = DEFAULT_FMCG_TABS_CONTENT.bgColor;
@@ -2860,6 +2903,10 @@ export function SectionEditorCard({
       if (!finalMerged.tabTextColor) finalMerged.tabTextColor = DEFAULT_FMCG_TABS_CONTENT.tabTextColor;
       if (!finalMerged.activeTabBgColor) finalMerged.activeTabBgColor = DEFAULT_FMCG_TABS_CONTENT.activeTabBgColor;
       if (!finalMerged.activeTabTextColor) finalMerged.activeTabTextColor = DEFAULT_FMCG_TABS_CONTENT.activeTabTextColor;
+      if (!finalMerged.arrowBgColor) finalMerged.arrowBgColor = DEFAULT_FMCG_TABS_CONTENT.arrowBgColor;
+      if (!finalMerged.arrowTextColor) finalMerged.arrowTextColor = DEFAULT_FMCG_TABS_CONTENT.arrowTextColor;
+      if (!finalMerged.arrowHoverBgColor) finalMerged.arrowHoverBgColor = DEFAULT_FMCG_TABS_CONTENT.arrowHoverBgColor;
+      if (!finalMerged.arrowHoverTextColor) finalMerged.arrowHoverTextColor = DEFAULT_FMCG_TABS_CONTENT.arrowHoverTextColor;
     }
 
     if (section.type === 'bi-tabs') {

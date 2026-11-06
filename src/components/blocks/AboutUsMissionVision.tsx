@@ -114,10 +114,10 @@ export function AboutUsMissionVision({ content }: AboutUsMissionVisionProps) {
         background: `linear-gradient(to bottom, ${bgGradientFrom}, ${bgGradientVia}, ${bgGradientTo})`,
       }}
     >
-      <div className="absolute -top-20 -left-20 w-[450px] h-[450px] bg-purple-400/20 rounded-full blur-[100px] pointer-events-none" />
+      {/* <div className="absolute -top-20 -left-20 w-[450px] h-[450px] bg-purple-400/20 rounded-full blur-[100px] pointer-events-none" />
       <div className="absolute -bottom-20 -right-20 w-[450px] h-[450px] bg-indigo-400/20 rounded-full blur-[100px] pointer-events-none" />
       <div className="absolute -left-10 top-1/2 -translate-y-1/2 w-48 h-96 opacity-40 pointer-events-none bg-[radial-gradient(#a855f7_1.5px,transparent_1.5px)] [background-size:16px_16px]" />
-      <div className="absolute -right-10 top-1/2 -translate-y-1/2 w-48 h-96 opacity-40 pointer-events-none bg-[radial-gradient(#a855f7_1.5px,transparent_1.5px)] [background-size:16px_16px]" />
+      <div className="absolute -right-10 top-1/2 -translate-y-1/2 w-48 h-96 opacity-40 pointer-events-none bg-[radial-gradient(#a855f7_1.5px,transparent_1.5px)] [background-size:16px_16px]" /> */}
 
       <div className="container mx-auto max-w-7xl px-4 sm:px-6 relative z-10">
         <div className="max-w-3xl mx-auto text-center space-y-4 mb-14 md:mb-20">

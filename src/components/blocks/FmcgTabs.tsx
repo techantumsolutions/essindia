@@ -31,6 +31,10 @@ interface FmcgTabsContent {
   tabTextColor?: string;
   activeTabBgColor?: string;
   activeTabTextColor?: string;
+  arrowBgColor?: string;
+  arrowTextColor?: string;
+  arrowHoverBgColor?: string;
+  arrowHoverTextColor?: string;
 }
 
 export function FmcgTabs({ content }: { content?: FmcgTabsContent }) {
@@ -96,11 +100,16 @@ export function FmcgTabs({ content }: { content?: FmcgTabsContent }) {
   const tabTextColor = content?.tabTextColor || '#ffffff';
   const activeTabBgColor = content?.activeTabBgColor || '#fcc42c';
   const activeTabTextColor = content?.activeTabTextColor || '#131e3d';
+  const arrowBgColor = content?.arrowBgColor || '#18264d';
+  const arrowTextColor = content?.arrowTextColor || '#ffffff';
+  const arrowHoverBgColor = content?.arrowHoverBgColor || '#fcc42c';
+  const arrowHoverTextColor = content?.arrowHoverTextColor || '#131e3d';
 
   const [activeTabIdx, setActiveTabIdx] = useState(0);
   const [hoveredQuestionImage, setHoveredQuestionImage] = useState<string | null>(null);
   const [activeQuestionIdx, setActiveQuestionIdx] = useState(0);
   const [mobileExpandedIdx, setMobileExpandedIdx] = useState<number | null>(null);
+  const [hoveredArrow, setHoveredArrow] = useState<'left' | 'right' | null>(null);
 
   const [hasDesktopOverflow, setHasDesktopOverflow] = useState(false);
   const [canScrollLeft, setCanScrollLeft] = useState(false);
@@ -153,10 +162,12 @@ export function FmcgTabs({ content }: { content?: FmcgTabsContent }) {
     }
   }, [activeTabIdx]);
 
-  const showArrows = tabs.length > 1;
-
+  // Desktop: show arrows only when the tab strip can scroll that way.
+  // Mobile: show arrows only when there is a previous/next tab.
   const canGoPrev = isDesktop ? canScrollLeft : activeTabIdx > 0;
   const canGoNext = isDesktop ? canScrollRight : activeTabIdx < tabs.length - 1;
+  const showPrevArrow = tabs.length > 1 && canGoPrev && (isDesktop ? hasDesktopOverflow : true);
+  const showNextArrow = tabs.length > 1 && canGoNext && (isDesktop ? hasDesktopOverflow : true);
 
   const handlePrev = () => {
     if (window.innerWidth >= 1024) {
@@ -178,6 +189,14 @@ export function FmcgTabs({ content }: { content?: FmcgTabsContent }) {
     }
   };
 
+  const getArrowStyle = (side: 'left' | 'right') => {
+    const hovered = hoveredArrow === side;
+    return {
+      backgroundColor: hovered ? arrowHoverBgColor : arrowBgColor,
+      color: hovered ? arrowHoverTextColor : arrowTextColor,
+    };
+  };
+
   return (
     <section className="py-14 px-6 text-white" style={{ backgroundColor: bgColor }}>
       <div className="container mx-auto max-w-7xl">
@@ -195,18 +214,14 @@ export function FmcgTabs({ content }: { content?: FmcgTabsContent }) {
           className="relative flex items-stretch"
           style={{ backgroundColor: bgColor }}
         >
-          {showArrows && (
+          {showPrevArrow && (
             <button
               type="button"
               onClick={handlePrev}
-              disabled={!canGoPrev}
-              className={`px-3 sm:px-4.5 items-center justify-center transition-all duration-300 shrink-0 z-10 border-r border-slate-700/30 ${
-                hasDesktopOverflow ? 'flex' : 'flex lg:hidden'
-              } ${
-                canGoPrev
-                  ? 'bg-[#18264d] text-white hover:bg-[#fcc42c] hover:text-[#131e3d] cursor-pointer active:scale-95'
-                  : 'bg-[#131e3d]/80 text-slate-500/40 cursor-not-allowed opacity-30'
-              }`}
+              onMouseEnter={() => setHoveredArrow('left')}
+              onMouseLeave={() => setHoveredArrow(null)}
+              style={getArrowStyle('left')}
+              className="flex px-3 sm:px-4.5 items-center justify-center transition-all duration-300 shrink-0 z-10 border-r border-slate-700/30 cursor-pointer active:scale-95"
               aria-label="Previous tab"
               title="Previous tab"
             >
@@ -243,18 +258,14 @@ export function FmcgTabs({ content }: { content?: FmcgTabsContent }) {
             })}
           </div>
 
-          {showArrows && (
+          {showNextArrow && (
             <button
               type="button"
               onClick={handleNext}
-              disabled={!canGoNext}
-              className={`px-3 sm:px-4.5 items-center justify-center transition-all duration-300 shrink-0 z-10 border-l border-slate-700/30 ${
-                hasDesktopOverflow ? 'flex' : 'flex lg:hidden'
-              } ${
-                canGoNext
-                  ? 'bg-[#18264d] text-white hover:bg-[#fcc42c] hover:text-[#131e3d] cursor-pointer active:scale-95'
-                  : 'bg-[#131e3d]/80 text-slate-500/40 cursor-not-allowed opacity-30'
-              }`}
+              onMouseEnter={() => setHoveredArrow('right')}
+              onMouseLeave={() => setHoveredArrow(null)}
+              style={getArrowStyle('right')}
+              className="flex px-3 sm:px-4.5 items-center justify-center transition-all duration-300 shrink-0 z-10 border-l border-slate-700/30 cursor-pointer active:scale-95"
               aria-label="Next tab"
               title="Next tab"
             >

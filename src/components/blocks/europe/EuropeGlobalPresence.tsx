@@ -19,6 +19,10 @@ export interface EuropeGlobalPresenceContent extends EuropeCommonSettings {
   description?: string;
   descriptionColor?: string;
   statistics?: Statistic[];
+  backgroundColor?: string;
+  bgColor?: string;
+  statNumberColor?: string;
+  statLabelColor?: string;
 }
 
 const DEFAULT_STATS: Statistic[] = [
@@ -31,20 +35,23 @@ const DEFAULT_STATS: Statistic[] = [
 export function EuropeGlobalPresence({ content }: { content?: EuropeGlobalPresenceContent }) {
   const image = content?.image || '/About-Europe/image 141.png';
   const title = content?.title || 'Discover why over 200,000 businesses trust the Sinch Super Network';
-  const titleColor = '#ffffff';
+  const titleColor = content?.titleColor || '#ffffff';
   const subtitle = content?.subtitle || 'The ESS India Super Network';
-  const subtitleColor = '#94a3b8';
+  const subtitleColor = content?.subtitleColor || '#94a3b8';
   const description =
     content?.description ||
     "Meet the network that powers other networks. It's the most direct, secure, and reliable tier-1 network for messaging, voice, and email.";
-  const descriptionColor = '#94a3b8';
+  const descriptionColor = content?.descriptionColor || '#94a3b8';
+  const backgroundColor = content?.backgroundColor || content?.bgColor || '#111827';
+  const statNumberColor = content?.statNumberColor || '#f5c234';
+  const statLabelColor = content?.statLabelColor || '#ffffff';
   const statistics = (content?.statistics?.length ? content.statistics : DEFAULT_STATS).slice(0, 4);
 
   return (
     <EuropeSectionShell
       content={{
         ...content,
-        backgroundColor: '#111827',
+        backgroundColor,
         sectionPaddingTop: content?.sectionPaddingTop || 'pt-12',
         sectionPaddingBottom: content?.sectionPaddingBottom || 'pb-12',
       }}
@@ -70,12 +77,18 @@ export function EuropeGlobalPresence({ content }: { content?: EuropeGlobalPresen
 
         <div className="space-y-6">
           {subtitle && (
-            <p className="text-sm font-normal text-slate-400 tracking-wide">
+            <p
+              className="text-sm font-normal tracking-wide"
+              style={{ color: subtitleColor }}
+            >
               {subtitle}
             </p>
           )}
           {title && (
-            <h2 className="text-3xl sm:text-[38px] leading-[1.2] font-semibold text-white">
+            <h2
+              className="text-3xl sm:text-[38px] leading-[1.2] font-semibold"
+              style={{ color: titleColor }}
+            >
               {title}
             </h2>
           )}
@@ -96,12 +109,20 @@ export function EuropeGlobalPresence({ content }: { content?: EuropeGlobalPresen
                 className="text-left"
               >
                 {stat.number && (
-                  <div className="text-3xl sm:text-4xl font-bold mb-1 text-[#f5c234]">
+                  <div
+                    className="text-3xl sm:text-4xl font-bold mb-1"
+                    style={{ color: statNumberColor }}
+                  >
                     {stat.number}
                   </div>
                 )}
                 {stat.label && (
-                  <div className="text-sm font-medium text-white">{stat.label}</div>
+                  <div
+                    className="text-sm font-medium"
+                    style={{ color: statLabelColor }}
+                  >
+                    {stat.label}
+                  </div>
                 )}
               </motion.div>
             ))}

@@ -50,103 +50,51 @@ const DEFAULT_CONTENT: Landing1WorksContent = {
   works: DEFAULT_WORKS
 };
 
-function getSlideStep(el: HTMLElement) {
-  const card = el.firstElementChild as HTMLElement | null;
-  const next = card?.nextElementSibling as HTMLElement | null;
-  if (card && next) return next.offsetLeft - card.offsetLeft;
-  return card?.offsetWidth || el.clientWidth;
-}
-
 export function Landing1Works({ content }: { content?: Landing1WorksContent }) {
   const data = { ...DEFAULT_CONTENT, ...content };
   const works = data.works || [];
   const scrollRef = useRef<HTMLDivElement>(null);
-  const pausedRef = useRef(false);
-  const loopingRef = useRef(false);
-  const [perView, setPerView] = useState(3);
-  const [canScroll, setCanScroll] = useState(false);
-
-  const shouldLoop = works.length > perView;
-  loopingRef.current = shouldLoop;
-  const slides = shouldLoop ? [...works, ...works] : works;
+  const [canScrollLeft, setCanScrollLeft] = useState(false);
+  const [canScrollRight, setCanScrollRight] = useState(false);
 
   const checkScroll = useCallback(() => {
-    const el = scrollRef.current;
-    if (!el) return;
-    setCanScroll(el.scrollWidth - el.clientWidth > 8);
-  }, []);
-
-  const normalizeLoop = useCallback(() => {
-    const el = scrollRef.current;
-    if (!el || !loopingRef.current || works.length === 0) return;
-    const cycle = getSlideStep(el) * works.length;
-    if (cycle <= 0 || el.scrollLeft < cycle - 1) return;
-    const previous = el.style.scrollBehavior;
-    el.style.scrollBehavior = 'auto';
-    el.scrollLeft = el.scrollLeft - cycle;
-    el.style.scrollBehavior = previous;
-  }, [works.length]);
-
-  const scrollByCard = useCallback((direction: 'left' | 'right') => {
-    const el = scrollRef.current;
-    if (!el) return;
-    const step = getSlideStep(el);
-    const maxScroll = el.scrollWidth - el.clientWidth;
-    if (maxScroll <= 8 || step <= 0) return;
-
-    if (direction === 'left' && loopingRef.current && el.scrollLeft <= 8) {
-      const cycle = step * works.length;
-      const previous = el.style.scrollBehavior;
-      el.style.scrollBehavior = 'auto';
-      el.scrollLeft = el.scrollLeft + cycle;
-      el.style.scrollBehavior = previous;
+    if (scrollRef.current) {
+      const { scrollLeft, scrollWidth, clientWidth } = scrollRef.current;
+      setCanScrollLeft(scrollLeft > 5);
+      setCanScrollRight(scrollLeft < scrollWidth - clientWidth - 5);
     }
-
-    el.scrollBy({ left: direction === 'right' ? step : -step, behavior: 'smooth' });
-  }, [works.length]);
-
-  useEffect(() => {
-    const media = window.matchMedia('(min-width: 768px)');
-    const update = () => setPerView(media.matches ? 3 : 1);
-    update();
-    media.addEventListener('change', update);
-    return () => media.removeEventListener('change', update);
   }, []);
 
   useEffect(() => {
     checkScroll();
+    const timer = setTimeout(checkScroll, 100);
     const el = scrollRef.current;
-    if (!el) return;
-
-    let settleTimer = 0;
-    const onScroll = () => {
-      checkScroll();
-      window.clearTimeout(settleTimer);
-      settleTimer = window.setTimeout(() => normalizeLoop(), 80);
-    };
-
-    el.addEventListener('scroll', onScroll, { passive: true });
-    window.addEventListener('resize', checkScroll);
+    if (el) {
+      el.addEventListener('scroll', checkScroll);
+      window.addEventListener('resize', checkScroll);
+    }
     return () => {
-      window.clearTimeout(settleTimer);
-      el.removeEventListener('scroll', onScroll);
+      clearTimeout(timer);
+      if (el) {
+        el.removeEventListener('scroll', checkScroll);
+      }
       window.removeEventListener('resize', checkScroll);
     };
-  }, [checkScroll, normalizeLoop, slides.length]);
+  }, [checkScroll, works]);
 
-  useEffect(() => {
-    const el = scrollRef.current;
-    if (!el || !shouldLoop) return;
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-
-    const id = window.setInterval(() => {
-      if (pausedRef.current) return;
-      if (el.scrollWidth - el.clientWidth <= 8) return;
-      el.scrollBy({ left: getSlideStep(el), behavior: 'smooth' });
-    }, 4500);
-
-    return () => window.clearInterval(id);
-  }, [shouldLoop, works.length]);
+  const scroll = (direction: 'left' | 'right') => {
+    if (scrollRef.current) {
+      const card = scrollRef.current.firstElementChild as HTMLElement | null;
+      const next = card?.nextElementSibling as HTMLElement | null;
+      const cardWidth = card && next
+        ? next.offsetLeft - card.offsetLeft
+        : card
+          ? card.offsetWidth + 32
+          : 340;
+      const scrollAmount = direction === 'left' ? -cardWidth : cardWidth;
+      scrollRef.current.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+    }
+  };
 
   return (
     <section className="py-12 border-t border-b bg-slate-50 text-slate-900 font-sans select-none border-slate-200">
@@ -172,26 +120,22 @@ export function Landing1Works({ content }: { content?: Landing1WorksContent }) {
           )}
         </div>
 
-        {/* Works carousel — one card on small screens, three from md up, matching the previous grid */}
-        <div
-          className="relative"
-          onMouseEnter={() => { pausedRef.current = true; }}
-          onMouseLeave={() => { pausedRef.current = false; }}
-        >
-          {canScroll && (
+        {/* Works carousel — same left/right scroll logic as IndustrySection */}
+        <div className="relative group/carousel">
+          {canScrollLeft && (
             <button
               type="button"
-              onClick={() => scrollByCard('left')}
+              onClick={() => scroll('left')}
               aria-label="Previous works"
               className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-1 md:-translate-x-3 lg:-translate-x-14 xl:-translate-x-16 z-20 w-10 h-10 rounded-full bg-white border border-indigo-100 text-[#462294] shadow-md flex items-center justify-center hover:bg-[#462294] hover:text-white transition-colors cursor-pointer"
             >
               <ChevronLeft className="w-5 h-5" />
             </button>
           )}
-          {canScroll && (
+          {canScrollRight && (
             <button
               type="button"
-              onClick={() => scrollByCard('right')}
+              onClick={() => scroll('right')}
               aria-label="Next works"
               className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-1 md:translate-x-3 lg:translate-x-14 xl:translate-x-16 z-20 w-10 h-10 rounded-full bg-white border border-indigo-100 text-[#462294] shadow-md flex items-center justify-center hover:bg-[#462294] hover:text-white transition-colors cursor-pointer"
             >
@@ -201,16 +145,14 @@ export function Landing1Works({ content }: { content?: Landing1WorksContent }) {
 
           <div
             ref={scrollRef}
-            className="flex items-stretch gap-8 overflow-x-auto snap-x snap-mandatory py-3 -my-3 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"
+            className="flex items-stretch gap-8 overflow-x-auto scroll-smooth snap-x snap-mandatory py-3 -my-3 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"
             role="region"
             aria-label="Works carousel"
           >
-            {slides.map((item, idx) => (
+            {works.map((item, idx) => (
               <Link
                 key={`${item.title}-${idx}`}
                 href={item.link || '#'}
-                aria-hidden={shouldLoop && idx >= works.length ? true : undefined}
-                tabIndex={shouldLoop && idx >= works.length ? -1 : undefined}
                 className="snap-start shrink-0 w-full md:w-[calc((100%-4rem)/3)] bg-white rounded-[32px] overflow-hidden p-5 border border-indigo-900/5 shadow-[0_8px_30px_rgb(0,0,0,0.015)] hover:shadow-[0_20px_40px_rgb(0,0,0,0.04)] hover:-translate-y-1.5 transition-all duration-300 flex flex-col h-full cursor-pointer group"
               >
                 {/* Image Frame */}

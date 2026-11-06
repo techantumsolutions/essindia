@@ -16,6 +16,13 @@ export interface RetailOperationsContent {
   subtitle?: string;
   paragraph?: string;
   operations?: RetailOperationItem[];
+  bgColor?: string;
+  borderColor?: string;
+  titleColor?: string;
+  subtitleColor?: string;
+  paragraphColor?: string;
+  itemTitleColor?: string;
+  itemDescriptionColor?: string;
 }
 
 export function RetailOperations({ content }: { content: RetailOperationsContent }) {
@@ -87,8 +94,16 @@ export function RetailOperations({ content }: { content: RetailOperationsContent
     ],
   } = content || {};
 
+  const bgColor = content?.bgColor || '#ffffff';
+  const borderColor = content?.borderColor || '#e5e7eb';
+  const titleColor = content?.titleColor || '#2b2a63';
+  const subtitleColor = content?.subtitleColor || '#5c77ff';
+  const paragraphColor = content?.paragraphColor || '#888888';
+  const itemTitleColor = content?.itemTitleColor || '#2b2a63';
+  const itemDescriptionColor = content?.itemDescriptionColor || '#888888';
+
   return (
-    <section className="py-12 border-t border-b bg-white">
+    <section className="py-12 border-t border-b" style={{ backgroundColor: bgColor, borderColor }}>
       <div className="container mx-auto px-4 md:px-8 max-w-7xl">
 
         {/* Header */}
@@ -97,7 +112,8 @@ export function RetailOperations({ content }: { content: RetailOperationsContent
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="text-3xl md:text-4xl font-bold text-[#2b2a63] mb-1 tracking-tight"
+            className="text-3xl md:text-4xl font-bold mb-1 tracking-tight"
+            style={{ color: titleColor }}
           >
             {title}
           </motion.h2>
@@ -106,7 +122,8 @@ export function RetailOperations({ content }: { content: RetailOperationsContent
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: 0.1 }}
-            className="text-lg  font-bold text-[#5c77ff] mb-1"
+            className="text-lg font-bold mb-1"
+            style={{ color: subtitleColor }}
           >
             {subtitle}
           </motion.h3>
@@ -115,7 +132,8 @@ export function RetailOperations({ content }: { content: RetailOperationsContent
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: 0.2 }}
-            className="text-[#888888] text-sm leading-relaxed whitespace-pre-line"
+            className="text-sm leading-relaxed whitespace-pre-line"
+            style={{ color: paragraphColor }}
           >
             {paragraph}
           </motion.p>
@@ -140,14 +158,15 @@ export function RetailOperations({ content }: { content: RetailOperationsContent
                   className="w-12 h-12 object-contain filter group-hover:brightness-75 transition-all"
                 />
               </div>
-              <h4 className="font-bold text-[#2b2a63] mb-1 text-base md:text-sm">{op.title}</h4>
+              <h4 className="font-bold mb-1 text-base md:text-sm" style={{ color: itemTitleColor }}>{op.title}</h4>
               {(op.description?.includes('<') && op.description.includes('>')) || op.description?.includes('&lt;') ? (
                 <FormattedText
                   content={op.description}
-                  className="text-[#888888] text-[16px] leading-[1.6] [&_p]:m-0 [&_p]:text-[#888888]"
+                  className="text-[16px] leading-[1.6] [&_p]:m-0"
+                  style={{ color: itemDescriptionColor }}
                 />
               ) : (
-                <p className="text-[#888888] text-xs  leading-relaxed">{op.description}</p>
+                <p className="text-xs leading-relaxed" style={{ color: itemDescriptionColor }}>{op.description}</p>
               )}
             </motion.div>
           ))}

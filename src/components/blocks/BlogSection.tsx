@@ -157,7 +157,7 @@ export function BlogSection({ content }: BlogSectionProps) {
                   }}
                 />
 
-                {/* Topic & Industries Floating Tags */}
+                {/* Topic & Industries Floating Tags — commented out
                 <div className="absolute bottom-4 left-4 flex flex-wrap gap-2 items-center">
                   {blog.topic && (
                     <div className="bg-white/95 backdrop-blur px-2.5 py-1 rounded-xl shadow-sm text-left flex flex-col justify-center">
@@ -172,6 +172,7 @@ export function BlogSection({ content }: BlogSectionProps) {
                     </div>
                   ))}
                 </div>
+                */}
               </div>
 
               {/* Title - Black color */}

@@ -4,7 +4,7 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { ArrowLeft, ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { type CaseStudyPost, defaultCaseStudies } from '@/lib/case-studies-data';
+import { type CaseStudyPost } from '@/lib/case-studies-data';
 import { useInternalNavigate } from '@/hooks/useInternalNavigate';
 import { HeroTitle } from '@/components/ui/HeroTitle';
 import { FormattedText } from '@/components/ui/FormattedText';
@@ -17,6 +17,24 @@ export function CaseStudyDetailSection({ content }: CaseStudyDetailSectionProps)
   const navigate = useInternalNavigate();
   // We receive content which should match the structure of CaseStudyPost
   const cs = content as CaseStudyPost;
+  const [moreStories, setMoreStories] = React.useState<CaseStudyPost[]>([]);
+
+  React.useEffect(() => {
+    async function fetchMoreStories() {
+      try {
+        const res = await fetch('/api/case-studies');
+        if (!res.ok) return;
+        const data = await res.json();
+        if (!Array.isArray(data)) return;
+        setMoreStories(
+          data.filter((item: CaseStudyPost) => item.slug !== cs.slug).slice(0, 3)
+        );
+      } catch (err) {
+        console.error('Failed to load more case studies', err);
+      }
+    }
+    fetchMoreStories();
+  }, [cs.slug]);
 
   const gradientFrom = cs.gradientFrom;
   const gradientVia = cs.gradientVia;
@@ -67,11 +85,11 @@ export function CaseStudyDetailSection({ content }: CaseStudyDetailSectionProps)
                 gradientFrom={(cs as any)?.titleGradientFrom}
                 gradientTo={(cs as any)?.titleGradientTo}
                 enableAnimation={(cs as any)?.enableTitleGradientAnimation}
-                className="text-4xl md:text-5xl lg:text-[52px] font-bold leading-tight mb-6 text-left"
+                className="text-4xl md:text-5xl lg:text-[52px] font-bold !leading-[1.12] !tracking-tight mb-6 text-left"
               />
             ) : (
               <h1
-                className="text-4xl md:text-5xl lg:text-[52px] font-bold leading-tight mb-6 transition-colors duration-300"
+                className="text-4xl md:text-5xl lg:text-[52px] font-bold !leading-[1.12] !tracking-tight mb-6 transition-colors duration-300"
                 style={{ color: cs.titleColor || '#ffffff' }}
               >
                 {cs.title}
@@ -81,25 +99,33 @@ export function CaseStudyDetailSection({ content }: CaseStudyDetailSectionProps)
             {cs.description && (
               <FormattedText
                 content={cs.description}
-                className="text-base leading-relaxed line-clamp-4 max-w-xl transition-colors duration-300"
+                className="text-base !leading-[1.6] line-clamp-4 !tracking-relaxed max-w-xl transition-colors duration-300"
                 style={{ color: cs.descriptionColor || '#e2e8f0' }}
               />
             )}
           </motion.div>
 
-          {/* Right: Image */}
-          <motion.div
-            initial={{ opacity: 0, x: 30 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-            className="relative h-full flex flex-col justify-center items-end lg:items-center"
-          >
-            <img
-              src={cs.image || '/Case-studies details/right_card.png'}
-              alt={cs.title}
-              className="object-contain max-w-full lg:max-w-[500px] rounded-2xl transition-transform duration-300 hover:scale-[1.02]"
-            />
-          </motion.div>
+          {/* Right: Floating image card (same UI as ErpHero) */}
+          <div className="w-full flex justify-center lg:justify-end">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.92, y: 30 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              transition={{ duration: 1, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
+              className="relative w-full aspect-[4/3] max-w-[500px] rounded-2xl overflow-hidden shadow-2xl border border-white/10"
+            >
+              <motion.div
+                animate={{ y: [0, -12, 0] }}
+                transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut' }}
+                className="w-full h-full"
+              >
+                <img
+                  src={cs.image || '/Case-studies details/right_card.png'}
+                  alt={cs.title || 'Case study'}
+                  className="w-full h-full object-contain"
+                />
+              </motion.div>
+            </motion.div>
+          </div>
         </div>
       </section>
 
@@ -334,7 +360,8 @@ export function CaseStudyDetailSection({ content }: CaseStudyDetailSectionProps)
         </div>
       </section>
 
-      {/* 5. More Stories Section */}
+      {/* 5. More Stories Section — published case studies only */}
+      {moreStories.length > 0 && (
       <section className="py-14 px-6 bg-[#fcfdfd] border-t border-slate-100">
         <div className="max-w-7xl mx-auto">
           <div className="flex items-center justify-between mb-12">
@@ -345,8 +372,8 @@ export function CaseStudyDetailSection({ content }: CaseStudyDetailSectionProps)
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {defaultCaseStudies.filter(c => c.slug !== cs.slug).slice(0, 3).map((moreCs, idx) => {
-              const detailLink = `/case-studies/${moreCs.slug}`;
+            {moreStories.map((moreCs, idx) => {
+              const detailLink = (moreCs as any).fullPath || `/case-studies/${moreCs.slug}`;
               return (
                 <motion.div
                   key={moreCs.slug}
@@ -391,6 +418,7 @@ export function CaseStudyDetailSection({ content }: CaseStudyDetailSectionProps)
           </div>
         </div>
       </section>
+      )}
 
     </article>
   );

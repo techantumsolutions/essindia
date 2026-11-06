@@ -280,6 +280,13 @@ function baseHumanLabel(key: string): string {
   if (key === 'headingColor') return 'Heading Primary Color';
   if (key === 'headingSecondaryColor') return 'Heading Secondary Color';
   if (key === 'titleColor') return 'Title Text Color';
+  if (key === 'subtitleColor') return 'Subtitle Text Color';
+  if (key === 'paragraphColor') return 'Paragraph Text Color';
+  if (key === 'itemTitleColor') return 'Item Title Text Color';
+  if (key === 'itemDescriptionColor') return 'Item Description Text Color';
+  if (key === 'backgroundColor') return 'Background Color';
+  if (key === 'statNumberColor') return 'Statistic Number Color';
+  if (key === 'statLabelColor') return 'Statistic Label Color';
   if (key === 'titleSecondaryColor') return 'Title Secondary Color';
   if (key === 'highlightedWordIndices') return 'Highlighted Word Positions';
   if (key === 'titleGradientFrom' || key === 'titleGradientStart') return 'Title Gradient Start Color';
