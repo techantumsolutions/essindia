@@ -98,41 +98,16 @@ export function UgandaInsights({ content }: { content?: UgandaInsightsContent })
   const activeTab = tabs[activeTabIdx] || tabs[0];
   const tabsRef = useRef<HTMLDivElement>(null);
 
-  const [canScrollLeft, setCanScrollLeft] = useState(false);
-  const [canScrollRight, setCanScrollRight] = useState(false);
+  const showArrows = tabs.length > 1;
+  const canGoPrev = activeTabIdx > 0;
+  const canGoNext = activeTabIdx < tabs.length - 1;
 
-  const checkScrollState = React.useCallback(() => {
-    if (tabsRef.current) {
-      const { scrollLeft, scrollWidth, clientWidth } = tabsRef.current;
-      setCanScrollLeft(scrollLeft > 5);
-      setCanScrollRight(scrollLeft + clientWidth < scrollWidth - 5);
-    }
-  }, []);
-
-  React.useEffect(() => {
-    checkScrollState();
-    const timer = setTimeout(checkScrollState, 150);
-    window.addEventListener('resize', checkScrollState);
-    return () => {
-      clearTimeout(timer);
-      window.removeEventListener('resize', checkScrollState);
-    };
-  }, [tabs, checkScrollState]);
-
-  const scrollTabs = (direction: 'left' | 'right') => {
-    if (tabsRef.current) {
-      const scrollAmount = direction === 'left' ? -280 : 280;
-      tabsRef.current.scrollBy({ left: scrollAmount, behavior: 'smooth' });
-    }
-  };
-
-  const handleTabClick = (idx: number, event: React.MouseEvent<HTMLButtonElement>) => {
-    setActiveTabIdx(idx);
-    if (typeof window === 'undefined' || window.innerWidth >= 1024) return;
-
+  const scrollToTab = React.useCallback((index: number) => {
+    if (!tabsRef.current) return;
     const container = tabsRef.current;
-    const tab = event.currentTarget;
-    if (!container || !tab) return;
+    const items = container.querySelectorAll<HTMLElement>('[data-tab-button="true"]');
+    const tab = items[index];
+    if (!tab) return;
 
     const containerRect = container.getBoundingClientRect();
     const tabRect = tab.getBoundingClientRect();
@@ -143,6 +118,25 @@ export function UgandaInsights({ content }: { content?: UgandaInsightsContent })
       left: container.scrollLeft + delta,
       behavior: 'smooth',
     });
+  }, []);
+
+  React.useEffect(() => {
+    const timer = setTimeout(() => {
+      scrollToTab(activeTabIdx);
+    }, 50);
+    return () => clearTimeout(timer);
+  }, [activeTabIdx, scrollToTab]);
+
+  const handlePrevTab = () => {
+    setActiveTabIdx((prev) => Math.max(0, prev - 1));
+  };
+
+  const handleNextTab = () => {
+    setActiveTabIdx((prev) => Math.min(tabs.length - 1, prev + 1));
+  };
+
+  const handleTabClick = (idx: number) => {
+    setActiveTabIdx(idx);
   };
 
   return (
@@ -164,21 +158,27 @@ export function UgandaInsights({ content }: { content?: UgandaInsightsContent })
         {/* Horizontal Navigation Tabs with Left & Right Arrow Buttons */}
         <div className="relative flex items-center gap-2 mb-10 w-full max-w-7xl mx-auto">
           {/* Left Arrow Button */}
-          <button
-            type="button"
-            onClick={() => scrollTabs('left')}
-            disabled={!canScrollLeft}
-            className={`w-9 h-9 rounded-full border border-slate-200 bg-white hover:bg-slate-100 flex items-center justify-center shadow-sm text-slate-700 shrink-0 transition-all duration-200 ${canScrollLeft ? 'opacity-100 scale-100 cursor-pointer' : 'opacity-0 pointer-events-none scale-90'
+          {showArrows && (
+            <button
+              type="button"
+              onClick={handlePrevTab}
+              disabled={!canGoPrev}
+              className={`w-9 h-9 rounded-full border border-slate-200 bg-white flex items-center justify-center shadow-sm text-slate-700 shrink-0 transition-all duration-200 ${
+                canGoPrev
+                  ? 'hover:bg-slate-100 hover:text-slate-900 cursor-pointer opacity-100 scale-100 active:scale-95'
+                  : 'opacity-30 cursor-not-allowed scale-95 bg-slate-50 text-slate-400 border-slate-200 shadow-none'
               }`}
-            aria-label="Scroll tabs left"
-          >
-            <ChevronLeft className="w-5 h-5" />
-          </button>
+              aria-label="Previous tab"
+            >
+              <ChevronLeft className="w-5 h-5" />
+            </button>
+          )}
 
           {/* Horizontal Scrollable Tabs Track */}
           <div
             ref={tabsRef}
-            onScroll={checkScrollState}
+            role="tablist"
+            aria-label="Insights categories"
             className="flex-1 min-w-0 flex items-center justify-start gap-2.5 overflow-x-auto no-scrollbar scroll-smooth py-2 px-2 border-b border-slate-200"
             style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
           >
@@ -188,11 +188,15 @@ export function UgandaInsights({ content }: { content?: UgandaInsightsContent })
                 <button
                   key={idx}
                   type="button"
-                  onClick={(event) => handleTabClick(idx, event)}
-                  className={`px-5 py-3 rounded-xl text-xs sm:text-sm font-semibold transition-all duration-200 whitespace-nowrap shrink-0 ${isActive
-                    ? 'bg-[#1d1b4b] text-white shadow-md shadow-[#1d1b4b]/20 scale-100'
-                    : 'bg-slate-100 text-slate-600 hover:bg-slate-200 hover:text-slate-900'
-                    }`}
+                  role="tab"
+                  aria-selected={isActive}
+                  data-tab-button="true"
+                  onClick={() => handleTabClick(idx)}
+                  className={`px-5 py-3 rounded-xl text-xs sm:text-sm font-semibold transition-all duration-200 whitespace-nowrap shrink-0 ${
+                    isActive
+                      ? 'bg-[#1d1b4b] text-white shadow-md shadow-[#1d1b4b]/20 scale-100'
+                      : 'bg-slate-100 text-slate-600 hover:bg-slate-200 hover:text-slate-900 cursor-pointer'
+                  }`}
                 >
                   <FormattedText content={tab.tabName} as="span" />
                 </button>
@@ -201,16 +205,21 @@ export function UgandaInsights({ content }: { content?: UgandaInsightsContent })
           </div>
 
           {/* Right Arrow Button */}
-          <button
-            type="button"
-            onClick={() => scrollTabs('right')}
-            disabled={!canScrollRight}
-            className={`w-9 h-9 rounded-full border border-slate-200 bg-white hover:bg-slate-100 flex items-center justify-center shadow-sm text-slate-700 shrink-0 transition-all duration-200 ${canScrollRight ? 'opacity-100 scale-100 cursor-pointer' : 'opacity-0 pointer-events-none scale-90'
+          {showArrows && (
+            <button
+              type="button"
+              onClick={handleNextTab}
+              disabled={!canGoNext}
+              className={`w-9 h-9 rounded-full border border-slate-200 bg-white flex items-center justify-center shadow-sm text-slate-700 shrink-0 transition-all duration-200 ${
+                canGoNext
+                  ? 'hover:bg-slate-100 hover:text-slate-900 cursor-pointer opacity-100 scale-100 active:scale-95'
+                  : 'opacity-30 cursor-not-allowed scale-95 bg-slate-50 text-slate-400 border-slate-200 shadow-none'
               }`}
-            aria-label="Scroll tabs right"
-          >
-            <ChevronRight className="w-5 h-5" />
-          </button>
+              aria-label="Next tab"
+            >
+              <ChevronRight className="w-5 h-5" />
+            </button>
+          )}
         </div>
 
         {/* Active Content Panel - Left Content, Right Image */}

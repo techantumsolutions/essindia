@@ -611,26 +611,36 @@ export function BlogDetailSection({ content }: BlogDetailSectionProps) {
                         <div className="col-span-6 p-4 text-center">{seg.column2Title || 'Column 2'}</div>
                       </div>
                       <div className="divide-y divide-slate-100 bg-white text-xs sm:text-sm">
-                        {seg.rows?.map((row, rIdx) => (
-                          <div key={rIdx} className="grid grid-cols-12 items-center">
-                            <div className="col-span-6 p-4 sm:p-5 border-r border-slate-200 space-y-1">
-                              <div className="flex items-stretch gap-3">
-                                <span className="w-1 bg-amber-400 rounded-full shrink-0 my-0.5" />
-                                <div>
-                                  <div className="font-bold text-[#290d78] text-base sm:text-lg">{row.col1Title}</div>
-                                  {row.col1Desc && (
-                                    <div className="text-xs sm:text-sm text-slate-500 font-normal mt-1 leading-relaxed">
-                                      {row.col1Desc}
+                        {seg.rows?.map((row, rIdx) => {
+                          const hasDesc = Boolean(row.col1Desc && String(row.col1Desc).trim().length > 0);
+                          return (
+                            <div key={rIdx} className="grid grid-cols-12 items-center">
+                              <div className="col-span-6 py-2 sm:px-5 border-r border-slate-200 space-y-1">
+                                {hasDesc ? (
+                                  <div className="flex items-stretch gap-3">
+                                    <span className="w-1 bg-amber-400 rounded-full shrink-0 my-0.5" />
+                                    <div>
+                                      <div className="font-medium text-[#290d78] text-sm">{row.col1Title}</div>
+                                      <div className="text-xs sm:text-sm text-slate-500 font-normal mt-1 leading-relaxed">
+                                        {row.col1Desc}
+                                      </div>
                                     </div>
-                                  )}
-                                </div>
+                                  </div>
+                                ) : (
+                                  <div className="flex items-center justify-center gap-3">
+                                    <span className="w-1 bg-amber-400 rounded-full shrink-0" />
+                                    <div className="font-medium text-[#290d78] text-sm">
+                                      {row.col1Title}
+                                    </div>
+                                  </div>
+                                )}
+                              </div>
+                              <div className="col-span-6 py-2 sm:px-5 text-center font-medium text-[#290d78] text-sm">
+                                {row.col2Text}
                               </div>
                             </div>
-                            <div className="col-span-6 p-4 sm:p-5 text-center font-bold text-[#290d78] text-base sm:text-lg">
-                              {row.col2Text}
-                            </div>
-                          </div>
-                        ))}
+                          );
+                        })}
                       </div>
                     </div>
                   </div>
@@ -785,8 +795,8 @@ export function BlogDetailSection({ content }: BlogDetailSectionProps) {
                       : undefined
                   }
                   className={`w-full py-3 rounded-xl font-bold text-xs transition-all duration-200 shadow-lg flex items-center justify-center gap-2 mt-2 ${!formData.agreeTerms || isSubmitting
-                      ? 'bg-slate-800 text-slate-500 cursor-not-allowed opacity-60'
-                      : 'bg-gradient-to-r from-[#8B5CF6] to-[#7C3AED] hover:from-[#7C3AED] hover:to-[#6D28D9] text-white cursor-pointer active:scale-[0.98]'
+                    ? 'bg-slate-800 text-slate-500 cursor-not-allowed opacity-60'
+                    : 'bg-gradient-to-r from-[#8B5CF6] to-[#7C3AED] hover:from-[#7C3AED] hover:to-[#6D28D9] text-white cursor-pointer active:scale-[0.98]'
                     }`}
                 >
                   {isSubmitting ? (
