@@ -30,6 +30,7 @@ import {
   Check,
   Monitor,
   Smartphone,
+  Bookmark,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
@@ -2544,6 +2545,7 @@ export default function PageEditor() {
   const [isPublishing, setIsPublishing] = React.useState(false);
   const [expandedSections, setExpandedSections] = React.useState<Set<string>>(new Set());
   const [showAddSection, setShowAddSection] = React.useState(false);
+  const [addSectionTab, setAddSectionTab] = React.useState<'default' | 'saved'>('default');
   const [sectionSearchQuery, setSectionSearchQuery] = React.useState('');
   const [librarySections, setLibrarySections] = React.useState<any[]>([]);
   const [previewSectionType, setPreviewSectionType] = React.useState<string | null>(null);
@@ -2947,11 +2949,35 @@ export default function PageEditor() {
     setDirtySections((prev) => new Set(prev).add(sectionId));
   };
 
-  const addSection = async (type: string, afterIndex?: number) => {
-    const libSec = librarySections.find(
-      (s) => s.type === type && (s.variant === 'default' || !s.variant)
-    ) || librarySections.find((s) => s.type === type);
-    const isValidUuid = libSec?.id && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(libSec.id);
+  const savedLibrarySections = React.useMemo(() => {
+    // Only sections explicitly saved via "Save as Template"
+    return (librarySections || []).filter((s) => {
+      const rawTags = s.categoryTags;
+      const tags = Array.isArray(rawTags)
+        ? rawTags.map(String)
+        : typeof rawTags === 'string'
+          ? (() => {
+              try {
+                const parsed = JSON.parse(rawTags);
+                return Array.isArray(parsed) ? parsed.map(String) : [];
+              } catch {
+                return [];
+              }
+            })()
+          : [];
+      return tags.includes('saved-template');
+    });
+  }, [librarySections]);
+
+  const addSection = async (
+    type: string,
+    options?: { afterIndex?: number; librarySectionId?: string; content?: Record<string, unknown>; name?: string }
+  ) => {
+    const afterIndex = options?.afterIndex;
+    const librarySectionId = options?.librarySectionId;
+    const isValidUuid =
+      !!librarySectionId &&
+      /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(librarySectionId);
 
     const res = await fetch(`/api/admin/pages/${pageId}/sections`, {
       method: 'POST',
@@ -2959,14 +2985,17 @@ export default function PageEditor() {
       body: JSON.stringify({
         type,
         orderIndex: afterIndex !== undefined ? afterIndex + 1 : undefined,
-        sectionLibraryId: isValidUuid ? libSec.id : undefined,
-        content: libSec?.contentJson || {},
+        sectionLibraryId: isValidUuid ? librarySectionId : undefined,
+        name: options?.name || undefined,
+        content: isValidUuid ? options?.content || {} : options?.content || {},
       }),
     });
     if (res.ok) {
-      toast.success('Section added');
+      toast.success(isValidUuid ? 'Saved template added to page' : 'Section added');
       setShowAddSection(false);
+      setSectionSearchQuery('');
       await fetchPage();
+      if (isValidUuid) await fetchLibrarySections();
     } else {
       toast.error('Failed to add section');
     }
@@ -3202,68 +3231,175 @@ export default function PageEditor() {
                 exit={{ opacity: 0, height: 0 }}
                 className="bg-white rounded-2xl border-2 border-dashed border-[#4B2A63]/20 p-6 flex flex-col gap-4 overflow-hidden"
               >
-                {/* Search Bar */}
-                <div className="relative w-full max-w-md">
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <Search className="w-4 h-4 text-slate-400" />
+                <div className="flex flex-col sm:flex-row sm:items-center gap-3 justify-between">
+                  <div className="inline-flex rounded-xl bg-slate-100 p-1 gap-1 self-start">
+                    <button
+                      type="button"
+                      onClick={() => setAddSectionTab('default')}
+                      className={cn(
+                        'px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all',
+                        addSectionTab === 'default'
+                          ? 'bg-white text-[#4B2A63] shadow-sm'
+                          : 'text-slate-500 hover:text-slate-700'
+                      )}
+                    >
+                      Default Templates
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setAddSectionTab('saved')}
+                      className={cn(
+                        'px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all',
+                        addSectionTab === 'saved'
+                          ? 'bg-white text-[#4B2A63] shadow-sm'
+                          : 'text-slate-500 hover:text-slate-700'
+                      )}
+                    >
+                      Saved Templates
+                      {savedLibrarySections.length > 0 && (
+                        <span className="ml-1.5 text-[10px] font-black text-[#4B2A63]/70">
+                          ({savedLibrarySections.length})
+                        </span>
+                      )}
+                    </button>
                   </div>
-                  <input
-                    type="text"
-                    placeholder="Search sections..."
-                    value={sectionSearchQuery}
-                    onChange={(e) => setSectionSearchQuery(e.target.value)}
-                    className="w-full bg-slate-50 border border-slate-200 rounded-xl py-2 pl-10 pr-4 text-sm focus:outline-none focus:ring-2 focus:ring-[#4B2A63]/20 focus:border-[#4B2A63]/30 transition-all"
-                  />
+
+                  <div className="relative w-full max-w-md">
+                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                      <Search className="w-4 h-4 text-slate-400" />
+                    </div>
+                    <input
+                      type="text"
+                      placeholder={
+                        addSectionTab === 'saved'
+                          ? 'Search saved templates...'
+                          : 'Search default templates...'
+                      }
+                      value={sectionSearchQuery}
+                      onChange={(e) => setSectionSearchQuery(e.target.value)}
+                      className="w-full bg-slate-50 border border-slate-200 rounded-xl py-2 pl-10 pr-4 text-sm focus:outline-none focus:ring-2 focus:ring-[#4B2A63]/20 focus:border-[#4B2A63]/30 transition-all"
+                    />
+                  </div>
                 </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-                  {SECTION_REGISTRY.filter((s) => {
-                    if (s.label.includes('Legacy')) return false;
-                    if (s.type === 'mfg-icons') {
-                      return page.template?.name === 'Intelligent ERP Automation Template';
-                    }
-                    if (sectionSearchQuery.trim()) {
-                      const query = sectionSearchQuery.toLowerCase();
-                      if (!s.label.toLowerCase().includes(query) && !s.description.toLowerCase().includes(query)) {
-                        return false;
+                {addSectionTab === 'default' ? (
+                  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                    {SECTION_REGISTRY.filter((s) => {
+                      if (s.label.includes('Legacy')) return false;
+                      if (s.type === 'mfg-icons') {
+                        return page.template?.name === 'Intelligent ERP Automation Template';
                       }
-                    }
-                    return true;
-                  }).map((s) => (
-                    <div
-                      key={s.type}
-                      className="p-4 rounded-xl bg-slate-50 border border-slate-100 flex flex-col justify-between gap-3 group hover:border-[#4B2A63]/20 transition-all hover:shadow-sm"
-                    >
-                      <div>
-                        <p className="text-sm font-bold text-slate-800">
-                          {s.label}
-                        </p>
-                        <p className="text-[10px] text-slate-400 mt-1 line-clamp-2">
-                          {s.description}
+                      if (sectionSearchQuery.trim()) {
+                        const query = sectionSearchQuery.toLowerCase();
+                        if (
+                          !s.label.toLowerCase().includes(query) &&
+                          !s.description.toLowerCase().includes(query) &&
+                          !s.type.toLowerCase().includes(query)
+                        ) {
+                          return false;
+                        }
+                      }
+                      return true;
+                    }).map((s) => (
+                      <div
+                        key={s.type}
+                        className="p-4 rounded-xl bg-slate-50 border border-slate-100 flex flex-col justify-between gap-3 group hover:border-[#4B2A63]/20 transition-all hover:shadow-sm"
+                      >
+                        <div>
+                          <p className="text-sm font-bold text-slate-800">{s.label}</p>
+                          <p className="text-[10px] text-slate-400 mt-1 line-clamp-2">{s.description}</p>
+                        </div>
+                        <div className="flex gap-2 mt-auto">
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            type="button"
+                            onClick={() => setPreviewSectionType(s.type)}
+                            className="flex-1 text-xs py-1 h-8 rounded-lg border-[#4B2A63]/20 text-[#4B2A63] hover:bg-[#4B2A63]/5 font-semibold"
+                          >
+                            Preview
+                          </Button>
+                          <Button
+                            size="sm"
+                            type="button"
+                            onClick={() => addSection(s.type, { content: {} })}
+                            className="flex-1 text-xs py-1 h-8 rounded-lg bg-[#4B2A63] text-white hover:bg-[#3B198F] font-semibold"
+                          >
+                            Add
+                          </Button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                    {savedLibrarySections.filter((s) => {
+                      if (!sectionSearchQuery.trim()) return true;
+                      const query = sectionSearchQuery.toLowerCase();
+                      const label =
+                        SECTION_REGISTRY.find((r) => r.type === s.type)?.label || s.type;
+                      return (
+                        String(s.name || '').toLowerCase().includes(query) ||
+                        String(s.type || '').toLowerCase().includes(query) ||
+                        label.toLowerCase().includes(query)
+                      );
+                    }).length === 0 ? (
+                      <div className="col-span-full py-10 text-center rounded-xl bg-slate-50 border border-dashed border-slate-200">
+                        <Bookmark className="w-8 h-8 text-slate-200 mx-auto mb-2" />
+                        <p className="text-sm font-medium text-slate-400">No saved templates yet</p>
+                        <p className="text-xs text-slate-300 mt-1 max-w-sm mx-auto">
+                          Open a section and click <strong>Save as Template</strong> to reuse its filled content on other pages.
                         </p>
                       </div>
-                      <div className="flex gap-2 mt-auto">
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          type="button"
-                          onClick={() => setPreviewSectionType(s.type)}
-                          className="flex-1 text-xs py-1 h-8 rounded-lg border-[#4B2A63]/20 text-[#4B2A63] hover:bg-[#4B2A63]/5 font-semibold"
-                        >
-                          Preview
-                        </Button>
-                        <Button
-                          size="sm"
-                          type="button"
-                          onClick={() => { addSection(s.type); setSectionSearchQuery(''); }}
-                          className="flex-1 text-xs py-1 h-8 rounded-lg bg-[#4B2A63] text-white hover:bg-[#3B198F] font-semibold"
-                        >
-                          Add
-                        </Button>
-                      </div>
-                    </div>
-                  ))}
-                </div>
+                    ) : (
+                      savedLibrarySections
+                        .filter((s) => {
+                          if (!sectionSearchQuery.trim()) return true;
+                          const query = sectionSearchQuery.toLowerCase();
+                          const label =
+                            SECTION_REGISTRY.find((r) => r.type === s.type)?.label || s.type;
+                          return (
+                            String(s.name || '').toLowerCase().includes(query) ||
+                            String(s.type || '').toLowerCase().includes(query) ||
+                            label.toLowerCase().includes(query)
+                          );
+                        })
+                        .map((s) => {
+                          const meta = SECTION_REGISTRY.find((r) => r.type === s.type);
+                          return (
+                            <div
+                              key={s.id}
+                              className="p-4 rounded-xl bg-slate-50 border border-slate-100 flex flex-col justify-between gap-3 group hover:border-[#4B2A63]/20 transition-all hover:shadow-sm"
+                            >
+                              <div>
+                                <p className="text-sm font-bold text-slate-800">{s.name}</p>
+                                <p className="text-[10px] font-semibold text-[#4B2A63]/70 mt-1">
+                                  {meta?.label || s.type}
+                                </p>
+                                <p className="text-[10px] text-slate-400 mt-1 line-clamp-2">
+                                  {meta?.description || 'Saved section with filled content'}
+                                </p>
+                              </div>
+                              <Button
+                                size="sm"
+                                type="button"
+                                onClick={() =>
+                                  addSection(s.type, {
+                                    librarySectionId: s.id,
+                                    content: s.contentJson || {},
+                                    name: s.name,
+                                  })
+                                }
+                                className="w-full text-xs py-1 h-8 rounded-lg bg-[#4B2A63] text-white hover:bg-[#3B198F] font-semibold"
+                              >
+                                Add Saved
+                              </Button>
+                            </div>
+                          );
+                        })
+                    )}
+                  </div>
+                )}
               </motion.div>
             )}
           </AnimatePresence>
@@ -3300,6 +3436,8 @@ export default function PageEditor() {
                     onMove={moveSection}
                     isSectionDirty={dirtySections.has(section.id)}
                     disableStructureChanges={isLandingPage}
+                    pageId={page.id}
+                    onSavedToLibrary={fetchLibrarySections}
                   />
                 </Reorder.Item>
               ))}
@@ -3747,7 +3885,7 @@ export default function PageEditor() {
                 <Button
                   type="button"
                   onClick={() => {
-                    addSection(previewSectionType);
+                    addSection(previewSectionType, { content: {} });
                     setPreviewSectionType(null);
                   }}
                   className="bg-[#4B2A63] hover:bg-[#3B198F] text-white rounded-full px-6 gap-2 h-10 shadow-sm"

@@ -49,6 +49,8 @@ export class SectionLibraryRepository {
     animationJson?: Record<string, unknown>;
     categoryTags?: string[];
     status?: string;
+    sourcePageId?: string | null;
+    sourceSectionId?: string | null;
   }) {
     if (!isValidSectionType(data.type)) {
       throw new Error(`Invalid section type: ${data.type}`);
@@ -59,7 +61,7 @@ export class SectionLibraryRepository {
 
     const existing = await this.findByHash(identityHash);
     if (existing) {
-      const error = new Error('Section already exists in library.');
+      const error = new Error('A saved section with this name and content already exists.');
       (error as Error & { code: string }).code = 'DUPLICATE_SECTION';
       throw error;
     }
@@ -79,6 +81,8 @@ export class SectionLibraryRepository {
         animationJson: data.animationJson || {},
         categoryTags: data.categoryTags || [],
         status: data.status || 'draft',
+        sourcePageId: data.sourcePageId || null,
+        sourceSectionId: data.sourceSectionId || null,
         version: 1,
       })
       .returning();

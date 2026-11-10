@@ -12,13 +12,16 @@ import {
   Eye,
   EyeOff,
   RotateCcw,
+  BookmarkPlus,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
+import { toast } from 'sonner';
 import { getSectionDefinition } from '@/lib/cms/section-registry';
 import { DynamicFieldRenderer } from './DynamicFieldRenderer';
 import { mergeSchemaWithContent, isHiddenCmsField } from './field-utils';
 import type { JsonValue } from './field-utils';
+import { SaveSectionLibraryModal } from './SaveSectionLibraryModal';
 
 export interface PageSection {
   id: string;
@@ -2481,6 +2484,8 @@ interface SectionEditorCardProps {
   onMove: (index: number, direction: 'up' | 'down') => void;
   isSectionDirty: boolean;
   disableStructureChanges?: boolean;
+  pageId?: string;
+  onSavedToLibrary?: () => void;
 }
 
 export function SectionEditorCard({
@@ -2497,9 +2502,13 @@ export function SectionEditorCard({
   onMove,
   isSectionDirty,
   disableStructureChanges = false,
+  pageId,
+  onSavedToLibrary,
 }: SectionEditorCardProps) {
   const [saving, setSaving] = React.useState(false);
   const [activeTab, setActiveTab] = React.useState<string>('basic');
+  const [showSaveLibraryModal, setShowSaveLibraryModal] = React.useState(false);
+  const [savingToLibrary, setSavingToLibrary] = React.useState(false);
   const meta = getSectionDefinition(section.type);
 
   const { mergedContent, colorDefaults } = React.useMemo(() => {
@@ -3260,6 +3269,43 @@ export function SectionEditorCard({
     }
   };
 
+  const handleSaveToLibrary = async (name: string) => {
+    setSavingToLibrary(true);
+    try {
+      const res = await fetch('/api/admin/sections', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name,
+          type: section.type,
+          variant: section.variant || 'default',
+          contentJson: section.content || {},
+          status: 'published',
+          categoryTags: ['saved-template'],
+          sourcePageId: pageId || null,
+          sourceSectionId: section.id,
+        }),
+      });
+      const data = await res.json().catch(() => null);
+      if (!res.ok) {
+        const msg =
+          data?.error ||
+          data?.message ||
+          (res.status === 409
+            ? 'A saved section with this name and content already exists.'
+            : 'Failed to save section template');
+        throw new Error(msg);
+      }
+      setShowSaveLibraryModal(false);
+      onSavedToLibrary?.();
+      toast.success(`Saved template “${name}”`);
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : 'Failed to save section template');
+    } finally {
+      setSavingToLibrary(false);
+    }
+  };
+
   const sectionPreview = getSectionPreview(section.content);
 
   return (
@@ -3475,7 +3521,18 @@ export function SectionEditorCard({
                 </span>
               )}
             </div>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 flex-wrap justify-end">
+              <Button
+                size="sm"
+                variant="outline"
+                type="button"
+                onClick={() => setShowSaveLibraryModal(true)}
+                disabled={saving || savingToLibrary}
+                className="rounded-full gap-1.5 px-4 text-[#4B2A63] border-[#4B2A63]/25 hover:bg-[#4B2A63]/5"
+              >
+                <BookmarkPlus className="w-3.5 h-3.5" />
+                Save as Template
+              </Button>
               {onDiscard && (
                 <Button
                   size="sm"
@@ -3505,11 +3562,19 @@ export function SectionEditorCard({
             </div>
           </div>
         </div>
+      </motion.div>
+      )}
+      </AnimatePresence>
+
+      <SaveSectionLibraryModal
+        open={showSaveLibraryModal}
+        sectionType={section.type}
+        defaultName={section.name || meta?.label || section.type}
+        saving={savingToLibrary}
+        onClose={() => setShowSaveLibraryModal(false)}
+        onConfirm={handleSaveToLibrary}
+      />
     </motion.div>
-  )
-}
-      </AnimatePresence >
-    </motion.div >
   );
 }
 

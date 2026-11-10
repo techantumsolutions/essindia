@@ -37,6 +37,8 @@ export async function POST(request: Request) {
     const created = await sectionLibraryRepository.create({
       ...parsed.data,
       contentJson: parsed.data.contentJson,
+      sourcePageId: parsed.data.sourcePageId,
+      sourceSectionId: parsed.data.sourceSectionId,
     });
     return NextResponse.json(created, { status: 201 });
   } catch (error: unknown) {

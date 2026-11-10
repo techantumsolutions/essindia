@@ -1,6 +1,7 @@
 export { DynamicFieldRenderer } from './DynamicFieldRenderer';
 export { SectionEditorCard } from './SectionEditorCard';
 export type { PageSection } from './SectionEditorCard';
+export { SaveSectionLibraryModal } from './SaveSectionLibraryModal';
 export { ArrayFieldEditor } from './ArrayFieldEditor';
 export { RichTextField } from './RichTextField';
 export { MediaField } from './MediaField';
