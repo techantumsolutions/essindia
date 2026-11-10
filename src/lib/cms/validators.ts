@@ -23,7 +23,9 @@ export const sectionLibrarySchema = z.object({
   responsiveJson: z.record(z.string(), z.unknown()).optional(),
   animationJson: z.record(z.string(), z.unknown()).optional(),
   categoryTags: z.array(z.string()).optional(),
-  status: z.enum(['draft', 'published', 'archived']).optional(),
+  status: z.enum(['draft', 'published', 'archived', 'active']).optional(),
+  sourcePageId: z.string().uuid().nullable().optional(),
+  sourceSectionId: z.string().uuid().nullable().optional(),
 });
 
 export const templateSchema = z.object({
