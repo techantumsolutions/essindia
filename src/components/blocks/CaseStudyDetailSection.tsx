@@ -25,9 +25,10 @@ export function CaseStudyDetailSection({ content }: CaseStudyDetailSectionProps)
         const res = await fetch('/api/case-studies');
         if (!res.ok) return;
         const data = await res.json();
-        if (!Array.isArray(data)) return;
+        const list = Array.isArray(data) ? data : data?.caseStudies;
+        if (!Array.isArray(list)) return;
         setMoreStories(
-          data.filter((item: CaseStudyPost) => item.slug !== cs.slug).slice(0, 3)
+          list.filter((item: CaseStudyPost) => item.slug !== cs.slug).slice(0, 3)
         );
       } catch (err) {
         console.error('Failed to load more case studies', err);
@@ -66,7 +67,7 @@ export function CaseStudyDetailSection({ content }: CaseStudyDetailSectionProps)
                   color: cs.badgeTextColor || '#7c3aed'
                 }}
               >
-                {cs.badgeText || cs.topic || cs.industry || 'Caetrory Name'}
+                {cs.badgeText || cs.topic || cs.industry || 'Category Name'}
               </div>
               {cs.date && (
                 <div

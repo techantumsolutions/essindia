@@ -51,6 +51,7 @@ import { RichTextField } from '@/components/admin/page-editor/RichTextField';
 import { MediaField } from '@/components/admin/page-editor/MediaField';
 import { ColorPickerField } from '@/components/admin/page-editor/ColorPickerField';
 import { defaultCaseStudies } from '@/lib/case-studies-data';
+import { DEFAULT_TOPICS, DEFAULT_INDUSTRIES } from '@/lib/blogs-data';
 
 // ---------------------------------------------------------------------------
 // Types
@@ -132,8 +133,77 @@ function findSchemaForSection(
 }
 
 // ---------------------------------------------------------------------------
-// Blog Posts Manager Component
+// Shared Taxonomy & Dropdown Components
 // ---------------------------------------------------------------------------
+
+interface CustomDropdownProps {
+  value: string;
+  onChange: (val: string) => void;
+  options: { value: string; label: string }[];
+  placeholder: string;
+}
+
+function CustomDropdown({ value, onChange, options, placeholder }: CustomDropdownProps) {
+  const [isOpen, setIsOpen] = React.useState(false);
+  const containerRef = React.useRef<HTMLDivElement>(null);
+
+  React.useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (containerRef.current && !containerRef.current.contains(event.target as Node)) {
+        setIsOpen(false);
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  const selectedOption = options.find(opt => opt.value === value);
+
+  return (
+    <div ref={containerRef} className="relative w-full">
+      <button
+        type="button"
+        onClick={() => setIsOpen(!isOpen)}
+        className="w-full bg-slate-50 hover:bg-slate-100/80 active:bg-slate-200/50 rounded-xl px-4 py-2.5 text-sm outline-none border border-transparent focus:border-[#4B2A63]/20 focus:ring-2 focus:ring-[#4B2A63]/10 font-medium text-left flex items-center justify-between transition-all cursor-pointer"
+      >
+        <span className={value ? 'text-slate-800 font-medium' : 'text-slate-400 font-medium'}>
+          {selectedOption ? selectedOption.label : placeholder}
+        </span>
+        <ChevronDown className={cn('w-4 h-4 text-slate-400 transition-transform duration-200', isOpen && 'transform rotate-180')} />
+      </button>
+
+      <AnimatePresence>
+        {isOpen && (
+          <motion.div
+            initial={{ opacity: 0, y: 4, scale: 0.98 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: 4, scale: 0.98 }}
+            transition={{ duration: 0.15 }}
+            className="absolute z-50 left-0 right-0 mt-1.5 max-h-60 overflow-y-auto rounded-xl bg-white border border-slate-100 shadow-xl py-1 outline-none"
+          >
+            {options.map((opt) => (
+              <button
+                key={opt.value}
+                type="button"
+                onClick={() => {
+                  onChange(opt.value);
+                  setIsOpen(false);
+                }}
+                className={cn(
+                  'w-full px-4 py-2 text-sm text-left font-medium transition-colors hover:bg-[#4B2A63]/5 hover:text-[#4B2A63] flex items-center justify-between cursor-pointer',
+                  opt.value === value ? 'bg-[#4B2A63]/5 text-[#4B2A63]' : 'text-slate-700'
+                )}
+              >
+                <span>{opt.label}</span>
+                {opt.value === value && <Check className="w-4.5 h-4.5 text-[#4B2A63]" />}
+              </button>
+            ))}
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  );
+}
 
 // ---------------------------------------------------------------------------
 // Case Study Posts Manager Component
@@ -158,6 +228,8 @@ export function CaseStudyManager({ pageId, onRefresh }: { pageId?: string; onRef
   const [slugTouched, setSlugTouched] = React.useState(false);
   const [topic, setTopic] = React.useState('');
   const [industry, setIndustry] = React.useState('');
+  const [topics, setTopics] = React.useState<string[]>(DEFAULT_TOPICS);
+  const [industries, setIndustries] = React.useState<string[]>(DEFAULT_INDUSTRIES);
   const [date, setDate] = React.useState('');
   const [image, setImage] = React.useState('');
   const [description, setDescription] = React.useState('');
@@ -254,10 +326,28 @@ export function CaseStudyManager({ pageId, onRefresh }: { pageId?: string; onRef
     }
   }, []);
 
+  const fetchTaxonomy = React.useCallback(async () => {
+    try {
+      const res = await fetch('/api/blogs');
+      if (res.ok) {
+        const data = await res.json();
+        if (Array.isArray(data?.configuredTopics) && data.configuredTopics.length > 0) {
+          setTopics(data.configuredTopics);
+        }
+        if (Array.isArray(data?.configuredIndustries) && data.configuredIndustries.length > 0) {
+          setIndustries(data.configuredIndustries);
+        }
+      }
+    } catch (err) {
+      console.error('Failed to load topics & industries in CaseStudyManager', err);
+    }
+  }, []);
+
   React.useEffect(() => {
     fetchStudies();
     fetchTemplates();
-  }, [fetchStudies, fetchTemplates]);
+    fetchTaxonomy();
+  }, [fetchStudies, fetchTemplates, fetchTaxonomy]);
 
   React.useEffect(() => {
     if (!slugTouched && !editingStudyId) {
@@ -296,8 +386,8 @@ export function CaseStudyManager({ pageId, onRefresh }: { pageId?: string; onRef
       const detailSection = pageData.sections?.find((s: any) => s.type === 'case-study-detail');
       const content = detailSection?.content || {};
 
-      setTopic(content.badgeText || content.topic || '');
-      setIndustry(content.industry || '');
+      setTopic(content.topic || content.badgeText || '');
+      setIndustry(content.industry || (Array.isArray(content.industries) ? content.industries[0] : '') || '');
       setDate(content.date || '');
       setImage(content.image || '');
       setDescription(content.description || '');
@@ -466,8 +556,11 @@ export function CaseStudyManager({ pageId, onRefresh }: { pageId?: string; onRef
         gradientTo: gradientTo || '#292048',
         badgeBgColor: '#ffffff',
         badgeBorderColor: '#7c3aed',
-        badgeText: topic || 'Caetrory Name',
+        badgeText: topic || 'Case Study',
         badgeTextColor: '#7c3aed',
+        topic: topic || undefined,
+        industry: industry || undefined,
+        industries: industry ? [industry] : [],
         date: date || undefined,
         dateColor: '#ffffff',
         description: description || undefined,
@@ -817,12 +910,22 @@ export function CaseStudyManager({ pageId, onRefresh }: { pageId?: string; onRef
                       </div>
                       <div className="grid grid-cols-3 gap-6">
                         <div className="space-y-1">
-                          <label className="admin-label">Topic</label>
-                          <input type="text" value={topic} onChange={(e) => setTopic(e.target.value)} placeholder="e.g. ERP" className="admin-input" />
+                          <label className="admin-label">Topic / Category</label>
+                          <CustomDropdown
+                            value={topic}
+                            onChange={setTopic}
+                            placeholder="Select Topic"
+                            options={Array.from(new Set([...(topic ? [topic] : []), ...topics])).map((t) => ({ value: t, label: t }))}
+                          />
                         </div>
                         <div className="space-y-1">
                           <label className="admin-label">Industry</label>
-                          <input type="text" value={industry} onChange={(e) => setIndustry(e.target.value)} placeholder="e.g. Retail" className="admin-input" />
+                          <CustomDropdown
+                            value={industry}
+                            onChange={setIndustry}
+                            placeholder="Select Industry"
+                            options={Array.from(new Set([...(industry ? [industry] : []), ...industries])).map((ind) => ({ value: ind, label: ind }))}
+                          />
                         </div>
                         <div className="space-y-1">
                           <label className="admin-label">Date</label>
@@ -981,104 +1084,8 @@ export function CaseStudyManager({ pageId, onRefresh }: { pageId?: string; onRef
 }
 
 // ---------------------------------------------------------------------------
-
-interface CustomDropdownProps {
-  value: string;
-  onChange: (val: string) => void;
-  options: { value: string; label: string }[];
-  placeholder: string;
-}
-
-function CustomDropdown({ value, onChange, options, placeholder }: CustomDropdownProps) {
-  const [isOpen, setIsOpen] = React.useState(false);
-  const containerRef = React.useRef<HTMLDivElement>(null);
-
-  React.useEffect(() => {
-    function handleClickOutside(event: MouseEvent) {
-      if (containerRef.current && !containerRef.current.contains(event.target as Node)) {
-        setIsOpen(false);
-      }
-    }
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, []);
-
-  const selectedOption = options.find(opt => opt.value === value);
-
-  return (
-    <div ref={containerRef} className="relative w-full">
-      <button
-        type="button"
-        onClick={() => setIsOpen(!isOpen)}
-        className="w-full bg-slate-50 hover:bg-slate-100/80 active:bg-slate-200/50 rounded-xl px-4 py-2.5 text-sm outline-none border border-transparent focus:border-[#4B2A63]/20 focus:ring-2 focus:ring-[#4B2A63]/10 font-medium text-left flex items-center justify-between transition-all cursor-pointer"
-      >
-        <span className={value ? 'text-slate-800 font-medium' : 'text-slate-400 font-medium'}>
-          {selectedOption ? selectedOption.label : placeholder}
-        </span>
-        <ChevronDown className={cn('w-4 h-4 text-slate-400 transition-transform duration-200', isOpen && 'transform rotate-180')} />
-      </button>
-
-      <AnimatePresence>
-        {isOpen && (
-          <motion.div
-            initial={{ opacity: 0, y: 4, scale: 0.98 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: 4, scale: 0.98 }}
-            transition={{ duration: 0.15 }}
-            className="absolute z-50 left-0 right-0 mt-1.5 max-h-60 overflow-y-auto rounded-xl bg-white border border-slate-100 shadow-xl py-1 outline-none"
-          >
-            {options.map((opt) => (
-              <button
-                key={opt.value}
-                type="button"
-                onClick={() => {
-                  onChange(opt.value);
-                  setIsOpen(false);
-                }}
-                className={cn(
-                  'w-full px-4 py-2 text-sm text-left font-medium transition-colors hover:bg-[#4B2A63]/5 hover:text-[#4B2A63] flex items-center justify-between cursor-pointer',
-                  opt.value === value ? 'bg-[#4B2A63]/5 text-[#4B2A63]' : 'text-slate-700'
-                )}
-              >
-                <span>{opt.label}</span>
-                {opt.value === value && <Check className="w-4.5 h-4.5 text-[#4B2A63]" />}
-              </button>
-            ))}
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </div>
-  );
-}
-
-
-const DEFAULT_TOPICS = [
-  'Business Intelligence',
-  'ERP Solutions',
-  'IoT Solutions',
-  'Mobile App Solutions',
-  'CRM Solutions',
-  'Sales Force Automation',
-  'After-Sales Service App'
-];
-
-const DEFAULT_INDUSTRIES = [
-  'FMCG',
-  'Pharma',
-  'Manufacturing',
-  'Retail',
-  'Electronics',
-  'Automotive',
-  'Healthcare',
-  'Logistics & Supply Chain',
-  'Chemicals',
-  'Textiles',
-  'Construction & Real Estate',
-  'Food & Beverages',
-  'Agriculture',
-  'Energy & Utilities',
-  'Financial Services'
-];
+// Blog Posts Manager Component
+// ---------------------------------------------------------------------------
 
 export interface BlogManagerProps {
   pageId?: string;
@@ -1087,14 +1094,40 @@ export interface BlogManagerProps {
 }
 
 export function BlogManager({ pageId, onRefresh, blogListSection }: BlogManagerProps) {
+  const [fetchedTopics, setFetchedTopics] = React.useState<string[]>([]);
+  const [fetchedIndustries, setFetchedIndustries] = React.useState<string[]>([]);
+
+  React.useEffect(() => {
+    async function fetchTaxonomy() {
+      try {
+        const res = await fetch('/api/blogs');
+        if (res.ok) {
+          const data = await res.json();
+          if (Array.isArray(data?.configuredTopics) && data.configuredTopics.length > 0) {
+            setFetchedTopics(data.configuredTopics);
+          }
+          if (Array.isArray(data?.configuredIndustries) && data.configuredIndustries.length > 0) {
+            setFetchedIndustries(data.configuredIndustries);
+          }
+        }
+      } catch (err) {
+        console.error('Failed to load topics & industries in BlogManager', err);
+      }
+    }
+    fetchTaxonomy();
+  }, []);
+
   const topics = React.useMemo(() => {
     const sectionContent = blogListSection?.content as any;
     const rawTopics = sectionContent?.topics;
     if (Array.isArray(rawTopics) && rawTopics.length > 0) {
       return rawTopics.filter(Boolean);
     }
+    if (fetchedTopics.length > 0) {
+      return fetchedTopics;
+    }
     return DEFAULT_TOPICS;
-  }, [blogListSection]);
+  }, [blogListSection, fetchedTopics]);
 
   const industries = React.useMemo(() => {
     const sectionContent = blogListSection?.content as any;
@@ -1102,8 +1135,11 @@ export function BlogManager({ pageId, onRefresh, blogListSection }: BlogManagerP
     if (Array.isArray(rawIndustries) && rawIndustries.length > 0) {
       return rawIndustries.filter(Boolean);
     }
+    if (fetchedIndustries.length > 0) {
+      return fetchedIndustries;
+    }
     return DEFAULT_INDUSTRIES;
-  }, [blogListSection]);
+  }, [blogListSection, fetchedIndustries]);
 
   const [blogs, setBlogs] = React.useState<any[]>([]);
   const [templates, setTemplates] = React.useState<any[]>([]);
@@ -1159,6 +1195,7 @@ export function BlogManager({ pageId, onRefresh, blogListSection }: BlogManagerP
   ]);
   const [calcTitle, setCalcTitle] = React.useState('Calculate your app development timeline!');
   const [calcDisclaimer, setCalcDisclaimer] = React.useState('I agree to receive the personalized development estimation report and future tech insights.');
+  const [calcButtonText, setCalcButtonText] = React.useState('Get Free Estimation');
   const [calcPoints, setCalcPoints] = React.useState<string[]>([
     '100% Free & No Commitment',
     'Detailed Timeline Breakdown in 24h',
@@ -1166,7 +1203,7 @@ export function BlogManager({ pageId, onRefresh, blogListSection }: BlogManagerP
   ]);
 
   // Modal active tab control
-  const [activeTab, setActiveTab] = React.useState<'hero' | 'author' | 'content' | 'conclusion'>('hero');
+  const [activeTab, setActiveTab] = React.useState<'hero' | 'author' | 'content' | 'conclusion' | 'form'>('hero');
   const [editingBlogId, setEditingBlogId] = React.useState<string | null>(null);
   const [isFetchingDetail, setIsFetchingDetail] = React.useState(false);
 
@@ -1192,8 +1229,13 @@ export function BlogManager({ pageId, onRefresh, blogListSection }: BlogManagerP
     setContentSegments([]);
     setConclusionParagraphs([]);
     setCalcTitle('Calculate your app development timeline!');
-    setCalcDisclaimer('');
-    setCalcPoints([]);
+    setCalcDisclaimer('I agree to receive the personalized development estimation report and future tech insights.');
+    setCalcButtonText('Get Free Estimation');
+    setCalcPoints([
+      '100% Free & No Commitment',
+      'Detailed Timeline Breakdown in 24h',
+      'Estimated Cost Range Included'
+    ]);
     setStatus('draft');
     setEditingBlogId(null);
     setActiveTab('hero');
@@ -1234,7 +1276,11 @@ export function BlogManager({ pageId, onRefresh, blogListSection }: BlogManagerP
         setConclusionParagraphs(Array.isArray(c.conclusionParagraphs) ? c.conclusionParagraphs : []);
 
         setCalcTitle(c.calcTitle || 'Calculate your app development timeline!');
-        setCalcDisclaimer(c.calcDisclaimer || '');
+        setCalcDisclaimer(
+          c.calcDisclaimer ||
+            'I agree to receive the personalized development estimation report and future tech insights.'
+        );
+        setCalcButtonText(c.calcButtonText || 'Get Free Estimation');
         setCalcPoints(Array.isArray(c.calcPoints) ? c.calcPoints : []);
       }
 
@@ -1434,6 +1480,7 @@ export function BlogManager({ pageId, onRefresh, blogListSection }: BlogManagerP
 
             calcTitle: calcTitle || 'Calculate your app development timeline!',
             calcDisclaimer: calcDisclaimer || undefined,
+            calcButtonText: calcButtonText || 'Get Free Estimation',
             calcPoints: calcPoints || [],
           };
 
@@ -1558,6 +1605,7 @@ export function BlogManager({ pageId, onRefresh, blogListSection }: BlogManagerP
 
         calcTitle: calcTitle || 'Calculate your app development timeline!',
         calcDisclaimer: calcDisclaimer || undefined,
+        calcButtonText: calcButtonText || 'Get Free Estimation',
         calcPoints: calcPoints || [],
       };
 
@@ -1766,7 +1814,8 @@ export function BlogManager({ pageId, onRefresh, blogListSection }: BlogManagerP
                   { id: 'hero', label: '1. Hero & Basic Details' },
                   { id: 'author', label: '2. Author Card' },
                   { id: 'content', label: '3. Content Segments' },
-                  { id: 'conclusion', label: '4. Conclusion & Form' },
+                  { id: 'conclusion', label: '4. Conclusion' },
+                  { id: 'form', label: '5. Blog Contact Form' },
                 ].map((tab) => (
                   <button
                     key={tab.id}
@@ -1824,7 +1873,7 @@ export function BlogManager({ pageId, onRefresh, blogListSection }: BlogManagerP
                           value={category}
                           onChange={setCategory}
                           placeholder="Select Topic"
-                          options={topics.map((t) => ({ value: t, label: t }))}
+                          options={Array.from(new Set([...(category ? [category] : []), ...topics])).map((t) => ({ value: t, label: t }))}
                         />
                       </div>
                       <div className="space-y-1">
@@ -1833,7 +1882,7 @@ export function BlogManager({ pageId, onRefresh, blogListSection }: BlogManagerP
                           value={industry}
                           onChange={setIndustry}
                           placeholder="Select Industry"
-                          options={industries.map((ind) => ({ value: ind, label: ind }))}
+                          options={Array.from(new Set([...(industry ? [industry] : []), ...industries])).map((ind) => ({ value: ind, label: ind }))}
                         />
                       </div>
                       <div className="space-y-1">
@@ -2329,7 +2378,7 @@ export function BlogManager({ pageId, onRefresh, blogListSection }: BlogManagerP
                   </div>
                 )}
 
-                {/* TAB 4: Conclusion & Form */}
+                {/* TAB 4: Conclusion */}
                 {activeTab === 'conclusion' && (
                   <div className="space-y-6">
                     <div className="space-y-3 bg-slate-50 p-4 rounded-2xl border border-slate-200">
@@ -2366,12 +2415,19 @@ export function BlogManager({ pageId, onRefresh, blogListSection }: BlogManagerP
                         </div>
                       ))}
                     </div>
+                  </div>
+                )}
 
+                {/* TAB 5: Blog Contact Form */}
+                {activeTab === 'form' && (
+                  <div className="space-y-6">
                     <div className="space-y-4 bg-slate-50 p-4 rounded-2xl border border-slate-200">
-                      <h4 className="text-xs font-bold text-slate-700 uppercase tracking-wider border-b border-slate-200 pb-2">Sidebar Form</h4>
+                      <h4 className="text-xs font-bold text-slate-700 uppercase tracking-wider border-b border-slate-200 pb-2">
+                        Blog Contact Form
+                      </h4>
 
                       <div className="space-y-1">
-                        <label className="admin-label">Form Title</label>
+                        <label className="admin-label">Form Heading</label>
                         <input
                           type="text"
                           value={calcTitle}
@@ -2382,19 +2438,30 @@ export function BlogManager({ pageId, onRefresh, blogListSection }: BlogManagerP
                       </div>
 
                       <div className="space-y-1">
-                        <label className="admin-label">Disclaimer</label>
-                        <input
-                          type="text"
+                        <label className="admin-label">Form Content</label>
+                        <textarea
+                          rows={3}
                           value={calcDisclaimer}
                           onChange={(e) => setCalcDisclaimer(e.target.value)}
-                          placeholder="Form disclaimer agreement..."
+                          placeholder="Agreement / consent text shown next to the checkbox..."
+                          className="admin-input font-medium text-xs resize-y"
+                        />
+                      </div>
+
+                      <div className="space-y-1">
+                        <label className="admin-label">Form Button Text</label>
+                        <input
+                          type="text"
+                          value={calcButtonText}
+                          onChange={(e) => setCalcButtonText(e.target.value)}
+                          placeholder="e.g. Get Free Estimation"
                           className="admin-input font-medium"
                         />
                       </div>
 
                       <div className="space-y-2">
                         <div className="flex items-center justify-between">
-                          <label className="admin-label">Points</label>
+                          <label className="admin-label">Form Points</label>
                           <button
                             type="button"
                             onClick={() => setCalcPoints(prev => [...prev, 'New feature point'])}

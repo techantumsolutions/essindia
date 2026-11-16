@@ -22,6 +22,7 @@ import { DynamicFieldRenderer } from './DynamicFieldRenderer';
 import { mergeSchemaWithContent, isHiddenCmsField } from './field-utils';
 import type { JsonValue } from './field-utils';
 import { SaveSectionLibraryModal } from './SaveSectionLibraryModal';
+import { DEFAULT_TOPICS, DEFAULT_INDUSTRIES } from '@/lib/blogs-data';
 
 export interface PageSection {
   id: string;
@@ -57,9 +58,14 @@ const BLOG_DETAIL_TABS: Record<string, string[]> = {
   ],
   conclusion: [
     'conclusionParagraphs',
+  ],
+  form: [
     'calcTitle',
     'calcDisclaimer',
-    'calcPoints'
+    'calcButtonText',
+    'calcPoints',
+    'formButtonHoverBgColor',
+    'formButtonHoverTextColor',
   ]
 };
 
@@ -73,7 +79,8 @@ const TESTIMONIALS_TABS: Record<string, string[]> = {
     'titleColor',
     'description',
     'descriptionColor',
-    'bgImage'
+    'bgImage',
+    'testimonialTitleColor',
   ],
   testimonials: ['testimonials']
 };
@@ -86,6 +93,8 @@ const CASE_STUDY_DETAIL_TABS: Record<string, string[]> = {
     'badgeBgColor',
     'badgeBorderColor',
     'badgeText',
+    'topic',
+    'industry',
     'badgeTextColor',
     'date',
     'dateColor',
@@ -110,7 +119,9 @@ const DEFAULT_CASE_STUDY_CONTENT: Record<string, any> = {
   bgColor: 'linear-gradient(135deg, #1e2445 0%, #292048 100%)',
   badgeBgColor: '#ffffff',
   badgeBorderColor: '#7c3aed',
-  badgeText: 'Caetrory Name',
+  badgeText: 'Business Intelligence',
+  topic: 'Business Intelligence',
+  industry: 'Retail',
   badgeTextColor: '#7c3aed',
   date: 'December 18, 2025',
   dateColor: '#ffffff',
@@ -238,11 +249,14 @@ const DEFAULT_BLOG_CONTENT: Record<string, any> = {
 
   calcTitle: 'Calculate your app development timeline!',
   calcDisclaimer: 'I agree to receive the personalized development estimation report and future tech insights.',
+  calcButtonText: 'Get Free Estimation',
   calcPoints: [
     '100% Free & No Commitment',
     'Detailed Timeline Breakdown in 24h',
     'Estimated Cost Range Included'
-  ]
+  ],
+  formButtonHoverBgColor: '',
+  formButtonHoverTextColor: '',
 };
 
 const DEFAULT_CASE_STUDY_LIST_CONTENT: Record<string, any> = {
@@ -251,6 +265,8 @@ const DEFAULT_CASE_STUDY_LIST_CONTENT: Record<string, any> = {
   subheadingText:
     'Explore how Maathra has helped enterprises worldwide transform their operations with Oracle APEX and Cloud solutions.',
   bgImage: '/Case-studies/banner.png',
+  topics: DEFAULT_TOPICS,
+  industries: DEFAULT_INDUSTRIES,
 };
 
 const DEFAULT_BLOG_LIST_CONTENT: Record<string, any> = {
@@ -258,30 +274,8 @@ const DEFAULT_BLOG_LIST_CONTENT: Record<string, any> = {
   headingText: 'Press & Media Resources',
   subheadingText: 'Everything journalists, analysts, and partners need to cover ESS — from brand assets to company facts.',
   bgImage: '',
-  topics: [
-    'Business Intelligence',
-    'ERP Solutions',
-    'IoT Solutions',
-    'Mobile App Solutions',
-    'CRM Solutions',
-    'Sales Force Automation',
-    'After-Sales Service App'
-  ],
-  industries: [
-    'FMCG',
-    'Pharma',
-    'Manufacturing',
-    'Retail',
-    'Electronics',
-    'Automotive',
-    'Healthcare',
-    'Logistics & Supply Chain',
-    'Chemicals',
-    'Textiles',
-    'Construction & Real Estate',
-    'Food & Beverages',
-    'Agriculture'
-  ]
+  topics: DEFAULT_TOPICS,
+  industries: DEFAULT_INDUSTRIES,
 };
 
 const DEFAULT_PRIVACY_POLICY_CONTENT: Record<string, any> = {
@@ -305,6 +299,7 @@ const DEFAULT_TESTIMONIALS_CONTENT: Record<string, any> = {
   description: 'Empowering enterprises across industries with scalable digital solutions and intelligent automation. Trusted by growing businesses and enterprise teams across multiple countries for delivering innovation, efficiency, and measurable business outcomes.',
   descriptionColor: '#cbd5e1',
   bgImage: '',
+  testimonialTitleColor: '#4b6bfb',
   testimonials: [{ topic: 'ERP Solutions', industry: 'FMCG', companyName: '', quote: '', authorAvatar: '', authorName: '', authorTitle: '' }]
 };
 
@@ -2470,6 +2465,38 @@ const DEFAULT_LANDING1_TESTIMONIALS_CONTENT: Record<string, any> = {
   ]
 };
 
+const DEFAULT_CAREER_HERO_CONTENT: Record<string, any> = {
+  bgColor: '',
+  bgImage: '/Career-Page/Career.png',
+  overlayColor: 'rgba(0, 0, 0, 0.4)',
+  gradientColor1: '',
+  gradientColor2: '',
+  gradientColor3: '',
+  ctaText: 'Careers',
+  ctaBgColor: '#ffffff',
+  ctaTextColor: '#0D1A5C',
+  title: 'Join us to shape the future of\nemployment',
+  titleColor: '#ffffff',
+  description: "We're building a culture at ESS where amazing people (like you) can do their best work.\nIf you're ready to accelerate your career and transform the employment landscape, we'd\nlove for you to come work with us!",
+  descriptionColor: '#ffffff',
+};
+
+const DEFAULT_QUALITY_HERO_CONTENT: Record<string, any> = {
+  bgColor: '',
+  bgImage: '/QualityPolicy/BgGradient.png',
+  gradientColor1: '',
+  gradientColor2: '',
+  gradientColor3: '',
+  badge: 'Quality Policy',
+  badgeBgColor: '#ffffff',
+  badgeTextColor: '#4A2D66',
+  badgeBorderColor: '#f1f5f9',
+  title: 'A Legacy of Quality. A Culture of Continuous Improvement.',
+  titleColor: '#ffffff',
+  subtitle: 'Since beginning our quality journey in 1998, ESS has continuously evolved its systems, processes, and delivery standards to build a strong culture of excellence and innovation.',
+  subtitleColor: '#9ea3b0',
+};
+
 interface SectionEditorCardProps {
   section: PageSection;
   schema?: Record<string, unknown> | null;
@@ -2718,12 +2745,22 @@ export function SectionEditorCard({
         baseSchema = DEFAULT_LANDING1_TESTIMONIALS_CONTENT as Record<string, JsonValue>;
       } else if (section.type === 'retail-operations') {
         baseSchema = DEFAULT_RETAIL_OPERATIONS_CONTENT as Record<string, JsonValue>;
+      } else if (section.type === 'career-hero') {
+        baseSchema = DEFAULT_CAREER_HERO_CONTENT as Record<string, JsonValue>;
+      } else if (section.type === 'quality-hero') {
+        baseSchema = DEFAULT_QUALITY_HERO_CONTENT as Record<string, JsonValue>;
       }
     }
 
     rememberColorDefaults(baseSchema as Record<string, any>);
     if (section.type === 'europe-global-presence') {
       rememberColorDefaults(DEFAULT_EUROPE_GLOBAL_PRESENCE_CONTENT);
+    }
+    if (section.type === 'career-hero') {
+      rememberColorDefaults(DEFAULT_CAREER_HERO_CONTENT);
+    }
+    if (section.type === 'quality-hero') {
+      rememberColorDefaults(DEFAULT_QUALITY_HERO_CONTENT);
     }
 
     const merged = mergeSchemaWithContent(
@@ -2764,6 +2801,25 @@ export function SectionEditorCard({
       if (!finalMerged.paragraphColor) finalMerged.paragraphColor = d.paragraphColor;
       if (!finalMerged.itemTitleColor) finalMerged.itemTitleColor = d.itemTitleColor;
       if (!finalMerged.itemDescriptionColor) finalMerged.itemDescriptionColor = d.itemDescriptionColor;
+    }
+
+    if (section.type === 'career-hero') {
+      const d = DEFAULT_CAREER_HERO_CONTENT;
+      rememberColorDefaults(d);
+      if (!finalMerged.titleColor) finalMerged.titleColor = d.titleColor;
+      if (!finalMerged.descriptionColor) finalMerged.descriptionColor = d.descriptionColor;
+      if (!finalMerged.ctaBgColor) finalMerged.ctaBgColor = d.ctaBgColor;
+      if (!finalMerged.ctaTextColor) finalMerged.ctaTextColor = d.ctaTextColor;
+    }
+
+    if (section.type === 'quality-hero') {
+      const d = DEFAULT_QUALITY_HERO_CONTENT;
+      rememberColorDefaults(d);
+      if (!finalMerged.titleColor) finalMerged.titleColor = d.titleColor;
+      if (!finalMerged.subtitleColor) finalMerged.subtitleColor = d.subtitleColor;
+      if (!finalMerged.badgeBgColor) finalMerged.badgeBgColor = d.badgeBgColor;
+      if (!finalMerged.badgeTextColor) finalMerged.badgeTextColor = d.badgeTextColor;
+      if (!finalMerged.badgeBorderColor) finalMerged.badgeBorderColor = d.badgeBorderColor;
     }
 
     if (section.type === 'industries') {
@@ -2932,6 +2988,42 @@ export function SectionEditorCard({
       if (!finalMerged.pointHoverBorderColor) finalMerged.pointHoverBorderColor = DEFAULT_BI_TABS_CONTENT.pointHoverBorderColor;
       if (!finalMerged.pointHoverBgColor) finalMerged.pointHoverBgColor = DEFAULT_BI_TABS_CONTENT.pointHoverBgColor;
       if (!finalMerged.pointArrowColor) finalMerged.pointArrowColor = DEFAULT_BI_TABS_CONTENT.pointArrowColor;
+    }
+
+    if (section.type === 'blog-detail-block') {
+      rememberColorDefaults(DEFAULT_BLOG_CONTENT);
+      (
+        [
+          'calcTitle',
+          'calcDisclaimer',
+          'calcButtonText',
+          'formButtonHoverBgColor',
+          'formButtonHoverTextColor',
+        ] as const
+      ).forEach((key) => {
+        if (finalMerged[key] === undefined || finalMerged[key] === null) {
+          finalMerged[key] = DEFAULT_BLOG_CONTENT[key];
+        }
+      });
+      if (!Array.isArray(finalMerged.calcPoints)) {
+        finalMerged.calcPoints = DEFAULT_BLOG_CONTENT.calcPoints;
+      }
+    }
+
+    if (section.type === 'testimonials-block') {
+      rememberColorDefaults(DEFAULT_TESTIMONIALS_CONTENT);
+      (
+        [
+          'bgColor',
+          'badgeBgColor',
+          'badgeTextColor',
+          'titleColor',
+          'descriptionColor',
+          'testimonialTitleColor',
+        ] as const
+      ).forEach((key) => {
+        if (!finalMerged[key]) finalMerged[key] = DEFAULT_TESTIMONIALS_CONTENT[key];
+      });
     }
 
     if (section.type === 'bi-highlight-strip') {
@@ -3436,7 +3528,8 @@ export function SectionEditorCard({
                         { id: 'hero', label: '1. Hero & Basic Details' },
                         { id: 'author', label: '2. Author Card' },
                         { id: 'content', label: '3. Content Segments' },
-                        { id: 'conclusion', label: '4. Conclusion & Form' },
+                        { id: 'conclusion', label: '4. Conclusion' },
+                        { id: 'form', label: '5. Blog Contact Form' },
                       ];
                   // Fallback tab if currently activeTab is not valid for the switch
                   const tabsMap = section.type === 'testimonials-block'

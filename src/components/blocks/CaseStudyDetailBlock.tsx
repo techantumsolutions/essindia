@@ -114,8 +114,9 @@ export function CaseStudyDetailBlock({ content }: CaseStudyDetailBlockProps) {
         const res = await fetch('/api/case-studies');
         if (res.ok) {
           const data = await res.json();
+          const list = Array.isArray(data) ? data : data?.caseStudies || [];
           // Filter out the current page if possible, just take first 3 for now
-          setMoreStories(data.slice(0, 3));
+          setMoreStories(list.slice(0, 3));
         }
       } catch (err) {
         console.error('Failed to fetch case studies', err);

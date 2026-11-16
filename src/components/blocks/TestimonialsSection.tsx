@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronDown, ChevronUp, SlidersHorizontal } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { FormattedText } from '@/components/ui/FormattedText';
+import { DEFAULT_TOPICS, DEFAULT_INDUSTRIES } from '@/lib/blogs-data';
 
 interface Testimonial {
   quote: string;
@@ -29,31 +30,15 @@ interface TestimonialsContent {
   descriptionColor?: string;
   bgColor?: string;
   bgImage?: string;
+  testimonialTitleColor?: string;
+  topics?: string[];
+  industries?: string[];
   testimonials?: Testimonial[];
 }
 
 interface TestimonialsSectionProps {
   content?: TestimonialsContent;
 }
-
-const DEFAULT_TOPICS = [
-  'Business Intelligence',
-  'ERP Solutions',
-  'IoT Solutions',
-  'Mobile App Solutions',
-  'CRM Solutions',
-  'Sales Force Automation',
-  'After-Sales Service App'
-];
-
-const DEFAULT_INDUSTRIES = [
-  'Industries',
-  'FMCG',
-  'Pharma',
-  'Manufacturing',
-  'Retail',
-  'Electronics'
-];
 
 export function TestimonialsSection({ content }: TestimonialsSectionProps) {
   const badge = content?.badgeText || 'Testimonials';
@@ -65,7 +50,44 @@ export function TestimonialsSection({ content }: TestimonialsSectionProps) {
   const subheadingColor = content?.descriptionColor || '#cbd5e1';
   const bgColor = content?.bgColor || '#0d0720';
   const bgImage = content?.bgImage;
+  const testimonialTitleColor = content?.testimonialTitleColor || '#4b6bfb';
   const testimonials = content?.testimonials || [];
+
+  // Dynamic Topics & Industries from CMS/API
+  const [dynamicTopics, setDynamicTopics] = React.useState<string[]>(
+    content?.topics && content.topics.length > 0 ? content.topics : []
+  );
+  const [dynamicIndustries, setDynamicIndustries] = React.useState<string[]>(
+    content?.industries && content.industries.length > 0 ? content.industries : []
+  );
+
+  React.useEffect(() => {
+    async function fetchTaxonomy() {
+      try {
+        const res = await fetch('/api/blogs');
+        if (res.ok) {
+          const data = await res.json();
+          if (Array.isArray(data?.configuredTopics) && data.configuredTopics.length > 0) {
+            setDynamicTopics(data.configuredTopics);
+          }
+          if (Array.isArray(data?.configuredIndustries) && data.configuredIndustries.length > 0) {
+            setDynamicIndustries(data.configuredIndustries);
+          }
+        }
+      } catch (err) {
+        console.error('Failed to load dynamic taxonomy in TestimonialsSection', err);
+      }
+    }
+    fetchTaxonomy();
+  }, []);
+
+  const baseTopics = dynamicTopics.length > 0
+    ? dynamicTopics
+    : (content?.topics && content.topics.length > 0 ? content.topics : DEFAULT_TOPICS);
+
+  const baseIndustries = dynamicIndustries.length > 0
+    ? dynamicIndustries
+    : (content?.industries && content.industries.length > 0 ? content.industries : DEFAULT_INDUSTRIES);
 
   // State
   const [selectedTopics, setSelectedTopics] = React.useState<string[]>([]);
@@ -76,15 +98,15 @@ export function TestimonialsSection({ content }: TestimonialsSectionProps) {
   // Dynamic lists from testimonials if they have extra tags, combined with defaults
   const topicsList = React.useMemo(() => {
     const uniqueTags = new Set(testimonials.map(t => t.topic).filter(Boolean));
-    const merged = Array.from(new Set([...DEFAULT_TOPICS, ...uniqueTags]));
+    const merged = Array.from(new Set([...baseTopics, ...uniqueTags]));
     return merged;
-  }, [testimonials]);
+  }, [baseTopics, testimonials]);
 
   const industriesList = React.useMemo(() => {
     const uniqueTags = new Set(testimonials.map(t => t.industry).filter(Boolean));
-    const merged = Array.from(new Set([...DEFAULT_INDUSTRIES, ...uniqueTags]));
+    const merged = Array.from(new Set([...baseIndustries, ...uniqueTags]));
     return merged;
-  }, [testimonials]);
+  }, [baseIndustries, testimonials]);
 
   // Filter handlers
   const toggleTopic = (topic: string) => {
@@ -256,11 +278,7 @@ export function TestimonialsSection({ content }: TestimonialsSectionProps) {
           {/* Right Column: Testimonial Cards Grid */}
           <div className="col-span-1 lg:col-span-3 space-y-8">
             {filteredTestimonials.length === 0 ? (
-              <motion.div
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="bg-slate-50 rounded-[28px] p-16 text-center border border-dashed border-slate-200"
-              >
+              <div className="bg-slate-50 rounded-[28px] p-16 text-center border border-dashed border-slate-200">
                 <SlidersHorizontal className="w-12 h-12 text-slate-300 mx-auto mb-4" />
                 <h4 className="text-lg font-bold text-slate-700 mb-2">No testimonials match your filters</h4>
                 <p className="text-sm text-slate-400 max-w-sm mx-auto">Try resetting some of your Topics or Industries checkboxes to see more client reviews.</p>
@@ -270,73 +288,65 @@ export function TestimonialsSection({ content }: TestimonialsSectionProps) {
                 >
                   Clear Filters
                 </button>
-              </motion.div>
+              </div>
             ) : (
-              <motion.div
-                layout
-                className="grid grid-cols-1 md:grid-cols-2 gap-6"
-              >
-                <AnimatePresence mode="popLayout">
-                  {filteredTestimonials.map((item, idx) => {
-                    const fallbackAvatar = `https://api.dicebear.com/7.x/avataaars/svg?seed=${item.authorName || 'User'}`;
-                    return (
-                      <motion.div
-                        layout
-                        key={`${item.authorName}-${idx}`}
-                        initial={{ opacity: 0, scale: 0.95, y: 20 }}
-                        animate={{ opacity: 1, scale: 1, y: 0 }}
-                        exit={{ opacity: 0, scale: 0.95, y: 20 }}
-                        transition={{ duration: 0.4 }}
-                        whileHover={{ y: -5, transition: { duration: 0.2 } }}
-                        className="flex flex-col justify-between bg-white border border-slate-100 rounded-[24px] p-6 shadow-sm hover:shadow-md transition-all"
-                      >
-                        <div className="space-y-4">
-                          {/* Logo or Brand header */}
-                          <div className="h-8 flex items-center">
-                            {item.logoUrl ? (
-                              <img
-                                src={item.logoUrl}
-                                alt={item.companyName || 'logo'}
-                                className="h-full max-w-[120px] object-contain"
-                                onError={(e) => {
-                                  // Hide broken image and render text fallback
-                                  (e.target as HTMLImageElement).style.display = 'none';
-                                }}
-                              />
-                            ) : item.companyName ? (
-                              <span className="text-[#4b6bfb] font-black text-lg tracking-tight">
-                                {item.companyName.toLowerCase()}
-                              </span>
-                            ) : null}
-                          </div>
-
-                          {/* Quote text */}
-                          <FormattedText
-                            content={item.quote}
-                            className="text-slate-600 text-sm leading-relaxed"
-                          />
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {filteredTestimonials.map((item, idx) => {
+                  const fallbackAvatar = `https://api.dicebear.com/7.x/avataaars/svg?seed=${item.authorName || 'User'}`;
+                  return (
+                    <div
+                      key={`${item.authorName}-${idx}`}
+                      className="flex flex-col justify-between bg-white border border-slate-100 rounded-[24px] p-6 shadow-sm hover:shadow-md hover:-translate-y-1 transition-all duration-200"
+                    >
+                      <div className="space-y-4">
+                        {/* Logo or Brand header */}
+                        <div className="h-8 flex items-center">
+                          {item.logoUrl ? (
+                            <img
+                              src={item.logoUrl}
+                              alt={item.companyName || 'logo'}
+                              className="h-full max-w-[120px] object-contain"
+                              onError={(e) => {
+                                // Hide broken image and render text fallback
+                                (e.target as HTMLImageElement).style.display = 'none';
+                              }}
+                            />
+                          ) : item.companyName ? (
+                            <span
+                              className="font-black text-lg tracking-tight"
+                              style={{ color: testimonialTitleColor }}
+                            >
+                              {item.companyName}
+                            </span>
+                          ) : null}
                         </div>
 
-                        {/* Author info footer */}
-                        <div className="flex items-center gap-3 pt-6 mt-6 border-t border-slate-50">
-                          <img
-                            src={item.authorAvatar || fallbackAvatar}
-                            alt={item.authorName}
-                            className="w-10 h-10 rounded-full object-cover border border-slate-100 bg-slate-50"
-                            onError={(e) => {
-                              (e.target as HTMLImageElement).src = fallbackAvatar;
-                            }}
-                          />
-                          <div>
-                            <p className="text-xs font-bold text-slate-800">{item.authorName}</p>
-                            <p className="text-[10px] text-slate-400 font-medium">{item.authorTitle}</p>
-                          </div>
+                        {/* Quote text */}
+                        <FormattedText
+                          content={item.quote}
+                          className="text-slate-600 text-sm leading-relaxed"
+                        />
+                      </div>
+
+                      {/* Author info footer */}
+                      <div className="flex items-center gap-3 pt-6 mt-6 border-t border-slate-50">
+                        <img
+                          src={item.authorAvatar || fallbackAvatar}
+                          alt={item.authorName}
+                          className="w-10 h-10 rounded-full object-cover border border-slate-100 bg-slate-50"
+                          onError={(e) => {
+                            (e.target as HTMLImageElement).src = fallbackAvatar;
+                          }}
+                        />
+                        <div>
+                          <p className="text-xs font-bold text-slate-800">{item.authorName}</p>
+                          <p className="text-[10px] text-slate-400 font-medium">{item.authorTitle}</p>
                         </div>
-                      </motion.div>
-                    );
-                  })}
-                </AnimatePresence>
-              </motion.div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
             )}
           </div>
 

@@ -25,6 +25,16 @@ export function isHiddenCmsField(key: string, sectionType?: string, keyPath?: st
   const lower = key.toLowerCase();
   if (lower === 'headingtag' || lower === 'titletag') return true;
   if (lower === 'overviewimages' || lower.startsWith('overviewimage')) return true;
+  if ((sectionType === 'career-hero' || sectionType === 'quality-hero') && (
+    key === 'titleGradientFrom' ||
+    key === 'titleGradientTo' ||
+    key === 'titleGradientStart' ||
+    key === 'titleGradientEnd' ||
+    key === 'enableTitleGradientAnimation' ||
+    lower.includes('titlegradient')
+  )) {
+    return true;
+  }
   if ((sectionType === 'case-study-detail' || sectionType === 'case-study-detail-block') && key === 'bgColor') return true;
 
   if (sectionType === 'blog-detail-block') {
@@ -274,6 +284,9 @@ function baseHumanLabel(key: string): string {
   if (key === 'resultsItems') return 'Points';
   if (key === 'resultsCtaDescription') return 'CTA Description';
   if (key === 'bgImage') return 'Background Image';
+  if (key === 'overlayColor') return 'Background Overlay Color';
+  if (key === 'ctaBgColor') return 'Badge / CTA Background Color';
+  if (key === 'ctaTextColor') return 'Badge / CTA Text Color';
   if (key === 'badgeBgColor') return 'Badge Background Color';
   if (key === 'badgeColor' || key === 'badgeTextColor') return 'Badge Text Color';
   if (key === 'badgeBorderColor') return 'Badge Border Color';
@@ -345,6 +358,7 @@ function baseHumanLabel(key: string): string {
   if (key === 'pointHoverBorderColor') return 'Point Hover Border Color';
   if (key === 'pointHoverBgColor') return 'Point Hover Background Color';
   if (key === 'pointArrowColor') return 'Point Arrow Icon Color';
+  if (key === 'testimonialTitleColor') return 'Testimonial Title Color';
   if (key === 'boldTextColor') return 'Bold Text Color';
   if (key === 'circleBgColor') return 'Icon Circle Background Color';
   if (key === 'circleIconColor') return 'Icon Circle Icon Color';
@@ -472,6 +486,10 @@ export function humanLabel(
   key: string,
   options?: { sectionType?: string; keyPath?: string }
 ): string {
+  if (options?.sectionType === 'quality-hero' && key === 'subtitle') {
+    return 'Subtitle';
+  }
+
   if (options?.keyPath?.includes('challengePoints') || options?.keyPath?.includes('challenge_points')) {
     if (key === 'title') return 'Point Title';
     if (key === 'description') return 'Point Description';
@@ -638,9 +656,12 @@ export function humanLabel(
     if (key === 'authorCardBio') return 'Author Description';
     if (key === 'contentSegments') return 'Content Segments (Dynamic)';
     if (key === 'conclusionParagraphs') return 'Conclusion Descriptions';
-    if (key === 'calcTitle') return 'Form Title';
-    if (key === 'calcDisclaimer') return 'Form Disclaimer';
+    if (key === 'calcTitle') return 'Form Heading';
+    if (key === 'calcDisclaimer') return 'Form Content';
+    if (key === 'calcButtonText') return 'Form Button Text';
     if (key === 'calcPoints') return 'Form Points';
+    if (key === 'formButtonHoverBgColor') return 'Form Button Hover BG Color';
+    if (key === 'formButtonHoverTextColor') return 'Form Button Hover Text Color';
   }
 
   if (options?.sectionType === 'why-ess' && key === 'points') {

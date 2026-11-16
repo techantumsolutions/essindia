@@ -3,33 +3,47 @@
 import React from 'react';
 import { getHeroBackgroundStyles } from '@/lib/utils';
 import { motion } from 'framer-motion';
-import { HeroTitle } from '@/components/ui/HeroTitle';
 import { FormattedText } from '@/components/ui/FormattedText';
 
 export default function CareerHero({ content }: { content?: any }) {
   const {
     title = 'Join us to shape the future of\nemployment',
+    titleColor = '#ffffff',
     description = "We're building a culture at ESS where amazing people (like you) can do their best work.\nIf you're ready to accelerate your career and transform the employment landscape, we'd\nlove for you to come work with us!",
+    descriptionColor = '#ffffff',
     ctaText = 'Careers',
-    bgImage = '/Career-Page/Career.png'
+    ctaBgColor = '#ffffff',
+    ctaTextColor = '#0D1A5C',
+    bgColor = '',
+    bgImage = '/Career-Page/Career.png',
+    overlayColor = 'rgba(0, 0, 0, 0.4)',
+    gradientColor1,
+    gradientColor2,
+    gradientColor3,
   } = content || {};
 
-  
   const bgStyles = getHeroBackgroundStyles({
-    gradientColor1: content?.gradientColor1,
-    gradientColor2: content?.gradientColor2,
-    gradientColor3: content?.gradientColor3,
-  }, undefined);
+    gradientColor1,
+    gradientColor2,
+    gradientColor3,
+  }, bgColor ? { backgroundColor: bgColor } : undefined);
+
+  const hasGradient = Boolean(gradientColor1 || gradientColor2 || gradientColor3);
 
   return (
-    <section className="relative min-h-[45vh] flex items-center justify-center overflow-hidden px-6 py-14" style={bgStyles}>
+    <section
+      className="relative min-h-[45vh] flex items-center justify-center overflow-hidden px-6 py-14"
+      style={{ backgroundColor: bgColor || undefined, ...bgStyles }}
+    >
       {/* Background Image */}
-      {!(content?.gradientColor1 || content?.gradientColor2 || content?.gradientColor3) && (
+      {!hasGradient && bgImage && (
         <div
           className="absolute inset-0 z-0 bg-cover bg-center bg-no-repeat"
           style={{ backgroundImage: `url("${bgImage}")` }}
         >
-          <div className="absolute inset-0 bg-black/40" />
+          {overlayColor && (
+            <div className="absolute inset-0" style={{ backgroundColor: overlayColor }} />
+          )}
         </div>
       )}
 
@@ -39,30 +53,27 @@ export default function CareerHero({ content }: { content?: any }) {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
         >
-          <div className="inline-flex items-center rounded-[20px] bg-white px-14 py-2 text-lg font-medium text-[#0D1A5C] mb-6 cursor-pointer hover:bg-slate-50 transition-colors shadow-lg">
-            {ctaText}
+          <div
+            className="inline-flex items-center rounded-[20px] px-14 py-2 text-lg font-medium mb-6 cursor-pointer hover:opacity-95 transition-all shadow-lg"
+            style={{
+              backgroundColor: ctaBgColor || content?.badgeBgColor || '#ffffff',
+              color: ctaTextColor || content?.badgeTextColor || '#0D1A5C',
+            }}
+          >
+            {ctaText || content?.badgeText || 'Careers'}
           </div>
 
-          {(content?.titleGradientFrom || content?.titleGradientTo) && (content as any)?.enableTitleGradientAnimation !== false ? (
-            <HeroTitle
-              as="h1"
-              title={title.replace(/\n/g, ' ')}
-              gradientFrom={content.titleGradientFrom}
-              gradientTo={content.titleGradientTo}
-              enableAnimation={(content as any)?.enableTitleGradientAnimation}
-              className="text-5xl md:text-6xl lg:text-[72px] font-thin tracking-wide mb-8 max-w-5xl mx-auto leading-[1.15] justify-center"
-            />
-          ) : (
-            <FormattedText
-              content={title}
-              as="h1"
-              className="text-5xl md:text-6xl lg:text-[72px] font-thin tracking-wide text-white mb-8 max-w-5xl mx-auto leading-[1.15]"
-            />
-          )}
+          <FormattedText
+            content={title}
+            as="h1"
+            className="text-5xl md:text-6xl lg:text-[72px] font-thin tracking-wide mb-8 max-w-5xl mx-auto leading-[1.15] whitespace-pre-line"
+            style={{ color: titleColor || '#ffffff' }}
+          />
 
           <FormattedText
             content={description}
-            className="text-white/90 text-sm md:text-[15px] max-w-2xl mx-auto leading-tight tracking-wide"
+            className="text-sm md:text-[15px] max-w-2xl mx-auto leading-tight tracking-wide whitespace-pre-line"
+            style={{ color: descriptionColor || 'rgba(255, 255, 255, 0.9)' }}
           />
         </motion.div>
       </div>

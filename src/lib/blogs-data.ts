@@ -3,6 +3,34 @@ export interface BlogAuthor {
   avatar: string;
 }
 
+export const DEFAULT_TOPICS = [
+  'Business Intelligence',
+  'ERP Solutions',
+  'IoT Solutions',
+  'Mobile App Solutions',
+  'CRM Solutions',
+  'Sales Force Automation',
+  'After-Sales Service App'
+];
+
+export const DEFAULT_INDUSTRIES = [
+  'FMCG',
+  'Pharma',
+  'Manufacturing',
+  'Retail',
+  'Electronics',
+  'Automotive',
+  'Healthcare',
+  'Logistics & Supply Chain',
+  'Chemicals',
+  'Textiles',
+  'Construction & Real Estate',
+  'Food & Beverages',
+  'Agriculture',
+  'Energy & Utilities',
+  'Financial Services'
+];
+
 export interface BlogPost {
   id?: string;
   title: string;
