@@ -96,7 +96,10 @@ export interface BlogDetailContent {
   // Estimation Form
   calcTitle?: string;
   calcDisclaimer?: string;
+  calcButtonText?: string;
   calcPoints?: string[];
+  formButtonHoverBgColor?: string;
+  formButtonHoverTextColor?: string;
 }
 
 interface BlogAuthor {
@@ -260,13 +263,14 @@ export function BlogDetailSection({ content }: BlogDetailSectionProps) {
   // Form Settings
   const calcTitle = content?.calcTitle || 'Calculate your app development timeline!';
   const calcDisclaimer = content?.calcDisclaimer || 'I agree to receive the personalized development estimation report and future tech insights.';
+  const calcButtonText = content?.calcButtonText || 'Get Free Estimation';
   const calcPoints = content?.calcPoints || [
     '100% Free & No Commitment',
     'Detailed Timeline Breakdown in 24h',
     'Estimated Cost Range Included'
   ];
-  const formButtonHoverBgColor = (content as any)?.formButtonHoverBgColor;
-  const formButtonHoverTextColor = (content as any)?.formButtonHoverTextColor;
+  const formButtonHoverBgColor = content?.formButtonHoverBgColor;
+  const formButtonHoverTextColor = content?.formButtonHoverTextColor;
   const [isFormBtnHovered, setIsFormBtnHovered] = React.useState(false);
 
   // Dynamic Left Sidebar TOC Items
@@ -805,7 +809,7 @@ export function BlogDetailSection({ content }: BlogDetailSectionProps) {
                       <span>Submitting...</span>
                     </>
                   ) : (
-                    <span>Get Free Estimation</span>
+                    <span>{calcButtonText}</span>
                   )}
                 </button>
               </form>

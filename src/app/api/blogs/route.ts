@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { pages, pageSections } from '@/lib/db/schema';
 import { eq } from 'drizzle-orm';
+import { DEFAULT_TOPICS, DEFAULT_INDUSTRIES } from '@/lib/blogs-data';
 
 export async function GET() {
   try {
@@ -65,10 +66,18 @@ export async function GET() {
         };
       });
 
+    const finalTopics = configuredTopics.length > 0
+      ? Array.from(new Set(configuredTopics))
+      : DEFAULT_TOPICS;
+
+    const finalIndustries = configuredIndustries.length > 0
+      ? Array.from(new Set(configuredIndustries))
+      : DEFAULT_INDUSTRIES;
+
     return NextResponse.json({
       blogs,
-      configuredTopics: Array.from(new Set(configuredTopics)),
-      configuredIndustries: Array.from(new Set(configuredIndustries)),
+      configuredTopics: finalTopics,
+      configuredIndustries: finalIndustries,
     });
   } catch (error: any) {
     console.error('[Blogs API Error]', error);

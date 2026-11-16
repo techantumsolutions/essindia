@@ -130,54 +130,92 @@ export function BiIndustryServices({ content }: { content?: BiIndustryServicesCo
   const activeTab = tabs[activeTabIdx] || tabs[0];
 
   const tabsRef = useRef<HTMLDivElement>(null);
-  const [canScrollLeft, setCanScrollLeft] = useState(false);
-  const [canScrollRight, setCanScrollRight] = useState(false);
+  const [hasOverflow, setHasOverflow] = useState(false);
 
-  const checkScroll = useCallback(() => {
+  const checkOverflow = useCallback(() => {
     if (tabsRef.current) {
-      const { scrollLeft, scrollWidth, clientWidth } = tabsRef.current;
-      setCanScrollLeft(scrollLeft > 2);
-      setCanScrollRight(scrollLeft + clientWidth < scrollWidth - 2);
+      const { scrollWidth, clientWidth } = tabsRef.current;
+      setHasOverflow(scrollWidth > clientWidth + 2);
     }
   }, []);
 
   useEffect(() => {
-    checkScroll();
-    window.addEventListener('resize', checkScroll);
-    return () => window.removeEventListener('resize', checkScroll);
-  }, [checkScroll, tabs]);
+    checkOverflow();
+    const timer = setTimeout(checkOverflow, 150);
 
-  const handleTabClick = (idx: number, e: React.MouseEvent<HTMLButtonElement>) => {
-    setActiveTabIdx(idx);
-    if (typeof window !== 'undefined' && window.innerWidth < 768) {
-      const btn = e.currentTarget;
-      const container = tabsRef.current;
-      if (container && btn) {
-        if (idx === 0) {
-          container.scrollTo({
-            left: 0,
-            behavior: 'smooth',
-          });
-        } else if (idx === tabs.length - 1) {
-          container.scrollTo({
-            left: container.scrollWidth,
-            behavior: 'smooth',
-          });
-        } else {
-          const containerRect = container.getBoundingClientRect();
-          const btnRect = btn.getBoundingClientRect();
-          const delta = (btnRect.left - containerRect.left + btnRect.width / 2) - (containerRect.width / 2);
-          container.scrollTo({
-            left: container.scrollLeft + delta,
-            behavior: 'smooth',
-          });
-        }
-      }
+    let resizeObserver: ResizeObserver | null = null;
+    if (typeof ResizeObserver !== 'undefined' && tabsRef.current) {
+      resizeObserver = new ResizeObserver(() => {
+        checkOverflow();
+      });
+      resizeObserver.observe(tabsRef.current);
     }
+
+    window.addEventListener('resize', checkOverflow);
+    return () => {
+      clearTimeout(timer);
+      if (resizeObserver) {
+        resizeObserver.disconnect();
+      }
+      window.removeEventListener('resize', checkOverflow);
+    };
+  }, [checkOverflow, tabs]);
+
+  const showArrows = tabs.length > 1 && hasOverflow;
+  const canGoPrev = activeTabIdx > 0;
+  const canGoNext = activeTabIdx < tabs.length - 1;
+
+  const scrollToTab = useCallback((index: number) => {
+    if (!tabsRef.current) return;
+    const container = tabsRef.current;
+    const items = container.querySelectorAll<HTMLElement>('[data-tab-button="true"]');
+    const target = items[index];
+    if (!target) return;
+
+    if (index === 0) {
+      container.scrollTo({ left: 0, behavior: 'smooth' });
+    } else if (index === items.length - 1) {
+      container.scrollTo({ left: container.scrollWidth, behavior: 'smooth' });
+    } else {
+      const containerRect = container.getBoundingClientRect();
+      const targetRect = target.getBoundingClientRect();
+      const delta = (targetRect.left - containerRect.left + targetRect.width / 2) - (containerRect.width / 2);
+      container.scrollTo({
+        left: container.scrollLeft + delta,
+        behavior: 'smooth',
+      });
+    }
+  }, []);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      scrollToTab(activeTabIdx);
+    }, 50);
+    return () => clearTimeout(timer);
+  }, [activeTabIdx, scrollToTab]);
+
+  useEffect(() => {
+    const handleResize = () => scrollToTab(activeTabIdx);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, [activeTabIdx, scrollToTab]);
+
+  const goToPrevTab = () => {
+    setActiveTabIdx((prev) => Math.max(0, prev - 1));
+  };
+
+  const goToNextTab = () => {
+    setActiveTabIdx((prev) => Math.min(tabs.length - 1, prev + 1));
   };
 
   const arrowStyle = (side: 'left' | 'right', enabled: boolean) => {
-    if (!enabled) return undefined;
+    if (!enabled) {
+      return {
+        backgroundColor: arrowBgColor,
+        color: arrowTextColor,
+        borderColor: '#e2e8f0',
+      };
+    }
     const hovered = hoveredArrow === side;
     return {
       backgroundColor: hovered ? arrowHoverBgColor : arrowBgColor,
@@ -206,29 +244,28 @@ export function BiIndustryServices({ content }: { content?: BiIndustryServicesCo
         </div>
 
         <div className="relative flex items-center justify-center max-w-5xl mx-auto mb-6 gap-2 sm:gap-3 px-1 sm:px-4">
-          <button
-            type="button"
-            onClick={() => {
-              if (tabsRef.current) {
-                tabsRef.current.scrollBy({ left: -240, behavior: 'smooth' });
-              }
-            }}
-            onMouseEnter={() => setHoveredArrow('left')}
-            onMouseLeave={() => setHoveredArrow(null)}
-            disabled={!canScrollLeft}
-            className={`w-9 h-9 sm:w-10 sm:h-10 rounded-full border transition-all duration-200 flex items-center justify-center shrink-0 shadow-sm ${canScrollLeft
-              ? 'opacity-100 scale-100 cursor-pointer active:scale-95'
-              : 'opacity-0 pointer-events-none scale-90'
-              }`}
-            style={arrowStyle('left', canScrollLeft)}
-            aria-label="Scroll left"
-          >
-            <ChevronLeft className="w-4 h-4 sm:w-5 sm:h-5" />
-          </button>
+          {showArrows && (
+            <button
+              type="button"
+              onClick={goToPrevTab}
+              onMouseEnter={() => setHoveredArrow('left')}
+              onMouseLeave={() => setHoveredArrow(null)}
+              disabled={!canGoPrev}
+              className={`w-9 h-9 sm:w-10 sm:h-10 rounded-full border transition-all duration-200 flex items-center justify-center shrink-0 shadow-sm ${canGoPrev
+                ? 'opacity-100 scale-100 cursor-pointer active:scale-95'
+                : 'opacity-30 cursor-not-allowed scale-95'
+                }`}
+              style={arrowStyle('left', canGoPrev)}
+              aria-label="Previous tab"
+            >
+              <ChevronLeft className="w-4 h-4 sm:w-5 sm:h-5" />
+            </button>
+          )}
 
           <div
             ref={tabsRef}
-            onScroll={checkScroll}
+            role="tablist"
+            aria-label="Industry services categories"
             className="flex-1 min-w-0 overflow-x-auto no-scrollbar py-2 px-1 scroll-smooth"
             style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
           >
@@ -239,7 +276,11 @@ export function BiIndustryServices({ content }: { content?: BiIndustryServicesCo
                   <button
                     key={idx}
                     type="button"
-                    onClick={(e) => handleTabClick(idx, e)}
+                    role="tab"
+                    aria-selected={isActive}
+                    data-tab-button="true"
+                    data-active={isActive}
+                    onClick={() => setActiveTabIdx(idx)}
                     className={`shrink-0 px-5 sm:px-6 py-2.5 rounded-full text-xs sm:text-sm font-semibold tracking-wide border transition-all duration-300 cursor-pointer whitespace-nowrap ${isActive
                       ? 'shadow-md scale-[1.02]'
                       : 'border-slate-200 hover:opacity-90'
@@ -257,25 +298,23 @@ export function BiIndustryServices({ content }: { content?: BiIndustryServicesCo
             </div>
           </div>
 
-          <button
-            type="button"
-            onClick={() => {
-              if (tabsRef.current) {
-                tabsRef.current.scrollBy({ left: 240, behavior: 'smooth' });
-              }
-            }}
-            onMouseEnter={() => setHoveredArrow('right')}
-            onMouseLeave={() => setHoveredArrow(null)}
-            disabled={!canScrollRight}
-            className={`w-9 h-9 sm:w-10 sm:h-10 rounded-full border transition-all duration-200 flex items-center justify-center shrink-0 shadow-sm ${canScrollRight
-              ? 'opacity-100 scale-100 cursor-pointer active:scale-95'
-              : 'opacity-0 pointer-events-none scale-90'
-              }`}
-            style={arrowStyle('right', canScrollRight)}
-            aria-label="Scroll right"
-          >
-            <ChevronRight className="w-4 h-4 sm:w-5 sm:h-5" />
-          </button>
+          {showArrows && (
+            <button
+              type="button"
+              onClick={goToNextTab}
+              onMouseEnter={() => setHoveredArrow('right')}
+              onMouseLeave={() => setHoveredArrow(null)}
+              disabled={!canGoNext}
+              className={`w-9 h-9 sm:w-10 sm:h-10 rounded-full border transition-all duration-200 flex items-center justify-center shrink-0 shadow-sm ${canGoNext
+                ? 'opacity-100 scale-100 cursor-pointer active:scale-95'
+                : 'opacity-30 cursor-not-allowed scale-95'
+                }`}
+              style={arrowStyle('right', canGoNext)}
+              aria-label="Next tab"
+            >
+              <ChevronRight className="w-4 h-4 sm:w-5 sm:h-5" />
+            </button>
+          )}
         </div>
 
         <div

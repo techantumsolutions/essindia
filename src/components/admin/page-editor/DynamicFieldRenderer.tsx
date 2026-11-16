@@ -12,6 +12,7 @@ import { RichTextField } from './RichTextField';
 import { ArrayFieldEditor } from './ArrayFieldEditor';
 import { ALL_COUNTRIES_LIST } from '@/lib/countries';
 import { SECTION_REGISTRY } from '@/lib/cms/section-registry';
+import { DEFAULT_TOPICS, DEFAULT_INDUSTRIES } from '@/lib/blogs-data';
 
 interface DynamicFieldRendererProps {
   keyPath: string;
@@ -1675,16 +1676,6 @@ function CountryCodeField({
   );
 }
 
-const DEFAULT_TOPIC_OPTIONS = [
-  'Business Intelligence',
-  'ERP Solutions',
-  'IoT Solutions',
-  'Mobile App Solutions',
-  'CRM Solutions',
-  'Sales Force Automation',
-  'After-Sales Service App'
-];
-
 function TopicSelectField({
   fieldKey,
   label,
@@ -1696,7 +1687,7 @@ function TopicSelectField({
   value: string;
   onChange: (value: string) => void;
 }) {
-  const [options, setOptions] = React.useState<string[]>(DEFAULT_TOPIC_OPTIONS);
+  const [options, setOptions] = React.useState<string[]>(DEFAULT_TOPICS);
 
   React.useEffect(() => {
     async function fetchDynamicTopics() {
@@ -1706,7 +1697,7 @@ function TopicSelectField({
           const data = await res.json();
           const configured = Array.isArray(data?.configuredTopics) && data.configuredTopics.length > 0
             ? data.configuredTopics
-            : DEFAULT_TOPIC_OPTIONS;
+            : DEFAULT_TOPICS;
           setOptions(Array.from(new Set(configured)));
         }
       } catch (e) {
@@ -1715,6 +1706,8 @@ function TopicSelectField({
     }
     fetchDynamicTopics();
   }, []);
+
+  const selectOptions = Array.from(new Set([...(value ? [value] : []), ...options]));
 
   return (
     <div className="space-y-1.5 flex-1 min-w-[200px]">
@@ -1725,7 +1718,7 @@ function TopicSelectField({
         className="admin-input"
       >
         <option value="">Select a topic...</option>
-        {options.map((t) => (
+        {selectOptions.map((t) => (
           <option key={t} value={t}>
             {t}
           </option>
@@ -1734,24 +1727,6 @@ function TopicSelectField({
     </div>
   );
 }
-
-const DEFAULT_INDUSTRY_OPTIONS = [
-  'FMCG',
-  'Pharma',
-  'Manufacturing',
-  'Retail',
-  'Electronics',
-  'Automotive',
-  'Healthcare',
-  'Logistics & Supply Chain',
-  'Chemicals',
-  'Textiles',
-  'Construction & Real Estate',
-  'Food & Beverages',
-  'Agriculture',
-  'Energy & Utilities',
-  'Financial Services'
-];
 
 function IndustrySelectField({
   fieldKey,
@@ -1764,7 +1739,7 @@ function IndustrySelectField({
   value: string;
   onChange: (value: string) => void;
 }) {
-  const [options, setOptions] = React.useState<string[]>(DEFAULT_INDUSTRY_OPTIONS);
+  const [options, setOptions] = React.useState<string[]>(DEFAULT_INDUSTRIES);
 
   React.useEffect(() => {
     async function fetchDynamicIndustries() {
@@ -1774,7 +1749,7 @@ function IndustrySelectField({
           const data = await res.json();
           const configured = Array.isArray(data?.configuredIndustries) && data.configuredIndustries.length > 0
             ? data.configuredIndustries
-            : DEFAULT_INDUSTRY_OPTIONS;
+            : DEFAULT_INDUSTRIES;
           setOptions(Array.from(new Set(configured)));
         }
       } catch (e) {
@@ -1783,6 +1758,8 @@ function IndustrySelectField({
     }
     fetchDynamicIndustries();
   }, []);
+
+  const selectOptions = Array.from(new Set([...(value ? [value] : []), ...options]));
 
   return (
     <div className="space-y-1.5 flex-1 min-w-[200px]">
@@ -1793,7 +1770,7 @@ function IndustrySelectField({
         className="admin-input"
       >
         <option value="">Select an industry...</option>
-        {options.map((ind) => (
+        {selectOptions.map((ind) => (
           <option key={ind} value={ind}>
             {ind}
           </option>

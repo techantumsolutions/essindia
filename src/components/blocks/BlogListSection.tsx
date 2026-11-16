@@ -9,7 +9,7 @@ import { useInternalNavigate } from '@/hooks/useInternalNavigate';
 import { HeroTitle } from '@/components/ui/HeroTitle';
 import { FormattedText } from '@/components/ui/FormattedText';
 
-import { defaultBlogs, type BlogPost } from '@/lib/blogs-data';
+import { defaultBlogs, type BlogPost, DEFAULT_TOPICS, DEFAULT_INDUSTRIES } from '@/lib/blogs-data';
 
 interface BlogListContent {
   badgeText?: string;
@@ -24,40 +24,26 @@ interface BlogListSectionProps {
   content?: BlogListContent;
 }
 
-const TOPICS = [
-  'Business Intelligence',
-  'ERP Solutions',
-  'IoT Solutions',
-  'Mobile App Solutions',
-  'CRM Solutions',
-  'Sales Force Automation',
-  'After-Sales Service App'
-];
-
-const INDUSTRIES = [
-  'FMCG',
-  'Pharma',
-  'Manufacturing',
-  'Retail',
-  'Electronics',
-  'Automotive',
-  'Healthcare',
-  'Logistics & Supply Chain',
-  'Chemicals',
-  'Textiles',
-  'Construction & Real Estate',
-  'Food & Beverages',
-  'Agriculture'
-];
-
 export function BlogListSection({ content }: BlogListSectionProps) {
   const navigate = useInternalNavigate();
   const badge = content?.badgeText || 'Latest Blogs';
   const heading = content?.headingText || 'Press & Media Resources';
   const subheading = content?.subheadingText || 'Everything journalists, analysts, and partners need to cover ESS — from brand assets to company facts. Everything journalists, analysts, and partners need to cover ESS— from brand assets to company facts.';
   const bgImage = content?.bgImage;
-  const topicsList = content?.topics && content.topics.length > 0 ? content.topics : TOPICS;
-  const industriesList = content?.industries && content.industries.length > 0 ? content.industries : INDUSTRIES;
+  const [dynamicTopics, setDynamicTopics] = React.useState<string[]>(
+    content?.topics && content.topics.length > 0 ? content.topics : []
+  );
+  const [dynamicIndustries, setDynamicIndustries] = React.useState<string[]>(
+    content?.industries && content.industries.length > 0 ? content.industries : []
+  );
+
+  const topicsList = dynamicTopics.length > 0
+    ? dynamicTopics
+    : (content?.topics && content.topics.length > 0 ? content.topics : DEFAULT_TOPICS);
+
+  const industriesList = dynamicIndustries.length > 0
+    ? dynamicIndustries
+    : (content?.industries && content.industries.length > 0 ? content.industries : DEFAULT_INDUSTRIES);
 
   const pathname = usePathname();
   const isPreviewMode = pathname.startsWith('/admin') || pathname.includes('/preview');
@@ -87,6 +73,13 @@ export function BlogListSection({ content }: BlogListSectionProps) {
             setBlogs(list);
           } else {
             setBlogs(isDefaultBlogPage ? defaultBlogs : []);
+          }
+
+          if (Array.isArray(data?.configuredTopics) && data.configuredTopics.length > 0) {
+            setDynamicTopics(data.configuredTopics);
+          }
+          if (Array.isArray(data?.configuredIndustries) && data.configuredIndustries.length > 0) {
+            setDynamicIndustries(data.configuredIndustries);
           }
         } else {
           setBlogs(isDefaultBlogPage ? defaultBlogs : []);
@@ -306,11 +299,7 @@ export function BlogListSection({ content }: BlogListSectionProps) {
                 <p className="text-slate-400 text-sm mt-4 font-bold">Loading articles...</p>
               </div>
             ) : displayedBlogs.length === 0 ? (
-              <motion.div
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="bg-slate-50 rounded-[32px] p-16 text-center border border-dashed border-slate-200"
-              >
+              <div className="bg-slate-50 rounded-[32px] p-16 text-center border border-dashed border-slate-200">
                 <SlidersHorizontal className="w-12 h-12 text-slate-300 mx-auto mb-4" />
                 <h4 className="text-lg font-bold text-slate-700 mb-2">No articles match your filters</h4>
                 <p className="text-sm text-slate-400 max-w-sm mx-auto">Try resetting some of your Topics or Industries checkboxes to see more news.</p>
@@ -320,95 +309,74 @@ export function BlogListSection({ content }: BlogListSectionProps) {
                 >
                   Clear Filters
                 </Button>
-              </motion.div>
+              </div>
             ) : (
               <>
-                <motion.div
-                  layout
-                  className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
-                >
-                  <AnimatePresence mode="popLayout">
-                    {displayedBlogs.map((blog, idx) => {
-                      const detailLink = blog.fullPath || `/blog/${blog.slug}`;
-                      return (
-                        <motion.div
-                          layout
-                          key={blog.slug}
-                          initial={{ opacity: 0, scale: 0.9, y: 20 }}
-                          animate={{ opacity: 1, scale: 1, y: 0 }}
-                          exit={{ opacity: 0, scale: 0.9, y: 20 }}
-                          transition={{ duration: 0.5, delay: idx * 0.05 }}
-                          whileHover={{ y: -8, transition: { duration: 0.3 } }}
-                          className="flex flex-col group cursor-pointer bg-white border border-slate-100 rounded-[28px] overflow-hidden shadow-sm hover:shadow-xl transition-all"
-                          onClick={() => navigate(detailLink)}
-                        >
-                          {/* Image */}
-                          <div className="relative aspect-[16/10] bg-slate-100 overflow-hidden">
-                            <motion.img
-                              src={blog.image}
-                              alt={blog.title}
-                              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
-                              onError={(e) => {
-                                (e.target as HTMLImageElement).src = '/blog-1.png';
-                              }}
-                            />
-                            {/* Topic & Industries Floating Tags */}
-                            <div className="absolute bottom-4 left-4 flex flex-wrap gap-2 items-center">
-                              <div className="bg-white/95 backdrop-blur px-3 py-1.5 rounded-xl border border-slate-200/80 shadow-md text-left flex flex-col justify-center">
-                                <span className="text-[9px] text-[#3b82f6] font-extrabold uppercase tracking-wider block leading-none mb-1">Topic</span>
-                                <span className="text-xs text-black font-extrabold leading-none">{blog.topic}</span>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                  {displayedBlogs.map((blog) => {
+                    const detailLink = blog.fullPath || `/blog/${blog.slug}`;
+                    return (
+                      <div
+                        key={blog.slug}
+                        className="flex flex-col group cursor-pointer bg-white border border-slate-100 rounded-[28px] overflow-hidden shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-200"
+                        onClick={() => navigate(detailLink)}
+                      >
+                        {/* Image */}
+                        <div className="relative aspect-[16/10] bg-slate-100 overflow-hidden">
+                          <img
+                            src={blog.image}
+                            alt={blog.title}
+                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                            onError={(e) => {
+                              (e.target as HTMLImageElement).src = '/blog-1.png';
+                            }}
+                          />
+                          {/* Topic & Industries Floating Tags */}
+                          <div className="absolute bottom-1 right-1 flex flex-wrap gap-2 items-center">
+                            {/* <div className="bg-white/95 backdrop-blur px-3 py-1.5 rounded-xl border border-slate-200/80 shadow-md text-left flex flex-col justify-center">
+                              <span className="text-[9px] text-[#3b82f6] font-extrabold uppercase tracking-wider block leading-none mb-1">Topic</span>
+                              <span className="text-xs text-black font-extrabold leading-none">{blog.topic}</span>
+                            </div> */}
+                            {blog.industries && blog.industries.filter((ind: string) => ind !== 'Industries').map((ind: string) => (
+                              <div key={ind} className="bg-white/95 backdrop-blur px-3 py-1.5 rounded-xl border border-slate-200/80 shadow-md text-left flex flex-col justify-center">
+                                <span className="text-[9px] text-[#3b82f6] font-semibold uppercase tracking-wider block leading-none mb-1">Industry</span>
+                                <span className="text-xs text-black font-medium leading-none">{ind}</span>
                               </div>
-                              {blog.industries && blog.industries.filter((ind: string) => ind !== 'Industries').map((ind: string) => (
-                                <div key={ind} className="bg-white/95 backdrop-blur px-3 py-1.5 rounded-xl border border-slate-200/80 shadow-md text-left flex flex-col justify-center">
-                                  <span className="text-[9px] text-[#3b82f6] font-extrabold uppercase tracking-wider block leading-none mb-1">Industry</span>
-                                  <span className="text-xs text-black font-extrabold leading-none">{ind}</span>
-                                </div>
-                              ))}
-                            </div>
+                            ))}
+                          </div>
+                        </div>
+
+                        {/* Content Body */}
+                        <div className="py-4 px-3 flex-1 flex flex-col justify-between">
+                          <div className="space-y-0">
+                            <h3 className="text-[16px] font-medium text-slate-800 leading-snug group-hover:text-[#103D38] transition-colors line-clamp-3">
+                              {blog.title}
+                            </h3>
                           </div>
 
-                          {/* Content Body */}
-                          <div className="py-4 px-3 flex-1 flex flex-col justify-between">
-                            <div className="space-y-0">
-                              <h3 className="text-[16px] font-black text-slate-800 leading-snug group-hover:text-[#103D38] transition-colors line-clamp-3">
-                                {blog.title}
-                              </h3>
-                              {/* <p className="text-xs text-slate-400 font-normal leading-relaxed line-clamp-3">
-                                {blog.description}
-                              </p> */}
-                            </div>
-
-                            {/* Author & Footer */}
-                            <div className="pt-3  border-t border-slate-50 flex items-center justify-between">
-                              <div className="flex items-center gap-3">
-                                <img
-                                  src={blog.author.avatar}
-                                  alt={blog.author.name}
-                                  className="w-8 h-8 rounded-full border border-slate-100 bg-slate-50"
-                                />
-                                <div>
-                                  <p className="text-[11px] font-black text-slate-700">{blog.author.name}</p>
-                                  <p className="text-[9px] text-slate-400">{blog.date}</p>
-                                </div>
+                          {/* Author & Footer */}
+                          <div className="pt-3 border-t border-slate-50 flex items-center justify-between">
+                            <div className="flex items-center gap-3">
+                              <img
+                                src={blog.author.avatar}
+                                alt={blog.author.name}
+                                className="w-8 h-8 rounded-full border border-slate-100 bg-slate-50"
+                              />
+                              <div>
+                                <p className="text-[11px] font-semibold text-slate-700">{blog.author.name}</p>
+                                <p className="text-[9px] text-slate-400">{blog.date}</p>
                               </div>
-                              {/* <div className="w-8 h-8 rounded-full bg-[#103D38]/5 group-hover:bg-[#103D38] text-[#103D38] group-hover:text-white flex items-center justify-center transition-colors">
-                                <ArrowRight className="w-3.5 h-3.5" />
-                              </div> */}
                             </div>
                           </div>
-                        </motion.div>
-                      );
-                    })}
-                  </AnimatePresence>
-                </motion.div>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
 
                 {/* Load More Trigger */}
                 {filteredBlogs.length > displayedBlogs.length && (
-                  <motion.div
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    className="text-center pt-8"
-                  >
+                  <div className="text-center pt-8">
                     <Button
                       onClick={loadMore}
                       variant="outline"
@@ -416,7 +384,7 @@ export function BlogListSection({ content }: BlogListSectionProps) {
                     >
                       Load More
                     </Button>
-                  </motion.div>
+                  </div>
                 )}
               </>
             )}

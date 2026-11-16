@@ -8,36 +8,20 @@ import { useInternalNavigate } from '@/hooks/useInternalNavigate';
 import { HeroTitle } from '@/components/ui/HeroTitle';
 
 import { type CaseStudyPost } from '@/lib/case-studies-data';
+import { DEFAULT_TOPICS, DEFAULT_INDUSTRIES } from '@/lib/blogs-data';
 
 interface CaseStudyListContent {
   badgeText?: string;
   headingText?: string;
   subheadingText?: string;
   bgImage?: string;
+  topics?: string[];
+  industries?: string[];
 }
 
 interface CaseStudyListSectionProps {
   content?: CaseStudyListContent;
 }
-
-const TOPICS = [
-  'Business Intelligence',
-  'ERP Solutions',
-  'IoT Solutions',
-  'Mobile App Solutions',
-  'CRM Solutions',
-  'Sales Force Automation',
-  'After-Sales Service App'
-];
-
-const INDUSTRIES = [
-  'Industries',
-  'FMCG',
-  'Pharma',
-  'Manufacturing',
-  'Retail',
-  'Electronics'
-];
 
 export function CaseStudyListSection({ content }: CaseStudyListSectionProps) {
   const navigate = useInternalNavigate();
@@ -45,6 +29,22 @@ export function CaseStudyListSection({ content }: CaseStudyListSectionProps) {
   const heading = content?.headingText || 'Explore our knowledge hub';
   const subheading = content?.subheadingText || 'Explore how Maathra has helped enterprises worldwide transform their operations with Oracle APEX and Cloud solutions.';
   const bgImage = content?.bgImage || '/Case-studies/banner.png';
+
+  // Dynamic Topics & Industries from CMS/API
+  const [dynamicTopics, setDynamicTopics] = React.useState<string[]>(
+    content?.topics && content.topics.length > 0 ? content.topics : []
+  );
+  const [dynamicIndustries, setDynamicIndustries] = React.useState<string[]>(
+    content?.industries && content.industries.length > 0 ? content.industries : []
+  );
+
+  const topicsList = dynamicTopics.length > 0
+    ? dynamicTopics
+    : (content?.topics && content.topics.length > 0 ? content.topics : DEFAULT_TOPICS);
+
+  const industriesList = dynamicIndustries.length > 0
+    ? dynamicIndustries
+    : (content?.industries && content.industries.length > 0 ? content.industries : DEFAULT_INDUSTRIES);
 
   // State
   const [caseStudies, setCaseStudies] = React.useState<CaseStudyPost[]>([]);
@@ -58,14 +58,22 @@ export function CaseStudyListSection({ content }: CaseStudyListSectionProps) {
   const [topicsOpen, setTopicsOpen] = React.useState(false);
   const [industriesOpen, setIndustriesOpen] = React.useState(false);
 
-  // Fetch published case studies only (API excludes drafts)
+  // Fetch published case studies & dynamic taxonomy
   React.useEffect(() => {
     async function fetchCaseStudies() {
       try {
         const res = await fetch('/api/case-studies');
         if (res.ok) {
           const data = await res.json();
-          setCaseStudies(Array.isArray(data) ? data : []);
+          const list = Array.isArray(data) ? data : data?.caseStudies || [];
+          setCaseStudies(list);
+
+          if (Array.isArray(data?.configuredTopics) && data.configuredTopics.length > 0) {
+            setDynamicTopics(data.configuredTopics);
+          }
+          if (Array.isArray(data?.configuredIndustries) && data.configuredIndustries.length > 0) {
+            setDynamicIndustries(data.configuredIndustries);
+          }
         } else {
           setCaseStudies([]);
         }
@@ -216,7 +224,7 @@ export function CaseStudyListSection({ content }: CaseStudyListSectionProps) {
                       exit={{ opacity: 0, height: 0 }}
                       className="overflow-hidden pl-1 space-y-2.5 pt-1"
                     >
-                      {TOPICS.map(topic => {
+                      {topicsList.map(topic => {
                         const isChecked = selectedTopics.includes(topic);
                         return (
                           <label key={topic} className="flex items-center gap-3 text-sm text-[#404040] font-normal cursor-pointer select-none group">
@@ -255,7 +263,7 @@ export function CaseStudyListSection({ content }: CaseStudyListSectionProps) {
                       exit={{ opacity: 0, height: 0 }}
                       className="overflow-hidden pl-1 space-y-2.5 pt-1"
                     >
-                      {INDUSTRIES.map(industry => {
+                      {industriesList.map(industry => {
                         const isChecked = selectedIndustries.includes(industry);
                         return (
                           <label key={industry} className="flex items-center gap-3 text-sm text-[#404040] font-normal cursor-pointer select-none group">
@@ -288,11 +296,7 @@ export function CaseStudyListSection({ content }: CaseStudyListSectionProps) {
                 <p className="text-slate-400 text-sm mt-4 font-bold">Loading case studies...</p>
               </div>
             ) : displayedCaseStudies.length === 0 ? (
-              <motion.div
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="bg-slate-50 rounded-[32px] p-16 text-center border border-dashed border-slate-200"
-              >
+              <div className="bg-slate-50 rounded-[32px] p-16 text-center border border-dashed border-slate-200">
                 <SlidersHorizontal className="w-12 h-12 text-slate-300 mx-auto mb-4" />
                 <h4 className="text-lg font-bold text-slate-700 mb-2">No articles match your filters</h4>
                 <p className="text-sm text-slate-400 max-w-sm mx-auto">Try resetting some of your Topics or Industries checkboxes to see more news.</p>
@@ -302,69 +306,54 @@ export function CaseStudyListSection({ content }: CaseStudyListSectionProps) {
                 >
                   Clear Filters
                 </Button>
-              </motion.div>
+              </div>
             ) : (
               <>
-                <motion.div
-                  layout
-                  className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
-                >
-                  <AnimatePresence mode="popLayout">
-                    {displayedCaseStudies.map((cs, idx) => {
-                      const detailLink = (cs as any).fullPath || `/case-studies/${cs.slug}`;
-                      return (
-                        <motion.div
-                          layout
-                          key={cs.slug}
-                          initial={{ opacity: 0, scale: 0.9, y: 20 }}
-                          animate={{ opacity: 1, scale: 1, y: 0 }}
-                          exit={{ opacity: 0, scale: 0.9, y: 20 }}
-                          transition={{ duration: 0.5, delay: idx * 0.05 }}
-                          whileHover={{ y: -8, transition: { duration: 0.3 } }}
-                          className="flex flex-col group cursor-pointer bg-white border border-[#4a2c5a]/20 rounded-[24px] overflow-hidden shadow-sm hover:shadow-md transition-all p-3"
-                          onClick={() => navigate(detailLink)}
-                        >
-                          {/* Image */}
-                          <div className="relative aspect-[4/3] overflow-hidden rounded-xl">
-                            <motion.img
-                              src={cs.image}
-                              alt={cs.title}
-                              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
-                            />
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {displayedCaseStudies.map((cs) => {
+                    const detailLink = (cs as any).fullPath || `/case-studies/${cs.slug}`;
+                    return (
+                      <div
+                        key={cs.slug}
+                        className="flex flex-col group cursor-pointer bg-white border border-[#4a2c5a]/20 rounded-[24px] overflow-hidden shadow-sm hover:shadow-md hover:-translate-y-1 transition-all duration-200 p-3"
+                        onClick={() => navigate(detailLink)}
+                      >
+                        {/* Image */}
+                        <div className="relative aspect-[4/3] overflow-hidden rounded-xl">
+                          <img
+                            src={cs.image}
+                            alt={cs.title}
+                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                          />
+                        </div>
+
+                        {/* Content Body */}
+                        <div className="pt-5 pb-2 px-1 flex-1 flex flex-col justify-between">
+                          <div className="space-y-3">
+                            <div>
+                              <span className="inline-block px-3 py-1 rounded-full border border-[#4a2c5a]/30 text-[10px] font-bold text-[#4a2c5a] tracking-wide">
+                                {cs.topic || 'Category Name'}
+                              </span>
+                            </div>
+                            <h3 className="text-[17px] font-bold text-[#1a1a1a] leading-snug group-hover:text-[#4a2c5a] transition-colors line-clamp-3">
+                              {cs.title}
+                            </h3>
                           </div>
 
-                          {/* Content Body */}
-                          <div className="pt-5 pb-2 px-1 flex-1 flex flex-col justify-between">
-                            <div className="space-y-3">
-                              <div>
-                                <span className="inline-block px-3 py-1 rounded-full border border-[#4a2c5a]/30 text-[10px] font-bold text-[#4a2c5a] tracking-wide">
-                                  {cs.topic || 'Category Name'}
-                                </span>
-                              </div>
-                              <h3 className="text-[17px] font-bold text-[#1a1a1a] leading-snug group-hover:text-[#4a2c5a] transition-colors line-clamp-3">
-                                {cs.title}
-                              </h3>
-                            </div>
-
-                            {/* Footer */}
-                            <div className="pt-6 flex items-center justify-between mt-auto">
-                              <p className="text-[13px] text-slate-500 font-medium">{cs.date}</p>
-                              <ArrowRight className="w-5 h-5 text-[#242A4A] transition-transform group-hover:translate-x-1" strokeWidth={1.5} />
-                            </div>
+                          {/* Footer */}
+                          <div className="pt-6 flex items-center justify-between mt-auto">
+                            <p className="text-[13px] text-slate-500 font-medium">{cs.date}</p>
+                            <ArrowRight className="w-5 h-5 text-[#242A4A] transition-transform group-hover:translate-x-1" strokeWidth={1.5} />
                           </div>
-                        </motion.div>
-                      );
-                    })}
-                  </AnimatePresence>
-                </motion.div>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
 
                 {/* Load More Trigger */}
                 {filteredCaseStudies.length > displayedCaseStudies.length && (
-                  <motion.div
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    className="text-center pt-8"
-                  >
+                  <div className="text-center pt-8">
                     <Button
                       onClick={loadMore}
                       variant="outline"
@@ -372,7 +361,7 @@ export function CaseStudyListSection({ content }: CaseStudyListSectionProps) {
                     >
                       Load More
                     </Button>
-                  </motion.div>
+                  </div>
                 )}
               </>
             )}
