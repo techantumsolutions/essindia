@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 128 128" fill="none" role="img" aria-labelledby="title">
+  <title id="title">Customer satisfaction — partnership handshake</title>
+  <g stroke="#101B55" stroke-width="5" stroke-linecap="round" stroke-linejoin="round">
+    <path d="m8 53 17-22 20 14-18 27L8 53ZM120 53l-17-22-20 14 18 27 19-19Z"/>
+    <path d="m39 52 13-10c6-4 12-4 18 0l4 3M89 53 74 43l-12 11c-5 5-11 6-16 2l-3-3 16-16"/>
+    <path d="m28 70 26 28c4 4 10 3 12-2m-5-8 8 8c4 4 10 3 12-2m-9-12 9 10c4 4 10 3 12-2m-8-14 10 11c4 4 10 2 11-3 1-2 0-5-2-7L88 55"/>
+    <path d="m34 76 8-8c3-3 8-3 11 0s3 8 0 11l-8 8c-3 3-8 3-11 0s-3-8 0-11Z"/>
+    <path d="m46 86 7-7c3-3 8-3 11 0s3 8 0 11l-7 7c-3 3-8 3-11 0s-3-8 0-11Z"/>
+    <path d="M64 13v11M43 18l-5-8M85 18l5-8"/>
+  </g>
+</svg>

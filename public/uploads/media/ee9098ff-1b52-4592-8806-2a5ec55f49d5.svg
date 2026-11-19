@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 128 128" fill="none" role="img" aria-labelledby="title">
+  <title id="title">Industries served — protected professional network</title>
+  <g stroke="#101B55" stroke-width="5" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M64 9 84 17v16c0 14-9 24-20 29-11-5-20-15-20-29V17L64 9Z"/>
+    <path d="m55 34 7 7 13-15"/>
+    <circle cx="64" cy="78" r="10"/>
+    <path d="M44 113c0-13 8-22 20-22s20 9 20 22H44Z"/>
+    <circle cx="29" cy="83" r="8"/>
+    <path d="M39 98c-3-3-6-4-10-4-10 0-17 8-17 19h25"/>
+    <circle cx="99" cy="83" r="8"/>
+    <path d="M89 98c3-3 6-4 10-4 10 0 17 8 17 19H91"/>
+  </g>
+</svg>

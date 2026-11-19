@@ -171,55 +171,49 @@ export function AssFeaturesGrid({ content }: { content?: AssFeaturesGridContent 
   const [searchQuery, setSearchQuery] = useState('');
 
   const tabsScrollRef = React.useRef<HTMLDivElement>(null);
-  const [canScrollLeft, setCanScrollLeft] = useState(false);
-  const [canScrollRight, setCanScrollRight] = useState(false);
 
-  const checkScroll = React.useCallback(() => {
-    if (tabsScrollRef.current) {
-      const { scrollLeft, scrollWidth, clientWidth } = tabsScrollRef.current;
-      setCanScrollLeft(scrollLeft > 5);
-      setCanScrollRight(scrollLeft + clientWidth < scrollWidth - 5);
-    }
+  const showArrows = categories.length > 1;
+  const canGoPrev = activeCategoryIndex > 0;
+  const canGoNext = activeCategoryIndex < categories.length - 1;
+
+  const scrollToTab = React.useCallback((index: number) => {
+    if (!tabsScrollRef.current) return;
+    const container = tabsScrollRef.current;
+    const items = container.querySelectorAll<HTMLElement>('[data-category-tab="true"]');
+    const tab = items[index];
+    if (!tab) return;
+
+    const containerRect = container.getBoundingClientRect();
+    const tabRect = tab.getBoundingClientRect();
+    const delta =
+      tabRect.left + tabRect.width / 2 - (containerRect.left + containerRect.width / 2);
+
+    container.scrollTo({
+      left: container.scrollLeft + delta,
+      behavior: 'smooth',
+    });
   }, []);
 
   React.useEffect(() => {
-    checkScroll();
-    const timer = setTimeout(checkScroll, 100);
-    window.addEventListener('resize', checkScroll);
-    return () => {
-      clearTimeout(timer);
-      window.removeEventListener('resize', checkScroll);
-    };
-  }, [checkScroll, categories]);
+    const timer = setTimeout(() => {
+      scrollToTab(activeCategoryIndex);
+    }, 50);
+    return () => clearTimeout(timer);
+  }, [activeCategoryIndex, scrollToTab, categories]);
 
-  const handleScrollLeft = () => {
-    if (tabsScrollRef.current) {
-      const scrollAmount = Math.max(150, tabsScrollRef.current.clientWidth * 0.7);
-      tabsScrollRef.current.scrollBy({ left: -scrollAmount, behavior: 'smooth' });
-    }
+  const handlePrevCategory = () => {
+    setSearchQuery('');
+    setActiveCategoryIndex((prev) => Math.max(0, prev - 1));
   };
 
-  const handleScrollRight = () => {
-    if (tabsScrollRef.current) {
-      const scrollAmount = Math.max(150, tabsScrollRef.current.clientWidth * 0.7);
-      tabsScrollRef.current.scrollBy({ left: scrollAmount, behavior: 'smooth' });
-    }
+  const handleNextCategory = () => {
+    setSearchQuery('');
+    setActiveCategoryIndex((prev) => Math.min(categories.length - 1, prev + 1));
   };
 
-  const handleTabClick = (idx: number, e: React.MouseEvent<HTMLButtonElement>) => {
+  const handleTabClick = (idx: number) => {
     setActiveCategoryIndex(idx);
     setSearchQuery('');
-    const btn = e.currentTarget;
-    const container = tabsScrollRef.current;
-    if (container && btn) {
-      const containerRect = container.getBoundingClientRect();
-      const btnRect = btn.getBoundingClientRect();
-      const delta = (btnRect.left - containerRect.left + btnRect.width / 2) - (containerRect.width / 2);
-      container.scrollTo({
-        left: container.scrollLeft + delta,
-        behavior: 'smooth',
-      });
-    }
   };
 
   const activeCategory = categories[activeCategoryIndex] || categories[0] || { name: 'Popular', items: [] };
@@ -244,14 +238,19 @@ export function AssFeaturesGrid({ content }: { content?: AssFeaturesGridContent 
               Categories
             </h3>
 
-            {/* Mobile Category List (Scrollable Horizontal Tabs with Dynamic Left/Right Navigation) */}
+            {/* Mobile / tablet category tabs — arrows change the active category */}
             <div className="lg:hidden relative flex items-center gap-1.5 py-1">
-              {canScrollLeft && (
+              {showArrows && (
                 <button
                   type="button"
-                  onClick={handleScrollLeft}
-                  className="p-2 rounded-xl border border-slate-200 bg-white text-[#2a2b6a] hover:bg-slate-50 transition-colors shrink-0 shadow-xs flex items-center justify-center cursor-pointer"
-                  aria-label="Previous categories"
+                  onClick={handlePrevCategory}
+                  disabled={!canGoPrev}
+                  className={`p-2 rounded-xl border shrink-0 shadow-xs flex items-center justify-center transition-all duration-200 ${
+                    canGoPrev
+                      ? 'border-slate-200 bg-white text-[#2a2b6a] hover:bg-slate-50 cursor-pointer'
+                      : 'border-slate-200 bg-slate-50 text-slate-300 cursor-not-allowed opacity-40'
+                  }`}
+                  aria-label="Previous category"
                 >
                   <ChevronLeft className="w-4 h-4" />
                 </button>
@@ -259,15 +258,20 @@ export function AssFeaturesGrid({ content }: { content?: AssFeaturesGridContent 
 
               <div
                 ref={tabsScrollRef}
-                onScroll={checkScroll}
-                className="flex-1 flex overflow-x-auto gap-2 py-1 scrollbar-none items-center scroll-smooth"
+                role="tablist"
+                aria-label="Integration categories"
+                className="flex-1 min-w-0 flex overflow-x-auto gap-2 py-1 items-center scroll-smooth no-scrollbar [&::-webkit-scrollbar]:hidden"
+                style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
               >
                 {categories.map((cat, idx) => (
                   <button
                     key={idx}
                     type="button"
-                    onClick={(e) => handleTabClick(idx, e)}
-                    className={`shrink-0 px-4 py-2.5 text-xs font-semibold rounded-xl border transition-all duration-300 cursor-pointer ${idx === activeCategoryIndex
+                    role="tab"
+                    aria-selected={idx === activeCategoryIndex}
+                    data-category-tab="true"
+                    onClick={() => handleTabClick(idx)}
+                    className={`shrink-0 whitespace-nowrap px-4 py-2.5 text-xs font-semibold rounded-xl border transition-all duration-300 cursor-pointer ${idx === activeCategoryIndex
                       ? 'bg-[#2a2b6a] text-white border-[#2a2b6a] shadow-sm'
                       : 'bg-slate-50 text-slate-600 border-slate-200 hover:bg-slate-100'
                       }`}
@@ -277,12 +281,17 @@ export function AssFeaturesGrid({ content }: { content?: AssFeaturesGridContent 
                 ))}
               </div>
 
-              {canScrollRight && (
+              {showArrows && (
                 <button
                   type="button"
-                  onClick={handleScrollRight}
-                  className="p-2 rounded-xl border border-slate-200 bg-white text-[#2a2b6a] hover:bg-slate-50 transition-colors shrink-0 shadow-xs flex items-center justify-center cursor-pointer"
-                  aria-label="Next categories"
+                  onClick={handleNextCategory}
+                  disabled={!canGoNext}
+                  className={`p-2 rounded-xl border shrink-0 shadow-xs flex items-center justify-center transition-all duration-200 ${
+                    canGoNext
+                      ? 'border-slate-200 bg-white text-[#2a2b6a] hover:bg-slate-50 cursor-pointer'
+                      : 'border-slate-200 bg-slate-50 text-slate-300 cursor-not-allowed opacity-40'
+                  }`}
+                  aria-label="Next category"
                 >
                   <ChevronRight className="w-4 h-4" />
                 </button>

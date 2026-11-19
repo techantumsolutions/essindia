@@ -66,7 +66,7 @@ export default function CareerHero({ content }: { content?: any }) {
           <FormattedText
             content={title}
             as="h1"
-            className="text-5xl md:text-6xl lg:text-[72px] font-thin tracking-wide mb-8 max-w-5xl mx-auto leading-[1.15] whitespace-pre-line"
+            className="text-5xl md:text-6xl lg:text-[72px] font-thin mb-8 max-w-5xl mx-auto leading-[1.15] whitespace-pre-line"
             style={{ color: titleColor || '#ffffff' }}
           />
 

@@ -20,15 +20,17 @@ export default async function proxy(request: NextRequest) {
       const proto = request.headers.get('x-forwarded-proto') || url.protocol.replace(':', '');
 
       if (preferredHost && host && host !== preferredHost && !host.includes('localhost')) {
-        const redirectUrl = new URL(request.url);
-        redirectUrl.host = preferredHost;
-        if (shouldForceHttps()) redirectUrl.protocol = 'https:';
+        const redirectUrl = request.nextUrl.clone();
+        redirectUrl.protocol = shouldForceHttps() ? 'https:' : redirectUrl.protocol;
+        redirectUrl.hostname = preferredHost;
+        redirectUrl.port = '';
         return NextResponse.redirect(redirectUrl, 301);
       }
 
       if (shouldForceHttps() && proto === 'http' && !host.includes('localhost')) {
-        const redirectUrl = new URL(request.url);
+        const redirectUrl = request.nextUrl.clone();
         redirectUrl.protocol = 'https:';
+        redirectUrl.port = '';
         return NextResponse.redirect(redirectUrl, 301);
       }
     }

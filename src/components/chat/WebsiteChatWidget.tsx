@@ -26,6 +26,7 @@ export function WebsiteChatWidget() {
   const [emailInput, setEmailInput] = useState('');
   const [phoneInput, setPhoneInput] = useState('');
   const [showLeadPrompt, setShowLeadPrompt] = useState(false);
+  const [leadSubmitted, setLeadSubmitted] = useState(false);
   const [isSubmittingLead, setIsSubmittingLead] = useState(false);
 
   const chatBottomRef = useRef<HTMLDivElement>(null);
@@ -105,6 +106,7 @@ export function WebsiteChatWidget() {
             setShowLeadPrompt(true);
           } else if (leadAlreadySubmitted) {
             setShowLeadPrompt(false);
+            setLeadSubmitted(true);
           }
         }
       } catch (err) {
@@ -202,7 +204,7 @@ export function WebsiteChatWidget() {
         }),
       });
 
-      if (res.ok) {
+      if (res.ok && !leadSubmitted) {
         setIsTyping(true);
         // Start 20 second fallback timer for automated AI response if no agent answers in time
         if (fallbackTimerRef.current) clearTimeout(fallbackTimerRef.current);
@@ -253,6 +255,12 @@ export function WebsiteChatWidget() {
           localStorage.setItem('ess_chat_user_name', nameInput.trim());
         }
         setShowLeadPrompt(false);
+        setLeadSubmitted(true);
+        setIsTyping(false);
+        if (fallbackTimerRef.current) {
+          clearTimeout(fallbackTimerRef.current);
+          fallbackTimerRef.current = null;
+        }
         setNameInput('');
         setEmailInput('');
         setPhoneInput('');
@@ -387,8 +395,22 @@ export function WebsiteChatWidget() {
                 <div ref={chatBottomRef} />
               </div>
 
+              {leadSubmitted && !showLeadPrompt && (
+                <div className="px-3 pt-2.5 bg-white border-t border-slate-100">
+                  <p className="text-[11px] leading-snug text-[#4B2A63] bg-purple-50 border border-purple-100 rounded-xl px-3 py-2">
+                    Our team will reply here as soon as they see your message.
+                  </p>
+                </div>
+              )}
+
               {/* Input Bar */}
-              <form onSubmit={handleSendMessage} className="p-3 bg-white border-t border-slate-100 flex items-center gap-2">
+              <form
+                onSubmit={handleSendMessage}
+                className={cn(
+                  'p-3 bg-white flex items-center gap-2',
+                  !(leadSubmitted && !showLeadPrompt) && 'border-t border-slate-100'
+                )}
+              >
                 <input
                   type="text"
                   placeholder="Type your message..."

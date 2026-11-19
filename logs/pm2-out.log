@@ -1,0 +1,132 @@
+2026-11-19T01:05:17: ▲ Next.js 16.2.4
+2026-11-19T01:05:17: - Local:         http://127.0.0.1:5003
+2026-11-19T01:05:17: - Network:       http://127.0.0.1:5003
+2026-11-19T01:05:17: ✓ Ready in 444ms
+2026-11-19T01:05:18: [DB] Initializing postgres client with: postgresql://postgres.hsdxevtiqoguvkfeqdwk:****@aws-1-ap-northeast-1.pooler.supabase.com:6543/postgres?pgbouncer=true
+2026-11-19T01:07:51: [DB] Initializing postgres client with: postgresql://postgres.hsdxevtiqoguvkfeqdwk:****@aws-1-ap-northeast-1.pooler.supabase.com:6543/postgres?pgbouncer=true
+2026-11-19T04:39:59: {
+2026-11-19T04:39:59:   severity_local: 'NOTICE',
+2026-11-19T04:39:59:   severity: 'NOTICE',
+2026-11-19T04:39:59:   code: '42P07',
+2026-11-19T04:39:59:   message: 'relation "chat_conversations" already exists, skipping',
+2026-11-19T04:39:59:   file: 'parse_utilcmd.c',
+2026-11-19T04:39:59:   line: '207',
+2026-11-19T04:39:59:   routine: 'transformCreateStmt'
+2026-11-19T04:39:59: }
+2026-11-19T04:39:59: {
+2026-11-19T04:39:59:   severity_local: 'NOTICE',
+2026-11-19T04:39:59:   severity: 'NOTICE',
+2026-11-19T04:39:59:   code: '42P07',
+2026-11-19T04:39:59:   message: 'relation "chat_messages" already exists, skipping',
+2026-11-19T04:39:59:   file: 'parse_utilcmd.c',
+2026-11-19T04:39:59:   line: '207',
+2026-11-19T04:39:59:   routine: 'transformCreateStmt'
+2026-11-19T04:39:59: }
+2026-11-19T04:40:16: {
+2026-11-19T04:40:16:   severity_local: 'NOTICE',
+2026-11-19T04:40:16:   severity: 'NOTICE',
+2026-11-19T04:40:16:   code: '42P07',
+2026-11-19T04:40:16:   message: 'relation "chat_notification_settings" already exists, skipping',
+2026-11-19T04:40:16:   file: 'parse_utilcmd.c',
+2026-11-19T04:40:16:   line: '207',
+2026-11-19T04:40:16:   routine: 'transformCreateStmt'
+2026-11-19T04:40:16: }
+2026-11-19T05:33:58: {
+2026-11-19T05:33:58:   severity_local: 'NOTICE',
+2026-11-19T05:33:58:   severity: 'NOTICE',
+2026-11-19T05:33:58:   code: '42P07',
+2026-11-19T05:33:58:   message: 'relation "chat_notification_settings" already exists, skipping',
+2026-11-19T05:33:58:   file: 'parse_utilcmd.c',
+2026-11-19T05:33:58:   line: '207',
+2026-11-19T05:33:58:   routine: 'transformCreateStmt'
+2026-11-19T05:33:58: }
+2026-11-19T05:33:59: {
+2026-11-19T05:33:59:   severity_local: 'NOTICE',
+2026-11-19T05:33:59:   severity: 'NOTICE',
+2026-11-19T05:33:59:   code: '42P07',
+2026-11-19T05:33:59:   message: 'relation "chat_notification_settings" already exists, skipping',
+2026-11-19T05:33:59:   file: 'parse_utilcmd.c',
+2026-11-19T05:33:59:   line: '207',
+2026-11-19T05:33:59:   routine: 'transformCreateStmt'
+2026-11-19T05:33:59: }
+2026-11-19T05:34:22: {
+2026-11-19T05:34:22:   severity_local: 'NOTICE',
+2026-11-19T05:34:22:   severity: 'NOTICE',
+2026-11-19T05:34:22:   code: '42P07',
+2026-11-19T05:34:22:   message: 'relation "chat_notification_settings" already exists, skipping',
+2026-11-19T05:34:22:   file: 'parse_utilcmd.c',
+2026-11-19T05:34:22:   line: '207',
+2026-11-19T05:34:22:   routine: 'transformCreateStmt'
+2026-11-19T05:34:22: }
+2026-11-19T05:34:22: {
+2026-11-19T05:34:22:   severity_local: 'NOTICE',
+2026-11-19T05:34:22:   severity: 'NOTICE',
+2026-11-19T05:34:22:   code: '42P07',
+2026-11-19T05:34:22:   message: 'relation "chat_notification_settings" already exists, skipping',
+2026-11-19T05:34:22:   file: 'parse_utilcmd.c',
+2026-11-19T05:34:22:   line: '207',
+2026-11-19T05:34:22:   routine: 'transformCreateStmt'
+2026-11-19T05:34:22: }
+2026-11-19T05:35:00: {
+2026-11-19T05:35:00:   severity_local: 'NOTICE',
+2026-11-19T05:35:00:   severity: 'NOTICE',
+2026-11-19T05:35:00:   code: '42P07',
+2026-11-19T05:35:00:   message: 'relation "chat_notification_settings" already exists, skipping',
+2026-11-19T05:35:00:   file: 'parse_utilcmd.c',
+2026-11-19T05:35:00:   line: '207',
+2026-11-19T05:35:00:   routine: 'transformCreateStmt'
+2026-11-19T05:35:00: }
+2026-11-19T05:35:05: {
+2026-11-19T05:35:05:   severity_local: 'NOTICE',
+2026-11-19T05:35:05:   severity: 'NOTICE',
+2026-11-19T05:35:05:   code: '42P07',
+2026-11-19T05:35:05:   message: 'relation "chat_notification_settings" already exists, skipping',
+2026-11-19T05:35:05:   file: 'parse_utilcmd.c',
+2026-11-19T05:35:05:   line: '207',
+2026-11-19T05:35:05:   routine: 'transformCreateStmt'
+2026-11-19T05:35:05: }
+2026-11-19T05:35:05: {
+2026-11-19T05:35:05:   severity_local: 'NOTICE',
+2026-11-19T05:35:05:   severity: 'NOTICE',
+2026-11-19T05:35:05:   code: '42P07',
+2026-11-19T05:35:05:   message: 'relation "chat_notification_settings" already exists, skipping',
+2026-11-19T05:35:05:   file: 'parse_utilcmd.c',
+2026-11-19T05:35:05:   line: '207',
+2026-11-19T05:35:05:   routine: 'transformCreateStmt'
+2026-11-19T05:35:05: }
+2026-11-19T05:38:53: {
+2026-11-19T05:38:53:   severity_local: 'NOTICE',
+2026-11-19T05:38:53:   severity: 'NOTICE',
+2026-11-19T05:38:53:   code: '42P07',
+2026-11-19T05:38:53:   message: 'relation "chat_notification_settings" already exists, skipping',
+2026-11-19T05:38:53:   file: 'parse_utilcmd.c',
+2026-11-19T05:38:53:   line: '207',
+2026-11-19T05:38:53:   routine: 'transformCreateStmt'
+2026-11-19T05:38:53: }
+2026-11-19T05:38:54: {
+2026-11-19T05:38:54:   severity_local: 'NOTICE',
+2026-11-19T05:38:54:   severity: 'NOTICE',
+2026-11-19T05:38:54:   code: '42P07',
+2026-11-19T05:38:54:   message: 'relation "chat_notification_settings" already exists, skipping',
+2026-11-19T05:38:54:   file: 'parse_utilcmd.c',
+2026-11-19T05:38:54:   line: '207',
+2026-11-19T05:38:54:   routine: 'transformCreateStmt'
+2026-11-19T05:38:54: }
+2026-11-19T06:40:21: ▲ Next.js 16.2.4
+2026-11-19T06:40:21: - Local:         http://127.0.0.1:5003
+2026-11-19T06:40:21: - Network:       http://127.0.0.1:5003
+2026-11-19T06:40:21: ✓ Ready in 215ms
+2026-11-19T06:40:22: [DB] Initializing postgres client with: postgresql://postgres.hsdxevtiqoguvkfeqdwk:****@aws-1-ap-northeast-1.pooler.supabase.com:6543/postgres?pgbouncer=true
+2026-11-19T06:40:27: [DB] Initializing postgres client with: postgresql://postgres.hsdxevtiqoguvkfeqdwk:****@aws-1-ap-northeast-1.pooler.supabase.com:6543/postgres?pgbouncer=true
+2026-11-19T08:37:12: ▲ Next.js 16.2.4
+2026-11-19T08:37:12: - Local:         http://127.0.0.1:5003
+2026-11-19T08:37:12: - Network:       http://127.0.0.1:5003
+2026-11-19T08:37:12: ✓ Ready in 270ms
+2026-11-19T08:37:12: [DB] Initializing postgres client with: postgresql://postgres.hsdxevtiqoguvkfeqdwk:****@aws-1-ap-northeast-1.pooler.supabase.com:6543/postgres?pgbouncer=true
+2026-11-19T08:37:15: [DB] Initializing postgres client with: postgresql://postgres.hsdxevtiqoguvkfeqdwk:****@aws-1-ap-northeast-1.pooler.supabase.com:6543/postgres?pgbouncer=true
+2026-11-19T08:39:15: ▲ Next.js 16.2.4
+2026-11-19T08:39:15: - Local:         http://127.0.0.1:5003
+2026-11-19T08:39:15: - Network:       http://127.0.0.1:5003
+2026-11-19T08:39:15: ✓ Ready in 200ms
+2026-11-19T08:39:15: [DB] Initializing postgres client with: postgresql://postgres.hsdxevtiqoguvkfeqdwk:****@aws-1-ap-northeast-1.pooler.supabase.com:6543/postgres?pgbouncer=true
+2026-11-19T08:39:18: [DB] Initializing postgres client with: postgresql://postgres.hsdxevtiqoguvkfeqdwk:****@aws-1-ap-northeast-1.pooler.supabase.com:6543/postgres?pgbouncer=true

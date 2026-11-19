@@ -60,7 +60,7 @@ const navGroups = [
   {
     label: 'Marketing & SEO',
     items: [
-      { icon: BarChart3, label: 'Charts', href: '/admin/charts' },
+      { icon: BarChart3, label: 'Chats', href: '/admin/charts' },
       { icon: Shield, label: 'SEO Settings', href: '/admin/seo' },
       { icon: ArrowRightLeft, label: 'Redirects', href: '/admin/redirects' },
       { icon: MessageSquare, label: 'Leads', href: '/admin/forms' },

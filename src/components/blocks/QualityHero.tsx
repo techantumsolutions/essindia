@@ -90,7 +90,7 @@ export function QualityHero({ content }: QualityHeroProps) {
             <FormattedText
               content={title}
               as="h1"
-              className="text-4xl md:text-5xl lg:text-6xl font-extralight leading-[1.2] max-w-5xl tracking-tight whitespace-pre-line"
+              className="text-4xl md:text-5xl lg:text-6xl font-extralight leading-[1.2] max-w-5xl whitespace-pre-line"
               style={{ color: titleColor || '#ffffff' }}
             />
           </motion.div>

@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 128 128" fill="none" role="img" aria-labelledby="title">
+  <title id="title">Years of experience — calendar with checkmark</title>
+  <g stroke="#101B55" stroke-width="5" stroke-linecap="round" stroke-linejoin="round">
+    <rect x="19" y="27" width="90" height="77" rx="11"/>
+    <path d="M19 48h90M42 18v18M86 18v18"/>
+    <path d="M36 62h8M57 62h8M36 77h8M57 77h8"/>
+    <circle cx="91" cy="89" r="23" fill="#FFFFFF"/>
+    <path d="m80 89 8 8 15-17"/>
+  </g>
+</svg>
