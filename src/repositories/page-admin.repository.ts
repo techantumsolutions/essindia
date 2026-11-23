@@ -7,6 +7,7 @@ import {
   seoMetadata,
   categories,
   navigationItems,
+  navigationMenus,
   megaMenuCategories,
   megaMenuSubCategories,
   megaMenuSubSubCategories,
@@ -14,7 +15,7 @@ import {
   templateSections,
 } from '@/lib/db/schema';
 import { asc, desc, eq, ne, or, and, isNull, ilike, inArray } from 'drizzle-orm';
-import { buildFullPath, buildPageTree, slugify } from '@/lib/cms/utils';
+import { buildFullPath, buildPageTree, isRootHomepagePath, slugify } from '@/lib/cms/utils';
 import {
   buildPagePathFromNavAndCategorySlugs,
   buildPagePathFromNavHierarchy,
@@ -31,9 +32,10 @@ import {
 } from '@/lib/cms/page-navigation';
 import { safeRedisDel, safeRedisKeys } from '@/lib/redis';
 import { revalidatePath } from 'next/cache';
-import { isMissingSchemaError } from '@/lib/cms/pg-error';
+import { getPostgresErrorCode, isMissingSchemaError } from '@/lib/cms/pg-error';
 import { syncPageToMegaMenu, updateMegaMenuFromPage } from '@/lib/cms/sync-page-to-mega-menu';
 import { navigationTreeRepository } from './navigation-tree.repository';
+import { applyLiveCountryLinkPaths } from '@/lib/cms/country-links';
 
 import type { PageTreeNode } from '@/lib/cms/types';
 
@@ -228,7 +230,9 @@ export class PageAdminRepository {
       const nav = await db.query.navigationItems.findFirst({
         where: eq(navigationItems.id, placement.navigationItemId),
       });
-      if (!nav) throw new Error('Invalid navigation menu item');
+      if (!nav) {
+        fullPath = buildFullPath(null, pageSlug);
+      } else {
 
       const navSlug = slugify(nav.label) || nav.slug?.replace(/^\//, '') || '';
 
@@ -281,6 +285,7 @@ export class PageAdminRepository {
 
       const existing = await db.query.pages.findFirst({ where: eq(pages.fullPath, fullPath) });
       if (existing) throw new Error('A page with this route already exists');
+      }
     } else {
       fullPath = buildFullPath(null, pageSlug);
     }
@@ -293,8 +298,22 @@ export class PageAdminRepository {
       throw new Error(`The page title "${data.title.trim()}" is already allocated to another page. Please change the page title.`);
     }
 
-    const duplicate = await db.query.pages.findFirst({ where: eq(pages.fullPath, fullPath) });
-    if (duplicate) throw new Error('Duplicate page path');
+    if (isRootHomepagePath(fullPath) || isRootHomepagePath(pageSlug)) {
+      fullPath = '/';
+    }
+
+    const duplicate = await db.query.pages.findFirst({
+      where: isRootHomepagePath(fullPath)
+        ? or(eq(pages.fullPath, '/'), eq(pages.fullPath, '/index'), eq(pages.slug, 'index'))
+        : eq(pages.fullPath, fullPath),
+    });
+    if (duplicate) {
+      throw new Error(
+        isRootHomepagePath(fullPath)
+          ? '/ is already used in other page'
+          : 'Duplicate page path'
+      );
+    }
 
     const [seo] = await db.insert(seoMetadata).values({ title: data.title }).returning();
 
@@ -419,9 +438,16 @@ export class PageAdminRepository {
           title: current.title,
           parentId,
           navigationItemId,
-          megaMenuCategoryId: current.megaMenuCategoryId,
-          megaMenuSubCategoryId: current.megaMenuSubCategoryId,
-          megaMenuSubSubCategoryId: current.megaMenuSubSubCategoryId,
+          megaMenuCategoryId:
+            data.megaMenuCategoryId !== undefined ? data.megaMenuCategoryId : current.megaMenuCategoryId,
+          megaMenuSubCategoryId:
+            data.megaMenuSubCategoryId !== undefined
+              ? data.megaMenuSubCategoryId
+              : current.megaMenuSubCategoryId,
+          megaMenuSubSubCategoryId:
+            data.megaMenuSubSubCategoryId !== undefined
+              ? data.megaMenuSubSubCategoryId
+              : current.megaMenuSubSubCategoryId,
         },
         id
       );
@@ -429,6 +455,14 @@ export class PageAdminRepository {
       navigationItemId = placement.navigationItemId;
       depthLevel = placement.depthLevel;
       sortOrder = placement.sortOrder;
+    }
+
+    if (navigationItemId) {
+      const navStillExists = await db.query.navigationItems.findFirst({
+        where: eq(navigationItems.id, navigationItemId),
+        columns: { id: true },
+      });
+      if (!navStillExists) navigationItemId = null;
     }
 
     if (
@@ -461,7 +495,11 @@ export class PageAdminRepository {
         const nav = await db.query.navigationItems.findFirst({
           where: eq(navigationItems.id, finalNavId),
         });
-        if (!nav) throw new Error('Invalid navigation menu item');
+        if (!nav) {
+          finalNavId = null;
+          navigationItemId = null;
+          fullPath = buildFullPath(null, pageSlug);
+        } else {
         const navSlug = slugify(nav.label) || nav.slug?.replace(/^\//, '') || '';
 
         if (finalCatId) {
@@ -505,6 +543,7 @@ export class PageAdminRepository {
             pageSlug,
           });
         }
+        }
       } else {
         fullPath = buildFullPath(null, pageSlug);
       }
@@ -523,12 +562,26 @@ export class PageAdminRepository {
         }
       }
 
-      if (fullPath !== current.fullPath) {
+      if (isRootHomepagePath(fullPath) || isRootHomepagePath(data.slug)) {
+        fullPath = '/';
+        data.slug = 'index';
+      }
+
+      if (fullPath !== current.fullPath || isRootHomepagePath(fullPath)) {
         const duplicate = await db.query.pages.findFirst({
-          where: and(eq(pages.fullPath, fullPath), ne(pages.id, id)),
+          where: and(
+            ne(pages.id, id),
+            isRootHomepagePath(fullPath)
+              ? or(eq(pages.fullPath, '/'), eq(pages.fullPath, '/index'), eq(pages.slug, 'index'))
+              : eq(pages.fullPath, fullPath)
+          ),
         });
         if (duplicate) {
-          throw new Error(`The route "${fullPath}" is already used by another page ("${duplicate.title}")`);
+          throw new Error(
+            isRootHomepagePath(fullPath)
+              ? '/ is already used in other page'
+              : `The route "${fullPath}" is already used by another page ("${duplicate.title}")`
+          );
         }
       }
     }
@@ -541,6 +594,13 @@ export class PageAdminRepository {
       sortOrder,
       fullPath,
       updatedAt: new Date(),
+      ...(!navigationItemId
+        ? {
+            megaMenuCategoryId: null,
+            megaMenuSubCategoryId: null,
+            megaMenuSubSubCategoryId: null,
+          }
+        : {}),
       ...(data.status === 'published' && !current.publishedAt
         ? { publishedAt: new Date() }
         : {}),
@@ -550,6 +610,9 @@ export class PageAdminRepository {
     try {
       [updated] = await db.update(pages).set(updatePayload).where(eq(pages.id, id)).returning();
     } catch (error) {
+      if (isRootHomepagePath(fullPath) && getPostgresErrorCode(error) === '23505') {
+        throw new Error('/ is already used in other page');
+      }
       if (!isMissingSchemaError(error)) throw error;
       const { depthLevel: _depth, sortOrder: _sort, ...basePayload } = updatePayload;
       [updated] = await db.update(pages).set(basePayload).where(eq(pages.id, id)).returning();
@@ -570,6 +633,14 @@ export class PageAdminRepository {
     await this.invalidateNavigationCache();
     await this.invalidateCache(current.fullPath);
 
+    if (isRootHomepagePath(fullPath) && isRootHomepagePath(current.fullPath)) {
+      try {
+        await this.syncHeaderItemUrls(id, current.fullPath, '/');
+      } catch (err) {
+        console.error('Failed to sync header navigation URLs:', err);
+      }
+    }
+
     if (fullPath !== current.fullPath) {
       await this.invalidateCache(fullPath);
 
@@ -585,6 +656,18 @@ export class PageAdminRepository {
         } catch {
           // Ignore if redirect for this path already exists
         }
+      }
+
+      try {
+        await this.syncCountryDropdownLinks(id, fullPath);
+      } catch (err) {
+        console.error('Failed to sync header country dropdown paths:', err);
+      }
+
+      try {
+        await this.syncHeaderItemUrls(id, current.fullPath, fullPath);
+      } catch (err) {
+        console.error('Failed to sync header navigation URLs:', err);
       }
 
       // Cascade path update to child pages
@@ -1037,7 +1120,8 @@ export class PageAdminRepository {
         where: eq(navigationItems.id, navigationItemId),
         columns: { id: true },
       });
-      if (!nav) throw new Error('Invalid navigation menu item');
+      // Deleted/stale menu items must not block page saves — treat as unlinked.
+      if (!nav) navigationItemId = null;
     }
 
     const hierarchyRows = await db
@@ -1148,6 +1232,67 @@ export class PageAdminRepository {
     // Revalidate public pages only — revalidating root layout also refreshes /admin
     // and can trigger Supabase middleware churn that looks like a logout.
     revalidatePath('/', 'page');
+  }
+
+  /** Keep header Home/logo hrefs on the page's current public path. */
+  private async syncHeaderItemUrls(pageId: string, oldPath: string, newPath: string) {
+    const nextUrl = isRootHomepagePath(newPath) ? '/' : newPath;
+    const previousUrls = [
+      ...new Set(
+        [
+          oldPath,
+          isRootHomepagePath(oldPath) ? '/index' : '',
+          isRootHomepagePath(newPath) ? '/index' : '',
+        ].filter((value): value is string => Boolean(value) && value !== nextUrl)
+      ),
+    ];
+
+    await db
+      .update(navigationItems)
+      .set({ url: nextUrl, updatedAt: new Date() })
+      .where(eq(navigationItems.pageId, pageId));
+
+    if (previousUrls.length > 0) {
+      await db
+        .update(navigationItems)
+        .set({ url: nextUrl, updatedAt: new Date() })
+        .where(inArray(navigationItems.url, previousUrls));
+    }
+
+    const menus = await db.query.navigationMenus.findMany({
+      columns: { id: true, logoLink: true },
+    });
+    for (const menu of menus) {
+      const logoLink = menu.logoLink || '';
+      const shouldUpdate =
+        previousUrls.includes(logoLink) ||
+        (isRootHomepagePath(newPath) && isRootHomepagePath(logoLink) && logoLink !== nextUrl);
+      if (!shouldUpdate) continue;
+      await db
+        .update(navigationMenus)
+        .set({ logoLink: nextUrl, updatedAt: new Date() })
+        .where(eq(navigationMenus.id, menu.id));
+    }
+  }
+
+  /** Keep Header Country Dropdown hrefs on the allocated page's current slug. */
+  private async syncCountryDropdownLinks(pageId: string, newFullPath: string) {
+    const menus = await db.query.navigationMenus.findMany({
+      columns: { id: true, countryLinks: true },
+    });
+
+    for (const menu of menus) {
+      const links = Array.isArray(menu.countryLinks) ? (menu.countryLinks as Record<string, unknown>[]) : [];
+      if (!links.some((link) => link?.pageId === pageId)) continue;
+
+      const next = applyLiveCountryLinkPaths(links, new Map([[pageId, newFullPath]]));
+      if (next === links) continue;
+
+      await db
+        .update(navigationMenus)
+        .set({ countryLinks: next, updatedAt: new Date() })
+        .where(eq(navigationMenus.id, menu.id));
+    }
   }
 
   private async syncNavigationLinks(

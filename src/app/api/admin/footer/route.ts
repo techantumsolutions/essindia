@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { revalidatePath } from 'next/cache';
 import { isAdminRequest } from '@/lib/cms/auth';
 import { footerRepository } from '@/repositories/footer.repository';
 import { badRequest, serverError, unauthorized } from '@/lib/cms/api-response';
@@ -43,6 +44,7 @@ export async function PUT(request: Request) {
       links: links || { company: [], products: [], industries: [], services: [] },
     });
 
+    revalidatePath('/', 'layout');
     return NextResponse.json(updated);
   } catch (error) {
     console.error('[API Footer PUT]', error);

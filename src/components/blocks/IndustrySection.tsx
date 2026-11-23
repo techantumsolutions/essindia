@@ -141,7 +141,7 @@ export function IndustrySection({ content }: IndustrySectionProps) {
           />
           <MotionSection variant="fadeUp" delay={0.3}>
             <h3
-              className="text-xl md:text-[24px] font-medium mb-6"
+              className="text-[16px] md:text-[24px] font-medium mb-6"
               style={{ color: subheadingTextColor }}
             >
               {subheading}

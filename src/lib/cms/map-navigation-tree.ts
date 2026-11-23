@@ -1,6 +1,7 @@
 import type { MegaMenuPayload } from '@/lib/cms/mega-menu-types';
 import type { NavigationTreeItem } from '@/lib/cms/navigation-tree-types';
 import { hasRenderableMegaMenu } from '@/lib/cms/mega-menu-sanitize';
+import { normalizeHomepagePath } from '@/lib/cms/utils';
 import type { NavItem } from '@/components/layout/Header';
 
 /** Map DB navigation tree + mega menus to Header nav items (no static fallbacks). */
@@ -20,14 +21,14 @@ export function mapNavigationTreeToNavItems(
           ? item.children.map((child) => ({
               id: child.id,
               label: child.label,
-              url: child.url,
+              url: normalizeHomepagePath(child.url) ?? child.url,
             }))
           : undefined;
 
       return {
         id: item.id,
         label: item.label,
-        url: item.url,
+        url: normalizeHomepagePath(item.url) ?? item.url,
         megaMenuEnabled: item.megaMenuEnabled,
         megaMenu,
         megaMenuConfig: item.megaMenuConfig,

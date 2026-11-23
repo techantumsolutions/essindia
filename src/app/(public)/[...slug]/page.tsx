@@ -1,6 +1,6 @@
 import { pageRepository } from '@/repositories/page.repository';
 import { SectionRenderer } from '@/components/cms/SectionRenderer';
-import { notFound } from 'next/navigation';
+import { notFound, permanentRedirect } from 'next/navigation';
 import { Metadata } from 'next';
 import { buildPageMetadata } from '@/lib/seo/build-page-metadata';
 import { PageScripts } from '@/components/seo/PageScripts';
@@ -31,6 +31,10 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
   if (isSystemRoute(slug)) return {};
 
+  if (slug.length === 1 && slug[0] === 'index') {
+    permanentRedirect('/');
+  }
+
   const fullPath = `/${slug.join('/')}`;
   const page = await pageRepository.getPageByPath(fullPath);
 
@@ -59,6 +63,10 @@ export default async function DynamicPage({ params }: PageProps) {
 
   if (isSystemRoute(slug)) {
     return notFound();
+  }
+
+  if (slug.length === 1 && slug[0] === 'index') {
+    permanentRedirect('/');
   }
 
   const fullPath = `/${slug.join('/')}`;

@@ -6,6 +6,11 @@ interface PrivacyPolicyContent {
   contentHtml?: string;
 }
 
+/** Keep extra Enter / empty paragraphs from the CMS editor visible on the public page. */
+function preserveEditorLineBreaks(html: string) {
+  return html.replace(/<p>(?:\s|&nbsp;|<br\s*\/?>)*<\/p>/gi, '<p><br></p>');
+}
+
 export function PrivacyPolicy({ content }: { content?: PrivacyPolicyContent }) {
   const title = content?.title || 'Privacy Policy';
   const contentHtml = content?.contentHtml || `
@@ -25,8 +30,8 @@ export function PrivacyPolicy({ content }: { content?: PrivacyPolicyContent }) {
           className="text-4xl font-extrabold text-slate-900 tracking-tight mb-8 pb-4 border-b border-slate-100"
         />
         <FormattedText
-          content={contentHtml}
-          className="prose prose-slate max-w-none prose-headings:font-bold prose-headings:text-slate-900 prose-p:leading-relaxed prose-p:text-slate-600 prose-li:text-slate-600"
+          content={preserveEditorLineBreaks(contentHtml)}
+          className="privacy-policy-content prose prose-slate max-w-none prose-headings:font-bold prose-headings:text-slate-900 prose-p:text-slate-600 prose-li:text-slate-600"
         />
       </div>
     </section>

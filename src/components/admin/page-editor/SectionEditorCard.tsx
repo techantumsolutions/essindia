@@ -270,10 +270,21 @@ const DEFAULT_CASE_STUDY_LIST_CONTENT: Record<string, any> = {
 };
 
 const DEFAULT_BLOG_LIST_CONTENT: Record<string, any> = {
+  bgColor: '',
+  gradientColor1: '',
+  gradientColor2: '',
+  gradientColor3: '',
   badgeText: 'Latest Blogs',
+  badgeBgColor: '#ffffff',
+  badgeTextColor: '#0A2E2A',
+  badgeBorderColor: '#f1f5f9',
   headingText: 'Press & Media Resources',
+  titleColor: '#ffffff',
+  titleGradientFrom: '',
+  titleGradientTo: '',
+  enableTitleGradientAnimation: true,
   subheadingText: 'Everything journalists, analysts, and partners need to cover ESS — from brand assets to company facts.',
-  bgImage: '',
+  subheadingTextColor: '#e2e8f0',
   topics: DEFAULT_TOPICS,
   industries: DEFAULT_INDUSTRIES,
 };
@@ -2465,6 +2476,17 @@ const DEFAULT_LANDING1_TESTIMONIALS_CONTENT: Record<string, any> = {
   ]
 };
 
+const DEFAULT_CTA_CONTENT: Record<string, any> = {
+  title: 'Ready To Start Your Career Journey?',
+  subtitle: 'Join our team and be part of an innovative culture that values your growth and contributions.',
+  ctaText: 'Join Us',
+  ctaHoverBgColor: '',
+  ctaHoverTextColor: '',
+  button1Url: '',
+  button1FormType: '',
+  button1PdfUrl: '',
+};
+
 const DEFAULT_CAREER_HERO_CONTENT: Record<string, any> = {
   bgColor: '',
   bgImage: '/Career-Page/Career.png',
@@ -2747,6 +2769,8 @@ export function SectionEditorCard({
         baseSchema = DEFAULT_RETAIL_OPERATIONS_CONTENT as Record<string, JsonValue>;
       } else if (section.type === 'career-hero') {
         baseSchema = DEFAULT_CAREER_HERO_CONTENT as Record<string, JsonValue>;
+      } else if (section.type === 'cta') {
+        baseSchema = DEFAULT_CTA_CONTENT as Record<string, JsonValue>;
       } else if (section.type === 'quality-hero') {
         baseSchema = DEFAULT_QUALITY_HERO_CONTENT as Record<string, JsonValue>;
       }
@@ -2782,7 +2806,7 @@ export function SectionEditorCard({
               buttonText: 'Schedule Free Demo',
               note: 'Your data is secure and never shared.'
             };
-          } else if (['autoScroll', 'isActive', 'supportsVariants'].includes(key)) {
+          } else if (['autoScroll', 'isActive', 'supportsVariants', 'enableTitleGradientAnimation'].includes(key)) {
             finalMerged[key] = true;
           } else {
             finalMerged[key] = '';
@@ -3007,6 +3031,24 @@ export function SectionEditorCard({
       });
       if (!Array.isArray(finalMerged.calcPoints)) {
         finalMerged.calcPoints = DEFAULT_BLOG_CONTENT.calcPoints;
+      }
+    }
+
+    if (section.type === 'blog-list-block') {
+      rememberColorDefaults(DEFAULT_BLOG_LIST_CONTENT);
+      (
+        [
+          'badgeBgColor',
+          'badgeTextColor',
+          'badgeBorderColor',
+          'titleColor',
+          'subheadingTextColor',
+        ] as const
+      ).forEach((key) => {
+        if (!finalMerged[key]) finalMerged[key] = DEFAULT_BLOG_LIST_CONTENT[key];
+      });
+      if (typeof finalMerged.enableTitleGradientAnimation !== 'boolean') {
+        finalMerged.enableTitleGradientAnimation = true;
       }
     }
 
@@ -3251,7 +3293,7 @@ export function SectionEditorCard({
 
     const keys = Object.keys(mergedContent);
     let finalKeys = keys;
-    if ((section.type.startsWith('landing1-') || section.type.startsWith('landing2-') || section.type.startsWith('contact-') || section.type.startsWith('europe-') || section.type.startsWith('uganda-') || section.type.startsWith('about-us-') || section.type === 'job-detail-hero' || section.type === 'job-detail-content' || section.type === 'bi-highlight-strip' || section.type === 'bi-industries' || section.type === 'career-positions' || section.type === 'career-perks' || section.type === 'about-us-cta' || section.type === 'career-cta' || section.type === 'blog' || section.type === 'about-us-services-overview' || section.type.startsWith('oracle-') || (section.type.startsWith('rpa-') && section.type !== 'rpa-hero') || section.type.startsWith('ass-') || section.type.startsWith('aom-') || section.type.startsWith('fmcg-') || section.type.startsWith('roi-') || section.type.startsWith('retail-')) && meta?.fieldOrder) {
+    if ((section.type.startsWith('landing1-') || section.type.startsWith('landing2-') || section.type.startsWith('contact-') || section.type.startsWith('europe-') || section.type.startsWith('uganda-') || section.type.startsWith('about-us-') || section.type === 'job-detail-hero' || section.type === 'job-detail-content' || section.type === 'bi-highlight-strip' || section.type === 'bi-industries' || section.type === 'career-positions' || section.type === 'career-perks' || section.type === 'about-us-cta' || section.type === 'career-cta' || section.type === 'cta' || section.type === 'blog' || section.type === 'about-us-services-overview' || section.type.startsWith('oracle-') || (section.type.startsWith('rpa-') && section.type !== 'rpa-hero') || section.type.startsWith('ass-') || section.type.startsWith('aom-') || section.type.startsWith('fmcg-') || section.type.startsWith('roi-') || section.type.startsWith('retail-')) && meta?.fieldOrder) {
       finalKeys = meta.fieldOrder;
     } else if (meta?.fieldOrder) {
       finalKeys = keys.sort((a, b) => {

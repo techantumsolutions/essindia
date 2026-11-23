@@ -281,6 +281,35 @@ section h2 {
   line-height: inherit !important;
 }
 
+/* Privacy Policy Block: honor CMS rich-text line spacing (must beat global `.prose p` 1.6 !important). */
+.formatted-text-content.privacy-policy-content.prose p,
+.formatted-text-content.privacy-policy-content.prose li,
+.formatted-text-content.privacy-policy-content.prose h1,
+.formatted-text-content.privacy-policy-content.prose h2,
+.formatted-text-content.privacy-policy-content.prose h3,
+.formatted-text-content.privacy-policy-content p,
+.formatted-text-content.privacy-policy-content li,
+.formatted-text-content.privacy-policy-content h1,
+.formatted-text-content.privacy-policy-content h2,
+.formatted-text-content.privacy-policy-content h3 {
+  line-height: var(--cms-line-height, 1.8) !important;
+}
+
+.formatted-text-content.privacy-policy-content p:empty,
+.formatted-text-content.privacy-policy-content p:has(> br:only-child),
+.formatted-text-content.privacy-policy-content.prose p:empty,
+.formatted-text-content.privacy-policy-content.prose p:has(> br:only-child) {
+  min-height: calc(1em * var(--cms-line-height, 1.8));
+}
+
+.ProseMirror p[style*="--cms-line-height"],
+.ProseMirror li[style*="--cms-line-height"],
+.ProseMirror h1[style*="--cms-line-height"],
+.ProseMirror h2[style*="--cms-line-height"],
+.ProseMirror h3[style*="--cms-line-height"] {
+  line-height: var(--cms-line-height) !important;
+}
+
 /* Rich Text, Tiptap & Quill Editor List Styles */
 .formatted-text-content ul,
 .ql-editor ul,
@@ -310,6 +339,13 @@ section h2 {
   display: list-item !important;
 }
 
+footer.site-footer a.footer-column-link {
+  color: #000;
+}
+footer.site-footer a.footer-column-link:hover {
+  color: var(--footer-col-link-hover, #7e22ce);
+}
+
 /* Laptop Screens Specific Width (80vw for Header, Footer & Main Content) */
 @media (min-width: 1024px) and (max-width: 1600px) {
   .container,
@@ -319,4 +355,25 @@ section h2 {
     max-width: 80vw !important;
     width: 80vw !important;
   }
+}
+
+/* Inner header links share leftover space so they never overlap the logo or Contact button. */
+header [data-header-nav] [data-slot="navigation-menu"] {
+  max-width: 100%;
+  width: 100%;
+}
+header [data-header-nav] [data-slot="navigation-menu-list"] {
+  width: 100%;
+  justify-content: space-between;
+}
+header [data-header-nav] [data-slot="navigation-menu-trigger"],
+header [data-header-nav] [data-slot="navigation-menu-item"] a {
+  width: auto;
+  max-width: none;
+  white-space: nowrap;
+  padding-left: clamp(0.125rem, 0.4vw, 0.4rem);
+  padding-right: clamp(0.125rem, 0.4vw, 0.4rem);
+}
+header [data-header-nav] [data-slot="navigation-menu-trigger"] svg {
+  display: none;
 }

@@ -2,8 +2,10 @@ import { Header } from "./Header";
 import { navigationTreeRepository } from "@/repositories/navigation-tree.repository";
 import { mapNavigationTreeToNavItems } from "@/lib/cms/map-navigation-tree";
 import { db } from "@/lib/db";
-import { navigationMenus } from "@/lib/db/schema";
-import { eq } from "drizzle-orm";
+import { navigationMenus, pages } from "@/lib/db/schema";
+import { eq, inArray } from "drizzle-orm";
+import { applyLiveCountryLinkPaths, collectCountryLinkPageIds } from "@/lib/cms/country-links";
+import { normalizeHomepagePath } from "@/lib/cms/utils";
 
 export async function HeaderShell() {
   try {
@@ -30,15 +32,33 @@ export async function HeaderShell() {
       .then((rows) => rows[0] || null)
       .catch(() => null);
 
+    const storedLinks = (menuRecord?.countryLinks as any[]) ?? [];
+    const pageIds = collectCountryLinkPageIds(storedLinks);
+    let countryLinks = storedLinks;
+    if (pageIds.length > 0) {
+      try {
+        const pageRows = await db
+          .select({ id: pages.id, fullPath: pages.fullPath })
+          .from(pages)
+          .where(inArray(pages.id, pageIds));
+        countryLinks = applyLiveCountryLinkPaths(
+          storedLinks,
+          new Map(pageRows.map((row) => [row.id, row.fullPath]))
+        );
+      } catch {
+        countryLinks = storedLinks;
+      }
+    }
+
     return (
       <Header
         navData={navData}
         logoUrl={menuRecord?.logoUrl ?? undefined}
-        logoLink={menuRecord?.logoLink ?? undefined}
+        logoLink={normalizeHomepagePath(menuRecord?.logoLink) ?? menuRecord?.logoLink ?? undefined}
         getStartedText={menuRecord?.getStartedText ?? undefined}
         getStartedLink={menuRecord?.getStartedLink ?? undefined}
         countryDropdownText={menuRecord?.countryDropdownText ?? undefined}
-        countryLinks={(menuRecord?.countryLinks as any[]) ?? []}
+        countryLinks={countryLinks}
       />
     );
   } catch (err) {

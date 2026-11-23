@@ -17,10 +17,12 @@ import {
   LayoutGrid,
   ChevronDown,
   Search,
-  AlertTriangle
+  AlertTriangle,
+  Palette
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
+import { ColorPickerField } from '@/components/admin/page-editor/ColorPickerField';
 
 interface FooterLink {
   label: string;
@@ -56,6 +58,7 @@ interface FooterSettingsData {
       industries?: string;
       services?: string;
     };
+    linkHoverColor?: string;
   };
 }
 
@@ -230,6 +233,7 @@ export default function FooterCMSPage() {
             industries: 'Industries',
             services: 'Services'
           };
+          data.links.linkHoverColor = data.links.linkHoverColor || '#7e22ce';
           setSettings(data);
         } else {
           toast.error('Failed to load footer settings');
@@ -274,7 +278,7 @@ export default function FooterCMSPage() {
 
     // Validate that all links have a non-empty label
     for (const [category, links] of Object.entries(settings.links)) {
-      if (category === 'social' || category === 'copyright' || category === 'titles') continue;
+      if (category === 'social' || category === 'copyright' || category === 'titles' || category === 'linkHoverColor') continue;
       const linkList = links as FooterLink[];
       for (let i = 0; i < linkList.length; i++) {
         const link = linkList[i];
@@ -728,6 +732,31 @@ export default function FooterCMSPage() {
 
       {activeTab === 'links' && (
         <div className="space-y-8">
+          <div className="bg-white rounded-[32px] p-8 border border-slate-100 shadow-[0_20px_50px_-15px_rgba(0,0,0,0.03)]">
+            <h3 className="font-bold text-lg text-slate-900 mb-2 flex items-center gap-2">
+              <Palette className="w-5 h-5 text-purple-500" /> Column Links Hover Color
+            </h3>
+            <p className="text-sm text-slate-500 mb-6">
+              This color is applied to every column link in the website footer on hover.
+            </p>
+            <div className="max-w-md">
+              <ColorPickerField
+                fieldKey="linkHoverColor"
+                label="Hover Color"
+                value={settings.links.linkHoverColor || ''}
+                defaultValue="#7e22ce"
+                onChange={(val) => {
+                  setSettings({
+                    ...settings,
+                    links: {
+                      ...settings.links,
+                      linkHoverColor: val
+                    }
+                  });
+                }}
+              />
+            </div>
+          </div>
           <div className="grid grid-cols-1 gap-2">
             {(['company', 'products', 'industries', 'services', 'bottomLinks'] as LinkCategory[]).map((colName) => (
               <div

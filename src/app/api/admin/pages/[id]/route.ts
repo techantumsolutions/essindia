@@ -46,6 +46,17 @@ export async function PATCH(
     if (!page) return notFound('Page not found');
     return NextResponse.json(page);
   } catch (error) {
+    if (error instanceof Error) {
+      const msg = error.message;
+      if (
+        msg.includes('already used') ||
+        msg.includes('Duplicate') ||
+        msg.includes('already exists') ||
+        msg.includes('Only one page')
+      ) {
+        return badRequest(msg);
+      }
+    }
     return serverError(error);
   }
 }
