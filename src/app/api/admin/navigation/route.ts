@@ -1,11 +1,12 @@
 import { NextResponse } from 'next/server';
 import { db } from '@/lib/db';
-import { navigationMenus, navigationItems } from '@/lib/db/schema';
-import { eq } from 'drizzle-orm';
+import { navigationMenus, navigationItems, pages } from '@/lib/db/schema';
+import { eq, inArray } from 'drizzle-orm';
 import { navigationTreeRepository } from '@/repositories/navigation-tree.repository';
 import { isAdminRequest } from '@/lib/cms/auth';
 import { unauthorized } from '@/lib/cms/api-response';
 import { revalidatePath } from 'next/cache';
+import { applyLiveCountryLinkPaths, collectCountryLinkPageIds } from '@/lib/cms/country-links';
 
 import { navigationRepository } from '@/repositories/navigation.repository';
 
@@ -126,6 +127,21 @@ export async function PUT(request: Request) {
       return NextResponse.json({ error: 'location is required' }, { status: 400 });
     }
 
+    let resolvedCountryLinks = countryLinks;
+    if (Array.isArray(countryLinks) && countryLinks.length > 0) {
+      const pageIds = collectCountryLinkPageIds(countryLinks);
+      if (pageIds.length > 0) {
+        const pageRows = await db
+          .select({ id: pages.id, fullPath: pages.fullPath })
+          .from(pages)
+          .where(inArray(pages.id, pageIds));
+        resolvedCountryLinks = applyLiveCountryLinkPaths(
+          countryLinks,
+          new Map(pageRows.map((row) => [row.id, row.fullPath]))
+        );
+      }
+    }
+
     const updated = await db
       .update(navigationMenus)
       .set({
@@ -134,7 +150,7 @@ export async function PUT(request: Request) {
         getStartedText: getStartedText !== undefined ? getStartedText : undefined,
         getStartedLink: getStartedLink !== undefined ? getStartedLink : undefined,
         countryDropdownText: countryDropdownText !== undefined ? countryDropdownText : undefined,
-        countryLinks: countryLinks !== undefined ? countryLinks : undefined,
+        countryLinks: resolvedCountryLinks !== undefined ? resolvedCountryLinks : undefined,
         updatedAt: new Date(),
       })
       .where(eq(navigationMenus.location, location))

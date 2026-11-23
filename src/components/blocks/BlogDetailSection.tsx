@@ -6,6 +6,7 @@ import { ChevronDown, Check, ArrowRight, Loader2 } from 'lucide-react';
 import { useInternalNavigate } from '@/hooks/useInternalNavigate';
 import { HeroTitle } from '@/components/ui/HeroTitle';
 import { FormattedText } from '@/components/ui/FormattedText';
+import { safeImageUrl } from '@/lib/utils';
 
 export interface KeyTakeawaysSegment {
   type: 'key-takeaways';
@@ -57,6 +58,17 @@ export interface TableSegment {
 }
 
 export type ContentSegment = KeyTakeawaysSegment | ItemsSegment | CardsSegment | TableSegment;
+
+function hasVisibleCmsText(value?: string | null): boolean {
+  if (!value || typeof value !== 'string') return false;
+  const text = value
+    .replace(/[\u200B-\u200D\uFEFF]/g, '')
+    .replace(/&nbsp;/gi, ' ')
+    .replace(/<[^>]*>/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+  return text.length > 0;
+}
 
 export interface BlogDetailContent {
   // Hero & Basic Details
@@ -562,29 +574,40 @@ export function BlogDetailSection({ content }: BlogDetailSectionProps) {
               }
 
               if (seg.type === 'items') {
+                const visibleItems = (seg.items || [])
+                  .map((item) => {
+                    const title = hasVisibleCmsText(item.title) ? item.title : '';
+                    const descriptions = (item.descriptions || []).filter(hasVisibleCmsText);
+                    const image = safeImageUrl(item.image);
+                    return { title, descriptions, image };
+                  })
+                  .filter((item) => item.title || item.descriptions.length > 0 || item.image);
+
+                if (visibleItems.length === 0) return null;
+
                 return (
                   <div key={segId} id={segId} className="scroll-mt-28 space-y-10">
-                    {seg.items?.map((item, iIdx) => (
+                    {visibleItems.map((item, iIdx) => (
                       <div key={iIdx} className="space-y-6">
-                        {item.title && (
+                        {item.title ? (
                           <FormattedText
                             content={item.title}
                             as="div"
                             className="text-xl sm:text-2xl font-bold text-slate-900 [&_p]:text-inherit [&_p]:font-bold [&_p]:m-0"
                           />
-                        )}
-                        {item.descriptions && item.descriptions.length > 0 && (
+                        ) : null}
+                        {item.descriptions.length > 0 ? (
                           <div className="space-y-4 text-sm sm:text-base text-slate-600 leading-relaxed font-normal">
                             {item.descriptions.map((dText, dIdx) => (
                               <FormattedText key={dIdx} content={dText} />
                             ))}
                           </div>
-                        )}
-                        {item.image && (
+                        ) : null}
+                        {item.image ? (
                           <div className="my-6 rounded-2xl overflow-hidden border border-slate-100 bg-white shadow-sm p-3 flex items-center justify-center">
                             <img src={item.image} alt={item.title || 'Item image'} className="w-full h-auto object-contain max-h-[450px]" />
                           </div>
-                        )}
+                        ) : null}
                       </div>
                     ))}
                   </div>

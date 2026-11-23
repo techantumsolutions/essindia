@@ -255,6 +255,7 @@ export function CaseStudyManager({ pageId, onRefresh }: { pageId?: string; onRef
 
   // Results
   const [resultsTitle, setResultsTitle] = React.useState('');
+  const [resultsSubtitle, setResultsSubtitle] = React.useState('');
   const [resultsItems, setResultsItems] = React.useState(['']);
 
   const totalPages = Math.max(1, Math.ceil(studies.length / itemsPerPage));
@@ -361,7 +362,7 @@ export function CaseStudyManager({ pageId, onRefresh }: { pageId?: string; onRef
     setOverview(''); setOverviewImage1(''); setOverviewImage2('');
     setChallengeTitle(''); setChallengeDescription(''); setChallengeImage(''); setChallengePoints([{ title: '', description: '' }]);
     setSolutionsTitle(''); setSolutionsDescription(''); setSolutionModules([{ name: '', description: '', icon: '' }]);
-    setResultsTitle(''); setResultsItems(['']);
+    setResultsTitle(''); setResultsSubtitle(''); setResultsItems(['']);
     setActiveTab('basic');
   };
 
@@ -406,6 +407,7 @@ export function CaseStudyManager({ pageId, onRefresh }: { pageId?: string; onRef
       setSolutionModules(Array.isArray(content.solutionModules) && content.solutionModules.length > 0 ? content.solutionModules : [{ name: '', description: '', icon: '' }]);
 
       setResultsTitle(content.resultsTitle || '');
+      setResultsSubtitle(content.resultsSubtitle || content.resultsHtml || '');
       setResultsItems(Array.isArray(content.resultsItems) && content.resultsItems.length > 0 ? content.resultsItems : ['']);
 
       setActiveTab('basic');
@@ -520,6 +522,7 @@ export function CaseStudyManager({ pageId, onRefresh }: { pageId?: string; onRef
               solutionsDescription: cs.solutionsDescription || cs.solutionHtml,
               solutionModules: cs.solutionModules,
               resultsTitle: cs.resultsTitle,
+              resultsSubtitle: cs.resultsSubtitle || cs.resultsHtml,
               resultsItems: cs.resultsItems,
               gradientFrom: cs.gradientFrom || '#1e2445',
               gradientTo: cs.gradientTo || '#292048',
@@ -577,6 +580,7 @@ export function CaseStudyManager({ pageId, onRefresh }: { pageId?: string; onRef
         solutionsDescription: solutionsDescription || undefined,
         solutionModules: filteredSolutions.length > 0 ? filteredSolutions : undefined,
         resultsTitle: resultsTitle || undefined,
+        resultsSubtitle: resultsSubtitle || undefined,
         resultsItems: filteredResults.length > 0 ? filteredResults : undefined,
       };
 
@@ -1051,6 +1055,16 @@ export function CaseStudyManager({ pageId, onRefresh }: { pageId?: string; onRef
                       <div className="space-y-1">
                         <label className="admin-label">Results Title</label>
                         <input type="text" value={resultsTitle} onChange={(e) => setResultsTitle(e.target.value)} className="admin-input" />
+                      </div>
+                      <div className="space-y-1">
+                        <label className="admin-label">Results Description</label>
+                        <textarea
+                          value={resultsSubtitle}
+                          onChange={(e) => setResultsSubtitle(e.target.value)}
+                          rows={4}
+                          placeholder="Description shown under the results title"
+                          className="admin-input resize-y min-h-[96px]"
+                        />
                       </div>
                       <div className="space-y-3">
                         <label className="admin-label">Result Items</label>
@@ -2837,7 +2851,13 @@ export default function PageEditor() {
 
       const savePromises: Promise<Response>[] = [];
 
-      if (metaChanged) {
+      const navIdStillExists =
+        !!page.navigationItemId &&
+        (navItems.length === 0 || navItems.some((n) => n.id === page.navigationItemId));
+      const staleNavigationLink = !!page.navigationItemId && navItems.length > 0 && !navIdStillExists;
+
+      if (metaChanged || staleNavigationLink) {
+        const navigationItemId = navIdStillExists ? page.navigationItemId || null : null;
         savePromises.push(
           fetch(`/api/admin/pages/${pageId}`, {
             method: 'PATCH',
@@ -2846,10 +2866,10 @@ export default function PageEditor() {
               title: page.title,
               slug: page.slug,
               fullPath: page.fullPath,
-              navigationItemId: page.navigationItemId || null,
-              megaMenuCategoryId: page.megaMenuCategoryId || null,
-              megaMenuSubCategoryId: page.megaMenuSubCategoryId || null,
-              megaMenuSubSubCategoryId: page.megaMenuSubSubCategoryId || null,
+              navigationItemId,
+              megaMenuCategoryId: navigationItemId ? page.megaMenuCategoryId || null : null,
+              megaMenuSubCategoryId: navigationItemId ? page.megaMenuSubCategoryId || null : null,
+              megaMenuSubSubCategoryId: navigationItemId ? page.megaMenuSubSubCategoryId || null : null,
             }),
           })
         );
@@ -3689,12 +3709,30 @@ export default function PageEditor() {
                   ) : (
                     <input
                       type="text"
-                      placeholder="page-slug"
-                      value={page.slug}
+                      placeholder="/page-slug"
+                      value={
+                        page.fullPath === '/' || page.slug === 'index' || page.slug === '/'
+                          ? '/'
+                          : page.fullPath || (page.slug ? `/${page.slug}` : '')
+                      }
                       onChange={(e) => {
-                        const val = e.target.value.toLowerCase().replace(/[^a-z0-9-]+/g, '');
+                        let val = e.target.value.toLowerCase().replace(/[^a-z0-9-/]+/g, '');
+                        val = val.replace(/\/+/g, '/');
+                        if (val && !val.startsWith('/')) val = `/${val}`;
+
+                        if (val === '/' || val === '') {
+                          setPage((prev) =>
+                            prev
+                              ? { ...prev, slug: val === '/' ? 'index' : '', fullPath: val || '/' }
+                              : prev
+                          );
+                          return;
+                        }
+
+                        const parts = val.split('/').filter(Boolean);
+                        const lastSegment = parts[parts.length - 1] || 'index';
                         setPage((prev) =>
-                          prev ? { ...prev, slug: val, fullPath: `/${val}` } : prev
+                          prev ? { ...prev, slug: lastSegment, fullPath: `/${parts.join('/')}` } : prev
                         );
                       }}
                       className="w-full bg-slate-50 rounded-xl px-4 py-3 text-sm font-mono outline-none focus:ring-2 focus:ring-[#4B2A63]/10 border border-transparent focus:border-[#4B2A63]/20 text-slate-800 font-medium"

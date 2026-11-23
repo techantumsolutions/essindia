@@ -25,31 +25,24 @@ export default function ManufacturingProcess({ content }: { content?: any }) {
   const steps = content?.processes || defaultSteps;
 
   const scrollRef = useRef<HTMLDivElement>(null);
-  const pausedRef = useRef(false);
-  const loopingRef = useRef(false);
   const [perView, setPerView] = useState(4);
-  const [canScroll, setCanScroll] = useState(false);
+  const [canScrollLeft, setCanScrollLeft] = useState(false);
+  const [canScrollRight, setCanScrollRight] = useState(false);
 
-  const shouldLoop = steps.length > perView;
-  loopingRef.current = shouldLoop;
-  const slides = shouldLoop ? [...steps, ...steps] : steps;
+  const slides = steps;
+  const canScroll = canScrollLeft || canScrollRight;
 
   const checkScroll = useCallback(() => {
     const el = scrollRef.current;
-    if (!el) return;
-    setCanScroll(el.scrollWidth - el.clientWidth > 8);
+    if (!el) {
+      setCanScrollLeft(false);
+      setCanScrollRight(false);
+      return;
+    }
+    const maxScroll = el.scrollWidth - el.clientWidth;
+    setCanScrollLeft(el.scrollLeft > 8);
+    setCanScrollRight(maxScroll > 8 && el.scrollLeft < maxScroll - 8);
   }, []);
-
-  const normalizeLoop = useCallback(() => {
-    const el = scrollRef.current;
-    if (!el || !loopingRef.current || steps.length === 0) return;
-    const cycle = getSlideStep(el) * steps.length;
-    if (cycle <= 0 || el.scrollLeft < cycle - 1) return;
-    const previous = el.style.scrollBehavior;
-    el.style.scrollBehavior = 'auto';
-    el.scrollLeft = el.scrollLeft - cycle;
-    el.style.scrollBehavior = previous;
-  }, [steps.length]);
 
   const scrollByCard = useCallback((direction: 'left' | 'right') => {
     const el = scrollRef.current;
@@ -57,17 +50,11 @@ export default function ManufacturingProcess({ content }: { content?: any }) {
     const step = getSlideStep(el);
     const maxScroll = el.scrollWidth - el.clientWidth;
     if (maxScroll <= 8 || step <= 0) return;
-
-    if (direction === 'left' && loopingRef.current && el.scrollLeft <= 8) {
-      const cycle = step * steps.length;
-      const previous = el.style.scrollBehavior;
-      el.style.scrollBehavior = 'auto';
-      el.scrollLeft = el.scrollLeft + cycle;
-      el.style.scrollBehavior = previous;
-    }
+    if (direction === 'left' && el.scrollLeft <= 8) return;
+    if (direction === 'right' && el.scrollLeft >= maxScroll - 8) return;
 
     el.scrollBy({ left: direction === 'right' ? step : -step, behavior: 'smooth' });
-  }, [steps.length]);
+  }, []);
 
   useEffect(() => {
     const sm = window.matchMedia('(min-width: 640px)');
@@ -87,35 +74,20 @@ export default function ManufacturingProcess({ content }: { content?: any }) {
     const el = scrollRef.current;
     if (!el) return;
 
-    let settleTimer = 0;
-    const onScroll = () => {
-      checkScroll();
-      window.clearTimeout(settleTimer);
-      settleTimer = window.setTimeout(() => normalizeLoop(), 80);
-    };
+    const onScroll = () => checkScroll();
+    const frame = window.requestAnimationFrame(checkScroll);
+    const ro = typeof ResizeObserver !== 'undefined' ? new ResizeObserver(checkScroll) : null;
+    ro?.observe(el);
 
     el.addEventListener('scroll', onScroll, { passive: true });
     window.addEventListener('resize', checkScroll);
     return () => {
-      window.clearTimeout(settleTimer);
+      window.cancelAnimationFrame(frame);
+      ro?.disconnect();
       el.removeEventListener('scroll', onScroll);
       window.removeEventListener('resize', checkScroll);
     };
-  }, [checkScroll, normalizeLoop, slides.length]);
-
-  useEffect(() => {
-    const el = scrollRef.current;
-    if (!el || !shouldLoop) return;
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-
-    const id = window.setInterval(() => {
-      if (pausedRef.current) return;
-      if (el.scrollWidth - el.clientWidth <= 8) return;
-      el.scrollBy({ left: getSlideStep(el), behavior: 'smooth' });
-    }, 4500);
-
-    return () => window.clearInterval(id);
-  }, [shouldLoop, steps.length]);
+  }, [checkScroll, slides.length]);
 
   return (
     <section className="py-14 bg-white px-6">
@@ -132,17 +104,14 @@ export default function ManufacturingProcess({ content }: { content?: any }) {
           </p>
         </div>
 
-        <div
-          className="relative"
-          onMouseEnter={() => { pausedRef.current = true; }}
-          onMouseLeave={() => { pausedRef.current = false; }}
-        >
+        <div className="relative">
           {canScroll && (
             <button
               type="button"
               onClick={() => scrollByCard('left')}
+              disabled={!canScrollLeft}
               aria-label="Previous process steps"
-              className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-1 md:-translate-x-3 z-20 w-10 h-10 rounded-full bg-white border border-[#27256b]/15 text-[#27256b] shadow-md flex items-center justify-center hover:bg-[#27256b] hover:text-white transition-colors cursor-pointer"
+              className={`absolute left-0 top-1/2 -translate-y-1/2 -translate-x-1 md:-translate-x-3 z-20 w-10 h-10 rounded-full bg-white border border-[#27256b]/15 text-[#27256b] shadow-md flex items-center justify-center transition-colors ${canScrollLeft ? 'hover:bg-[#27256b] hover:text-white cursor-pointer' : 'opacity-40 cursor-not-allowed'}`}
             >
               <ChevronLeft className="w-5 h-5" />
             </button>
@@ -151,8 +120,9 @@ export default function ManufacturingProcess({ content }: { content?: any }) {
             <button
               type="button"
               onClick={() => scrollByCard('right')}
+              disabled={!canScrollRight}
               aria-label="Next process steps"
-              className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-1 md:translate-x-3 z-20 w-10 h-10 rounded-full bg-white border border-[#27256b]/15 text-[#27256b] shadow-md flex items-center justify-center hover:bg-[#27256b] hover:text-white transition-colors cursor-pointer"
+              className={`absolute right-0 top-1/2 -translate-y-1/2 translate-x-1 md:translate-x-3 z-20 w-10 h-10 rounded-full bg-white border border-[#27256b]/15 text-[#27256b] shadow-md flex items-center justify-center transition-colors ${canScrollRight ? 'hover:bg-[#27256b] hover:text-white cursor-pointer' : 'opacity-40 cursor-not-allowed'}`}
             >
               <ChevronRight className="w-5 h-5" />
             </button>
@@ -160,16 +130,14 @@ export default function ManufacturingProcess({ content }: { content?: any }) {
 
           <div
             ref={scrollRef}
-            className={`flex items-stretch gap-8 overflow-x-auto snap-x snap-mandatory py-3 -my-3 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden ${shouldLoop ? '' : 'justify-center'}`}
+            className={`flex items-stretch gap-8 overflow-x-auto snap-x snap-mandatory py-3 -my-3 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden ${steps.length <= perView ? 'justify-center' : ''}`}
             role="region"
             aria-label="Process steps carousel"
           >
             {slides.map((step: any, i: number) => {
-              const isClone = shouldLoop && i >= steps.length;
               return (
                 <div
                   key={`${step.label}-${i}`}
-                  aria-hidden={isClone ? true : undefined}
                   className="snap-start shrink-0 w-full sm:w-[calc((100%-2rem)/2)] lg:w-[calc((100%-6rem)/4)] flex justify-center relative group"
                 >
                   <motion.div

@@ -38,6 +38,11 @@ export default function AdminLogin() {
         body: JSON.stringify({ email: username, password })
       });
 
+      const contentType = res.headers.get('content-type') || '';
+      if (!contentType.includes('application/json')) {
+        throw new Error('Login service is unavailable. Please try again.');
+      }
+
       const data = await res.json();
       if (!res.ok) {
         throw new Error(data.error || 'Invalid credentials. Please try again.');

@@ -24,6 +24,18 @@ import {
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { humanLabel } from './field-utils';
+import { LineHeight } from './line-height-extension';
+
+const LINE_SPACING_OPTIONS = [
+  { value: '', label: 'Line spacing' },
+  { value: '1', label: '1.0' },
+  { value: '1.15', label: '1.15' },
+  { value: '1.5', label: '1.5' },
+  { value: '1.8', label: '1.8' },
+  { value: '2', label: '2.0' },
+  { value: '2.5', label: '2.5' },
+  { value: '3', label: '3.0' },
+];
 
 interface RichTextFieldProps {
   fieldKey: string;
@@ -32,6 +44,7 @@ interface RichTextFieldProps {
   onChange: (value: string) => void;
   placeholder?: string;
   maxLength?: number;
+  enableLineSpacing?: boolean;
 }
 
 function ToolbarButton({
@@ -62,7 +75,7 @@ function ToolbarButton({
   );
 }
 
-export function RichTextField({ fieldKey, label, value, onChange, placeholder, maxLength }: RichTextFieldProps) {
+export function RichTextField({ fieldKey, label, value, onChange, placeholder, maxLength, enableLineSpacing = false }: RichTextFieldProps) {
   const isHtml = value.includes('<') && value.includes('>');
 
   const editor = useEditor({
@@ -81,6 +94,7 @@ export function RichTextField({ fieldKey, label, value, onChange, placeholder, m
       Placeholder.configure({
         placeholder: placeholder || `Enter ${humanLabel(fieldKey).toLowerCase()}...`,
       }),
+      ...(enableLineSpacing ? [LineHeight] : []),
     ],
     content: isHtml ? value : `<p>${value || ''}</p>`,
     onUpdate: ({ editor: ed }) => {
@@ -242,6 +256,36 @@ export function RichTextField({ fieldKey, label, value, onChange, placeholder, m
           >
             <Redo className="w-4 h-4" />
           </ToolbarButton>
+
+          {enableLineSpacing && (
+            <>
+              <div className="w-px h-5 bg-slate-200 mx-1" />
+              <select
+                title="Line spacing"
+                aria-label="Line spacing"
+                className="h-7 max-w-[118px] text-[11px] rounded-md border border-slate-200 bg-white px-1.5 text-slate-600 cursor-pointer"
+                value={
+                  editor.getAttributes('paragraph').lineHeight ||
+                  editor.getAttributes('heading').lineHeight ||
+                  ''
+                }
+                onChange={(e) => {
+                  const next = e.target.value;
+                  if (!next) {
+                    editor.chain().focus().unsetLineHeight().run();
+                  } else {
+                    editor.chain().focus().setLineHeight(next).run();
+                  }
+                }}
+              >
+                {LINE_SPACING_OPTIONS.map((opt) => (
+                  <option key={opt.value || 'default'} value={opt.value}>
+                    {opt.label}
+                  </option>
+                ))}
+              </select>
+            </>
+          )}
         </div>
 
         <EditorContent editor={editor} />

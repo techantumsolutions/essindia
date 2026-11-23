@@ -92,7 +92,11 @@ export function Header({
   const [scrolled, setScrolled] = React.useState(false);
   const pathname = usePathname();
   const countryRef = React.useRef<HTMLDivElement>(null);
+  const headerRowRef = React.useRef<HTMLDivElement>(null);
   const [countryClearance, setCountryClearance] = React.useState(0);
+  const [useCompactNav, setUseCompactNav] = React.useState(false);
+  const compactNavRef = React.useRef(false);
+  const fitMetricsRef = React.useRef({ logo: 0, nav: 0, actions: 0 });
 
   const toggleMobileItem = (itemId: string) => {
     setExpandedMobileItems((prev) => ({
@@ -135,14 +139,88 @@ export function Header({
   }, [isMobileMenuOpen]);
 
   React.useEffect(() => {
+    compactNavRef.current = useCompactNav;
+  }, [useCompactNav]);
+
+  React.useEffect(() => {
     const handleResize = () => {
-      if (window.innerWidth >= 1280) {
+      if (window.innerWidth >= 1280 && !compactNavRef.current) {
         setIsMobileMenuOpen(false);
       }
     };
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, []);
+
+  React.useEffect(() => {
+    const row = headerRowRef.current;
+    if (!row) return;
+
+    const measureFit = () => {
+      if (window.innerWidth < 1280) {
+        if (compactNavRef.current) {
+          compactNavRef.current = false;
+          setUseCompactNav(false);
+        }
+        return;
+      }
+
+      const logo = row.querySelector('[data-header-logo]') as HTMLElement | null;
+      const nav = row.querySelector('[data-header-nav]') as HTMLElement | null;
+      const actions = row.querySelector('[data-header-actions]') as HTMLElement | null;
+      const metrics = fitMetricsRef.current;
+      const list = nav?.querySelector('[data-slot="navigation-menu-list"]') as HTMLElement | null;
+
+      if (logo && logo.offsetWidth > 0) metrics.logo = logo.offsetWidth;
+      if (actions && actions.offsetWidth > 0) metrics.actions = actions.offsetWidth;
+      if (list && getComputedStyle(nav!).display !== 'none') {
+        const triggers = list.querySelectorAll<HTMLElement>(
+          '[data-slot="navigation-menu-trigger"], [data-slot="navigation-menu-link"]'
+        );
+        const contentWidth = Array.from(triggers).reduce(
+          (sum, el) => sum + el.offsetWidth,
+          0
+        );
+        if (contentWidth > 0) metrics.nav = contentWidth;
+      }
+
+      if (!metrics.nav) return;
+
+      const styles = window.getComputedStyle(row);
+      const horizontalPad =
+        (parseFloat(styles.paddingLeft) || 0) +
+        (parseFloat(styles.paddingRight) || 0);
+      const columnGap = parseFloat(styles.columnGap || styles.gap) || 0;
+      const availableForNav =
+        row.clientWidth - horizontalPad - metrics.logo - metrics.actions - columnGap * 2;
+      const shouldCompact = compactNavRef.current
+        ? availableForNav < metrics.nav + 8
+        : availableForNav < metrics.nav;
+
+      if (shouldCompact !== compactNavRef.current) {
+        compactNavRef.current = shouldCompact;
+        setUseCompactNav(shouldCompact);
+      }
+    };
+
+    measureFit();
+    const raf = window.requestAnimationFrame(measureFit);
+    const timeouts = [50, 200, 500].map((ms) => window.setTimeout(measureFit, ms));
+    const ro = typeof ResizeObserver !== 'undefined' ? new ResizeObserver(measureFit) : null;
+    const nav = row.querySelector('[data-header-nav]');
+    if (ro) {
+      ro.observe(row);
+      if (nav) ro.observe(nav);
+    }
+    window.addEventListener('resize', measureFit);
+
+    return () => {
+      window.cancelAnimationFrame(raf);
+      timeouts.forEach((id) => window.clearTimeout(id));
+      if (ro) ro.disconnect();
+      window.removeEventListener('resize', measureFit);
+    };
+  }, [navData, getStartedText, countryLinks, countryClearance]);
 
   React.useEffect(() => {
     const handleScroll = () => {
@@ -160,18 +238,22 @@ export function Header({
     }
 
     const updateClearance = () => {
-      const countryWidth = el.offsetWidth;
-      const windowWidth = window.innerWidth;
-      const maxW = 1280;
-      const outsideMargin = windowWidth > maxW ? (windowWidth - maxW) / 2 : 0;
-      const needed = countryWidth + 14 - outsideMargin;
-      setCountryClearance(needed > 0 ? needed : 0);
+      const row = headerRowRef.current;
+      if (!row) {
+        setCountryClearance(0);
+        return;
+      }
+      const gap = el.getBoundingClientRect().left - row.getBoundingClientRect().right;
+      setCountryClearance(gap >= 8 ? 0 : Math.max(0, Math.ceil(8 - gap)));
     };
 
     updateClearance();
 
     const ro = typeof ResizeObserver !== 'undefined' ? new ResizeObserver(updateClearance) : null;
-    if (ro) ro.observe(el);
+    if (ro) {
+      ro.observe(el);
+      if (headerRowRef.current) ro.observe(headerRowRef.current);
+    }
     window.addEventListener('resize', updateClearance);
 
     return () => {
@@ -193,10 +275,13 @@ export function Header({
           "bg-white py-3 shadow-[0_4px_25px_-5px_rgba(0,0,0,0.1)] border-b border-slate-200"
         )}
       >
-        <div className="mx-auto flex w-full max-w-7xl items-center justify-between px-6 md:px-8">
+        <div
+          ref={headerRowRef}
+          className="mx-auto flex w-full max-w-7xl items-center justify-between gap-1 px-6 md:px-8"
+        >
 
           {/* Logo */}
-          <Link href={logoLink || '/'} className="flex items-center group shrink-0 relative z-10">
+          <Link href={logoLink || '/'} data-header-logo className="flex items-center group shrink-0 relative z-10">
             <div className="relative">
               <img
                 src={logoUrl}
@@ -210,31 +295,44 @@ export function Header({
           </Link>
 
           {/* Desktop Nav */}
-          <div className="hidden xl:flex flex-1 justify-center min-w-0">
+          <div
+            data-header-nav
+            className={cn(
+              "hidden flex-1 justify-center min-w-0 overflow-hidden",
+              !useCompactNav && "xl:flex"
+            )}
+          >
             <DesktopNav items={navData} />
           </div>
 
-          {/* Right Actions */}
-          <div
-            className="hidden xl:flex items-center space-x-3 transition-[padding] duration-200 shrink-0"
-            style={{
-              paddingRight: countryClearance > 0 ? `${countryClearance}px` : undefined,
-            }}
-          >
-            <Link href={getStartedLink}>
-              <Button className="bg-[#111] hover:bg-black text-white rounded-none px-6 py-2 transition-all duration-300 hover:shadow-lg hover:-translate-y-0.5 active:scale-95 cursor-pointer shrink-0">
-                {getStartedText}
-              </Button>
-            </Link>
-          </div>
+          <div className="flex items-center shrink-0">
+            {/* Mobile Toggle — stays with Contact Us so it never jumps to the center */}
+            <button
+              data-header-hamburger
+              className={cn(
+                "text-slate-700 p-2 hover:bg-slate-50 rounded-full transition-colors cursor-pointer shrink-0",
+                useCompactNav ? "flex xl:flex" : "xl:hidden"
+              )}
+              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+            >
+              {isMobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+            </button>
 
-          {/* Mobile Toggle */}
-          <button
-            className="xl:hidden text-slate-700 p-2 hover:bg-slate-50 rounded-full transition-colors cursor-pointer shrink-0"
-            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-          >
-            {isMobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-          </button>
+            {/* Right Actions */}
+            <div
+              data-header-actions
+              className="hidden xl:flex items-center space-x-3 transition-[padding] duration-200 shrink-0"
+              style={{
+                paddingRight: countryClearance > 0 ? `${countryClearance}px` : undefined,
+              }}
+            >
+              <Link href={getStartedLink}>
+                <Button className="bg-[#111] hover:bg-black text-white rounded-none px-6 py-2 transition-all duration-300 hover:shadow-lg hover:-translate-y-0.5 active:scale-95 cursor-pointer shrink-0">
+                  {getStartedText}
+                </Button>
+              </Link>
+            </div>
+          </div>
         </div>
 
         {/* Desktop Country Selector - positioned outside the max-w-7xl layout */}
@@ -259,7 +357,10 @@ export function Header({
               exit={{ opacity: 0 }}
               transition={{ duration: 0.25 }}
               onClick={() => setIsMobileMenuOpen(false)}
-              className="fixed inset-0 bg-black/40 backdrop-blur-xs z-40 xl:hidden touch-none"
+              className={cn(
+                "fixed inset-0 bg-black/40 backdrop-blur-xs z-40 touch-none",
+                !useCompactNav && "xl:hidden"
+              )}
               aria-hidden="true"
             />
 
@@ -269,7 +370,10 @@ export function Header({
               exit={{ opacity: 0, y: 10, scale: 0.95 }}
               transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
               style={{ maxHeight: 'calc(100dvh - 96px)', WebkitOverflowScrolling: 'touch' }}
-              className="absolute top-[80px] left-4 right-4 bg-white/95 backdrop-blur-2xl rounded-none shadow-2xl border border-slate-100 p-6 pb-8 flex flex-col gap-6 xl:hidden z-50 max-h-[calc(100vh-96px)] max-h-[calc(100dvh-96px)] overflow-y-auto overscroll-contain"
+              className={cn(
+                "absolute top-[80px] left-4 right-4 bg-white/95 backdrop-blur-2xl rounded-none shadow-2xl border border-slate-100 p-6 pb-8 flex flex-col gap-6 z-50 max-h-[calc(100vh-96px)] max-h-[calc(100dvh-96px)] overflow-y-auto overscroll-contain",
+                !useCompactNav && "xl:hidden"
+              )}
             >
             <nav className="flex flex-col gap-4 shrink-0">
               {navData.map((item) => {
@@ -373,6 +477,9 @@ export function Header({
   );
 }
 
+const desktopNavItemClass =
+  "bg-transparent hover:bg-slate-50 text-[13px] text-slate-700 font-medium cursor-pointer py-1 w-auto max-w-none shrink-0 whitespace-nowrap tracking-tight";
+
 function DesktopNav({ items = [] }: { items: NavItem[] }) {
   const [value, setValue] = React.useState<string>("");
   const [mounted, setMounted] = React.useState(false);
@@ -388,9 +495,9 @@ function DesktopNav({ items = [] }: { items: NavItem[] }) {
 
   if (!mounted) {
     return (
-      <div className="flex items-center gap-1.5">
+      <div className="flex w-full items-center justify-between">
         {items.map((item) => (
-          <span key={item.id} className="text-[13px] text-slate-700 font-medium opacity-80 px-2 py-1">
+          <span key={item.id} className="text-[13px] text-slate-700 font-medium opacity-80 py-1">
             {item.label}
           </span>
         ))}
@@ -399,8 +506,8 @@ function DesktopNav({ items = [] }: { items: NavItem[] }) {
   }
 
   return (
-    <NavigationMenu align="center" value={value} onValueChange={setValue}>
-      <NavigationMenuList className="gap-0.5">
+    <NavigationMenu align="center" value={value} onValueChange={setValue} className="w-full max-w-none">
+      <NavigationMenuList className="w-full justify-between gap-0">
         {items.map((item) => {
           const isDropdown = item.megaMenuConfig?.displayType === 'dropdown';
           const simpleLinks = item.megaMenuConfig?.links || [];
@@ -413,7 +520,7 @@ function DesktopNav({ items = [] }: { items: NavItem[] }) {
               {hasRenderableMegaMenu(item.megaMenu) ? (
                 isDropdown || !hasSubCategories ? (
                   <>
-                    <NavigationMenuTrigger className="bg-transparent hover:bg-slate-50 text-[13px] text-slate-700 font-medium cursor-pointer px-2.5 py-1">
+                    <NavigationMenuTrigger className={desktopNavItemClass}>
                       {item.label}
                     </NavigationMenuTrigger>
                     <NavigationMenuContent>
@@ -440,7 +547,7 @@ function DesktopNav({ items = [] }: { items: NavItem[] }) {
                   </>
                 ) : (
                   <>
-                    <NavigationMenuTrigger className="bg-transparent hover:bg-slate-50 text-[13px] text-slate-700 font-medium cursor-pointer px-2.5 py-1">
+                    <NavigationMenuTrigger className={desktopNavItemClass}>
                       {item.label}
                     </NavigationMenuTrigger>
                     <MegaMenuContent data={item.megaMenu!} />
@@ -448,7 +555,7 @@ function DesktopNav({ items = [] }: { items: NavItem[] }) {
                 )
               ) : simpleLinks.length > 0 ? (
                 <>
-                  <NavigationMenuTrigger className="bg-transparent hover:bg-slate-50 text-[13px] text-slate-700 font-medium cursor-pointer px-2.5 py-1">
+                  <NavigationMenuTrigger className={desktopNavItemClass}>
                     {item.label}
                   </NavigationMenuTrigger>
                   <NavigationMenuContent>
@@ -475,7 +582,7 @@ function DesktopNav({ items = [] }: { items: NavItem[] }) {
                 </>
               ) : item.children && item.children.length > 0 ? (
                 <>
-                  <NavigationMenuTrigger className="bg-transparent hover:bg-slate-50 text-[13px] text-slate-700 font-medium cursor-pointer px-2.5 py-1">
+                  <NavigationMenuTrigger className={desktopNavItemClass}>
                     {item.label}
                   </NavigationMenuTrigger>
                   <NavigationMenuContent>
@@ -491,7 +598,7 @@ function DesktopNav({ items = [] }: { items: NavItem[] }) {
                   </NavigationMenuContent>
                 </>
               ) : (
-                <NavigationMenuLink render={<Link href={item.url || '#'} />} className={cn(navigationMenuTriggerStyle(), "bg-transparent hover:bg-slate-50 text-[13px] text-slate-700 font-medium cursor-pointer px-2.5 py-1")}>
+                <NavigationMenuLink render={<Link href={item.url || '#'} />} className={cn(navigationMenuTriggerStyle(), desktopNavItemClass)}>
                   {item.label}
                 </NavigationMenuLink>
               )}

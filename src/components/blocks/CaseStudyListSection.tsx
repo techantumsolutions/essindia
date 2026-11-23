@@ -121,6 +121,18 @@ export function CaseStudyListSection({ content }: CaseStudyListSectionProps) {
     return filteredCaseStudies.slice(0, visibleCount);
   }, [filteredCaseStudies, visibleCount]);
 
+  const visibleTopics = React.useMemo(
+    () => topicsList.filter((topic) => caseStudies.some((cs) => cs.topic === topic)),
+    [topicsList, caseStudies]
+  );
+
+  const visibleIndustries = React.useMemo(
+    () => industriesList.filter((industry) =>
+      caseStudies.some((cs) => Array.isArray(cs.industries) && cs.industries.includes(industry))
+    ),
+    [industriesList, caseStudies]
+  );
+
   const loadMore = () => {
     setVisibleCount(prev => Math.min(prev + 6, filteredCaseStudies.length));
   };
@@ -207,6 +219,7 @@ export function CaseStudyListSection({ content }: CaseStudyListSectionProps) {
               </div>
 
               {/* Topics Filter */}
+              {visibleTopics.length > 0 && (
               <div className="space-y-4">
                 <button
                   onClick={() => setTopicsOpen(!topicsOpen)}
@@ -224,7 +237,7 @@ export function CaseStudyListSection({ content }: CaseStudyListSectionProps) {
                       exit={{ opacity: 0, height: 0 }}
                       className="overflow-hidden pl-1 space-y-2.5 pt-1"
                     >
-                      {topicsList.map(topic => {
+                      {visibleTopics.map(topic => {
                         const isChecked = selectedTopics.includes(topic);
                         return (
                           <label key={topic} className="flex items-center gap-3 text-sm text-[#404040] font-normal cursor-pointer select-none group">
@@ -244,8 +257,10 @@ export function CaseStudyListSection({ content }: CaseStudyListSectionProps) {
                   )}
                 </AnimatePresence>
               </div>
+              )}
 
               {/* Industries Filter */}
+              {visibleIndustries.length > 0 && (
               <div className="space-y-4 pt-6">
                 <button
                   onClick={() => setIndustriesOpen(!industriesOpen)}
@@ -263,7 +278,7 @@ export function CaseStudyListSection({ content }: CaseStudyListSectionProps) {
                       exit={{ opacity: 0, height: 0 }}
                       className="overflow-hidden pl-1 space-y-2.5 pt-1"
                     >
-                      {industriesList.map(industry => {
+                      {visibleIndustries.map(industry => {
                         const isChecked = selectedIndustries.includes(industry);
                         return (
                           <label key={industry} className="flex items-center gap-3 text-sm text-[#404040] font-normal cursor-pointer select-none group">
@@ -283,6 +298,7 @@ export function CaseStudyListSection({ content }: CaseStudyListSectionProps) {
                   )}
                 </AnimatePresence>
               </div>
+              )}
 
             </div>
           </div>

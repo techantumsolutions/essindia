@@ -36,6 +36,7 @@ import CareerPerks from '@/components/blocks/CareerPerks';
 import CareerLife from '@/components/blocks/CareerLife';
 import CareerPositions from '@/components/blocks/CareerPositions';
 import CareerCta from '@/components/blocks/CareerCta';
+import CtaSection from '@/components/blocks/CtaSection';
 import JobDetailHero from '@/components/blocks/JobDetailHero';
 import JobDetailContent from '@/components/blocks/JobDetailContent';
 import { BlogListSection } from '@/components/blocks/BlogListSection';
@@ -306,6 +307,8 @@ export function SectionRenderer({ section }: SectionRendererProps) {
       return <CareerPositions content={section.content} />;
     case 'career-cta':
       return <CareerCta content={section.content} />;
+    case 'cta':
+      return <CtaSection content={section.content} />;
     case 'job-detail-hero':
       return <JobDetailHero content={section.content} />;
     case 'job-detail-content':

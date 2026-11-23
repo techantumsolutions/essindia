@@ -128,7 +128,10 @@ export default function NavigationModule() {
           getStartedText: menuSettings.getStartedText,
           getStartedLink: menuSettings.getStartedLink,
           countryDropdownText: menuSettings.countryDropdownText,
-          countryLinks: menuSettings.countryLinks || [],
+          countryLinks: ((menuSettings.countryLinks as any[]) || []).map((link: any) => {
+            const livePage = registryPages.find((p) => p.id === link.pageId);
+            return livePage?.routePath ? { ...link, redirectUrl: livePage.routePath } : link;
+          }),
         }),
       });
 
@@ -903,6 +906,10 @@ export default function NavigationModule() {
                   <div className="space-y-2">
                     {((menuSettings.countryLinks as any[]) || []).map((cLink: any, idx: number) => {
                       const hasCssFlag = /^[a-z]{2}$/i.test(String(cLink.countryCode || ''));
+                      const liveRoute =
+                        (cLink.pageId &&
+                          registryPages.find((p) => p.id === cLink.pageId)?.routePath) ||
+                        cLink.redirectUrl;
                       return (
                         <div key={idx} className="p-3 bg-slate-50 rounded-xl border border-slate-200 flex items-center gap-3 relative">
                           <div className="flex-1 grid grid-cols-1 sm:grid-cols-3 gap-2">
@@ -989,8 +996,8 @@ export default function NavigationModule() {
                                     );
                                   })}
                               </select>
-                              {cLink.redirectUrl ? (
-                                <p className="text-[10px] font-mono text-slate-400 pt-0.5">Route: {cLink.redirectUrl}</p>
+                              {liveRoute ? (
+                                <p className="text-[10px] font-mono text-slate-400 pt-0.5">Route: {liveRoute}</p>
                               ) : null}
                             </div>
                           </div>

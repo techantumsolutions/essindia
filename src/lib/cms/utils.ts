@@ -11,10 +11,23 @@ export function slugify(text: string): string {
 
 export function buildFullPath(parentPath: string | null, slug: string): string {
   if (!parentPath || parentPath === '/') {
-    return slug === 'index' ? '/' : `/${slug}`;
+    return slug === 'index' || slug === '/' ? '/' : `/${slug}`;
   }
   const base = parentPath.endsWith('/') ? parentPath.slice(0, -1) : parentPath;
   return `${base}/${slug}`;
+}
+
+/** True for the site homepage route (`/`), including the legacy `/index` slug. */
+export function isRootHomepagePath(path?: string | null): boolean {
+  if (!path) return false;
+  const trimmed = path.trim();
+  return trimmed === '/' || trimmed === '/index' || trimmed === 'index';
+}
+
+/** Public href for a stored CMS path. Legacy homepage slug `index` is always `/`. */
+export function normalizeHomepagePath(path?: string | null): string | undefined {
+  if (path == null || path === '') return path ?? undefined;
+  return isRootHomepagePath(path) ? '/' : path;
 }
 
 export function generateSectionIdentityHash(

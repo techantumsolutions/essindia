@@ -38,6 +38,7 @@ export interface FooterSettingsData {
       industries?: string;
       services?: string;
     };
+    linkHoverColor?: string;
   };
 }
 
@@ -56,6 +57,7 @@ export const defaultFooterSettings: FooterSettingsData = {
       industries: 'Industries',
       services: 'Services'
     },
+    linkHoverColor: '#7e22ce',
     copyright: 'Copyright © 2026. Eastern Software Solutions Pvt. Ltd All Rights Reserved',
     bottomLinks: [
       { label: 'Trust & security', url: '#', pageId: null },
@@ -147,7 +149,8 @@ export class FooterRepository {
           social,
           bottomLinks: dbLinks.bottomLinks || defaultFooterSettings.links.bottomLinks,
           copyright: dbLinks.copyright ?? defaultFooterSettings.links.copyright,
-          titles: dbLinks.titles || defaultFooterSettings.links.titles
+          titles: dbLinks.titles || defaultFooterSettings.links.titles,
+          linkHoverColor: dbLinks.linkHoverColor || defaultFooterSettings.links.linkHoverColor
         },
       };
     } catch (error) {
@@ -207,7 +210,8 @@ export class FooterRepository {
           social: dbLinks.social || social,
           bottomLinks: dbLinks.bottomLinks || [],
           copyright: dbLinks.copyright ?? '',
-          titles: dbLinks.titles || defaultFooterSettings.links.titles
+          titles: dbLinks.titles || defaultFooterSettings.links.titles,
+          linkHoverColor: dbLinks.linkHoverColor || defaultFooterSettings.links.linkHoverColor
         },
       };
     } else {
@@ -244,7 +248,8 @@ export class FooterRepository {
           social: dbLinks.social || social,
           bottomLinks: dbLinks.bottomLinks || [],
           copyright: dbLinks.copyright ?? '',
-          titles: dbLinks.titles || defaultFooterSettings.links.titles
+          titles: dbLinks.titles || defaultFooterSettings.links.titles,
+          linkHoverColor: dbLinks.linkHoverColor || defaultFooterSettings.links.linkHoverColor
         },
       };
     }

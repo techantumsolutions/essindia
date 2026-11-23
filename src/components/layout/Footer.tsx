@@ -6,9 +6,14 @@ export async function Footer() {
   const footerData = await footerRepository.getFooterSettings();
   const bottomLinks = footerData.links.bottomLinks || [];
   const copyrightText = footerData.links.copyright || 'Copyright © 2026. Eastern Software Solutions Pvt. Ltd All Rights Reserved';
+  const columnLinkHoverColor = footerData.links.linkHoverColor || '#7e22ce';
+  const columnLinkClassName = 'footer-column-link text-[13px] transition-colors';
 
   return (
-    <footer className="bg-[#ececec] border-t border-slate-100 pt-8 pb-0 px-6">
+    <footer
+      className="site-footer bg-[#ececec] border-t border-slate-100 pt-8 pb-0 px-6"
+      style={{ '--footer-col-link-hover': columnLinkHoverColor } as React.CSSProperties}
+    >
       <div className="container mx-auto max-w-7xl">
 
         {/* Top Section Grid */}
@@ -97,7 +102,7 @@ export async function Footer() {
             <ul className="space-y-1">
               {footerData.links.company.map((link, idx) => (
                 <li key={idx}>
-                  <Link href={link.url || '#'} className="text-[13px] text-black hover:text-purple-700 transition-colors">
+                  <Link href={link.url || '#'} className={columnLinkClassName}>
                     {link.label}
                   </Link>
                 </li>
@@ -113,7 +118,7 @@ export async function Footer() {
             <ul className="space-y-1">
               {footerData.links.products.map((link, idx) => (
                 <li key={idx}>
-                  <Link href={link.url || '#'} className="text-[13px] text-black hover:text-purple-700 transition-colors">
+                  <Link href={link.url || '#'} className={columnLinkClassName}>
                     {link.label}
                   </Link>
                 </li>
@@ -129,7 +134,7 @@ export async function Footer() {
             <ul className="space-y-1">
               {footerData.links.industries.map((link, idx) => (
                 <li key={idx}>
-                  <Link href={link.url || '#'} className="text-[13px] text-black hover:text-purple-700 transition-colors">
+                  <Link href={link.url || '#'} className={columnLinkClassName}>
                     {link.label}
                   </Link>
                 </li>
@@ -145,7 +150,7 @@ export async function Footer() {
             <ul className="space-y-1">
               {footerData.links.services.map((link, idx) => (
                 <li key={idx}>
-                  <Link href={link.url || '#'} className="text-[13px] text-black hover:text-purple-700 transition-colors">
+                  <Link href={link.url || '#'} className={columnLinkClassName}>
                     {link.label}
                   </Link>
                 </li>

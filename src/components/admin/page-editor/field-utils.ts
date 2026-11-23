@@ -36,6 +36,7 @@ export function isHiddenCmsField(key: string, sectionType?: string, keyPath?: st
     return true;
   }
   if ((sectionType === 'case-study-detail' || sectionType === 'case-study-detail-block') && key === 'bgColor') return true;
+  if (sectionType === 'blog-list-block' && (lower === 'bgimage' || key === 'bgImage')) return true;
 
   if (sectionType === 'blog-detail-block') {
     if (
@@ -490,6 +491,10 @@ export function humanLabel(
     return 'Subtitle';
   }
 
+  if (options?.sectionType === 'cta' && key === 'ctaText') {
+    return 'Button Text';
+  }
+
   if (options?.keyPath?.includes('challengePoints') || options?.keyPath?.includes('challenge_points')) {
     if (key === 'title') return 'Point Title';
     if (key === 'description') return 'Point Description';
@@ -747,6 +752,10 @@ export function detectFieldType(
     const lower = key.toLowerCase();
 
     if (sectionType === 'fmcg-tabs' && (lower === 'text' || lower === 'question' || lower === 'quotation')) {
+      return 'text';
+    }
+
+    if (sectionType === 'landing2-hero' && lower === 'text' && keyPath?.includes('badges')) {
       return 'text';
     }
 

@@ -80,6 +80,7 @@ export async function POST(request: Request) {
       if (
         msg.includes('Duplicate') ||
         msg.includes('already exists') ||
+        msg.includes('already used') ||
         msg.includes('already allocated') ||
         msg.includes('Invalid navigation') ||
         msg.includes('required')

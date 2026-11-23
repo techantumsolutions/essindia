@@ -48,6 +48,9 @@ export function DynamicFieldRenderer({
   ) {
     fieldType = 'text';
   }
+  if (sectionType === 'landing2-hero' && fieldKey === 'text' && keyPath.includes('badges')) {
+    fieldType = 'text';
+  }
   if (
     sectionType === 'oracle-apex-why-migrate' &&
     (fieldKey === 'tagText1' || fieldKey === 'tagText2' || fieldKey === 'tagText3' || fieldKey.toLowerCase().includes('tag'))
@@ -229,6 +232,7 @@ export function DynamicFieldRenderer({
           value={value as string}
           onChange={(v) => onChange(keyPath, v)}
           maxLength={sectionType === 'rpa-capabilities' && keyPath.includes('items') && fieldKey === 'description' ? 120 : undefined}
+          enableLineSpacing={sectionType === 'privacy-policy-block' && fieldKey === 'contentHtml'}
         />
       );
 

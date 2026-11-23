@@ -8,14 +8,26 @@ import { usePathname } from 'next/navigation';
 import { useInternalNavigate } from '@/hooks/useInternalNavigate';
 import { HeroTitle } from '@/components/ui/HeroTitle';
 import { FormattedText } from '@/components/ui/FormattedText';
+import { cn, getHeroBackgroundStyles } from '@/lib/utils';
 
 import { defaultBlogs, type BlogPost, DEFAULT_TOPICS, DEFAULT_INDUSTRIES } from '@/lib/blogs-data';
 
 interface BlogListContent {
   badgeText?: string;
+  badgeBgColor?: string;
+  badgeTextColor?: string;
+  badgeBorderColor?: string;
   headingText?: string;
+  titleColor?: string;
+  titleGradientFrom?: string;
+  titleGradientTo?: string;
+  enableTitleGradientAnimation?: boolean;
   subheadingText?: string;
-  bgImage?: string;
+  subheadingTextColor?: string;
+  bgColor?: string;
+  gradientColor1?: string;
+  gradientColor2?: string;
+  gradientColor3?: string;
   topics?: string[];
   industries?: string[];
 }
@@ -29,7 +41,6 @@ export function BlogListSection({ content }: BlogListSectionProps) {
   const badge = content?.badgeText || 'Latest Blogs';
   const heading = content?.headingText || 'Press & Media Resources';
   const subheading = content?.subheadingText || 'Everything journalists, analysts, and partners need to cover ESS — from brand assets to company facts. Everything journalists, analysts, and partners need to cover ESS— from brand assets to company facts.';
-  const bgImage = content?.bgImage;
   const [dynamicTopics, setDynamicTopics] = React.useState<string[]>(
     content?.topics && content.topics.length > 0 ? content.topics : []
   );
@@ -129,9 +140,42 @@ export function BlogListSection({ content }: BlogListSectionProps) {
     return filteredBlogs.slice(0, visibleCount);
   }, [filteredBlogs, visibleCount]);
 
+  const visibleTopics = React.useMemo(
+    () => topicsList.filter((topic) => blogs.some((blog) => blog.topic === topic)),
+    [topicsList, blogs]
+  );
+
+  const visibleIndustries = React.useMemo(
+    () => industriesList.filter((industry) =>
+      blogs.some((blog) => Array.isArray(blog.industries) && blog.industries.includes(industry))
+    ),
+    [industriesList, blogs]
+  );
+
   const loadMore = () => {
     setVisibleCount(prev => Math.min(prev + 6, filteredBlogs.length));
   };
+
+  const cmsColor = (value?: string) =>
+    typeof value === 'string' ? value.replace(/[\u200B-\u200D\uFEFF]/g, '').trim() : '';
+
+  const badgeBgColor = cmsColor(content?.badgeBgColor);
+  const badgeTextColor = cmsColor(content?.badgeTextColor);
+  const badgeBorderColor = cmsColor(content?.badgeBorderColor);
+  const titleColor = cmsColor(content?.titleColor);
+  const titleGradientFrom = cmsColor(content?.titleGradientFrom);
+  const titleGradientTo = cmsColor(content?.titleGradientTo);
+  const subheadingTextColor = cmsColor(content?.subheadingTextColor);
+  const bgColor = cmsColor(content?.bgColor);
+  const hasTitleGradient = Boolean(titleGradientFrom || titleGradientTo);
+  const heroStyle = getHeroBackgroundStyles(
+    {
+      gradientColor1: cmsColor(content?.gradientColor1),
+      gradientColor2: cmsColor(content?.gradientColor2),
+      gradientColor3: cmsColor(content?.gradientColor3),
+    },
+    bgColor ? { backgroundColor: bgColor } : undefined
+  );
 
   return (
     <section
@@ -140,14 +184,8 @@ export function BlogListSection({ content }: BlogListSectionProps) {
     >
       {/* Premium Hero Banner with header offset */}
       <div
-        className={`relative py-14 text-center px-4 overflow-hidden `}
-        style={bgImage ? {
-          backgroundImage: `url('${bgImage}')`,
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-          backgroundRepeat: 'no-repeat',
-          backgroundAttachment: 'fixed'
-        } : undefined}
+        className="relative py-14 text-center px-4 overflow-hidden"
+        style={heroStyle}
       >
         <div className="absolute inset-0 opacity-10" />
         <div className="relative max-w-4xl mx-auto flex flex-col items-center">
@@ -155,29 +193,42 @@ export function BlogListSection({ content }: BlogListSectionProps) {
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.6 }}
-            className="px-6 py-1.5  rounded-full bg-white text-[#0A2E2A] text-xs font-bold shadow-md uppercase tracking-wider  border border-slate-100"
+            className="px-6 py-1.5 rounded-full bg-white text-[#0A2E2A] text-xs font-bold shadow-md uppercase tracking-wider border border-slate-100"
+            style={{
+              ...(badgeBgColor ? { backgroundColor: badgeBgColor } : {}),
+              ...(badgeTextColor ? { color: badgeTextColor } : {}),
+              ...(badgeBorderColor ? { borderColor: badgeBorderColor } : {}),
+            }}
           >
             {badge}
           </motion.div>
-          {((content as any)?.titleGradientFrom || (content as any)?.titleGradientTo) && (content as any)?.enableTitleGradientAnimation !== false ? (
+          {hasTitleGradient ? (
             <HeroTitle
               as="h1"
               title={heading}
-              gradientFrom={(content as any)?.titleGradientFrom}
-              gradientTo={(content as any)?.titleGradientTo}
-              enableAnimation={(content as any)?.enableTitleGradientAnimation}
+              gradientFrom={titleGradientFrom}
+              gradientTo={titleGradientTo}
+              enableAnimation={content?.enableTitleGradientAnimation}
               className="text-4xl md:text-6xl font-black font-extralight tracking-tight leading-tight justify-center"
             />
           ) : (
             <FormattedText
               content={heading}
               as="h1"
-              className="text-4xl md:text-6xl font-black font-extralight text-white tracking-tight leading-tight"
+              className={cn(
+                'text-4xl md:text-6xl font-black font-extralight tracking-tight leading-tight',
+                !titleColor && 'text-white'
+              )}
+              style={titleColor ? { color: titleColor } : undefined}
             />
           )}
           <FormattedText
             content={subheading}
-            className="text-sm text-slate-200/90 max-w-2xl font-light leading-relaxed mb-4"
+            className={cn(
+              'text-sm max-w-2xl font-light leading-relaxed mb-4',
+              !subheadingTextColor && 'text-slate-200/90'
+            )}
+            style={subheadingTextColor ? { color: subheadingTextColor } : undefined}
           />
         </div>
       </div>
@@ -210,6 +261,7 @@ export function BlogListSection({ content }: BlogListSectionProps) {
               </div>
 
               {/* Topics Filter */}
+              {visibleTopics.length > 0 && (
               <div className="space-y-3">
                 <button
                   onClick={() => setTopicsOpen(!topicsOpen)}
@@ -227,7 +279,7 @@ export function BlogListSection({ content }: BlogListSectionProps) {
                       exit={{ opacity: 0, height: 0 }}
                       className="overflow-hidden pl-1 space-y-2.5 pt-1"
                     >
-                      {topicsList.map(topic => {
+                      {visibleTopics.map(topic => {
                         const isChecked = selectedTopics.includes(topic);
                         return (
                           <label key={topic} className="flex items-center gap-3 text-xs text-slate-600 font-medium cursor-pointer select-none group">
@@ -247,8 +299,10 @@ export function BlogListSection({ content }: BlogListSectionProps) {
                   )}
                 </AnimatePresence>
               </div>
+              )}
 
               {/* Industries Filter */}
+              {visibleIndustries.length > 0 && (
               <div className="space-y-3 pt-2">
                 <button
                   onClick={() => setIndustriesOpen(!industriesOpen)}
@@ -266,7 +320,7 @@ export function BlogListSection({ content }: BlogListSectionProps) {
                       exit={{ opacity: 0, height: 0 }}
                       className="overflow-hidden pl-1 space-y-2.5 pt-1"
                     >
-                      {industriesList.map(industry => {
+                      {visibleIndustries.map(industry => {
                         const isChecked = selectedIndustries.includes(industry);
                         return (
                           <label key={industry} className="flex items-center gap-3 text-xs text-slate-600 font-medium cursor-pointer select-none group">
@@ -286,6 +340,7 @@ export function BlogListSection({ content }: BlogListSectionProps) {
                   )}
                 </AnimatePresence>
               </div>
+              )}
 
             </div>
           </div>
@@ -331,19 +386,6 @@ export function BlogListSection({ content }: BlogListSectionProps) {
                               (e.target as HTMLImageElement).src = '/blog-1.png';
                             }}
                           />
-                          {/* Topic & Industries Floating Tags */}
-                          <div className="absolute bottom-1 right-1 flex flex-wrap gap-2 items-center">
-                            {/* <div className="bg-white/95 backdrop-blur px-3 py-1.5 rounded-xl border border-slate-200/80 shadow-md text-left flex flex-col justify-center">
-                              <span className="text-[9px] text-[#3b82f6] font-extrabold uppercase tracking-wider block leading-none mb-1">Topic</span>
-                              <span className="text-xs text-black font-extrabold leading-none">{blog.topic}</span>
-                            </div> */}
-                            {blog.industries && blog.industries.filter((ind: string) => ind !== 'Industries').map((ind: string) => (
-                              <div key={ind} className="bg-white/95 backdrop-blur px-3 py-1.5 rounded-xl border border-slate-200/80 shadow-md text-left flex flex-col justify-center">
-                                <span className="text-[9px] text-[#3b82f6] font-semibold uppercase tracking-wider block leading-none mb-1">Industry</span>
-                                <span className="text-xs text-black font-medium leading-none">{ind}</span>
-                              </div>
-                            ))}
-                          </div>
                         </div>
 
                         {/* Content Body */}
@@ -356,16 +398,9 @@ export function BlogListSection({ content }: BlogListSectionProps) {
 
                           {/* Author & Footer */}
                           <div className="pt-3 border-t border-slate-50 flex items-center justify-between">
-                            <div className="flex items-center gap-3">
-                              <img
-                                src={blog.author.avatar}
-                                alt={blog.author.name}
-                                className="w-8 h-8 rounded-full border border-slate-100 bg-slate-50"
-                              />
-                              <div>
-                                <p className="text-[11px] font-semibold text-slate-700">{blog.author.name}</p>
-                                <p className="text-[9px] text-slate-400">{blog.date}</p>
-                              </div>
+                            <div>
+                              <span className="block text-[11px] font-semibold leading-tight text-slate-700">{blog.author.name}</span>
+                              <span className="block text-[10px] leading-tight text-slate-400">{blog.date}</span>
                             </div>
                           </div>
                         </div>
