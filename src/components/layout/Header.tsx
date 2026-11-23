@@ -136,7 +136,7 @@ export function Header({
 
   React.useEffect(() => {
     const handleResize = () => {
-      if (window.innerWidth >= 1024) {
+      if (window.innerWidth >= 1280) {
         setIsMobileMenuOpen(false);
       }
     };
@@ -196,7 +196,7 @@ export function Header({
         <div className="mx-auto flex w-full max-w-7xl items-center justify-between px-6 md:px-8">
 
           {/* Logo */}
-          <Link href={logoLink || '/'} className="flex items-center group">
+          <Link href={logoLink || '/'} className="flex items-center group shrink-0 relative z-10">
             <div className="relative">
               <img
                 src={logoUrl}
@@ -210,13 +210,13 @@ export function Header({
           </Link>
 
           {/* Desktop Nav */}
-          <div className="hidden lg:flex flex-1 justify-center">
+          <div className="hidden xl:flex flex-1 justify-center min-w-0">
             <DesktopNav items={navData} />
           </div>
 
           {/* Right Actions */}
           <div
-            className="hidden lg:flex items-center space-x-3 transition-[padding] duration-200"
+            className="hidden xl:flex items-center space-x-3 transition-[padding] duration-200 shrink-0"
             style={{
               paddingRight: countryClearance > 0 ? `${countryClearance}px` : undefined,
             }}
@@ -230,7 +230,7 @@ export function Header({
 
           {/* Mobile Toggle */}
           <button
-            className="lg:hidden text-slate-700 p-2 hover:bg-slate-50 rounded-full transition-colors cursor-pointer"
+            className="xl:hidden text-slate-700 p-2 hover:bg-slate-50 rounded-full transition-colors cursor-pointer shrink-0"
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
           >
             {isMobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
@@ -241,7 +241,7 @@ export function Header({
         {countryLinks && countryLinks.length > 0 && (
           <div
             ref={countryRef}
-            className="hidden lg:flex items-center absolute right-6 md:right-8 top-1/2 -translate-y-1/2 shrink-0 z-20"
+            className="hidden xl:flex items-center absolute right-6 md:right-8 top-1/2 -translate-y-1/2 shrink-0 z-20"
           >
             <HeaderCountryDropdown countries={countryLinks} buttonText={countryDropdownText} />
           </div>
@@ -259,7 +259,7 @@ export function Header({
               exit={{ opacity: 0 }}
               transition={{ duration: 0.25 }}
               onClick={() => setIsMobileMenuOpen(false)}
-              className="fixed inset-0 bg-black/40 backdrop-blur-xs z-40 lg:hidden touch-none"
+              className="fixed inset-0 bg-black/40 backdrop-blur-xs z-40 xl:hidden touch-none"
               aria-hidden="true"
             />
 
@@ -269,7 +269,7 @@ export function Header({
               exit={{ opacity: 0, y: 10, scale: 0.95 }}
               transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
               style={{ maxHeight: 'calc(100dvh - 96px)', WebkitOverflowScrolling: 'touch' }}
-              className="absolute top-[80px] left-4 right-4 bg-white/95 backdrop-blur-2xl rounded-none shadow-2xl border border-slate-100 p-6 pb-8 flex flex-col gap-6 lg:hidden z-50 max-h-[calc(100vh-96px)] max-h-[calc(100dvh-96px)] overflow-y-auto overscroll-contain"
+              className="absolute top-[80px] left-4 right-4 bg-white/95 backdrop-blur-2xl rounded-none shadow-2xl border border-slate-100 p-6 pb-8 flex flex-col gap-6 xl:hidden z-50 max-h-[calc(100vh-96px)] max-h-[calc(100dvh-96px)] overflow-y-auto overscroll-contain"
             >
             <nav className="flex flex-col gap-4 shrink-0">
               {navData.map((item) => {

@@ -3,7 +3,7 @@ export function HeaderSkeleton() {
     <header className="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-sm border-b border-slate-100">
       <div className="container mx-auto max-w-7xl px-4 md:px-8 h-20 flex items-center justify-between">
         <div className="h-10 w-40 bg-slate-200 rounded animate-pulse" />
-        <div className="hidden lg:flex gap-6">
+        <div className="hidden xl:flex gap-6">
           {Array.from({ length: 5 }).map((_, i) => (
             <div key={i} className="h-4 w-16 bg-slate-200 rounded animate-pulse" />
           ))}
