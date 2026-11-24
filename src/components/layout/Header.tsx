@@ -91,12 +91,6 @@ export function Header({
   const [expandedMobileItems, setExpandedMobileItems] = React.useState<Record<string, boolean>>({});
   const [scrolled, setScrolled] = React.useState(false);
   const pathname = usePathname();
-  const countryRef = React.useRef<HTMLDivElement>(null);
-  const headerRowRef = React.useRef<HTMLDivElement>(null);
-  const [countryClearance, setCountryClearance] = React.useState(0);
-  const [useCompactNav, setUseCompactNav] = React.useState(false);
-  const compactNavRef = React.useRef(false);
-  const fitMetricsRef = React.useRef({ logo: 0, nav: 0, actions: 0 });
 
   const toggleMobileItem = (itemId: string) => {
     setExpandedMobileItems((prev) => ({
@@ -139,12 +133,8 @@ export function Header({
   }, [isMobileMenuOpen]);
 
   React.useEffect(() => {
-    compactNavRef.current = useCompactNav;
-  }, [useCompactNav]);
-
-  React.useEffect(() => {
     const handleResize = () => {
-      if (window.innerWidth >= 1280 && !compactNavRef.current) {
+      if (window.innerWidth >= 1024) {
         setIsMobileMenuOpen(false);
       }
     };
@@ -153,114 +143,12 @@ export function Header({
   }, []);
 
   React.useEffect(() => {
-    const row = headerRowRef.current;
-    if (!row) return;
-
-    const measureFit = () => {
-      if (window.innerWidth < 1280) {
-        if (compactNavRef.current) {
-          compactNavRef.current = false;
-          setUseCompactNav(false);
-        }
-        return;
-      }
-
-      const logo = row.querySelector('[data-header-logo]') as HTMLElement | null;
-      const nav = row.querySelector('[data-header-nav]') as HTMLElement | null;
-      const actions = row.querySelector('[data-header-actions]') as HTMLElement | null;
-      const metrics = fitMetricsRef.current;
-      const list = nav?.querySelector('[data-slot="navigation-menu-list"]') as HTMLElement | null;
-
-      if (logo && logo.offsetWidth > 0) metrics.logo = logo.offsetWidth;
-      if (actions && actions.offsetWidth > 0) metrics.actions = actions.offsetWidth;
-      if (list && getComputedStyle(nav!).display !== 'none') {
-        const triggers = list.querySelectorAll<HTMLElement>(
-          '[data-slot="navigation-menu-trigger"], [data-slot="navigation-menu-link"]'
-        );
-        const contentWidth = Array.from(triggers).reduce(
-          (sum, el) => sum + el.offsetWidth,
-          0
-        );
-        if (contentWidth > 0) metrics.nav = contentWidth;
-      }
-
-      if (!metrics.nav) return;
-
-      const styles = window.getComputedStyle(row);
-      const horizontalPad =
-        (parseFloat(styles.paddingLeft) || 0) +
-        (parseFloat(styles.paddingRight) || 0);
-      const columnGap = parseFloat(styles.columnGap || styles.gap) || 0;
-      const availableForNav =
-        row.clientWidth - horizontalPad - metrics.logo - metrics.actions - columnGap * 2;
-      const shouldCompact = compactNavRef.current
-        ? availableForNav < metrics.nav + 8
-        : availableForNav < metrics.nav;
-
-      if (shouldCompact !== compactNavRef.current) {
-        compactNavRef.current = shouldCompact;
-        setUseCompactNav(shouldCompact);
-      }
-    };
-
-    measureFit();
-    const raf = window.requestAnimationFrame(measureFit);
-    const timeouts = [50, 200, 500].map((ms) => window.setTimeout(measureFit, ms));
-    const ro = typeof ResizeObserver !== 'undefined' ? new ResizeObserver(measureFit) : null;
-    const nav = row.querySelector('[data-header-nav]');
-    if (ro) {
-      ro.observe(row);
-      if (nav) ro.observe(nav);
-    }
-    window.addEventListener('resize', measureFit);
-
-    return () => {
-      window.cancelAnimationFrame(raf);
-      timeouts.forEach((id) => window.clearTimeout(id));
-      if (ro) ro.disconnect();
-      window.removeEventListener('resize', measureFit);
-    };
-  }, [navData, getStartedText, countryLinks, countryClearance]);
-
-  React.useEffect(() => {
     const handleScroll = () => {
       setScrolled(window.scrollY > 20);
     };
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
-
-  React.useEffect(() => {
-    const el = countryRef.current;
-    if (!el || !countryLinks || countryLinks.length === 0) {
-      setCountryClearance(0);
-      return;
-    }
-
-    const updateClearance = () => {
-      const row = headerRowRef.current;
-      if (!row) {
-        setCountryClearance(0);
-        return;
-      }
-      const gap = el.getBoundingClientRect().left - row.getBoundingClientRect().right;
-      setCountryClearance(gap >= 8 ? 0 : Math.max(0, Math.ceil(8 - gap)));
-    };
-
-    updateClearance();
-
-    const ro = typeof ResizeObserver !== 'undefined' ? new ResizeObserver(updateClearance) : null;
-    if (ro) {
-      ro.observe(el);
-      if (headerRowRef.current) ro.observe(headerRowRef.current);
-    }
-    window.addEventListener('resize', updateClearance);
-
-    return () => {
-      if (ro) ro.disconnect();
-      window.removeEventListener('resize', updateClearance);
-    };
-  }, [pathname, countryLinks]);
 
   return (
     <header className={cn(
@@ -275,10 +163,7 @@ export function Header({
           "bg-white py-3 shadow-[0_4px_25px_-5px_rgba(0,0,0,0.1)] border-b border-slate-200"
         )}
       >
-        <div
-          ref={headerRowRef}
-          className="mx-auto flex w-full max-w-7xl items-center justify-between gap-1 px-6 md:px-8"
-        >
+        <div className="mx-auto flex w-full max-w-7xl items-center justify-between gap-3 px-4 md:px-6 xl:px-8">
 
           {/* Logo */}
           <Link href={logoLink || '/'} data-header-logo className="flex items-center group shrink-0 relative z-10">
@@ -289,7 +174,7 @@ export function Header({
                   e.currentTarget.src = '/footer-logo.png';
                 }}
                 alt="Eastern Software Solutions Pvt.Ltd"
-                className="h-10 w-[160px] object-contain"
+                className="h-10 w-[140px] xl:w-[160px] object-contain"
               />
             </div>
           </Link>
@@ -297,22 +182,16 @@ export function Header({
           {/* Desktop Nav */}
           <div
             data-header-nav
-            className={cn(
-              "hidden flex-1 justify-center min-w-0 overflow-hidden",
-              !useCompactNav && "xl:flex"
-            )}
+            className="hidden lg:flex flex-1 justify-center min-w-0 px-[18px]"
           >
             <DesktopNav items={navData} />
           </div>
 
           <div className="flex items-center shrink-0">
-            {/* Mobile Toggle — stays with Contact Us so it never jumps to the center */}
+            {/* Hamburger — tablet and mobile only */}
             <button
               data-header-hamburger
-              className={cn(
-                "text-slate-700 p-2 hover:bg-slate-50 rounded-full transition-colors cursor-pointer shrink-0",
-                useCompactNav ? "flex xl:flex" : "xl:hidden"
-              )}
+              className="lg:hidden text-slate-700 p-2 hover:bg-slate-50 rounded-full transition-colors cursor-pointer shrink-0"
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
             >
               {isMobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
@@ -321,13 +200,10 @@ export function Header({
             {/* Right Actions */}
             <div
               data-header-actions
-              className="hidden xl:flex items-center space-x-3 transition-[padding] duration-200 shrink-0"
-              style={{
-                paddingRight: countryClearance > 0 ? `${countryClearance}px` : undefined,
-              }}
+              className="hidden lg:flex items-center shrink-0"
             >
               <Link href={getStartedLink}>
-                <Button className="bg-[#111] hover:bg-black text-white rounded-none px-6 py-2 transition-all duration-300 hover:shadow-lg hover:-translate-y-0.5 active:scale-95 cursor-pointer shrink-0">
+                <Button className="bg-[#111] hover:bg-black text-white rounded-none px-4 xl:px-6 py-2 transition-all duration-300 hover:shadow-lg hover:-translate-y-0.5 active:scale-95 cursor-pointer shrink-0">
                   {getStartedText}
                 </Button>
               </Link>
@@ -337,10 +213,7 @@ export function Header({
 
         {/* Desktop Country Selector - positioned outside the max-w-7xl layout */}
         {countryLinks && countryLinks.length > 0 && (
-          <div
-            ref={countryRef}
-            className="hidden xl:flex items-center absolute right-6 md:right-8 top-1/2 -translate-y-1/2 shrink-0 z-20"
-          >
+          <div className="hidden lg:flex items-center absolute right-6 md:right-8 top-1/2 -translate-y-1/2 shrink-0 z-20">
             <HeaderCountryDropdown countries={countryLinks} buttonText={countryDropdownText} />
           </div>
         )}
@@ -357,10 +230,7 @@ export function Header({
               exit={{ opacity: 0 }}
               transition={{ duration: 0.25 }}
               onClick={() => setIsMobileMenuOpen(false)}
-              className={cn(
-                "fixed inset-0 bg-black/40 backdrop-blur-xs z-40 touch-none",
-                !useCompactNav && "xl:hidden"
-              )}
+              className="fixed inset-0 bg-black/40 backdrop-blur-xs z-40 touch-none lg:hidden"
               aria-hidden="true"
             />
 
@@ -370,10 +240,7 @@ export function Header({
               exit={{ opacity: 0, y: 10, scale: 0.95 }}
               transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
               style={{ maxHeight: 'calc(100dvh - 96px)', WebkitOverflowScrolling: 'touch' }}
-              className={cn(
-                "absolute top-[80px] left-4 right-4 bg-white/95 backdrop-blur-2xl rounded-none shadow-2xl border border-slate-100 p-6 pb-8 flex flex-col gap-6 z-50 max-h-[calc(100vh-96px)] max-h-[calc(100dvh-96px)] overflow-y-auto overscroll-contain",
-                !useCompactNav && "xl:hidden"
-              )}
+              className="absolute top-[80px] left-4 right-4 bg-white/95 backdrop-blur-2xl rounded-none shadow-2xl border border-slate-100 p-6 pb-8 flex flex-col gap-6 z-50 max-h-[calc(100vh-96px)] max-h-[calc(100dvh-96px)] overflow-y-auto overscroll-contain lg:hidden"
             >
             <nav className="flex flex-col gap-4 shrink-0">
               {navData.map((item) => {
@@ -478,11 +345,12 @@ export function Header({
 }
 
 const desktopNavItemClass =
-  "bg-transparent hover:bg-slate-50 text-[13px] text-slate-700 font-medium cursor-pointer py-1 w-auto max-w-none shrink-0 whitespace-nowrap tracking-tight";
+  "bg-transparent hover:bg-slate-50 text-[12px] xl:text-[13px] text-slate-700 font-medium cursor-pointer h-auto py-1 !px-1.5 w-auto max-w-none shrink-0 whitespace-nowrap tracking-tight";
 
 function DesktopNav({ items = [] }: { items: NavItem[] }) {
   const [value, setValue] = React.useState<string>("");
   const [mounted, setMounted] = React.useState(false);
+  const wrapRef = React.useRef<HTMLDivElement>(null);
   const pathname = usePathname();
 
   React.useEffect(() => {
@@ -493,11 +361,46 @@ function DesktopNav({ items = [] }: { items: NavItem[] }) {
     setValue("");
   }, [pathname]);
 
+  React.useEffect(() => {
+    if (!mounted) return;
+    const wrap = wrapRef.current;
+    if (!wrap) return;
+
+    const apply = () => {
+      const list = wrap.querySelector<HTMLElement>('[data-slot="navigation-menu-list"]');
+      const slot = wrap.closest<HTMLElement>('[data-header-nav]') ?? wrap;
+      if (!list) return;
+
+      list.style.gap = '0px';
+      const children = Array.from(list.children) as HTMLElement[];
+      if (children.length < 2) return;
+
+      const used = children.reduce((sum, el) => sum + el.getBoundingClientRect().width, 0);
+      const extra = wrap.clientWidth - used;
+      const gaps = children.length - 1;
+      list.style.justifyContent = 'flex-start';
+      list.style.gap = extra > 0 ? `${extra / gaps}px` : '0px';
+    };
+
+    apply();
+    const frame = window.requestAnimationFrame(apply);
+    const ro = typeof ResizeObserver !== 'undefined' ? new ResizeObserver(apply) : null;
+    const slot = wrap.closest('[data-header-nav]') ?? wrap;
+    if (ro) ro.observe(slot);
+    window.addEventListener('resize', apply);
+
+    return () => {
+      window.cancelAnimationFrame(frame);
+      if (ro) ro.disconnect();
+      window.removeEventListener('resize', apply);
+    };
+  }, [mounted, items]);
+
   if (!mounted) {
     return (
       <div className="flex w-full items-center justify-between">
         {items.map((item) => (
-          <span key={item.id} className="text-[13px] text-slate-700 font-medium opacity-80 py-1">
+          <span key={item.id} className="text-[12px] xl:text-[13px] text-slate-700 font-medium opacity-80 py-1 px-1.5">
             {item.label}
           </span>
         ))}
@@ -506,8 +409,9 @@ function DesktopNav({ items = [] }: { items: NavItem[] }) {
   }
 
   return (
-    <NavigationMenu align="center" value={value} onValueChange={setValue} className="w-full max-w-none">
-      <NavigationMenuList className="w-full justify-between gap-0">
+    <div ref={wrapRef} className="w-full min-w-0 max-w-full">
+    <NavigationMenu align="center" value={value} onValueChange={setValue} className="w-full max-w-full min-w-0">
+      <NavigationMenuList className="w-full max-w-full min-w-0 !justify-between">
         {items.map((item) => {
           const isDropdown = item.megaMenuConfig?.displayType === 'dropdown';
           const simpleLinks = item.megaMenuConfig?.links || [];
@@ -516,7 +420,7 @@ function DesktopNav({ items = [] }: { items: NavItem[] }) {
           );
 
           return (
-            <NavigationMenuItem key={item.id} value={item.id}>
+            <NavigationMenuItem key={item.id} value={item.id} className="shrink-0">
               {hasRenderableMegaMenu(item.megaMenu) ? (
                 isDropdown || !hasSubCategories ? (
                   <>
@@ -607,6 +511,7 @@ function DesktopNav({ items = [] }: { items: NavItem[] }) {
         })}
       </NavigationMenuList>
     </NavigationMenu>
+    </div>
   );
 }
 
