@@ -7,6 +7,16 @@ import { useInternalNavigate } from '@/hooks/useInternalNavigate';
 import { HeroTitle } from '@/components/ui/HeroTitle';
 import { FormattedText } from '@/components/ui/FormattedText';
 import { safeImageUrl } from '@/lib/utils';
+import { PhoneField } from '@/components/ui/PhoneField';
+import { validateAndFormatPhone } from '@/lib/phone-validation';
+import { DEFAULT_PHONE_COUNTRY } from '@/lib/dial-codes';
+import {
+  FORM_SUCCESS_MESSAGE,
+  submitErrorMessage,
+  validateEmail,
+  validateName,
+  validatePrivacy,
+} from '@/lib/form-validation';
 
 export interface KeyTakeawaysSegment {
   type: 'key-takeaways';
@@ -326,6 +336,7 @@ export function BlogDetailSection({ content }: BlogDetailSectionProps) {
     isRobotChecked: false,
     agreeTerms: false,
   });
+  const [phoneCountry, setPhoneCountry] = React.useState(DEFAULT_PHONE_COUNTRY);
   const [isSubmitting, setIsSubmitting] = React.useState(false);
 
   const [shareUrl, setShareUrl] = React.useState('');
@@ -373,12 +384,25 @@ export function BlogDetailSection({ content }: BlogDetailSectionProps) {
 
   const handleFormSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!formData.fullName || !formData.email || !formData.phone) {
-      alert('Please fill in all required fields.');
+
+    const nameCheck = validateName(formData.fullName);
+    if (!nameCheck.isValid) {
+      alert(nameCheck.message);
       return;
     }
-    if (!formData.agreeTerms) {
-      alert('Please agree to the disclaimer terms before submitting.');
+    const emailCheck = validateEmail(formData.email);
+    if (!emailCheck.isValid) {
+      alert(emailCheck.message);
+      return;
+    }
+    const validation = validateAndFormatPhone(formData.phone, phoneCountry);
+    if (!validation.isValid) {
+      alert(validation.message);
+      return;
+    }
+    const privacyCheck = validatePrivacy(formData.agreeTerms);
+    if (!privacyCheck.isValid) {
+      alert(privacyCheck.message);
       return;
     }
 
@@ -390,14 +414,15 @@ export function BlogDetailSection({ content }: BlogDetailSectionProps) {
         body: JSON.stringify({
           name: formData.fullName,
           email: formData.email,
-          phone: formData.phone,
+          phone: validation.e164,
+          countryCode: phoneCountry,
           formType: 'blog-lead',
           pageName: heroTitle || (typeof window !== 'undefined' ? window.location.pathname : ''),
         }),
       });
 
       if (res.ok) {
-        alert('Thank you! Your request for estimation has been submitted.');
+        alert(FORM_SUCCESS_MESSAGE);
         setFormData({
           fullName: '',
           email: '',
@@ -406,10 +431,11 @@ export function BlogDetailSection({ content }: BlogDetailSectionProps) {
           agreeTerms: false,
         });
       } else {
-        alert('Failed to submit request. Please try again.');
+        const data = await res.json().catch(() => ({}));
+        alert(submitErrorMessage(res.status, data.error));
       }
     } catch (err) {
-      alert('Something went wrong. Please try again.');
+      alert(submitErrorMessage());
     } finally {
       setIsSubmitting(false);
     }
@@ -763,7 +789,7 @@ export function BlogDetailSection({ content }: BlogDetailSectionProps) {
                 </h3>
               </div>
 
-              <form onSubmit={handleFormSubmit} className="space-y-4 text-xs">
+              <form onSubmit={handleFormSubmit} className="space-y-4 text-xs" noValidate>
                 <div>
                   <input
                     type="text"
@@ -787,13 +813,16 @@ export function BlogDetailSection({ content }: BlogDetailSectionProps) {
                 </div>
 
                 <div>
-                  <input
-                    type="tel"
-                    placeholder="Phone Number*"
+                  <PhoneField
+                    variant="attached"
                     required
                     value={formData.phone}
-                    onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                    className="w-full bg-transparent border-b border-slate-700 py-2 text-white placeholder-slate-500 focus:outline-none focus:border-purple-500 transition-colors"
+                    onChange={(phone) => setFormData({ ...formData, phone })}
+                    countryCode={phoneCountry}
+                    onCountryChange={setPhoneCountry}
+                    placeholder="Phone Number*"
+                    triggerClassName="!h-auto py-2 rounded-none border-0 border-b border-slate-700 bg-transparent text-white shadow-none focus-visible:ring-0 focus-visible:border-purple-500"
+                    inputClassName="!h-auto py-2 rounded-none border-0 border-b border-slate-700 bg-transparent text-white placeholder-slate-500 focus:ring-0 focus:border-purple-500"
                   />
                 </div>
 

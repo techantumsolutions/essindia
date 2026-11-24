@@ -5,6 +5,10 @@ import { motion } from 'framer-motion';
 import { CheckCircle2, Users, UploadCloud, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
 import JobDetailHero from '@/components/blocks/JobDetailHero';
+import { PhoneField } from '@/components/ui/PhoneField';
+import { validateAndFormatPhone } from '@/lib/phone-validation';
+import { DEFAULT_PHONE_COUNTRY } from '@/lib/dial-codes';
+import { submitErrorMessage, validateEmail, validateName } from '@/lib/form-validation';
 
 interface CareerDetailClientProps {
   job: {
@@ -32,6 +36,7 @@ export default function CareerDetailClient({ job }: CareerDetailClientProps) {
   const [fullName, setFullName] = React.useState('');
   const [email, setEmail] = React.useState('');
   const [phone, setPhone] = React.useState('');
+  const [phoneCountry, setPhoneCountry] = React.useState(DEFAULT_PHONE_COUNTRY);
   const [experience, setExperience] = React.useState('');
   const [currentCompany, setCurrentCompany] = React.useState('');
   const [noticePeriod, setNoticePeriod] = React.useState('');
@@ -55,14 +60,23 @@ export default function CareerDetailClient({ job }: CareerDetailClientProps) {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!fullName || !email || !phone || !experience || !noticePeriod || !resumeFile) {
-      toast.error('Please fill in all required fields and upload your resume');
+    const nameCheck = validateName(fullName);
+    if (!nameCheck.isValid) {
+      toast.error(nameCheck.message);
       return;
     }
-
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) {
-      toast.error('Please enter a valid email address.');
+    const emailCheck = validateEmail(email);
+    if (!emailCheck.isValid) {
+      toast.error(emailCheck.message);
+      return;
+    }
+    const validation = validateAndFormatPhone(phone, phoneCountry);
+    if (!validation.isValid) {
+      toast.error(validation.message);
+      return;
+    }
+    if (!experience || !noticePeriod || !resumeFile) {
+      toast.error('Please fill in all required fields and upload your resume');
       return;
     }
 
@@ -71,7 +85,8 @@ export default function CareerDetailClient({ job }: CareerDetailClientProps) {
       const formData = new FormData();
       formData.append('fullName', fullName);
       formData.append('email', email);
-      formData.append('phone', phone);
+      formData.append('phone', validation.e164);
+      formData.append('countryCode', phoneCountry);
       formData.append('experience', experience);
       formData.append('currentCompany', currentCompany);
       formData.append('noticePeriod', noticePeriod);
@@ -101,11 +116,11 @@ export default function CareerDetailClient({ job }: CareerDetailClientProps) {
         setCoverLetter('');
         setResumeFile(null);
       } else {
-        const data = await res.json();
-        throw new Error(data.error || 'Failed to submit application');
+        const data = await res.json().catch(() => ({}));
+        throw Object.assign(new Error(data.error || ''), { status: res.status });
       }
     } catch (err: any) {
-      toast.error(err.message || 'An error occurred while submitting your application');
+      toast.error(submitErrorMessage(err.status, err.message));
     } finally {
       setIsSubmitting(false);
     }
@@ -245,7 +260,7 @@ export default function CareerDetailClient({ job }: CareerDetailClientProps) {
                       </div>
 
                       {/* Form Inputs */}
-                      <form className="space-y-5" onSubmit={handleSubmit}>
+                      <form className="space-y-5" onSubmit={handleSubmit} noValidate>
 
                         {/* Full Name & Email */}
                         <div className="grid grid-cols-2 gap-4">
@@ -276,13 +291,16 @@ export default function CareerDetailClient({ job }: CareerDetailClientProps) {
                         <div className="grid grid-cols-2 gap-4">
                           <div className="space-y-1.5">
                             <label className="text-[11px] font-bold text-slate-700">Phone Number *</label>
-                            <input
-                              type="text"
+                            <PhoneField
+                              variant="attached"
                               required
-                              placeholder="+91 9876543210"
                               value={phone}
-                              onChange={(e) => setPhone(e.target.value)}
-                              className="w-full h-10 px-3 bg-white border border-slate-200 rounded-lg text-sm outline-none focus:border-[#4B2A63] transition-colors placeholder:text-slate-300"
+                              onChange={setPhone}
+                              countryCode={phoneCountry}
+                              onCountryChange={setPhoneCountry}
+                              placeholder="9876543210"
+                              triggerClassName="!h-10 rounded-l-lg border-slate-200 bg-white focus-visible:ring-0 focus-visible:border-[#4B2A63]"
+                              inputClassName="h-10 !h-10 px-3 bg-white border-slate-200 rounded-r-lg outline-none focus:ring-0 focus:border-[#4B2A63] placeholder:text-slate-300"
                             />
                           </div>
                           <div className="space-y-1.5">

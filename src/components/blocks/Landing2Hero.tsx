@@ -7,6 +7,17 @@ import { Check, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
 import { useCtaAction, type CtaFormType } from '@/hooks/useCtaAction';
 import { HeroTitle } from '@/components/ui/HeroTitle';
+import { PhoneField } from '@/components/ui/PhoneField';
+import { validateAndFormatPhone } from '@/lib/phone-validation';
+import { DEFAULT_PHONE_COUNTRY } from '@/lib/dial-codes';
+import {
+  FORM_SUCCESS_MESSAGE,
+  submitErrorMessage,
+  validateCompany,
+  validateEmail,
+  validateName,
+  validatePrivacy,
+} from '@/lib/form-validation';
 
 
 export interface BadgeItem {
@@ -100,6 +111,7 @@ export function Landing2Hero({ content }: { content?: Landing2HeroContent }) {
 
   const [acceptedTerms, setAcceptedTerms] = useState<boolean>(false);
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+  const [phoneCountry, setPhoneCountry] = useState(DEFAULT_PHONE_COUNTRY);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData(prev => ({ ...prev, [e.target.name]: e.target.value }));
@@ -107,33 +119,34 @@ export function Landing2Hero({ content }: { content?: Landing2HeroContent }) {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!acceptedTerms) {
-      toast.error('Please agree to the Terms of Service and Privacy Policy.');
+
+    const nameCheck = validateName(formData.name);
+    if (!nameCheck.isValid) {
+      toast.error(nameCheck.message);
       return;
     }
-
-    if (!formData.name.trim()) {
-      toast.error('Please enter your full name.');
+    const companyCheck = validateCompany(formData.company, true);
+    if (!companyCheck.isValid) {
+      toast.error(companyCheck.message);
       return;
     }
-
-    if (!formData.company.trim()) {
-      toast.error('Please enter your company name.');
-      return;
-    }
-
     if (!formData.industry.trim()) {
       toast.error('Please enter your industry.');
       return;
     }
-
-    if (!formData.email.trim()) {
-      toast.error('Please enter your email address.');
+    const emailCheck = validateEmail(formData.email);
+    if (!emailCheck.isValid) {
+      toast.error(emailCheck.message);
       return;
     }
-
-    if (!formData.phone.trim()) {
-      toast.error('Please enter your mobile number.');
+    const validation = validateAndFormatPhone(formData.phone, phoneCountry);
+    if (!validation.isValid) {
+      toast.error(validation.message);
+      return;
+    }
+    const privacyCheck = validatePrivacy(acceptedTerms);
+    if (!privacyCheck.isValid) {
+      toast.error(privacyCheck.message);
       return;
     }
 
@@ -145,7 +158,8 @@ export function Landing2Hero({ content }: { content?: Landing2HeroContent }) {
         body: JSON.stringify({
           name: formData.name,
           email: formData.email,
-          phone: formData.phone,
+          phone: validation.e164,
+          countryCode: phoneCountry,
           company: formData.company,
           message: JSON.stringify({ industry: formData.industry }),
           formType: 'landing-2',
@@ -154,14 +168,15 @@ export function Landing2Hero({ content }: { content?: Landing2HeroContent }) {
       });
 
       if (!res.ok) {
-        throw new Error('Failed to submit registration');
+        const data = await res.json().catch(() => ({}));
+        throw Object.assign(new Error(data.error || ''), { status: res.status });
       }
 
-      toast.success('Registration submitted successfully! Our team will contact you shortly.');
+      toast.success(FORM_SUCCESS_MESSAGE);
       setFormData({ name: '', company: '', industry: '', email: '', phone: '' });
       setAcceptedTerms(false);
     } catch (err: any) {
-      toast.error(err.message || 'Something went wrong. Please try again.');
+      toast.error(submitErrorMessage(err.status, err.message));
     } finally {
       setIsSubmitting(false);
     }
@@ -271,7 +286,7 @@ export function Landing2Hero({ content }: { content?: Landing2HeroContent }) {
             </div>
 
             {/* Registration Form */}
-            <form onSubmit={handleSubmit} className="space-y-4">
+            <form onSubmit={handleSubmit} className="space-y-4" noValidate>
               {/* Full Name Input */}
               <div>
                 <input
@@ -326,14 +341,17 @@ export function Landing2Hero({ content }: { content?: Landing2HeroContent }) {
 
               {/* Phone Input */}
               <div>
-                <input
-                  type="tel"
-                  name="phone"
+                <PhoneField
+                  variant="attached"
                   required
+                  name="phone"
                   value={formData.phone}
-                  onChange={handleChange}
+                  onChange={(phone) => setFormData((prev) => ({ ...prev, phone }))}
+                  countryCode={phoneCountry}
+                  onCountryChange={setPhoneCountry}
                   placeholder="Mobile Number"
-                  className="w-full px-4 py-3 rounded-lg border border-slate-200 text-sm placeholder:text-slate-400 focus:outline-none focus:border-[#3f1885] transition-colors"
+                  triggerClassName="!h-[46px] rounded-l-lg border-slate-200 bg-white focus-visible:ring-0 focus-visible:border-[#3f1885]"
+                  inputClassName="!h-[46px] px-4 py-3 rounded-r-lg border-slate-200 placeholder:text-slate-400 focus:ring-0 focus:border-[#3f1885]"
                 />
               </div>
 

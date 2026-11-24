@@ -4,6 +4,10 @@ import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { MessageSquare, X, Send, User, Bot, Check, ShieldCheck, Mail, Phone, ChevronRight } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { PhoneField } from '@/components/ui/PhoneField';
+import { validateAndFormatPhone } from '@/lib/phone-validation';
+import { DEFAULT_PHONE_COUNTRY } from '@/lib/dial-codes';
+import { submitErrorMessage, validateEmail, validateName } from '@/lib/form-validation';
 
 import { usePathname } from 'next/navigation';
 import { io, Socket } from 'socket.io-client';
@@ -25,6 +29,7 @@ export function WebsiteChatWidget() {
   // Contact lead state
   const [emailInput, setEmailInput] = useState('');
   const [phoneInput, setPhoneInput] = useState('');
+  const [phoneCountry, setPhoneCountry] = useState(DEFAULT_PHONE_COUNTRY);
   const [showLeadPrompt, setShowLeadPrompt] = useState(false);
   const [leadSubmitted, setLeadSubmitted] = useState(false);
   const [isSubmittingLead, setIsSubmittingLead] = useState(false);
@@ -237,6 +242,31 @@ export function WebsiteChatWidget() {
     e.preventDefault();
     if ((!nameInput.trim() && !emailInput.trim() && !phoneInput.trim()) || !conversationId || isSubmittingLead) return;
 
+    if (nameInput.trim()) {
+      const nameCheck = validateName(nameInput, false);
+      if (!nameCheck.isValid) {
+        window.alert(nameCheck.message);
+        return;
+      }
+    }
+    if (emailInput.trim()) {
+      const emailCheck = validateEmail(emailInput, false);
+      if (!emailCheck.isValid) {
+        window.alert(emailCheck.message);
+        return;
+      }
+    }
+
+    let e164Phone: string | undefined;
+    if (phoneInput.trim()) {
+      const validation = validateAndFormatPhone(phoneInput, phoneCountry, false);
+      if (!validation.isValid) {
+        window.alert(validation.message);
+        return;
+      }
+      e164Phone = validation.e164 || undefined;
+    }
+
     setIsSubmittingLead(true);
     try {
       const res = await fetch('/api/chat/lead', {
@@ -246,7 +276,8 @@ export function WebsiteChatWidget() {
           conversationId,
           name: nameInput.trim() || undefined,
           email: emailInput.trim() || undefined,
-          phone: phoneInput.trim() || undefined,
+          phone: e164Phone,
+          countryCode: e164Phone ? phoneCountry : undefined,
         }),
       });
       if (res.ok) {
@@ -264,9 +295,13 @@ export function WebsiteChatWidget() {
         setNameInput('');
         setEmailInput('');
         setPhoneInput('');
+      } else {
+        const data = await res.json().catch(() => ({}));
+        window.alert(submitErrorMessage(res.status, data.error));
       }
     } catch (err) {
       console.error('Error submitting lead:', err);
+      window.alert(submitErrorMessage());
     } finally {
       setIsSubmittingLead(false);
     }
@@ -356,6 +391,7 @@ export function WebsiteChatWidget() {
                     initial={{ opacity: 0, scale: 0.95 }}
                     animate={{ opacity: 1, scale: 1 }}
                     onSubmit={handleSubmitLead}
+                    noValidate
                     className="bg-white border border-purple-200 rounded-2xl p-3 shadow-lg my-2 space-y-2"
                   >
                     <p className="text-[11px] font-bold text-[#4B2A63] flex items-center gap-1">
@@ -375,12 +411,15 @@ export function WebsiteChatWidget() {
                       onChange={(e) => setEmailInput(e.target.value)}
                       className="w-full px-3 py-2 text-xs border border-slate-200 rounded-xl focus:outline-none focus:ring-1 focus:ring-[#4B2A63]"
                     />
-                    <input
-                      type="tel"
-                      placeholder="Mobile Number"
+                    <PhoneField
+                      variant="attached"
                       value={phoneInput}
-                      onChange={(e) => setPhoneInput(e.target.value)}
-                      className="w-full px-3 py-2 text-xs border border-slate-200 rounded-xl focus:outline-none focus:ring-1 focus:ring-[#4B2A63]"
+                      onChange={setPhoneInput}
+                      countryCode={phoneCountry}
+                      onCountryChange={setPhoneCountry}
+                      placeholder="Mobile Number"
+                      triggerClassName="!h-auto py-2 w-[88px] text-xs rounded-l-xl border-slate-200 bg-white focus-visible:ring-1 focus-visible:ring-[#4B2A63]"
+                      inputClassName="!h-auto px-3 py-2 text-xs border-slate-200 rounded-r-xl focus:ring-1 focus:ring-[#4B2A63]"
                     />
                     <button
                       type="submit"
