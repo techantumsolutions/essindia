@@ -346,6 +346,24 @@ footer.site-footer a.footer-column-link:hover {
   color: var(--footer-col-link-hover, #7e22ce);
 }
 
+/* Tablet portrait (e.g. iPad 1024px): hamburger, not the squeezed desktop nav. */
+@media (orientation: portrait) and (max-width: 1024px) {
+  header [data-header-nav],
+  header [data-header-actions],
+  header [data-header-country] {
+    display: none !important;
+  }
+  header [data-header-hamburger] {
+    display: block !important;
+  }
+  header [data-header-mobile-overlay] {
+    display: block !important;
+  }
+  header [data-header-mobile-drawer] {
+    display: flex !important;
+  }
+}
+
 /* Laptop Screens Specific Width (80vw for Header, Footer & Main Content) */
 @media (min-width: 1024px) and (max-width: 1600px) {
   .container,

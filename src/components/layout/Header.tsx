@@ -133,13 +133,18 @@ export function Header({
   }, [isMobileMenuOpen]);
 
   React.useEffect(() => {
+    const tabletPortrait = window.matchMedia('(orientation: portrait) and (max-width: 1024px)');
     const handleResize = () => {
-      if (window.innerWidth >= 1024) {
+      if (window.innerWidth >= 1024 && !tabletPortrait.matches) {
         setIsMobileMenuOpen(false);
       }
     };
     window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
+    tabletPortrait.addEventListener('change', handleResize);
+    return () => {
+      window.removeEventListener('resize', handleResize);
+      tabletPortrait.removeEventListener('change', handleResize);
+    };
   }, []);
 
   React.useEffect(() => {
@@ -213,7 +218,7 @@ export function Header({
 
         {/* Desktop Country Selector - positioned outside the max-w-7xl layout */}
         {countryLinks && countryLinks.length > 0 && (
-          <div className="hidden lg:flex items-center absolute right-6 md:right-8 top-1/2 -translate-y-1/2 shrink-0 z-20">
+          <div data-header-country className="hidden lg:flex items-center absolute right-6 md:right-8 top-1/2 -translate-y-1/2 shrink-0 z-20">
             <HeaderCountryDropdown countries={countryLinks} buttonText={countryDropdownText} />
           </div>
         )}
@@ -230,6 +235,7 @@ export function Header({
               exit={{ opacity: 0 }}
               transition={{ duration: 0.25 }}
               onClick={() => setIsMobileMenuOpen(false)}
+              data-header-mobile-overlay
               className="fixed inset-0 bg-black/40 backdrop-blur-xs z-40 touch-none lg:hidden"
               aria-hidden="true"
             />
@@ -240,6 +246,7 @@ export function Header({
               exit={{ opacity: 0, y: 10, scale: 0.95 }}
               transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
               style={{ maxHeight: 'calc(100dvh - 96px)', WebkitOverflowScrolling: 'touch' }}
+              data-header-mobile-drawer
               className="absolute top-[80px] left-4 right-4 bg-white/95 backdrop-blur-2xl rounded-none shadow-2xl border border-slate-100 p-6 pb-8 flex flex-col gap-6 z-50 max-h-[calc(100vh-96px)] max-h-[calc(100dvh-96px)] overflow-y-auto overscroll-contain lg:hidden"
             >
             <nav className="flex flex-col gap-4 shrink-0">
