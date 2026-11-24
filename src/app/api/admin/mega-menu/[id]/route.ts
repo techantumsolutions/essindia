@@ -17,7 +17,6 @@ import { slugify } from '@/lib/cms/utils';
 import { megaMenuRepository } from '@/repositories/mega-menu.repository';
 import { navigationRepository } from '@/repositories/navigation.repository';
 import { navigationTreeRepository } from '@/repositories/navigation-tree.repository';
-import { pageAdminRepository } from '@/repositories/page-admin.repository';
 
 export async function PUT(request: Request, props: { params: Promise<{ id: string }> }) {
   if (!(await isAdminRequest())) {
@@ -49,18 +48,6 @@ export async function PUT(request: Request, props: { params: Promise<{ id: strin
         .returning();
 
       if (row) {
-        if (row.pageId) {
-          await db
-            .update(pages)
-            .set({
-              sortOrder: orderIndex,
-              title: name,
-              slug: computedSlug,
-              updatedAt: new Date(),
-            })
-            .where(eq(pages.id, row.pageId));
-        }
-        await pageAdminRepository.syncPagePathsForCategoryChange(params.id, 'category');
         await clearCaches(row.navigationItemId);
         return NextResponse.json(row);
       } else {
@@ -107,21 +94,9 @@ export async function PUT(request: Request, props: { params: Promise<{ id: strin
         .returning();
 
       if (row) {
-        if (row.pageId) {
-          await db
-            .update(pages)
-            .set({
-              sortOrder: orderIndex,
-              title: name,
-              slug: computedSubSlug,
-              updatedAt: new Date(),
-            })
-            .where(eq(pages.id, row.pageId));
-        }
         const cat = await db.query.megaMenuCategories.findFirst({
           where: eq(megaMenuCategories.id, row.categoryId),
         });
-        await pageAdminRepository.syncPagePathsForCategoryChange(params.id, 'sub');
         if (cat) await clearCaches(cat.navigationItemId);
         return NextResponse.json(row);
       } else {
@@ -166,23 +141,11 @@ export async function PUT(request: Request, props: { params: Promise<{ id: strin
         .returning();
 
       if (row) {
-        if (row.pageId) {
-          await db
-            .update(pages)
-            .set({
-              sortOrder: orderIndex,
-              title: name,
-              slug: computedSubSubSlug,
-              updatedAt: new Date(),
-            })
-            .where(eq(pages.id, row.pageId));
-        }
         const sub = await db.query.megaMenuSubCategories.findFirst({
           where: eq(megaMenuSubCategories.id, row.subCategoryId),
           with: { category: true },
         });
         const category = sub?.category;
-        await pageAdminRepository.syncPagePathsForCategoryChange(params.id, 'sub-sub');
         if (category && !Array.isArray(category) && 'navigationItemId' in category) {
           await clearCaches(category.navigationItemId as string);
         }

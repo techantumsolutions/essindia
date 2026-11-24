@@ -4,21 +4,20 @@ import { useState } from 'react';
 import { ChevronDown } from 'lucide-react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { ALL_COUNTRIES_LIST } from '@/lib/countries';
-import countryCodesList from 'country-codes-list';
 import { toast } from 'sonner';
-import { validatePhoneNumber } from '@/lib/phone-validation';
+import { validateAndFormatPhone } from '@/lib/phone-validation';
+import { DEFAULT_PHONE_COUNTRY } from '@/lib/dial-codes';
+import {
+  FORM_COUNTRY_ERROR,
+  submitErrorMessage,
+  validateCompany,
+  validateEmail,
+  validateMessage,
+  validateName,
+  validatePrivacy,
+} from '@/lib/form-validation';
 import { completeFormSuccess } from '@/lib/forms/form-success';
-
-const DIAL_CODES = (countryCodesList.customArray({
-  name: '{countryNameEn}',
-  code: '{countryCode}',
-  dialCode: '+{countryCallingCode}'
-}) as any as Array<{ name: string; code: string; dialCode: string }>).map(c => ({
-  ...c,
-  code: c.code.toLowerCase()
-})).filter((c, index, self) =>
-  index === self.findIndex((t) => t.dialCode === c.dialCode)
-);
+import { PhoneField } from '@/components/ui/PhoneField';
 
 import { FormattedText } from '@/components/ui/FormattedText';
 
@@ -70,10 +69,9 @@ export function ContactFormFaq({ content }: { content?: ContactFormFaqContent })
       answer: "Yes, ESS offers ongoing technical support, maintenance, upgrades, and managed services after deployment."
     }
   ];
-  const [selectedCountry, setSelectedCountry] = useState<string>('');
+  const [selectedCountry, setSelectedCountry] = useState<string>(DEFAULT_PHONE_COUNTRY);
   const [searchQuery, setSearchQuery] = useState<string>('');
-  const [selectedDialCode, setSelectedDialCode] = useState<string>('in');
-  const [searchDialQuery, setSearchDialQuery] = useState<string>('');
+  const [selectedDialCode, setSelectedDialCode] = useState<string>(DEFAULT_PHONE_COUNTRY);
   const [acceptedPrivacy, setAcceptedPrivacy] = useState<boolean>(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -90,28 +88,58 @@ export function ContactFormFaq({ content }: { content?: ContactFormFaqContent })
     setFormData(prev => ({ ...prev, [e.target.name]: e.target.value }));
   };
 
+  const handleDialChange = (code: string) => {
+    setSelectedDialCode(code);
+    if (ALL_COUNTRIES_LIST.some((c) => c.code === code)) {
+      setSelectedCountry(code);
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!acceptedPrivacy) {
-      toast.error('Please accept the privacy policy to continue.');
+
+    const firstNameCheck = validateName(formData.firstName);
+    if (!firstNameCheck.isValid) {
+      toast.error(firstNameCheck.message);
       return;
     }
-
+    const lastNameCheck = validateName(formData.lastName);
+    if (!lastNameCheck.isValid) {
+      toast.error(lastNameCheck.message);
+      return;
+    }
+    const emailCheck = validateEmail(formData.email);
+    if (!emailCheck.isValid) {
+      toast.error(emailCheck.message);
+      return;
+    }
+    const phoneCheck = validateAndFormatPhone(formData.phone, selectedDialCode);
+    if (!phoneCheck.isValid) {
+      toast.error(phoneCheck.message);
+      return;
+    }
+    const companyCheck = validateCompany(formData.company);
+    if (!companyCheck.isValid) {
+      toast.error(companyCheck.message);
+      return;
+    }
     if (!selectedCountry) {
-      toast.error('Please select a country.');
+      toast.error(FORM_COUNTRY_ERROR);
       return;
     }
-
-    const validation = validatePhoneNumber(formData.phone, selectedDialCode);
-    if (!validation.isValid) {
-      toast.error(validation.message);
+    const messageCheck = validateMessage(formData.message, true);
+    if (!messageCheck.isValid) {
+      toast.error(messageCheck.message);
+      return;
+    }
+    const privacyCheck = validatePrivacy(acceptedPrivacy);
+    if (!privacyCheck.isValid) {
+      toast.error(privacyCheck.message);
       return;
     }
 
     setIsSubmitting(true);
     try {
-      const dialInfo = DIAL_CODES.find((c) => c.code === selectedDialCode);
-      const fullPhone = dialInfo && formData.phone ? `${dialInfo.dialCode} ${formData.phone}` : formData.phone;
       const countryInfo = ALL_COUNTRIES_LIST.find((c) => c.code === selectedCountry);
 
       const res = await fetch('/api/contact', {
@@ -120,7 +148,8 @@ export function ContactFormFaq({ content }: { content?: ContactFormFaqContent })
         body: JSON.stringify({
           name: `${formData.firstName} ${formData.lastName}`.trim(),
           email: formData.email,
-          phone: fullPhone,
+          phone: phoneCheck.e164,
+          countryCode: selectedDialCode,
           company: formData.company,
           country: countryInfo ? countryInfo.name : selectedCountry,
           message: formData.message,
@@ -129,17 +158,17 @@ export function ContactFormFaq({ content }: { content?: ContactFormFaqContent })
       });
 
       if (!res.ok) {
-        const data = await res.json();
-        throw new Error(data.error || 'Submission failed');
+        const data = await res.json().catch(() => ({}));
+        throw Object.assign(new Error(data.error || ''), { status: res.status });
       }
 
-      toast.success('Submitted successfully!');
       setFormData({ firstName: '', lastName: '', email: '', phone: '', company: '', message: '' });
-      setSelectedCountry('');
+      setSelectedCountry(DEFAULT_PHONE_COUNTRY);
+      setSelectedDialCode(DEFAULT_PHONE_COUNTRY);
       setAcceptedPrivacy(false);
       await completeFormSuccess('contact');
     } catch (err: any) {
-      toast.error(err.message || 'Something went wrong');
+      toast.error(submitErrorMessage(err.status, err.message));
     } finally {
       setIsSubmitting(false);
     }
@@ -147,11 +176,6 @@ export function ContactFormFaq({ content }: { content?: ContactFormFaqContent })
 
   const filteredCountries = ALL_COUNTRIES_LIST.filter((country) =>
     country.name.toLowerCase().includes(searchQuery.toLowerCase())
-  );
-
-  const filteredDialCodes = DIAL_CODES.filter((c) =>
-    c.name.toLowerCase().includes(searchDialQuery.toLowerCase()) ||
-    c.dialCode.includes(searchDialQuery)
   );
 
   return (
@@ -166,7 +190,7 @@ export function ContactFormFaq({ content }: { content?: ContactFormFaqContent })
               {formDescription}
             </p>
 
-            <form className="space-y-2" onSubmit={handleSubmit}>
+            <form className="space-y-2" onSubmit={handleSubmit} noValidate>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="space-y-2">
                   <label className="text-sm font-medium text-gray-700">First Name</label>
@@ -185,51 +209,15 @@ export function ContactFormFaq({ content }: { content?: ContactFormFaqContent })
                 </div>
                 <div className="space-y-2">
                   <label className="text-sm font-medium text-gray-700">Phone number</label>
-                  <div className="flex">
-                    <Select value={selectedDialCode} onValueChange={(v) => setSelectedDialCode(v || '')} onOpenChange={(open) => !open && setSearchDialQuery('')}>
-                      <SelectTrigger className="w-[100px] px-3 !h-[38px] rounded-l-lg rounded-r-none border border-r-0 border-gray-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#5C2B6A] focus-visible:border-transparent transition-all text-sm bg-gray-50 shadow-none z-10 relative">
-                        <SelectValue>
-                          {selectedDialCode && (
-                            <span className="flex items-center gap-1.5">
-                              {DIAL_CODES.find((c) => c.code === selectedDialCode)?.dialCode}
-                            </span>
-                          )}
-                        </SelectValue>
-                      </SelectTrigger>
-                      <SelectContent className="w-[260px] max-h-60 p-0" align="start" alignItemWithTrigger={false} side="bottom" collisionAvoidance={{ side: 'none' }}>
-                        <div className="p-2 sticky top-0 bg-white z-10 border-b border-gray-100">
-                          <input
-                            type="text"
-                            placeholder="Search..."
-                            className="w-full px-3 py-2 text-sm outline-none border border-gray-200 rounded-md focus:border-[#5C2B6A] focus:ring-1 focus:ring-[#5C2B6A] transition-all"
-                            value={searchDialQuery}
-                            onChange={(e) => setSearchDialQuery(e.target.value)}
-                            onKeyDown={(e) => {
-                              e.stopPropagation();
-                              if (e.key === ' ') {
-                                e.preventDefault();
-                                setSearchDialQuery(prev => prev + ' ');
-                              }
-                            }}
-                            onClick={(e) => e.stopPropagation()}
-                          />
-                        </div>
-                        <div className="p-1">
-                          {filteredDialCodes.length > 0 ? (
-                            filteredDialCodes.map((c) => (
-                              <SelectItem key={c.code} value={c.code} className="cursor-pointer flex items-center gap-2">
-                                <span className="text-gray-500 w-10">{c.dialCode}</span>
-                                <span className="truncate">{c.name}</span>
-                              </SelectItem>
-                            ))
-                          ) : (
-                            <div className="py-4 text-center text-sm text-gray-500">Not found</div>
-                          )}
-                        </div>
-                      </SelectContent>
-                    </Select>
-                    <input name="phone" value={formData.phone} onChange={handleInputChange} type="tel" placeholder="Enter phone number" className="w-full px-4 !h-[38px] rounded-r-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#5C2B6A] focus:border-transparent transition-all text-sm relative z-0" />
-                  </div>
+                  <PhoneField
+                    name="phone"
+                    required
+                    value={formData.phone}
+                    onChange={(phone) => setFormData((prev) => ({ ...prev, phone }))}
+                    countryCode={selectedDialCode}
+                    onCountryChange={handleDialChange}
+                    placeholder="Enter phone number"
+                  />
                 </div>
               </div>
 

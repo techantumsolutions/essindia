@@ -7,22 +7,19 @@ import { Input } from '@/components/ui/input';
 import { Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
 import { usePathname } from 'next/navigation';
-import { validatePhoneNumber } from '@/lib/phone-validation';
+import { validateAndFormatPhone } from '@/lib/phone-validation';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { ALL_COUNTRIES_LIST } from '@/lib/countries';
-import countryCodesList from 'country-codes-list';
+import { DEFAULT_PHONE_COUNTRY } from '@/lib/dial-codes';
+import {
+  FORM_COUNTRY_ERROR,
+  submitErrorMessage,
+  validateEmail,
+  validateName,
+  validatePrivacy,
+} from '@/lib/form-validation';
 import { completeFormSuccess } from '@/lib/forms/form-success';
-
-const DIAL_CODES = (countryCodesList.customArray({
-  name: '{countryNameEn}',
-  code: '{countryCode}',
-  dialCode: '+{countryCallingCode}'
-}) as any as Array<{ name: string; code: string; dialCode: string }>).map(c => ({
-  ...c,
-  code: c.code.toLowerCase()
-})).filter((c, index, self) =>
-  index === self.findIndex((t) => t.dialCode === c.dialCode)
-);
+import { PhoneField } from '@/components/ui/PhoneField';
 
 interface CtaLeadModalProps {
   isOpen: boolean;
@@ -43,34 +40,49 @@ export function CtaLeadModal({ isOpen, onClose, pdfUrl, pageName, isCareerCta, f
   });
   const [resumeFile, setResumeFile] = React.useState<File | null>(null);
 
-  const [selectedCountry, setSelectedCountry] = React.useState<string>('');
+  const [selectedCountry, setSelectedCountry] = React.useState<string>(DEFAULT_PHONE_COUNTRY);
   const [searchQuery, setSearchQuery] = React.useState<string>('');
-  const [selectedDialCode, setSelectedDialCode] = React.useState<string>('in');
-  const [searchDialQuery, setSearchDialQuery] = React.useState<string>('');
+  const [selectedDialCode, setSelectedDialCode] = React.useState<string>(DEFAULT_PHONE_COUNTRY);
   const [acceptedPrivacy, setAcceptedPrivacy] = React.useState<boolean>(false);
 
   const filteredCountries = ALL_COUNTRIES_LIST.filter(c => c.name.toLowerCase().includes(searchQuery.toLowerCase()));
-  const filteredDialCodes = DIAL_CODES.filter(c => c.name.toLowerCase().includes(searchDialQuery.toLowerCase()) || c.dialCode.includes(searchDialQuery));
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData(prev => ({ ...prev, [e.target.name]: e.target.value }));
   };
 
+  const handleDialChange = (code: string) => {
+    setSelectedDialCode(code);
+    if (ALL_COUNTRIES_LIST.some((c) => c.code === code)) {
+      setSelectedCountry(code);
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!acceptedPrivacy) {
-      toast.error('Please accept the privacy policy to continue.');
-      return;
-    }
-    
-    if (!selectedCountry) {
-      toast.error('Please select a country.');
-      return;
-    }
 
-    const validation = validatePhoneNumber(formData.phone, selectedDialCode);
+    const nameCheck = validateName(formData.name);
+    if (!nameCheck.isValid) {
+      toast.error(nameCheck.message);
+      return;
+    }
+    const emailCheck = validateEmail(formData.email);
+    if (!emailCheck.isValid) {
+      toast.error(emailCheck.message);
+      return;
+    }
+    const validation = validateAndFormatPhone(formData.phone, selectedDialCode);
     if (!validation.isValid) {
       toast.error(validation.message);
+      return;
+    }
+    if (!selectedCountry) {
+      toast.error(FORM_COUNTRY_ERROR);
+      return;
+    }
+    const privacyCheck = validatePrivacy(acceptedPrivacy);
+    if (!privacyCheck.isValid) {
+      toast.error(privacyCheck.message);
       return;
     }
 
@@ -97,8 +109,6 @@ export function CtaLeadModal({ isOpen, onClose, pdfUrl, pageName, isCareerCta, f
         uploadedResumeUrl = uploadJson.url || uploadJson.secure_url || '';
       }
 
-      const dialInfo = DIAL_CODES.find((c) => c.code === selectedDialCode);
-      const fullPhone = dialInfo && formData.phone ? `${dialInfo.dialCode} ${formData.phone}` : formData.phone;
       const countryInfo = ALL_COUNTRIES_LIST.find((c) => c.code === selectedCountry);
 
       const res = await fetch('/api/contact', {
@@ -106,7 +116,8 @@ export function CtaLeadModal({ isOpen, onClose, pdfUrl, pageName, isCareerCta, f
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           ...formData,
-          phone: fullPhone,
+          phone: validation.e164,
+          countryCode: selectedDialCode,
           country: countryInfo?.name || '',
           formType: formType || (isCareerCta ? 'career-cta' : 'cta'),
           pageName: pageName || pathname || document.title,
@@ -116,17 +127,19 @@ export function CtaLeadModal({ isOpen, onClose, pdfUrl, pageName, isCareerCta, f
       });
 
       if (!res.ok) {
-        const data = await res.json();
-        throw new Error(data.error || 'Failed to submit');
+        const data = await res.json().catch(() => ({}));
+        throw Object.assign(new Error(data.error || ''), { status: res.status });
       }
 
-      toast.success(isCareerCta ? 'Application submitted successfully!' : 'Submitted successfully!');
+      if (isCareerCta) {
+        toast.success('Application submitted successfully!');
+      }
       onClose();
       if (!isCareerCta) {
         await completeFormSuccess('cta', pdfUrl);
       }
     } catch (err: any) {
-      toast.error(err.message || 'Something went wrong. Please try again.');
+      toast.error(submitErrorMessage(err.status, err.message));
     } finally {
       setIsSubmitting(false);
     }
@@ -143,7 +156,7 @@ export function CtaLeadModal({ isOpen, onClose, pdfUrl, pageName, isCareerCta, f
               : 'Please provide your details below to access the requested document.'}
           </DialogDescription>
         </DialogHeader>
-        <form onSubmit={handleSubmit} className="space-y-4 mt-4">
+        <form onSubmit={handleSubmit} className="space-y-4 mt-4" noValidate>
           <div className="space-y-2">
             <label className="text-sm font-medium text-slate-700">Full Name *</label>
             <Input required name="name" value={formData.name} onChange={handleChange} placeholder="Enter Name" />
@@ -154,51 +167,17 @@ export function CtaLeadModal({ isOpen, onClose, pdfUrl, pageName, isCareerCta, f
           </div>
           <div className="space-y-2">
             <label className="text-sm font-medium text-slate-700">Phone Number *</label>
-            <div className="flex gap-2">
-              <Select value={selectedDialCode} onValueChange={(v) => setSelectedDialCode(v || '')} onOpenChange={(open) => !open && setSearchDialQuery('')}>
-                <SelectTrigger className="w-[100px] px-3 !h-[38px] rounded-md border border-slate-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#5C2B6A] focus-visible:border-transparent transition-all text-sm bg-slate-50 shadow-none relative shrink-0">
-                  <SelectValue>
-                    {selectedDialCode && (
-                      <span className="flex items-center gap-1.5">
-                        {DIAL_CODES.find((c) => c.code === selectedDialCode)?.dialCode}
-                      </span>
-                    )}
-                  </SelectValue>
-                </SelectTrigger>
-                <SelectContent className="w-[260px] max-h-48 p-0" align="start" alignItemWithTrigger={false} side="bottom">
-                  <div className="p-2 sticky top-0 bg-white z-10 border-b border-slate-100">
-                    <input
-                      type="text"
-                      placeholder="Search..."
-                      className="w-full px-3 py-2 text-sm outline-none border border-slate-200 rounded-md focus:border-[#5C2B6A] focus:ring-1 focus:ring-[#5C2B6A] transition-all"
-                      value={searchDialQuery}
-                      onChange={(e) => setSearchDialQuery(e.target.value)}
-                      onKeyDown={(e) => {
-                        e.stopPropagation();
-                        if (e.key === ' ') {
-                          e.preventDefault();
-                          setSearchDialQuery(prev => prev + ' ');
-                        }
-                      }}
-                      onClick={(e) => e.stopPropagation()}
-                    />
-                  </div>
-                  <div className="p-1">
-                    {filteredDialCodes.length > 0 ? (
-                      filteredDialCodes.map((c) => (
-                        <SelectItem key={c.code} value={c.code} className="cursor-pointer flex items-center gap-2">
-                          <span className="text-slate-500 w-10">{c.dialCode}</span>
-                          <span className="truncate">{c.name}</span>
-                        </SelectItem>
-                      ))
-                    ) : (
-                      <div className="py-4 text-center text-sm text-slate-500">Not found</div>
-                    )}
-                  </div>
-                </SelectContent>
-              </Select>
-              <Input required name="phone" value={formData.phone} onChange={handleChange} placeholder="Enter Mobile No" className="flex-1 !h-[38px] rounded-md" />
-            </div>
+            <PhoneField
+              variant="split"
+              required
+              name="phone"
+              value={formData.phone}
+              onChange={(phone) => setFormData((prev) => ({ ...prev, phone }))}
+              countryCode={selectedDialCode}
+              onCountryChange={handleDialChange}
+              placeholder="Enter Mobile No"
+              contentClassName="max-h-48"
+            />
           </div>
           <div className="space-y-2">
             <label className="text-sm font-medium text-slate-700">Country *</label>

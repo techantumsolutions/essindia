@@ -2,10 +2,12 @@ import { NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { chatConversations, chatMessages } from '@/lib/db/schema';
 import { eq } from 'drizzle-orm';
+import { validateAndFormatPhone } from '@/lib/phone-validation';
+import { FORM_SUBMIT_ERROR, validateEmail, validateName } from '@/lib/form-validation';
 
 export async function POST(request: Request) {
   try {
-    const { conversationId, email, phone, name } = await request.json();
+    const { conversationId, email, phone, name, countryCode } = await request.json();
 
     if (!conversationId) {
       return NextResponse.json({ error: 'conversationId is required' }, { status: 400 });
@@ -17,9 +19,27 @@ export async function POST(request: Request) {
     }
 
     const updateData: Record<string, any> = { updatedAt: new Date() };
-    if (email) updateData.userEmail = email.trim();
-    if (phone) updateData.userPhone = phone.trim();
-    if (name && name.trim()) updateData.userName = name.trim();
+    if (email && String(email).trim()) {
+      const emailCheck = validateEmail(email, false);
+      if (!emailCheck.isValid) {
+        return NextResponse.json({ error: emailCheck.message }, { status: 400 });
+      }
+      updateData.userEmail = String(email).trim();
+    }
+    if (phone && String(phone).trim()) {
+      const result = validateAndFormatPhone(phone, countryCode || '', false);
+      if (!result.isValid) {
+        return NextResponse.json({ error: result.message }, { status: 400 });
+      }
+      updateData.userPhone = result.e164;
+    }
+    if (name && String(name).trim()) {
+      const nameCheck = validateName(name, false);
+      if (!nameCheck.isValid) {
+        return NextResponse.json({ error: nameCheck.message }, { status: 400 });
+      }
+      updateData.userName = String(name).trim();
+    }
 
     await db.update(chatConversations)
       .set(updateData)
@@ -39,6 +59,6 @@ export async function POST(request: Request) {
     return NextResponse.json({ success: true, message: botMsg });
   } catch (error: any) {
     console.error('Error recording contact lead:', error);
-    return NextResponse.json({ error: error.message || 'Failed to record contact lead' }, { status: 500 });
+    return NextResponse.json({ error: FORM_SUBMIT_ERROR }, { status: 500 });
   }
 }

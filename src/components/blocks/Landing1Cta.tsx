@@ -4,6 +4,17 @@ import React from 'react';
 import { Phone, Check, ShieldCheck, ArrowRight, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
 import { usePathname } from 'next/navigation';
+import { PhoneField } from '@/components/ui/PhoneField';
+import { validateAndFormatPhone } from '@/lib/phone-validation';
+import { DEFAULT_PHONE_COUNTRY } from '@/lib/dial-codes';
+import {
+  FORM_SUCCESS_MESSAGE,
+  submitErrorMessage,
+  validateCompany,
+  validateEmail,
+  validateName,
+  validatePrivacy,
+} from '@/lib/form-validation';
 
 export interface Landing1CtaContent {
   badge?: string;
@@ -59,6 +70,7 @@ export function Landing1Cta({ content }: { content?: Landing1CtaContent }) {
   const [company, setCompany] = React.useState('');
   const [email, setEmail] = React.useState('');
   const [phone, setPhone] = React.useState('');
+  const [phoneCountry, setPhoneCountry] = React.useState(DEFAULT_PHONE_COUNTRY);
   const [industry, setIndustry] = React.useState('');
   const [employees, setEmployees] = React.useState('');
   const [currentErp, setCurrentErp] = React.useState('');
@@ -68,14 +80,34 @@ export function Landing1Cta({ content }: { content?: Landing1CtaContent }) {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!agree) {
-      toast.error('You must agree to the privacy policy');
+
+    const nameCheck = validateName(name);
+    if (!nameCheck.isValid) {
+      toast.error(nameCheck.message);
       return;
     }
-    if (!name || !email) {
-      toast.error('Name and Email are required');
+    const emailCheck = validateEmail(email);
+    if (!emailCheck.isValid) {
+      toast.error(emailCheck.message);
       return;
     }
+    const companyCheck = validateCompany(company);
+    if (!companyCheck.isValid) {
+      toast.error(companyCheck.message);
+      return;
+    }
+    const phoneCheck = validateAndFormatPhone(phone, phoneCountry, false);
+    if (!phoneCheck.isValid) {
+      toast.error(phoneCheck.message);
+      return;
+    }
+    const privacyCheck = validatePrivacy(agree);
+    if (!privacyCheck.isValid) {
+      toast.error(privacyCheck.message);
+      return;
+    }
+
+    const e164Phone = phoneCheck.e164 || '';
 
     setIsSubmitting(true);
     try {
@@ -92,7 +124,8 @@ export function Landing1Cta({ content }: { content?: Landing1CtaContent }) {
         body: JSON.stringify({
           name,
           email,
-          phone,
+          phone: e164Phone || undefined,
+          countryCode: e164Phone ? phoneCountry : undefined,
           company,
           formType: 'landing-1',
           message: messagePayload,
@@ -101,10 +134,11 @@ export function Landing1Cta({ content }: { content?: Landing1CtaContent }) {
       });
 
       if (!res.ok) {
-        throw new Error('Submission failed');
+        const data = await res.json().catch(() => ({}));
+        throw Object.assign(new Error(data.error || ''), { status: res.status });
       }
 
-      toast.success('Demo request submitted successfully!');
+      toast.success(FORM_SUCCESS_MESSAGE);
       // Reset form
       setName('');
       setCompany('');
@@ -115,9 +149,9 @@ export function Landing1Cta({ content }: { content?: Landing1CtaContent }) {
       setCurrentErp('');
       setRequirement('');
       setAgree(false);
-    } catch (err) {
+    } catch (err: any) {
       console.error(err);
-      toast.error('Failed to submit demo request. Please try again.');
+      toast.error(submitErrorMessage(err.status, err.message));
     } finally {
       setIsSubmitting(false);
     }
@@ -202,7 +236,7 @@ export function Landing1Cta({ content }: { content?: Landing1CtaContent }) {
               </h3>
             )}
 
-            <form onSubmit={handleSubmit} className="space-y-4">
+            <form onSubmit={handleSubmit} className="space-y-4" noValidate>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label className="text-xs font-bold text-slate-600 mb-1.5 block">Full Name</label>
@@ -238,12 +272,15 @@ export function Landing1Cta({ content }: { content?: Landing1CtaContent }) {
                 </div>
                 <div>
                   <label className="text-xs font-bold text-slate-600 mb-1.5 block">Phone</label>
-                  <input
-                    type="text"
-                    placeholder="+91 90000 00000"
+                  <PhoneField
+                    variant="attached"
                     value={phone}
-                    onChange={(e) => setPhone(e.target.value)}
-                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-indigo-600/40 focus:bg-white transition-all font-medium text-slate-800"
+                    onChange={setPhone}
+                    countryCode={phoneCountry}
+                    onCountryChange={setPhoneCountry}
+                    placeholder="90000 00000"
+                    triggerClassName="!h-[42px] rounded-l-xl border-slate-200 bg-slate-50 focus-visible:ring-0 focus-visible:border-indigo-600/40"
+                    inputClassName="!h-[42px] bg-slate-50 border-slate-200 rounded-r-xl px-4 py-2.5 font-medium text-slate-800 focus:ring-0 focus:border-indigo-600/40 focus:bg-white"
                   />
                 </div>
                 <div>

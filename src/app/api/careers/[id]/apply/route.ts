@@ -2,12 +2,15 @@ import { NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { careers, applications, careersSettings } from '@/lib/db/schema';
 import { eq } from 'drizzle-orm';
-import { notFound, serverError, badRequest } from '@/lib/cms/api-response';
+import { notFound, badRequest } from '@/lib/cms/api-response';
 import { StorageService } from '@/lib/storage/r2';
 import { writeFile, mkdir } from 'fs/promises';
 import { join } from 'path';
 import { randomUUID } from 'crypto';
 import { sendApplicationEmails } from '@/lib/email';
+import { validateAndFormatPhone } from '@/lib/phone-validation';
+import { FORM_RATE_LIMIT_ERROR, FORM_SUBMIT_ERROR, validateEmail, validateName } from '@/lib/form-validation';
+import { consumeFormRateLimit, getRequestIp } from '@/lib/form-rate-limit';
 
 export async function POST(
   request: Request,
@@ -20,10 +23,16 @@ export async function POST(
     });
     if (!job || job.status !== 'active') return notFound('Position not found');
 
+    const ip = getRequestIp(request);
+    if (!consumeFormRateLimit(`career-apply:${ip}`)) {
+      return NextResponse.json({ error: FORM_RATE_LIMIT_ERROR }, { status: 429 });
+    }
+
     const formData = await request.formData();
     const fullName = formData.get('fullName') as string | null;
     const email = formData.get('email') as string | null;
     const phone = formData.get('phone') as string | null;
+    const countryCode = formData.get('countryCode') as string | null;
     const experience = formData.get('experience') as string | null;
     const currentCompany = formData.get('currentCompany') as string | null;
     const noticePeriod = formData.get('noticePeriod') as string | null;
@@ -32,9 +41,23 @@ export async function POST(
     const coverLetter = formData.get('coverLetter') as string | null;
     const file = formData.get('resume') as File | null;
 
-    if (!fullName || !email || !phone || !experience || !noticePeriod || !file) {
+    if (!experience || !noticePeriod || !file) {
       return badRequest('Required fields are missing');
     }
+
+    const nameCheck = validateName(fullName || '');
+    if (!nameCheck.isValid) {
+      return badRequest(nameCheck.message);
+    }
+    const emailCheck = validateEmail(email || '');
+    if (!emailCheck.isValid) {
+      return badRequest(emailCheck.message);
+    }
+    const phoneResult = validateAndFormatPhone(phone || '', countryCode || '');
+    if (!phoneResult.isValid) {
+      return badRequest(phoneResult.message);
+    }
+    const e164Phone = phoneResult.e164;
 
     // Process file upload
     const buffer = Buffer.from(await file.arrayBuffer());
@@ -63,9 +86,9 @@ export async function POST(
       .insert(applications)
       .values({
         careerId,
-        fullName,
-        email,
-        phone,
+        fullName: (fullName || '').trim(),
+        email: (email || '').trim(),
+        phone: e164Phone,
         experience,
         currentCompany: currentCompany || null,
         noticePeriod,
@@ -96,13 +119,13 @@ export async function POST(
     // Send application emails asynchronously
     try {
       await sendApplicationEmails({
-        candidateEmail: email,
-        candidateName: fullName,
+        candidateEmail: (email || '').trim(),
+        candidateName: (fullName || '').trim(),
         jobTitle: job.title,
         hrEmail,
         jdUrl: job.jdUrl,
         applicantDetails: {
-          phone,
+          phone: e164Phone,
           experience,
           currentCompany: currentCompany || null,
           noticePeriod,
@@ -118,6 +141,7 @@ export async function POST(
 
     return NextResponse.json(app, { status: 201 });
   } catch (error) {
-    return serverError(error);
+    console.error('[Career apply error]:', error);
+    return NextResponse.json({ error: FORM_SUBMIT_ERROR }, { status: 500 });
   }
 }
