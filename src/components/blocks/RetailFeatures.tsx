@@ -10,6 +10,7 @@ export interface RetailFeatureItem {
 
 export interface RetailFeaturesContent {
   title?: string;
+  titleColor?: string;
   subtitle?: string;
   bgImage?: string;
   centerImage?: string;
@@ -53,6 +54,7 @@ export function RetailFeatures({ content }: { content: RetailFeaturesContent }) 
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             className="text-4xl md:text-5xl font-normal mb-1"
+            style={content?.titleColor ? { color: content.titleColor } : undefined}
           >
             {title}
           </motion.h2>

@@ -13,6 +13,7 @@ interface IndustryItem {
 
 interface BiIndustriesContent {
   title?: string;
+  titleColor?: string;
   description?: string;
   industries?: IndustryItem[];
 }
@@ -60,7 +61,10 @@ export function BiIndustries({ content }: { content?: BiIndustriesContent }) {
               viewport={{ once: true }}
               transition={{ duration: 0.5 }}
             >
-              <h2 className="text-4xl sm:text-[45px] font-bold text-[#4c327f] leading-tight tracking-tight">
+              <h2
+                className="text-4xl sm:text-[45px] font-bold text-[#4c327f] leading-tight tracking-tight"
+                style={content?.titleColor ? { color: content.titleColor } : undefined}
+              >
                 {title}
               </h2>
             </motion.div>

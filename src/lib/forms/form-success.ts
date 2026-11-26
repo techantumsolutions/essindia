@@ -12,11 +12,13 @@ export interface FormTypeSettings {
 export interface FormSettingsMap {
   contact: FormTypeSettings;
   cta: FormTypeSettings;
+  services: string[];
 }
 
 const DEFAULT_SETTINGS: FormSettingsMap = {
   contact: { thankYouUrl: '/thank-you' },
   cta: { thankYouUrl: '/thank-you' },
+  services: [],
 };
 
 let cachedSettings: FormSettingsMap | null = null;
@@ -33,6 +35,7 @@ export async function fetchFormSettings(): Promise<FormSettingsMap> {
       cachedSettings = {
         contact: { thankYouUrl: data?.contact?.thankYouUrl || DEFAULT_SETTINGS.contact.thankYouUrl },
         cta: { thankYouUrl: data?.cta?.thankYouUrl || DEFAULT_SETTINGS.cta.thankYouUrl },
+        services: Array.isArray(data?.services) ? data.services : [],
       };
       return cachedSettings;
     })

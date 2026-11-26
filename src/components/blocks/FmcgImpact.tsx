@@ -10,6 +10,7 @@ interface ImpactCard {
 
 interface FmcgImpactContent {
   title?: string;
+  titleColor?: string;
   cards?: ImpactCard[];
 }
 
@@ -46,7 +47,10 @@ export function FmcgImpact({ content }: { content?: FmcgImpactContent }) {
       <div className="container mx-auto max-w-7xl text-center space-y-12">
 
         {/* Title */}
-        <h2 className="text-3xl sm:text-4xl font-extrabold text-[#2a2b6a] leading-tight max-w-2xl mx-auto">
+        <h2
+          className="text-3xl sm:text-4xl font-extrabold text-[#2a2b6a] leading-tight max-w-2xl mx-auto"
+          style={content?.titleColor ? { color: content.titleColor } : undefined}
+        >
           {title}
         </h2>
 

@@ -43,7 +43,7 @@ export function RetailHero({ content }: { content: RetailHeroContent }) {
   const buttonText = content?.buttonText || 'Lorem Ipsum';
   const buttonUrl = content?.buttonUrl || '#';
   const buttonFormType = (content?.buttonFormType || '') as CtaFormType;
-  const { handleClick: handleBtnClick, modalNode } = useCtaAction(buttonUrl, buttonFormType);  const buttonBgColor = content?.buttonBgColor || '#fbbf24';
+  const { handleClick: handleBtnClick, modalNode } = useCtaAction(buttonUrl, buttonFormType, (content as any)?.buttonPdfUrl || (content as any)?.pdfUrl);  const buttonBgColor = content?.buttonBgColor || '#fbbf24';
   const buttonHoverBgColor = content?.buttonHoverBgColor;
   const buttonTextColor = content?.buttonTextColor || '#472393';
   const buttonHoverTextColor = content?.buttonHoverTextColor;

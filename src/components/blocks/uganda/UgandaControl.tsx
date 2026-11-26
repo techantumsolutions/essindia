@@ -13,6 +13,7 @@ interface PointItem {
 export interface UgandaControlContent {
   subtitle?: string;
   title?: string;
+  titleColor?: string;
   desc1?: string;
   desc2?: string;
   image?: string;
@@ -54,7 +55,10 @@ export function UgandaControl({ content }: { content?: UgandaControlContent }) {
               </span>
             )}
             {title && (
-              <h2 className="text-2xl sm:text-[34px] leading-tight font-extrabold text-[#1d1b4b] tracking-tight">
+              <h2
+                className="text-2xl sm:text-[34px] leading-tight font-extrabold text-[#1d1b4b] tracking-tight"
+                style={content?.titleColor ? { color: content.titleColor } : undefined}
+              >
                 {title}
               </h2>
             )}

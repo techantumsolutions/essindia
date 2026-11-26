@@ -18,6 +18,7 @@ interface StepItem {
 
 interface BiBusinessImpactContent {
   title?: string;
+  titleColor?: string;
   subtitle?: string;
   description?: string;
   optionLabel?: string;
@@ -94,7 +95,10 @@ export function BiBusinessImpact({ content }: { content?: BiBusinessImpactConten
           <div className="flex-1 lg:sticky lg:top-32 text-left">
             <div className="space-y-1.5 mb-3.5">
               {title && (
-                <h3 className="text-[32px] font-bold text-[#4c327f] tracking-tight leading-none">
+                <h3
+                  className="text-[32px] font-bold text-[#4c327f] tracking-tight leading-none"
+                  style={content?.titleColor ? { color: content.titleColor } : undefined}
+                >
                   {title}
                 </h3>
               )}

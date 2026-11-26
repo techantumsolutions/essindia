@@ -81,16 +81,17 @@ export default async function DynamicPage({ params }: PageProps) {
   const seo = page.seo as any;
 
   const isLandingPage =
-    page.pageType === 'landing' ||
-    page.pageType === 'LANDING' ||
-    fullPath.startsWith('/landing') ||
-    fullPath.includes('/landing-') ||
-    fullPath.startsWith('/lp') ||
-    (page.sections && page.sections.some((s: any) =>
-      s.type?.startsWith('landing1-') ||
-      s.type?.startsWith('landing2-') ||
-      s.type?.startsWith('landing-')
-    ));
+    page.pageType !== 'duplicated-landing' &&
+    (page.pageType === 'landing' ||
+      page.pageType === 'LANDING' ||
+      fullPath.startsWith('/landing') ||
+      fullPath.includes('/landing-') ||
+      fullPath.startsWith('/lp') ||
+      (page.sections && page.sections.some((s: any) =>
+        s.type?.startsWith('landing1-') ||
+        s.type?.startsWith('landing2-') ||
+        s.type?.startsWith('landing-')
+      )));
 
   if (page.sections && page.sections.length > 0) {
     return (

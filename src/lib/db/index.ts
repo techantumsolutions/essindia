@@ -1,6 +1,14 @@
+import dns from 'node:dns';
 import { drizzle } from 'drizzle-orm/postgres-js';
 import postgres from 'postgres';
 import * as schema from './schema';
+
+try {
+  // Prefer IPv4 DNS resolution to prevent IPv6 handshake stalls / CONNECT_TIMEOUT on Supabase pooler
+  dns.setDefaultResultOrder('ipv4first');
+} catch {
+  // Ignore in non-Node runtimes
+}
 
 // Prefer pooled transaction connection (port 6543) for app queries to prevent EMAXCONNSESSION
 const connectionString =
@@ -14,7 +22,7 @@ type DbGlobals = {
 };
 
 const globalDb = globalThis as typeof globalThis & DbGlobals;
-const CLIENT_CONFIG_VERSION = 3;
+const CLIENT_CONFIG_VERSION = 4;
 
 function createClient() {
   const masked = connectionString.replace(/:[^:@]+@/, ':****@');
@@ -26,7 +34,7 @@ function createClient() {
     prepare: false,
     max: Number(process.env.DB_POOL_MAX || 10),
     idle_timeout: 20,
-    connect_timeout: 10,
+    connect_timeout: 30,
     max_lifetime: 60 * 30,
     max_pipeline: 0,
   } as Parameters<typeof postgres>[1]);

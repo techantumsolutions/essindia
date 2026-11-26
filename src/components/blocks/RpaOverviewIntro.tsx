@@ -5,6 +5,7 @@ import { motion } from 'framer-motion';
 
 export interface RpaOverviewIntroContent {
   title?: string;
+  titleColor?: string;
   description?: string;
 }
 
@@ -23,6 +24,7 @@ export function RpaOverviewIntro({ content }: { content?: RpaOverviewIntroConten
               viewport={{ once: true }}
               transition={{ duration: 0.4 }}
               className="text-3xl sm:text-4xl font-bold text-[#27256b] tracking-tight leading-tight"
+              style={content?.titleColor ? { color: content.titleColor } : undefined}
             >
               {title}
             </motion.h2>

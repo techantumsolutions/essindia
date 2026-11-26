@@ -114,6 +114,8 @@ export function ArrayFieldEditor({
       } else if (lowerKey === 'modules') {
         if (sectionType === 'landing1-suite') {
           defaultObj = { name: '', desc: '', image: '', highlighted: false };
+        } else if (sectionType === 'landing2-modules') {
+          defaultObj = { title: '', iconType: 'planning', href: '' };
         } else if (sectionType === 'retail-mobile-dashboard') {
           defaultObj = { title: '', features: [] };
         } else {

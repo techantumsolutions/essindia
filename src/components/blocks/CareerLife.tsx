@@ -6,6 +6,7 @@ import { motion } from 'framer-motion';
 export default function CareerLife({ content }: { content?: any }) {
   const {
     title = 'Life Beyond the Code',
+    titleColor,
     subtitle = "From team celebrations to social events, here's a glimpse of the moments we share together.",
     image1 = '/Career-Page/image 88.png',
     image2 = '/Career-Page/image 89.png',
@@ -31,7 +32,12 @@ export default function CareerLife({ content }: { content?: any }) {
     <section className="py-12 px-6 border-t border-b bg-white">
       <div className="container mx-auto max-w-7xl">
         <div className="text-center mb-6 md:mb-8 lg:mb-16">
-          <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-4">{title}</h2>
+          <h2
+            className="text-3xl md:text-4xl font-bold text-slate-900 mb-4"
+            style={titleColor ? { color: titleColor } : undefined}
+          >
+            {title}
+          </h2>
           <p className="text-[#71717A] max-w-2xl mx-auto text-2xl font-light leading-none">
             {subtitle}
           </p>

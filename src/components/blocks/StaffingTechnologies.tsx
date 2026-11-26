@@ -13,6 +13,7 @@ interface TechColumn {
 
 interface StaffingTechnologiesContent {
   heading?: string;
+  headingColor?: string;
   columns?: TechColumn[];
 }
 
@@ -92,7 +93,10 @@ export function StaffingTechnologies({ content }: StaffingTechnologiesProps) {
     <section className="py-14 px-6 bg-white border-b">
       <div className="container mx-auto max-w-7xl">
         <div className="text-center mb-12">
-          <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-6 whitespace-pre-line">
+          <h2
+            className="text-3xl md:text-4xl font-bold text-slate-900 mb-6 whitespace-pre-line"
+            style={content?.headingColor ? { color: content.headingColor } : undefined}
+          >
             {heading}
           </h2>
           <div className="w-16 h-0.5 bg-[#2a2d7c] mx-auto"></div>

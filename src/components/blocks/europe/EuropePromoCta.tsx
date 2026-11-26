@@ -13,6 +13,7 @@ export interface EuropePromoCtaContent extends EuropeCommonSettings {
   image?: string;
   smallTitle?: string;
   title?: string;
+  titleColor?: string;
   headingTag?: string;
   description?: string;
   buttonText?: string;
@@ -36,7 +37,7 @@ export function EuropePromoCta({ content }: { content?: EuropePromoCtaContent })
   const buttonUrl = content?.buttonUrl || '/contact-us';
   const buttonFormType = (content?.buttonFormType || '') as CtaFormType;
 
-  const { handleClick: handleBtnClick, modalNode } = useCtaAction(buttonUrl, buttonFormType);
+  const { handleClick: handleBtnClick, modalNode } = useCtaAction(buttonUrl, buttonFormType, (content as any)?.buttonPdfUrl || (content as any)?.pdfUrl);
 
   return (
     <EuropeSectionShell content={{ ...content, backgroundColor: '#f4f7fa', sectionPaddingTop: 'pt-14', sectionPaddingBottom: 'pb-14' }}>
@@ -48,7 +49,12 @@ export function EuropePromoCta({ content }: { content?: EuropePromoCtaContent })
             </span>
           )}
           {title && (
-            <CmsHeading tag={undefined} fallback="h2" className="text-3xl sm:text-[40px] leading-[1.15] font-bold text-[#111827]">
+            <CmsHeading
+              tag={undefined}
+              fallback="h2"
+              className="text-3xl sm:text-[40px] leading-[1.15] font-bold text-[#111827]"
+              style={content?.titleColor ? { color: content.titleColor } : undefined}
+            >
               {title}
             </CmsHeading>
           )}

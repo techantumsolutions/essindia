@@ -8,6 +8,7 @@ import { Download, ExternalLink, X } from 'lucide-react';
 export interface StickyCardContent {
   image?: string;
   title?: string;
+  titleColor?: string;
   description?: string;
   buttonText?: string;
   documentUrl?: string;
@@ -72,7 +73,10 @@ export function StickyCardSection({ content }: StickyCardSectionProps) {
         <div className="flex-1 flex flex-col justify-between w-full min-w-0 pr-0.5">
           <div>
             {title && (
-              <h3 className="text-xs sm:text-sm font-bold text-slate-900 tracking-tight leading-tight mb-0.5 line-clamp-1">
+              <h3
+                className="text-xs sm:text-sm font-bold text-slate-900 tracking-tight leading-tight mb-0.5 line-clamp-1"
+                style={content?.titleColor ? { color: content.titleColor } : undefined}
+              >
                 {title}
               </h3>
             )}

@@ -5,6 +5,7 @@ import { motion } from 'framer-motion';
 
 export interface RetailClientsContent {
   title?: string;
+  titleColor?: string;
   logos?: string[];
   autoScroll?: boolean;
 }
@@ -31,6 +32,7 @@ export function RetailClients({ content }: { content: RetailClientsContent }) {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           className="text-xl md:text-2xl font-bold text-indigo-900 mb-10 text-center"
+          style={content?.titleColor ? { color: content.titleColor } : undefined}
         >
           {title}
         </motion.h3>

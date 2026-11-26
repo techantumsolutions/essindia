@@ -972,6 +972,12 @@ export class PageAdminRepository {
       counter++;
     }
 
+    const isSourceLandingPage =
+      Boolean(page.template?.name?.toLowerCase().includes('landing page')) ||
+      page.pageType === 'landing-page' ||
+      page.pageType === 'landing' ||
+      page.pageType === 'duplicated-landing';
+
     const [seo] = await db.insert(seoMetadata).values({ title: candidateTitle }).returning();
 
     const [copy] = await db
@@ -990,7 +996,7 @@ export class PageAdminRepository {
         megaMenuCategoryId: null,
         megaMenuSubCategoryId: null,
         megaMenuSubSubCategoryId: null,
-        pageType: page.pageType,
+        pageType: isSourceLandingPage ? 'duplicated-landing' : page.pageType,
         status: 'draft',
         seoId: seo.id,
         isTemplate: false,

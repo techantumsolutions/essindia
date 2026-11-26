@@ -13,6 +13,7 @@ interface ErpValueCard {
 
 interface ErpValueGridContent {
   heading?: string;
+  headingColor?: string;
   description?: string;
   badgeText?: string;
   values?: ErpValueCard[];
@@ -64,7 +65,10 @@ export function ErpValueGrid({ content }: ErpValueGridProps) {
         {/* Header Block */}
         <div className="text-center max-w-3xl mx-auto mb-12">
           <MotionSection variant="fadeUp" className="">
-            <h2 className="text-3xl md:text-4xl lg:text-[42px] font-bold text-[#462294] tracking-tight mb-4">
+            <h2
+              className="text-3xl md:text-4xl lg:text-[42px] font-bold text-[#000000] tracking-tight mb-4"
+              style={content?.headingColor ? { color: content.headingColor } : undefined}
+            >
               {heading}
             </h2>
             {description.includes('<p>') ? (
@@ -87,19 +91,19 @@ export function ErpValueGrid({ content }: ErpValueGridProps) {
               {/* Left Line */}
               <div className="hidden md:flex flex-1 items-center justify-end">
                 <div className="w-full border-t border-dashed border-[#B9B4D6]" />
-                <div className="w-2 h-2 rounded-full bg-[#4A36F4] ml-2 shrink-0" />
+                <div className="w-2 h-2 rounded-full bg-[#E9EDF3] ml-2 shrink-0" />
               </div>
 
               {/* Badge */}
               <div
-                className="bg-[#4A36F4] text-white rounded-full px-8 md:px-10 h-12 flex items-center justify-center text-sm md:text-base font-semibold shadow-lg"
+                className="bg-[#E9EDF3] text-[#000000] rounded-full px-8 md:px-10 h-12 flex items-center justify-center text-sm md:text-base font-semibold shadow-lg"
               >
                 {badgeText}
               </div>
 
               {/* Right Line */}
               <div className="hidden md:flex flex-1 items-center justify-start">
-                <div className="w-2 h-2 rounded-full bg-[#4A36F4] mr-2 shrink-0" />
+                <div className="w-2 h-2 rounded-full bg-[#E9EDF3] mr-2 shrink-0" />
                 <div className="w-full border-t border-dashed border-[#B9B4D6]" />
               </div>
             </div>

@@ -8,6 +8,7 @@ import { FormattedText } from '@/components/ui/FormattedText';
 
 interface RoiFormulaContent {
   title?: string;
+  titleColor?: string;
   paragraphs?: string[];
   image1?: string;
   image2?: string;
@@ -43,7 +44,10 @@ export function RoiFormula({ content }: { content?: RoiFormulaContent }) {
           transition={{ duration: 0.6 }}
           className="space-y-3 text-left max-w-5xl"
         >
-          <h2 className="text-3xl md:text-4xl font-bold text-[#2b2a6c] tracking-tight">
+          <h2
+            className="text-3xl md:text-4xl font-bold text-[#2b2a6c] tracking-tight"
+            style={content?.titleColor ? { color: content.titleColor } : undefined}
+          >
             {title}
           </h2>
 

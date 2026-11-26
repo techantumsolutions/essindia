@@ -16,6 +16,7 @@ interface ActionCard {
 
 interface FmcgActionContent {
   title?: string;
+  titleColor?: string;
   description?: string;
   cards?: ActionCard[];
 }
@@ -97,7 +98,10 @@ export function FmcgAction({ content }: { content?: FmcgActionContent }) {
 
         {/* Header Title & Description */}
         <div className="space-y-4 max-w-4xl mx-auto">
-          <h2 className="text-3xl sm:text-4xl font-extrabold text-[#2a2b6a] leading-tight">
+          <h2
+            className="text-3xl sm:text-4xl font-extrabold text-[#2a2b6a] leading-tight"
+            style={content?.titleColor ? { color: content.titleColor } : undefined}
+          >
             {title}
           </h2>
           <div className="text-slate-500 text-sm sm:text-base leading-relaxed">

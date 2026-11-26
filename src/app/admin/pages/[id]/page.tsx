@@ -209,7 +209,7 @@ function CustomDropdown({ value, onChange, options, placeholder }: CustomDropdow
 // Case Study Posts Manager Component
 // ---------------------------------------------------------------------------
 
-export function CaseStudyManager({ pageId, onRefresh }: { pageId?: string; onRefresh?: () => void }) {
+function CaseStudyManager({ pageId, onRefresh }: { pageId?: string; onRefresh?: () => void }) {
   const [studies, setStudies] = React.useState<any[]>([]);
   const [templates, setTemplates] = React.useState<any[]>([]);
   const [isLoading, setIsLoading] = React.useState(true);
@@ -1101,13 +1101,13 @@ export function CaseStudyManager({ pageId, onRefresh }: { pageId?: string; onRef
 // Blog Posts Manager Component
 // ---------------------------------------------------------------------------
 
-export interface BlogManagerProps {
+interface BlogManagerProps {
   pageId?: string;
   onRefresh?: () => void;
   blogListSection?: PageSection;
 }
 
-export function BlogManager({ pageId, onRefresh, blogListSection }: BlogManagerProps) {
+function BlogManager({ pageId, onRefresh, blogListSection }: BlogManagerProps) {
   const [fetchedTopics, setFetchedTopics] = React.useState<string[]>([]);
   const [fetchedIndustries, setFetchedIndustries] = React.useState<string[]>([]);
 
@@ -2573,7 +2573,7 @@ export function BlogManager({ pageId, onRefresh, blogListSection }: BlogManagerP
 function EditorSkeleton() {
   return (
     <div className="space-y-6 pb-24 animate-pulse">
-      <div className="sticky top-20 z-30 bg-[#F8F9FA]/95 backdrop-blur-lg py-4 -mx-2 px-2 border-b border-slate-100/50">
+      <div className="sticky top-14 z-30 bg-[#F8F9FA]/95 backdrop-blur-lg py-4 -mx-2 px-2 border-b border-slate-100/50">
         <div className="flex items-center justify-between gap-4">
           <div className="flex items-center gap-4">
             <div className="w-24 h-10 bg-slate-200 rounded-xl" />
@@ -2728,6 +2728,7 @@ export default function PageEditor() {
   };
 
   const isLandingPage = React.useMemo(() => {
+    if (page?.pageType === 'duplicated-landing') return false;
     return page?.template?.name?.toLowerCase().includes('landing page') || page?.pageType === 'landing-page' || false;
   }, [page]);
 
@@ -3162,7 +3163,7 @@ export default function PageEditor() {
       className="space-y-6 pb-24"
     >
       {/* ===== Sticky action bar ===== */}
-      <div className="sticky top-20 z-30 bg-[#F8F9FA]/95 backdrop-blur-lg py-4 -mx-2 px-2 border-b border-slate-100/50">
+      <div className="sticky top-14 z-30 bg-[#F8F9FA]/95 backdrop-blur-lg py-4 -mx-2 px-2 border-b border-slate-100/50">
         <div className="flex items-center justify-between gap-4">
           <div className="flex items-center gap-4 min-w-0">
             <Button

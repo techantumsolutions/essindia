@@ -29,7 +29,7 @@ interface AssFeaturesGridContent {
 export function AssFeaturesGrid({ content }: { content?: AssFeaturesGridContent }) {
   const ctaUrl = (content as any)?.ctaUrl || '';
   const ctaFormType = ((content as any)?.ctaFormType || '') as CtaFormType;
-  const { handleClick: handleCtaClick, modalNode } = useCtaAction(ctaUrl, ctaFormType);
+  const { handleClick: handleCtaClick, modalNode } = useCtaAction(ctaUrl, ctaFormType, (content as any)?.ctaPdfUrl || (content as any)?.pdfUrl);
   const title = content?.title || 'Simplify Scheduling. Accelerate Productivity.';
 
   const defaultCategories: Category[] = [

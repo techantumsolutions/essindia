@@ -55,13 +55,13 @@ export function RpaOverviewLogos({ content }: { content?: RpaOverviewLogosConten
               {duplicatedLogos.map((logo, idx) => (
                 <div
                   key={idx}
-                  className="relative w-20 h-10 shrink-0 select-none flex items-center justify-center"
+                  className="relative w-32 h-16 shrink-0 select-none flex items-center justify-center"
                 >
                   {logo.image && (
                     <img
                       src={logo.image}
                       alt={logo.name || 'Partner Logo'}
-                      className="w-full h-full object-contain opacity-75 hover:opacity-100 transition-opacity duration-300"
+                      className="max-w-full max-h-full object-contain opacity-75 hover:opacity-100 transition-opacity duration-300"
                     />
                   )}
                 </div>
@@ -83,13 +83,13 @@ export function RpaOverviewLogos({ content }: { content?: RpaOverviewLogosConten
                 whileInView={{ opacity: 1, scale: 1 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.35, delay: idx * 0.04 }}
-                className="relative w-20 h-10 sm:w-24 sm:h-12 md:w-28 md:h-12 hover:scale-110 transition-all duration-300 select-none flex items-center justify-center"
+                className="relative w-32 h-16 hover:scale-110 transition-all duration-300 select-none flex items-center justify-center"
               >
                 {logo.image && (
                   <img
                     src={logo.image}
                     alt={logo.name || 'Partner Logo'}
-                    className="w-full h-full object-contain"
+                    className="max-w-full max-h-full object-contain"
                   />
                 )}
               </motion.div>

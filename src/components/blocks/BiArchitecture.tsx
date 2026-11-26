@@ -5,6 +5,7 @@ import Image from 'next/image';
 
 interface BiArchitectureContent {
   title?: string;
+  titleColor?: string;
   description?: string;
   image?: string;
 }
@@ -21,7 +22,10 @@ export function BiArchitecture({ content }: { content?: BiArchitectureContent })
 
         {/* Header */}
         <div className="text-center max-w-4xl mx-auto mb-4 space-y-2">
-          <h2 className="text-3xl sm:text-4xl lg:text-[40px] font-bold text-[#4c327f] tracking-tight">
+          <h2
+            className="text-3xl sm:text-4xl lg:text-[40px] font-bold text-[#4c327f] tracking-tight"
+            style={content?.titleColor ? { color: content.titleColor } : undefined}
+          >
             {title}
           </h2>
           <p className="text-slate-500 font-light text-base sm:text-[17px] leading-relaxed">

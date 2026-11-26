@@ -7,6 +7,7 @@ import { FormattedText } from '@/components/ui/FormattedText';
 
 interface OracleApexIntroContent {
   title?: string;
+  titleColor?: string;
   paragraphs?: string[];
   buttonText?: string;
   buttonHoverBgColor?: string;
@@ -29,7 +30,7 @@ export function OracleApexIntro({ content }: { content?: OracleApexIntroContent 
   const buttonHoverTextColor = content?.buttonHoverTextColor;
   const buttonUrl = content?.buttonUrl || '#';
   const buttonFormType = (content?.buttonFormType || '') as CtaFormType;
-  const { handleClick: handleBtnClick, modalNode } = useCtaAction(buttonUrl, buttonFormType);
+  const { handleClick: handleBtnClick, modalNode } = useCtaAction(buttonUrl, buttonFormType, (content as any)?.buttonPdfUrl || (content as any)?.pdfUrl);
   return (
     <section className="py-14 px-6 bg-[#F5F5F5] font-sans relative">
       <div className="container mx-auto max-w-4xl text-center space-y-8">
@@ -41,7 +42,8 @@ export function OracleApexIntro({ content }: { content?: OracleApexIntroContent 
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.4 }}
-            className="text-3xl md:text-4xl font-bold text-[#2D1A70] tracking-tight leading-tight"
+            className={`text-3xl md:text-4xl font-bold tracking-tight leading-tight ${content?.titleColor ? '' : 'text-[#2D1A70]'}`}
+            style={content?.titleColor ? { color: content.titleColor } : undefined}
           >
             {title}
           </motion.h2>

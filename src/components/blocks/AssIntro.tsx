@@ -4,6 +4,7 @@ import React from 'react';
 
 interface AssIntroContent {
   title?: string;
+  titleColor?: string;
   paragraph1?: string;
   paragraph2?: string;
   paragraphs?: string[];
@@ -23,7 +24,10 @@ export function AssIntro({ content }: { content?: AssIntroContent }) {
   return (
     <section className="p-14 px-6 bg-[#f5f5f5] border-b">
       <div className="container mx-auto max-w-4xl text-center">
-        <h2 className="text-3xl md:text-4xl font-bold text-[#27256B] mb-8 leading-tight">
+        <h2
+          className="text-3xl md:text-4xl font-bold text-[#27256B] mb-8 leading-tight"
+          style={content?.titleColor ? { color: content.titleColor } : undefined}
+        >
           {title}
         </h2>
         <div className="space-y-4">

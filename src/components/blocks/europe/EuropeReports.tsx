@@ -39,7 +39,7 @@ const DEFAULT_CARDS: ReportCard[] = [
 
 export function EuropeReports({ content }: { content?: EuropeReportsContent }) {
   const sectionTitle = content?.sectionTitle || "Learn why we're the trusted CPaaS leader";
-  const sectionTitleColor = '#111827';
+  const sectionTitleColor = content?.sectionTitleColor || '#111827';
   const cards = (content?.cards?.length ? content.cards : DEFAULT_CARDS).slice(0, 3);
 
   return (

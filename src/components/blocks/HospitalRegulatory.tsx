@@ -8,6 +8,7 @@ interface RegulatoryPoint {
 
 interface HospitalRegulatoryContent {
   heading?: string;
+  headingColor?: string;
   description?: string;
   points?: RegulatoryPoint[];
   image1?: string;
@@ -71,6 +72,7 @@ export function HospitalRegulatory({ content }: HospitalRegulatoryProps) {
               content={heading}
               as="h2"
               className="text-3xl md:text-4xl font-bold text-[#2a2d7c] mb-6 whitespace-pre-line"
+              style={content?.headingColor ? { color: content.headingColor } : undefined}
             />
             <FormattedText
               content={description}

@@ -11,6 +11,7 @@ export interface ProcessStep {
 export interface Landing1ProcessContent {
   badge?: string;
   title?: string;
+  titleColor?: string;
   description?: string;
   process?: ProcessStep[];
 }
@@ -78,7 +79,10 @@ export function Landing1Process({ content }: { content?: Landing1ProcessContent 
             </span>
           )}
           {data.title && (
-            <h2 className="text-3xl md:text-[40px] font-extrabold tracking-tight text-slate-900 leading-tight">
+            <h2
+              className="text-3xl md:text-[40px] font-extrabold tracking-tight text-slate-900 leading-tight"
+              style={data.titleColor ? { color: data.titleColor } : undefined}
+            >
               {data.title}
             </h2>
           )}

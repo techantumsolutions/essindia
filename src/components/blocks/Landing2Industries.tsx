@@ -13,6 +13,7 @@ export interface IndustryCardItem {
 export interface Landing2IndustriesContent {
   badge?: string;
   title?: string;
+  titleColor?: string;
   industries?: IndustryCardItem[];
 }
 
@@ -53,7 +54,10 @@ export function Landing2Industries({ content }: { content?: Landing2IndustriesCo
 
         {/* Section Title */}
         {data.title && (
-          <h2 className="text-slate-900 text-3xl md:text-5xl font-extrabold tracking-tight leading-[1.15] mb-12">
+          <h2
+            className="text-slate-900 text-3xl md:text-5xl font-extrabold tracking-tight leading-[1.15] mb-12"
+            style={data.titleColor ? { color: data.titleColor } : undefined}
+          >
             {data.title}
           </h2>
         )}

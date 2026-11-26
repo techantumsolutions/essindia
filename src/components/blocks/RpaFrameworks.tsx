@@ -11,6 +11,7 @@ interface FrameworkLogo {
 
 interface RpaFrameworksContent {
   title?: string;
+  titleColor?: string;
   logos?: FrameworkLogo[];
   autoScroll?: boolean;
 }
@@ -39,6 +40,7 @@ export function RpaFrameworks({ content }: { content?: RpaFrameworksContent }) {
             viewport={{ once: true }}
             transition={{ duration: 0.4 }}
             className="text-lg sm:text-xl font-medium text-slate-700 tracking-tight"
+            style={content?.titleColor ? { color: content.titleColor } : undefined}
           >
             {title}
           </motion.h3>

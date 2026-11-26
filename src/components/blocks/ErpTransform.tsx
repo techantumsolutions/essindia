@@ -13,6 +13,7 @@ interface ErpTransformItem {
 
 interface ErpTransformContent {
   heading?: string;
+  headingColor?: string;
   description?: string;
   items?: ErpTransformItem[];
 }
@@ -79,7 +80,10 @@ export function ErpTransform({ content }: ErpTransformProps) {
         {/* Header Block */}
         <div className="text-center max-w-3xl mx-auto mb-16">
           <MotionSection variant="fadeUp">
-            <h2 className="text-3xl md:text-4xl lg:[42px] font-extrabold text-[#462294] tracking-tight">
+            <h2
+              className="text-3xl md:text-4xl lg:[42px] font-extrabold text-[#462294] tracking-tight"
+              style={content?.headingColor ? { color: content.headingColor } : undefined}
+            >
               {heading}
             </h2>
           </MotionSection>

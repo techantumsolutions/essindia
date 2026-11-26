@@ -180,14 +180,14 @@ export function CaseStudyListSection({ content }: CaseStudyListSectionProps) {
               {heading}
             </motion.h1>
           )}
-          <motion.p
+          <motion.div
             initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.2 }}
-            className="text-sm md:text-base text-white/80 max-w-2xl font-light leading-relaxed"
+            className="text-[18px] text-white/80 max-w-2xl font-light leading-relaxed"
           >
             {subheading}
-          </motion.p>
+          </motion.div>
         </div>
       </div>
 
@@ -220,84 +220,84 @@ export function CaseStudyListSection({ content }: CaseStudyListSectionProps) {
 
               {/* Topics Filter */}
               {visibleTopics.length > 0 && (
-              <div className="space-y-4">
-                <button
-                  onClick={() => setTopicsOpen(!topicsOpen)}
-                  className="w-full flex items-center justify-between text-left font-bold text-[#1a1a1a] text-lg py-1"
-                >
-                  Topic
-                  {topicsOpen ? <ChevronUp className="w-5 h-5 text-slate-600 font-light" /> : <ChevronDown className="w-5 h-5 text-slate-600 font-light" />}
-                </button>
+                <div className="space-y-4">
+                  <button
+                    onClick={() => setTopicsOpen(!topicsOpen)}
+                    className="w-full flex items-center justify-between text-left font-bold text-[#1a1a1a] text-lg py-1"
+                  >
+                    Topic
+                    {topicsOpen ? <ChevronUp className="w-5 h-5 text-slate-600 font-light" /> : <ChevronDown className="w-5 h-5 text-slate-600 font-light" />}
+                  </button>
 
-                <AnimatePresence initial={false}>
-                  {topicsOpen && (
-                    <motion.div
-                      initial={{ opacity: 0, height: 0 }}
-                      animate={{ opacity: 1, height: 'auto' }}
-                      exit={{ opacity: 0, height: 0 }}
-                      className="overflow-hidden pl-1 space-y-2.5 pt-1"
-                    >
-                      {visibleTopics.map(topic => {
-                        const isChecked = selectedTopics.includes(topic);
-                        return (
-                          <label key={topic} className="flex items-center gap-3 text-sm text-[#404040] font-normal cursor-pointer select-none group">
-                            <input
-                              type="checkbox"
-                              checked={isChecked}
-                              onChange={() => toggleTopic(topic)}
-                              className="w-[18px] h-[18px] rounded-sm border-slate-300 text-[#242A4A] focus:ring-[#242A4A] focus:ring-offset-0 cursor-pointer accent-[#242A4A]"
-                            />
-                            <span>
-                              {topic}
-                            </span>
-                          </label>
-                        );
-                      })}
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-              </div>
+                  <AnimatePresence initial={false}>
+                    {topicsOpen && (
+                      <motion.div
+                        initial={{ opacity: 0, height: 0 }}
+                        animate={{ opacity: 1, height: 'auto' }}
+                        exit={{ opacity: 0, height: 0 }}
+                        className="overflow-hidden pl-1 space-y-2.5 pt-1"
+                      >
+                        {visibleTopics.map(topic => {
+                          const isChecked = selectedTopics.includes(topic);
+                          return (
+                            <label key={topic} className="flex items-center gap-3 text-sm text-[#404040] font-normal cursor-pointer select-none group">
+                              <input
+                                type="checkbox"
+                                checked={isChecked}
+                                onChange={() => toggleTopic(topic)}
+                                className="w-[18px] h-[18px] rounded-sm border-slate-300 text-[#242A4A] focus:ring-[#242A4A] focus:ring-offset-0 cursor-pointer accent-[#242A4A]"
+                              />
+                              <span>
+                                {topic}
+                              </span>
+                            </label>
+                          );
+                        })}
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </div>
               )}
 
               {/* Industries Filter */}
               {visibleIndustries.length > 0 && (
-              <div className="space-y-4 pt-6">
-                <button
-                  onClick={() => setIndustriesOpen(!industriesOpen)}
-                  className="w-full flex items-center justify-between text-left font-bold text-[#1a1a1a] text-lg py-1"
-                >
-                  Industries
-                  {industriesOpen ? <ChevronUp className="w-5 h-5 text-slate-600 font-light" /> : <ChevronDown className="w-5 h-5 text-slate-600 font-light" />}
-                </button>
+                <div className="space-y-4 pt-6">
+                  <button
+                    onClick={() => setIndustriesOpen(!industriesOpen)}
+                    className="w-full flex items-center justify-between text-left font-bold text-[#1a1a1a] text-lg py-1"
+                  >
+                    Industries
+                    {industriesOpen ? <ChevronUp className="w-5 h-5 text-slate-600 font-light" /> : <ChevronDown className="w-5 h-5 text-slate-600 font-light" />}
+                  </button>
 
-                <AnimatePresence initial={false}>
-                  {industriesOpen && (
-                    <motion.div
-                      initial={{ opacity: 0, height: 0 }}
-                      animate={{ opacity: 1, height: 'auto' }}
-                      exit={{ opacity: 0, height: 0 }}
-                      className="overflow-hidden pl-1 space-y-2.5 pt-1"
-                    >
-                      {visibleIndustries.map(industry => {
-                        const isChecked = selectedIndustries.includes(industry);
-                        return (
-                          <label key={industry} className="flex items-center gap-3 text-sm text-[#404040] font-normal cursor-pointer select-none group">
-                            <input
-                              type="checkbox"
-                              checked={isChecked}
-                              onChange={() => toggleIndustry(industry)}
-                              className="w-[18px] h-[18px] rounded-sm border-slate-300 text-[#242A4A] focus:ring-[#242A4A] focus:ring-offset-0 cursor-pointer accent-[#242A4A]"
-                            />
-                            <span>
-                              {industry}
-                            </span>
-                          </label>
-                        );
-                      })}
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-              </div>
+                  <AnimatePresence initial={false}>
+                    {industriesOpen && (
+                      <motion.div
+                        initial={{ opacity: 0, height: 0 }}
+                        animate={{ opacity: 1, height: 'auto' }}
+                        exit={{ opacity: 0, height: 0 }}
+                        className="overflow-hidden pl-1 space-y-2.5 pt-1"
+                      >
+                        {visibleIndustries.map(industry => {
+                          const isChecked = selectedIndustries.includes(industry);
+                          return (
+                            <label key={industry} className="flex items-center gap-3 text-sm text-[#404040] font-normal cursor-pointer select-none group">
+                              <input
+                                type="checkbox"
+                                checked={isChecked}
+                                onChange={() => toggleIndustry(industry)}
+                                className="w-[18px] h-[18px] rounded-sm border-slate-300 text-[#242A4A] focus:ring-[#242A4A] focus:ring-offset-0 cursor-pointer accent-[#242A4A]"
+                              />
+                              <span>
+                                {industry}
+                              </span>
+                            </label>
+                          );
+                        })}
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </div>
               )}
 
             </div>

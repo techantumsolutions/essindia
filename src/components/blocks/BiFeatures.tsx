@@ -12,6 +12,7 @@ export interface BiFeatureRow {
 
 export interface BiFeaturesContent {
   sectionTitle?: string;
+  sectionTitleColor?: string;
   column1Title?: string;
   column2Title?: string;
   column3Title?: string;
@@ -52,7 +53,10 @@ export function BiFeatures({ content }: { content?: BiFeaturesContent }) {
       <div className="container mx-auto px-4 md:px-8 max-w-7xl">
         {/* Section Title */}
         {sectionTitle && (
-          <h2 className="text-3xl md:text-4xl font-bold text-[#2e1065] tracking-tight mb-8">
+          <h2
+            className="text-3xl md:text-4xl font-bold text-[#2e1065] tracking-tight mb-8"
+            style={content?.sectionTitleColor ? { color: content.sectionTitleColor } : undefined}
+          >
             {sectionTitle}
           </h2>
         )}

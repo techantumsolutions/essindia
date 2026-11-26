@@ -13,6 +13,7 @@ interface EmpowermentCard {
 
 interface BiEmpowermentContent {
   title?: string;
+  titleColor?: string;
   subtitle?: string;
   cards?: EmpowermentCard[];
 }
@@ -80,7 +81,10 @@ export function BiEmpowerment({ content }: { content?: BiEmpowermentContent }) {
 
         {/* Header */}
         <div className="text-center max-w-4xl mx-auto mb-6 space-y-2">
-          <h2 className="text-3xl sm:text-4xl lg:text-[40px] font-bold text-[#4c327f] tracking-tight">
+          <h2
+            className="text-3xl sm:text-4xl lg:text-[40px] font-bold text-[#4c327f] tracking-tight"
+            style={content?.titleColor ? { color: content.titleColor } : undefined}
+          >
             {title}
           </h2>
           <p className="text-slate-600 font-light text-base sm:text-[17px] leading-relaxed">

@@ -6,9 +6,11 @@ import { FormattedText } from '@/components/ui/FormattedText';
 
 export interface RetailNurtureContent {
   title?: string;
+  titleColor?: string;
   paragraphs?: string[];
   images?: string[];
   whyTitle?: string;
+  whyTitleColor?: string;
   whyParagraph?: string;
   whyImagePath?: string;
 }
@@ -59,7 +61,10 @@ export function RetailNurture({ content }: { content: RetailNurtureContent }) {
             transition={{ duration: 0.6 }}
             className="text-left"
           >
-            <h2 className="text-3xl -mt-4 md:text-4xl font-bold text-[#27256b] mb-4 tracking-tight">
+            <h2
+              className="text-3xl -mt-4 md:text-4xl font-bold text-[#27256b] mb-4 tracking-tight"
+              style={content?.titleColor ? { color: content.titleColor } : undefined}
+            >
               {title}
             </h2>
 
@@ -97,7 +102,10 @@ export function RetailNurture({ content }: { content: RetailNurtureContent }) {
               transition={{ duration: 0.6, delay: 0.2 }}
               className="w-full flex flex-col justify-center"
             >
-              <h2 className="text-3xl md:text-4xl font-bold text-indigo-900 mb-6 tracking-tight">
+              <h2
+                className="text-3xl md:text-4xl font-bold text-indigo-900 mb-6 tracking-tight"
+                style={content?.whyTitleColor ? { color: content.whyTitleColor } : undefined}
+              >
                 {whyTitle}
               </h2>
               <p className="text-sm text-[#b2b2b2] leading-relaxed text-justify md:text-left">

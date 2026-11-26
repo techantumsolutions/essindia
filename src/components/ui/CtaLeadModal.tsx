@@ -17,9 +17,11 @@ import {
   validateEmail,
   validateName,
   validatePrivacy,
+  validateService,
 } from '@/lib/form-validation';
 import { completeFormSuccess } from '@/lib/forms/form-success';
 import { PhoneField } from '@/components/ui/PhoneField';
+import { ServiceSelectField } from '@/components/ui/ServiceSelectField';
 
 interface CtaLeadModalProps {
   isOpen: boolean;
@@ -37,6 +39,7 @@ export function CtaLeadModal({ isOpen, onClose, pdfUrl, pageName, isCareerCta, f
     name: '',
     email: '',
     phone: '',
+    service: '',
   });
   const [resumeFile, setResumeFile] = React.useState<File | null>(null);
 
@@ -80,6 +83,13 @@ export function CtaLeadModal({ isOpen, onClose, pdfUrl, pageName, isCareerCta, f
       toast.error(FORM_COUNTRY_ERROR);
       return;
     }
+    if (!isCareerCta) {
+      const serviceCheck = validateService(formData.service);
+      if (!serviceCheck.isValid) {
+        toast.error(serviceCheck.message);
+        return;
+      }
+    }
     const privacyCheck = validatePrivacy(acceptedPrivacy);
     if (!privacyCheck.isValid) {
       toast.error(privacyCheck.message);
@@ -89,6 +99,17 @@ export function CtaLeadModal({ isOpen, onClose, pdfUrl, pageName, isCareerCta, f
     if (isCareerCta && !resumeFile) {
       toast.error('Please upload your resume to apply.');
       return;
+    }
+
+  const cleanPdfUrl = typeof pdfUrl === 'string' ? pdfUrl.trim() : '';
+  const validPdfUrl =
+    cleanPdfUrl && cleanPdfUrl !== '#' && cleanPdfUrl !== 'null' && cleanPdfUrl !== 'undefined'
+      ? cleanPdfUrl
+      : '';
+  const trimmedPdfUrl = !isCareerCta && validPdfUrl ? validPdfUrl : '';
+    const pdfWindow = trimmedPdfUrl ? window.open('', '_blank') : null;
+    if (pdfWindow) {
+      pdfWindow.opener = null;
     }
 
     setIsSubmitting(true);
@@ -119,6 +140,7 @@ export function CtaLeadModal({ isOpen, onClose, pdfUrl, pageName, isCareerCta, f
           phone: validation.e164,
           countryCode: selectedDialCode,
           country: countryInfo?.name || '',
+          service: !isCareerCta ? formData.service : undefined,
           formType: formType || (isCareerCta ? 'career-cta' : 'cta'),
           pageName: pageName || pathname || document.title,
           pdfUrl: uploadedResumeUrl || pdfUrl,
@@ -134,27 +156,45 @@ export function CtaLeadModal({ isOpen, onClose, pdfUrl, pageName, isCareerCta, f
       if (isCareerCta) {
         toast.success('Application submitted successfully!');
       }
+      if (pdfWindow && !pdfWindow.closed) {
+        pdfWindow.location.href = trimmedPdfUrl;
+      }
       onClose();
       if (!isCareerCta) {
-        await completeFormSuccess('cta', pdfUrl);
+        await completeFormSuccess('cta', pdfWindow ? undefined : trimmedPdfUrl);
       }
     } catch (err: any) {
+      if (pdfWindow && !pdfWindow.closed) {
+        pdfWindow.close();
+      }
       toast.error(submitErrorMessage(err.status, err.message));
     } finally {
       setIsSubmitting(false);
     }
   };
 
+  const hasDocument = Boolean(
+    typeof pdfUrl === 'string' &&
+    pdfUrl.trim() &&
+    pdfUrl.trim() !== '#' &&
+    pdfUrl.trim() !== 'null' &&
+    pdfUrl.trim() !== 'undefined'
+  );
+
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle>{isCareerCta ? 'Submit Your Resume' : 'Access Document'}</DialogTitle>
-          <DialogDescription>
-            {isCareerCta
-              ? 'Fill out your details and upload your resume to apply directly.'
-              : 'Please provide your details below to access the requested document.'}
-          </DialogDescription>
+          <DialogTitle>
+            {isCareerCta ? 'Submit Your Resume' : hasDocument ? 'Access Document' : 'Please fill the form'}
+          </DialogTitle>
+          {(isCareerCta || hasDocument) && (
+            <DialogDescription>
+              {isCareerCta
+                ? 'Fill out your details and upload your resume to apply directly.'
+                : 'Please provide your details below to access the requested document.'}
+            </DialogDescription>
+          )}
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4 mt-4" noValidate>
           <div className="space-y-2">
@@ -227,6 +267,16 @@ export function CtaLeadModal({ isOpen, onClose, pdfUrl, pageName, isCareerCta, f
               </SelectContent>
             </Select>
           </div>
+
+          {!isCareerCta && (
+            <div className="space-y-2">
+              <label className="text-sm font-medium text-slate-700">Service *</label>
+              <ServiceSelectField
+                value={formData.service}
+                onChange={(service) => setFormData((prev) => ({ ...prev, service }))}
+              />
+            </div>
+          )}
 
           {isCareerCta && (
             <div className="space-y-2">

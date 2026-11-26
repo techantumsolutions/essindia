@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { BlogManager } from '../pages/[id]/page';
+import { BlogManager } from '../pages/_managers';
 
 export default function AdminBlogsPage() {
   return (

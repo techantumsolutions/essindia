@@ -133,33 +133,33 @@ export default function JobDetailContent({ content }: { content?: any }) {
                   <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-1.5">
                       <label className="text-[11px] font-bold text-slate-700">Full Name *</label>
-                      <input type="text" className="w-full h-10 px-3 bg-white border border-slate-200 rounded-lg text-sm outline-none focus:border-[#4B2A63] transition-colors" />
+                      <input required type="text" className="w-full h-10 px-3 bg-white border border-slate-200 rounded-lg text-sm outline-none focus:border-[#4B2A63] transition-colors" />
                     </div>
                     <div className="space-y-1.5">
                       <label className="text-[11px] font-bold text-slate-700">Email Address *</label>
-                      <input type="email" placeholder="john@example.com" className="w-full h-10 px-3 bg-white border border-slate-200 rounded-lg text-sm outline-none focus:border-[#4B2A63] transition-colors placeholder:text-slate-300" />
+                      <input required type="email" placeholder="john@example.com" className="w-full h-10 px-3 bg-white border border-slate-200 rounded-lg text-sm outline-none focus:border-[#4B2A63] transition-colors placeholder:text-slate-300" />
                     </div>
                   </div>
 
                   <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-1.5">
                       <label className="text-[11px] font-bold text-slate-700">Phone Number *</label>
-                      <input type="text" placeholder="+91 9876543210" className="w-full h-10 px-3 bg-white border border-slate-200 rounded-lg text-sm outline-none focus:border-[#4B2A63] transition-colors placeholder:text-slate-300" />
+                      <input required type="text" placeholder="+91 9876543210" className="w-full h-10 px-3 bg-white border border-slate-200 rounded-lg text-sm outline-none focus:border-[#4B2A63] transition-colors placeholder:text-slate-300" />
                     </div>
                     <div className="space-y-1.5">
                       <label className="text-[11px] font-bold text-slate-700">Total Experience *</label>
-                      <input type="text" className="w-full h-10 px-3 bg-white border border-slate-200 rounded-lg text-sm outline-none focus:border-[#4B2A63] transition-colors" />
+                      <input required type="text" className="w-full h-10 px-3 bg-white border border-slate-200 rounded-lg text-sm outline-none focus:border-[#4B2A63] transition-colors" />
                     </div>
                   </div>
 
                   <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-1.5">
-                      <label className="text-[11px] font-bold text-slate-700">Current Company</label>
-                      <input type="text" className="w-full h-10 px-3 bg-white border border-slate-200 rounded-lg text-sm outline-none focus:border-[#4B2A63] transition-colors" />
+                      <label className="text-[11px] font-bold text-slate-700">Current Company *</label>
+                      <input required type="text" className="w-full h-10 px-3 bg-white border border-slate-200 rounded-lg text-sm outline-none focus:border-[#4B2A63] transition-colors" />
                     </div>
                     <div className="space-y-1.5">
                       <label className="text-[11px] font-bold text-slate-700">Notice Period *</label>
-                      <input type="text" className="w-full h-10 px-3 bg-white border border-slate-200 rounded-lg text-sm outline-none focus:border-[#4B2A63] transition-colors" />
+                      <input required type="text" className="w-full h-10 px-3 bg-white border border-slate-200 rounded-lg text-sm outline-none focus:border-[#4B2A63] transition-colors" />
                     </div>
                   </div>
 

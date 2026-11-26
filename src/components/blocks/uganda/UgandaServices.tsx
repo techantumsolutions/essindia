@@ -20,6 +20,7 @@ export interface ServiceCard {
 export interface UgandaServicesContent {
   badgeText?: string;
   title?: string;
+  titleColor?: string;
   description?: string;
   cards?: ServiceCard[];
 }
@@ -62,7 +63,8 @@ const DEFAULT_CARDS: ServiceCard[] = [
 function CardItem({ card, index }: { card: ServiceCard; index: number }) {
   const { handleClick, modalNode } = useCtaAction(
     card.ctaUrl || '/contact-us',
-    (card.ctaFormType || '') as CtaFormType
+    (card.ctaFormType || '') as CtaFormType,
+    (card as any)?.ctaPdfUrl || (card as any)?.pdfUrl
   );
 
   return (
@@ -229,7 +231,10 @@ export function UgandaServices({ content }: { content?: UgandaServicesContent })
 
         {/* Section Heading */}
         {title && (
-          <h2 className="text-3xl sm:text-4xl md:text-[44px] font-extrabold text-[#0a1128] tracking-tight max-w-3xl mx-auto leading-tight mb-4">
+          <h2
+            className="text-3xl sm:text-4xl md:text-[44px] font-extrabold text-[#0a1128] tracking-tight max-w-3xl mx-auto leading-tight mb-4"
+            style={content?.titleColor ? { color: content.titleColor } : undefined}
+          >
             {title}
           </h2>
         )}

@@ -14,11 +14,15 @@ import {
   validateEmail,
   validateName,
   validatePrivacy,
+  validateRequiredText,
+  validateService,
 } from '@/lib/form-validation';
+import { ServiceSelectField } from '@/components/ui/ServiceSelectField';
 
 export interface Landing1CtaContent {
   badge?: string;
   title?: string;
+  titleColor?: string;
   description?: string;
   whatWeGet?: string[];
   icon?: string;
@@ -75,6 +79,7 @@ export function Landing1Cta({ content }: { content?: Landing1CtaContent }) {
   const [employees, setEmployees] = React.useState('');
   const [currentErp, setCurrentErp] = React.useState('');
   const [requirement, setRequirement] = React.useState('');
+  const [service, setService] = React.useState('');
   const [agree, setAgree] = React.useState(false);
   const [isSubmitting, setIsSubmitting] = React.useState(false);
 
@@ -91,14 +96,39 @@ export function Landing1Cta({ content }: { content?: Landing1CtaContent }) {
       toast.error(emailCheck.message);
       return;
     }
-    const companyCheck = validateCompany(company);
+    const companyCheck = validateCompany(company, true);
     if (!companyCheck.isValid) {
       toast.error(companyCheck.message);
       return;
     }
-    const phoneCheck = validateAndFormatPhone(phone, phoneCountry, false);
+    const phoneCheck = validateAndFormatPhone(phone, phoneCountry);
     if (!phoneCheck.isValid) {
       toast.error(phoneCheck.message);
+      return;
+    }
+    const industryCheck = validateRequiredText(industry, 'Please enter your industry.');
+    if (!industryCheck.isValid) {
+      toast.error(industryCheck.message);
+      return;
+    }
+    const employeesCheck = validateRequiredText(employees, 'Please enter the number of employees.');
+    if (!employeesCheck.isValid) {
+      toast.error(employeesCheck.message);
+      return;
+    }
+    const currentErpCheck = validateRequiredText(currentErp, 'Please enter your current ERP.');
+    if (!currentErpCheck.isValid) {
+      toast.error(currentErpCheck.message);
+      return;
+    }
+    const requirementCheck = validateRequiredText(requirement, 'Please enter your business requirement.');
+    if (!requirementCheck.isValid) {
+      toast.error(requirementCheck.message);
+      return;
+    }
+    const serviceCheck = validateService(service);
+    if (!serviceCheck.isValid) {
+      toast.error(serviceCheck.message);
       return;
     }
     const privacyCheck = validatePrivacy(agree);
@@ -107,7 +137,7 @@ export function Landing1Cta({ content }: { content?: Landing1CtaContent }) {
       return;
     }
 
-    const e164Phone = phoneCheck.e164 || '';
+    const e164Phone = phoneCheck.e164;
 
     setIsSubmitting(true);
     try {
@@ -127,6 +157,7 @@ export function Landing1Cta({ content }: { content?: Landing1CtaContent }) {
           phone: e164Phone || undefined,
           countryCode: e164Phone ? phoneCountry : undefined,
           company,
+          service,
           formType: 'landing-1',
           message: messagePayload,
           pageName: pathname || ''
@@ -148,6 +179,7 @@ export function Landing1Cta({ content }: { content?: Landing1CtaContent }) {
       setEmployees('');
       setCurrentErp('');
       setRequirement('');
+      setService('');
       setAgree(false);
     } catch (err: any) {
       console.error(err);
@@ -172,7 +204,10 @@ export function Landing1Cta({ content }: { content?: Landing1CtaContent }) {
                 </span>
               )}
               {data.title && (
-                <h2 className="text-3xl md:text-[38px] font-extrabold tracking-tight text-slate-900 leading-tight mb-5">
+                <h2
+                  className="text-3xl md:text-[38px] font-extrabold tracking-tight text-slate-900 leading-tight mb-5"
+                  style={data.titleColor ? { color: data.titleColor } : undefined}
+                >
                   {data.title}
                 </h2>
               )}
@@ -253,6 +288,7 @@ export function Landing1Cta({ content }: { content?: Landing1CtaContent }) {
                   <label className="text-xs font-bold text-slate-600 mb-1.5 block">Company</label>
                   <input
                     type="text"
+                    required
                     placeholder="Acme Industries"
                     value={company}
                     onChange={(e) => setCompany(e.target.value)}
@@ -274,6 +310,7 @@ export function Landing1Cta({ content }: { content?: Landing1CtaContent }) {
                   <label className="text-xs font-bold text-slate-600 mb-1.5 block">Phone</label>
                   <PhoneField
                     variant="attached"
+                    required
                     value={phone}
                     onChange={setPhone}
                     countryCode={phoneCountry}
@@ -287,6 +324,7 @@ export function Landing1Cta({ content }: { content?: Landing1CtaContent }) {
                   <label className="text-xs font-bold text-slate-600 mb-1.5 block">Industry</label>
                   <input
                     type="text"
+                    required
                     placeholder="Select industry"
                     value={industry}
                     onChange={(e) => setIndustry(e.target.value)}
@@ -297,6 +335,7 @@ export function Landing1Cta({ content }: { content?: Landing1CtaContent }) {
                   <label className="text-xs font-bold text-slate-600 mb-1.5 block">Employees</label>
                   <input
                     type="text"
+                    required
                     placeholder="Select range"
                     value={employees}
                     onChange={(e) => setEmployees(e.target.value)}
@@ -307,6 +346,7 @@ export function Landing1Cta({ content }: { content?: Landing1CtaContent }) {
                   <label className="text-xs font-bold text-slate-600 mb-1.5 block">Current ERP</label>
                   <input
                     type="text"
+                    required
                     placeholder="Select current ERP"
                     value={currentErp}
                     onChange={(e) => setCurrentErp(e.target.value)}
@@ -317,10 +357,19 @@ export function Landing1Cta({ content }: { content?: Landing1CtaContent }) {
                   <label className="text-xs font-bold text-slate-600 mb-1.5 block">Business Requirement</label>
                   <input
                     type="text"
+                    required
                     placeholder="e.g. Automate finance & inventory"
                     value={requirement}
                     onChange={(e) => setRequirement(e.target.value)}
                     className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-indigo-600/40 focus:bg-white transition-all font-medium text-slate-800"
+                  />
+                </div>
+                <div className="sm:col-span-2">
+                  <label className="text-xs font-bold text-slate-600 mb-1.5 block">Service</label>
+                  <ServiceSelectField
+                    value={service}
+                    onChange={setService}
+                    triggerClassName="w-full !h-[42px] bg-slate-50 border border-slate-200 rounded-xl px-4 text-sm font-medium text-slate-800 shadow-none focus-visible:ring-0 focus-visible:border-indigo-600/40"
                   />
                 </div>
               </div>
@@ -330,6 +379,7 @@ export function Landing1Cta({ content }: { content?: Landing1CtaContent }) {
                 <input
                   type="checkbox"
                   id="agree-checkbox"
+                  required
                   checked={agree}
                   onChange={(e) => setAgree(e.target.checked)}
                   className="rounded border-slate-350 text-indigo-600 focus:ring-indigo-500 mt-1 cursor-pointer w-4 h-4 shrink-0"

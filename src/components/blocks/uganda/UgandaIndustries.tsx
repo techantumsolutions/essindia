@@ -13,6 +13,7 @@ interface IndustryCard {
 export interface UgandaIndustriesContent {
   subtitle?: string;
   title?: string;
+  titleColor?: string;
   description?: string;
   cards?: IndustryCard[];
 }
@@ -55,7 +56,10 @@ export function UgandaIndustries({ content }: { content?: UgandaIndustriesConten
           </span>
         )}
         {title && (
-          <h2 className="text-2xl sm:text-[34px] font-bold text-[#1d1b4b] mb-4 tracking-tight max-w-3xl mx-auto leading-tight whitespace-pre-line">
+          <h2
+            className="text-2xl sm:text-[34px] font-bold text-[#1d1b4b] mb-4 tracking-tight max-w-3xl mx-auto leading-tight whitespace-pre-line"
+            style={content?.titleColor ? { color: content.titleColor } : undefined}
+          >
             {title}
           </h2>
         )}

@@ -16,6 +16,7 @@ export interface TestimonialItem {
 export interface Landing1TestimonialsContent {
   badge?: string;
   title?: string;
+  titleColor?: string;
   description?: string;
   testimonials?: TestimonialItem[];
 }
@@ -110,7 +111,10 @@ export function Landing1Testimonials({ content }: { content?: Landing1Testimonia
             </span>
           )}
           {data.title && (
-            <h2 className="text-3xl md:text-[40px] font-extrabold tracking-tight text-slate-900 leading-tight">
+            <h2
+              className="text-3xl md:text-[40px] font-extrabold tracking-tight text-slate-900 leading-tight"
+              style={data.titleColor ? { color: data.titleColor } : undefined}
+            >
               {data.title}
             </h2>
           )}

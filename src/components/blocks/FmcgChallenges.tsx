@@ -11,6 +11,7 @@ interface ChallengeCard {
 
 interface FmcgChallengesContent {
   title?: string;
+  titleColor?: string;
   cards?: ChallengeCard[];
 }
 
@@ -57,7 +58,10 @@ export function FmcgChallenges({ content }: { content?: FmcgChallengesContent })
       <div className="container mx-auto max-w-7xl text-center space-y-12">
         
         {/* Section Title */}
-        <h2 className="text-3xl sm:text-4xl font-extrabold text-[#2a2b6a] leading-tight max-w-3xl mx-auto">
+        <h2
+          className="text-3xl sm:text-4xl font-extrabold text-[#2a2b6a] leading-tight max-w-3xl mx-auto"
+          style={content?.titleColor ? { color: content.titleColor } : undefined}
+        >
           {title}
         </h2>
 

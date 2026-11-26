@@ -74,8 +74,8 @@ export function ErpHero({ content }: ErpHeroProps) {
   const button2FormType = (content?.button2FormType || '') as CtaFormType;
   const image = content?.image || '/BANNER-IMMAGE-LEFT.png';
 
-  const { handleClick: handleBtn1Click, modalNode: modal1 } = useCtaAction(button1Url, button1FormType);
-  const { handleClick: handleBtn2Click, modalNode: modal2 } = useCtaAction(button2Url, button2FormType);
+  const { handleClick: handleBtn1Click, modalNode: modal1 } = useCtaAction(button1Url, button1FormType, (content as any)?.button1PdfUrl);
+  const { handleClick: handleBtn2Click, modalNode: modal2 } = useCtaAction(button2Url, button2FormType, (content as any)?.button2PdfUrl);
   const highlightedWordIndices = Array.isArray(content?.highlightedWordIndices)
     ? content.highlightedWordIndices
     : [3, 4, 6];

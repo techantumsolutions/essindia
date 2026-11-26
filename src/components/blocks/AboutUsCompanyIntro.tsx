@@ -21,7 +21,9 @@ interface HighlightItem {
 
 interface AboutUsCompanyIntroContent {
   title?: string;
+  titleColor?: string;
   subtitle?: string;
+  subtitleColor?: string;
   description?: string;
   description2?: string;
   image?: string;
@@ -115,8 +117,18 @@ export function AboutUsCompanyIntro({
 
             <MotionSection variant="fadeUp">
 
-              <FormattedText content={subtitle} as="h3" className="text-[22px] lg:text-[36px] font-bold text-black leading-tight" />
-              <FormattedText content={title} as="h2" className="text-[22px] lg:text-[36px] font-bold text-black leading-tight" />
+              <FormattedText
+                content={subtitle}
+                as="h3"
+                className="text-[22px] lg:text-[36px] font-bold text-black leading-tight"
+                style={content?.subtitleColor ? { color: content.subtitleColor } : undefined}
+              />
+              <FormattedText
+                content={title}
+                as="h2"
+                className="text-[22px] lg:text-[36px] font-bold text-black leading-tight"
+                style={content?.titleColor ? { color: content.titleColor } : undefined}
+              />
 
               <div className="space-y-2 mt-5">
                 <div className="text-[#71717A] text-base">

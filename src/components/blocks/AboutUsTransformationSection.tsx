@@ -13,6 +13,7 @@ interface TransformItem {
 
 interface AboutUsTransformationContent {
   title?: string;
+  titleColor?: string;
   items?: TransformItem[];
 }
 
@@ -60,7 +61,12 @@ export function AboutUsTransformationSection({
       <div className="max-w-7xl mx-auto px-4">
         {/* Heading */}
         <div className="max-w-4xl mx-auto text-center mb-8 md:mb-20">
-          <FormattedText content={title} as="h2" className="text-3xl md:text-5xl font-bold text-[#24365C] leading-[1.1]" />
+          <FormattedText
+            content={title}
+            as="h2"
+            className="text-3xl md:text-5xl font-bold text-[#24365C] leading-[1.1]"
+            style={content?.titleColor ? { color: content.titleColor } : undefined}
+          />
         </div>
 
         {/* Grid */}

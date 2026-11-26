@@ -16,6 +16,7 @@ export interface WhyEssFeatureItem {
 export interface Landing2WhyEssContent {
   badge?: string;
   title?: string;
+  titleColor?: string;
   features?: WhyEssFeatureItem[];
   ctaText?: string;
   ctaUrl?: string;
@@ -110,7 +111,7 @@ export function Landing2WhyEss({ content }: { content?: Landing2WhyEssContent })
   const { handleClick, modalNode } = useCtaAction(
     data.ctaUrl || '/contact-us',
     ctaFormType,
-    data.ctaPdfUrl
+    data.ctaPdfUrl || (data as any).pdfUrl
   );
 
   return (
@@ -125,7 +126,10 @@ export function Landing2WhyEss({ content }: { content?: Landing2WhyEssContent })
 
         {/* Section Big Title */}
         {data.title && (
-          <h2 className="text-slate-900 text-3xl md:text-5xl font-bold tracking-tight leading-[1.15] mb-12 max-w-4xl mx-auto whitespace-pre-line">
+          <h2
+            className="text-slate-900 text-3xl md:text-5xl font-bold tracking-tight leading-[1.15] mb-12 max-w-4xl mx-auto whitespace-pre-line"
+            style={data.titleColor ? { color: data.titleColor } : undefined}
+          >
             {data.title}
           </h2>
         )}

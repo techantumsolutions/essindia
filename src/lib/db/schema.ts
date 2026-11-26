@@ -578,6 +578,7 @@ export const formSubmissions = pgTable('form_submissions', {
   phone: varchar('phone', { length: 100 }),
   company: varchar('company', { length: 255 }),
   country: varchar('country', { length: 100 }),
+  service: varchar('service', { length: 255 }),
   message: text('message'),
   formType: varchar('form_type', { length: 50 }).default('contact').notNull(),
   pageName: varchar('page_name', { length: 255 }),

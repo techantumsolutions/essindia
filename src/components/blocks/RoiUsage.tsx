@@ -16,12 +16,15 @@ interface FaqItem {
 
 interface RoiUsageContent {
   usageTitle?: string;
+  usageTitleColor?: string;
   usageParagraphs?: string[];
   usageImage?: string;
   limitationsTitle?: string;
+  limitationsTitleColor?: string;
   limitationsDescription?: string;
   limitations?: LimitationItem[];
   faqTitle?: string;
+  faqTitleColor?: string;
   faqs?: FaqItem[];
 }
 
@@ -61,7 +64,10 @@ export function RoiUsage({ content }: { content?: RoiUsageContent }) {
             transition={{ duration: 0.6 }}
             className="flex-1 space-y-6 text-left"
           >
-            <h2 className="text-3xl md:text-4xl font-bold text-[#2b2a6c] tracking-tight">
+            <h2
+              className={`text-3xl md:text-4xl font-bold tracking-tight ${content?.usageTitleColor ? '' : 'text-[#2b2a6c]'}`}
+              style={content?.usageTitleColor ? { color: content.usageTitleColor } : undefined}
+            >
               {usageTitle}
             </h2>
             <div className="space-y-4 text-slate-600 text-sm sm:text-base leading-relaxed">
@@ -100,7 +106,10 @@ export function RoiUsage({ content }: { content?: RoiUsageContent }) {
           transition={{ duration: 0.6 }}
           className="space-y-6 text-left max-w-5xl"
         >
-          <h2 className="text-3xl md:text-4xl font-bold text-[#2b2a6c] tracking-tight">
+          <h2
+            className={`text-3xl md:text-4xl font-bold tracking-tight ${content?.limitationsTitleColor ? '' : 'text-[#2b2a6c]'}`}
+            style={content?.limitationsTitleColor ? { color: content.limitationsTitleColor } : undefined}
+          >
             {limitationsTitle}
           </h2>
 
@@ -147,7 +156,12 @@ export function RoiUsage({ content }: { content?: RoiUsageContent }) {
           transition={{ duration: 0.6 }}
           className="space-y-6 text-left max-w-5xl !mt-6 lg:!mt-8"
         >
-          <FormattedText content={faqTitle} as="h2" className="text-3xl md:text-4xl font-bold text-[#2b2a6c] tracking-tight" />
+          <FormattedText
+            content={faqTitle}
+            as="h2"
+            className={`text-3xl md:text-4xl font-bold tracking-tight ${content?.faqTitleColor ? 'roi-faq-title-colored' : 'text-[#2b2a6c]'}`}
+            style={content?.faqTitleColor ? { color: content.faqTitleColor } : undefined}
+          />
 
           <div className="space-y-4 text-slate-600 text-sm sm:text-base leading-relaxed whitespace-pre-line">
             {faqs.map((faq, idx) => (

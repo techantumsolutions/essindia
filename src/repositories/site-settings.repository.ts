@@ -20,6 +20,7 @@ export interface FormTypeSettings {
 export interface FormSettings {
   contact: FormTypeSettings;
   cta: FormTypeSettings;
+  services: string[];
 }
 
 const DEFAULT_SEO_GLOBALS: SeoGlobals = {
@@ -35,12 +36,29 @@ const DEFAULT_SEO_GLOBALS: SeoGlobals = {
 const DEFAULT_FORM_SETTINGS: FormSettings = {
   contact: { thankYouUrl: '/thank-you' },
   cta: { thankYouUrl: '/thank-you' },
+  services: [],
 };
 
 const SEO_GLOBALS_KEY = 'seo_globals';
 const FORM_SETTINGS_KEY = 'form_settings';
 const CACHE_KEY = 'site_settings:seo_globals';
 const FORM_SETTINGS_CACHE_KEY = 'site_settings:form_settings';
+
+function normalizeServicesList(list?: unknown): string[] {
+  if (!Array.isArray(list)) return [];
+  const seen = new Set<string>();
+  const result: string[] = [];
+  for (const item of list) {
+    if (typeof item !== 'string') continue;
+    const trimmed = item.trim();
+    if (!trimmed) continue;
+    const key = trimmed.toLowerCase();
+    if (seen.has(key)) continue;
+    seen.add(key);
+    result.push(trimmed);
+  }
+  return result;
+}
 
 export class SiteSettingsRepository {
   async getSeoGlobals(): Promise<SeoGlobals> {
@@ -94,6 +112,7 @@ export class SiteSettingsRepository {
           cta: {
             thankYouUrl: value.cta?.thankYouUrl?.trim() || DEFAULT_FORM_SETTINGS.cta.thankYouUrl,
           },
+          services: normalizeServicesList(value.services),
         };
       }, 300);
     } catch {
@@ -104,6 +123,7 @@ export class SiteSettingsRepository {
   async updateFormSettings(partial: {
     contact?: { thankYouUrl?: string };
     cta?: { thankYouUrl?: string };
+    services?: string[];
   }): Promise<FormSettings> {
     const current = await this.getFormSettings();
     const next: FormSettings = {
@@ -119,6 +139,10 @@ export class SiteSettingsRepository {
             ? partial.cta.thankYouUrl.trim()
             : current.cta.thankYouUrl,
       },
+      services:
+        partial.services !== undefined
+          ? normalizeServicesList(partial.services)
+          : current.services,
     };
 
     const existing = await db.query.siteSettings.findFirst({

@@ -7,6 +7,7 @@ import { useCtaAction, type CtaFormType } from '@/hooks/useCtaAction';
 export interface Landing2IntroContent {
   badgeText?: string;
   title?: string;
+  titleColor?: string;
   description?: string;
   ctaText?: string;
   ctaUrl?: string;
@@ -29,7 +30,7 @@ export function Landing2Intro({ content }: { content?: Landing2IntroContent }) {
   const { handleClick, modalNode } = useCtaAction(
     data.ctaUrl || '/contact-us',
     ctaFormType,
-    data.ctaPdfUrl
+    data.ctaPdfUrl || (data as any).pdfUrl
   );
 
   return (
@@ -46,7 +47,10 @@ export function Landing2Intro({ content }: { content?: Landing2IntroContent }) {
 
         {/* Main Heading (Purple, Bold, Large) */}
         {data.title && (
-          <h2 className="text-[#492490] text-3xl md:text-4xl font-normal tracking-tight leading-[1.2] max-w-4xl mx-auto mb-6">
+          <h2
+            className="text-[#492490] text-3xl md:text-4xl font-normal tracking-tight leading-[1.2] max-w-4xl mx-auto mb-6"
+            style={data.titleColor ? { color: data.titleColor } : undefined}
+          >
             {data.title}
           </h2>
         )}

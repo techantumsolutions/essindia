@@ -6,6 +6,7 @@ import { CtaLeadModal } from '@/components/ui/CtaLeadModal';
 
 interface AboutUsCtaContent {
   title?: string;
+  titleColor?: string;
   description?: string;
   buttonText?: string;
   buttonHoverBgColor?: string;
@@ -39,7 +40,10 @@ export function AboutUsCta({ content }: AboutUsCtaProps) {
     <section className="py-8 md:py-16">
       <div className="max-w-3xl mx-auto px-4 text-center">
         {/* Heading */}
-        <h2 className="text-3xl md:text-5xl font-bold text-[#0D2C84] leading-[1.1] mb-2">
+        <h2
+          className="text-3xl md:text-5xl font-bold text-[#0D2C84] leading-[1.1] mb-2"
+          style={content?.titleColor ? { color: content.titleColor } : undefined}
+        >
           {title}
         </h2>
 

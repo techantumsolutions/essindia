@@ -18,6 +18,7 @@ interface TabItem {
 
 interface OracleApexApproachContent {
   title?: string;
+  titleColor?: string;
   tag?: string;
   description?: string;
   tabs?: TabItem[];
@@ -25,7 +26,7 @@ interface OracleApexApproachContent {
 
 export function OracleApexApproach({ content }: { content?: OracleApexApproachContent }) {
   const title = content?.title || 'COMPREHENSIVE ORACLE FORMS MIGRATION ASSESSMENT';
-  const titleColor = '#000000';
+  const titleColor = content?.titleColor || '#000000';
   const tag = content?.tag || 'OUR STRATEGIC MIGRATION APPROACH';
   const subtitleColor = '#27256B';
   const description = content?.description || 'Unlike tool-only migration models, our approach combines technical precision with business transformation.';

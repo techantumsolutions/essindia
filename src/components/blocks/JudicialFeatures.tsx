@@ -11,6 +11,7 @@ interface FeatureData {
 
 interface JudicialFeaturesContent {
   heading?: string;
+  headingColor?: string;
   description?: string;
   desc?: string;
   sideImage?: string;
@@ -92,7 +93,10 @@ export function JudicialFeatures({ content }: JudicialFeaturesProps) {
           {/* Right Features List */}
           <div className="lg:w-1/2 w-full flex flex-col gap-4 justify-center">
             <div className="mb-4">
-              <h2 className="text-3xl md:text-4xl font-bold text-[#2a2d7c] mb-4">
+              <h2
+                className="text-3xl md:text-4xl font-bold text-[#2a2d7c] mb-4"
+                style={content?.headingColor ? { color: content.headingColor } : undefined}
+              >
                 {heading}
               </h2>
               <FormattedText

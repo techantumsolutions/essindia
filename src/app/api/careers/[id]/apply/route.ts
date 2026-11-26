@@ -9,7 +9,14 @@ import { join } from 'path';
 import { randomUUID } from 'crypto';
 import { sendApplicationEmails } from '@/lib/email';
 import { validateAndFormatPhone } from '@/lib/phone-validation';
-import { FORM_RATE_LIMIT_ERROR, FORM_SUBMIT_ERROR, validateEmail, validateName } from '@/lib/form-validation';
+import {
+  FORM_RATE_LIMIT_ERROR,
+  FORM_SUBMIT_ERROR,
+  validateCompany,
+  validateEmail,
+  validateName,
+  validateUrl,
+} from '@/lib/form-validation';
 import { consumeFormRateLimit, getRequestIp } from '@/lib/form-rate-limit';
 
 export async function POST(
@@ -41,7 +48,7 @@ export async function POST(
     const coverLetter = formData.get('coverLetter') as string | null;
     const file = formData.get('resume') as File | null;
 
-    if (!experience || !noticePeriod || !file) {
+    if (!experience?.trim() || !noticePeriod?.trim() || !file) {
       return badRequest('Required fields are missing');
     }
 
@@ -58,6 +65,29 @@ export async function POST(
       return badRequest(phoneResult.message);
     }
     const e164Phone = phoneResult.e164;
+
+    const companyCheck = validateCompany(currentCompany || '', true);
+    if (!companyCheck.isValid) {
+      return badRequest(companyCheck.message);
+    }
+    const linkedInCheck = validateUrl(
+      linkedInProfile || '',
+      'Please enter your LinkedIn profile URL.',
+      'Please enter a valid LinkedIn profile URL.',
+      false
+    );
+    if (!linkedInCheck.isValid) {
+      return badRequest(linkedInCheck.message);
+    }
+    const portfolioCheck = validateUrl(
+      portfolioUrl || '',
+      'Please enter your Portfolio or GitHub URL.',
+      'Please enter a valid Portfolio or GitHub URL.',
+      false
+    );
+    if (!portfolioCheck.isValid) {
+      return badRequest(portfolioCheck.message);
+    }
 
     // Process file upload
     const buffer = Buffer.from(await file.arrayBuffer());

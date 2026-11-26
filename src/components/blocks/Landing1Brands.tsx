@@ -5,6 +5,7 @@ import React from 'react';
 export interface Landing1BrandsContent {
   badge?: string;
   title?: string;
+  titleColor?: string;
   description?: string;
   logos?: string[];
 }
@@ -46,7 +47,10 @@ export function Landing1Brands({ content }: { content?: Landing1BrandsContent })
 
         {/* Title */}
         {data.title && (
-          <h2 className="text-2xl md:text-[40px] font-extrabold text-white tracking-tight leading-tight max-w-4xl mx-auto mb-2">
+          <h2
+            className="text-2xl md:text-[40px] font-extrabold text-white tracking-tight leading-tight max-w-4xl mx-auto mb-2"
+            style={data.titleColor ? { color: data.titleColor } : undefined}
+          >
             {data.title}
           </h2>
         )}

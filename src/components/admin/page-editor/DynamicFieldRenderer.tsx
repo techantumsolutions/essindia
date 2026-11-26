@@ -1285,6 +1285,11 @@ function ArrayField({
               for (const k of ['name', 'desc', 'image']) {
                 if (!(k in objItem)) objItem[k] = '';
               }
+            } else if (sectionType === 'landing2-modules') {
+              moduleOrder = ['icon', 'iconUrl', 'image', 'iconType', 'title', 'href', 'ctaUrl'];
+              if (!('href' in objItem) && !('ctaUrl' in objItem)) {
+                objItem.href = '';
+              }
             } else if (sectionType === 'erp-modules') {
               for (const k of ['ctaHoverBgColor', 'ctaHoverTextColor']) {
                 if (!(k in objItem)) objItem[k] = '';
@@ -1297,6 +1302,7 @@ function ArrayField({
               itemOrder = [
                 'badgeText',
                 'title',
+                'titleColor',
                 'description',
                 'primaryButtonText',
                 'primaryButtonUrl',
@@ -2402,15 +2408,49 @@ interface WordHighlightSelectorProps {
   allSectionValues?: Record<string, JsonValue>;
 }
 
-function WordHighlightSelector({ label, value, onChange, allSectionValues }: WordHighlightSelectorProps) {
+function WordHighlightSelector({ label, value, onChange, sectionType, allSectionValues }: WordHighlightSelectorProps) {
   const getDirectTitle = () => {
     if (allSectionValues) {
       if (typeof allSectionValues.heading === 'string' && allSectionValues.heading.trim()) return allSectionValues.heading;
       if (typeof allSectionValues.titleText === 'string' && allSectionValues.titleText.trim()) return allSectionValues.titleText;
       if (typeof allSectionValues.title === 'string' && allSectionValues.title.trim()) return allSectionValues.title;
       if (typeof allSectionValues.title_text === 'string' && allSectionValues.title_text.trim()) return allSectionValues.title_text;
+      const part1 = typeof allSectionValues.titlePart1 === 'string' ? allSectionValues.titlePart1.trim() : '';
+      const part2 = typeof allSectionValues.titlePart2 === 'string' ? allSectionValues.titlePart2.trim() : '';
+      const combined = [part1, part2].filter(Boolean).join(' ');
+      if (combined) return combined;
     }
     return '';
+  };
+
+  const isSplitTitle =
+    sectionType === 'landing1-intro' ||
+    Boolean(
+      allSectionValues &&
+        (typeof allSectionValues.titlePart1 === 'string' || typeof allSectionValues.titlePart2 === 'string')
+    );
+
+  const getDefaultIndices = (): number[] => {
+    if (sectionType === 'about-us-why-ess') {
+      return [3];
+    }
+    if (sectionType === 'about-us-mission-vision') {
+      const currentWords = (getDirectTitle() || domTitle || 'Building technology that transforms businesses.')
+        .split(/\s+/)
+        .filter(Boolean);
+      const tIdx = currentWords.findIndex((w) => w.toLowerCase().includes('transforms'));
+      return tIdx !== -1 ? [tIdx] : [3];
+    }
+    if (isSplitTitle) {
+      const part1Words = (typeof allSectionValues?.titlePart1 === 'string' ? allSectionValues.titlePart1 : '')
+        .split(/\s+/)
+        .filter(Boolean);
+      const part2Words = (typeof allSectionValues?.titlePart2 === 'string' ? allSectionValues.titlePart2 : '')
+        .split(/\s+/)
+        .filter(Boolean);
+      return part2Words.map((_, i) => part1Words.length + i);
+    }
+    return [3, 4, 6];
   };
 
   const [domTitle, setDomTitle] = React.useState<string>('');
@@ -2447,9 +2487,11 @@ function WordHighlightSelector({ label, value, onChange, allSectionValues }: Wor
 
   const titleText = getDirectTitle() || domTitle || "It's all about Streamline, Automate, and Accelerate for Business Fitness";
 
+  const defaultIndices = getDefaultIndices();
+
   const selectedIndices: number[] = Array.isArray(value)
     ? (value as number[])
-    : [3, 4, 6];
+    : defaultIndices;
 
   const words = titleText.split(/\s+/).filter(Boolean);
 
@@ -2472,7 +2514,7 @@ function WordHighlightSelector({ label, value, onChange, allSectionValues }: Wor
   };
 
   const resetDefault = () => {
-    onChange([3, 4, 6]);
+    onChange(defaultIndices);
   };
 
   return (
@@ -2490,7 +2532,11 @@ function WordHighlightSelector({ label, value, onChange, allSectionValues }: Wor
             onClick={resetDefault}
             className="text-purple-600 hover:underline px-1.5 py-0.5 rounded bg-purple-100/60 hover:bg-purple-100"
           >
-            Default (4, 5, 7)
+            {sectionType === 'about-us-mission-vision' || sectionType === 'about-us-why-ess'
+              ? 'Default'
+              : isSplitTitle
+                ? 'Default (Part 2)'
+                : 'Default (4, 5, 7)'}
           </button>
           <button
             type="button"

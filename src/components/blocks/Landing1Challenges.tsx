@@ -15,6 +15,7 @@ export interface ChallengeItem {
 export interface Landing1ChallengesContent {
   badge?: string;
   title?: string;
+  titleColor?: string;
   description?: string;
   challenges?: ChallengeItem[];
 }
@@ -119,7 +120,10 @@ export function Landing1Challenges({ content }: { content?: Landing1ChallengesCo
             </span>
           )}
           {data.title && (
-            <h2 className="text-3xl md:text-[42px] font-bold text-[#0D1F3D] leading-tight tracking-tight">
+            <h2
+              className="text-3xl md:text-[42px] font-bold text-[#0D1F3D] leading-tight tracking-tight"
+              style={data.titleColor ? { color: data.titleColor } : undefined}
+            >
               {data.title}
             </h2>
           )}

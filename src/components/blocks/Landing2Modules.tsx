@@ -27,6 +27,7 @@ export interface ModuleCardItem {
 
 export interface Landing2ModulesContent {
   title?: string;
+  titleColor?: string;
   modules?: ModuleCardItem[];
   ctaText?: string;
   ctaUrl?: string;
@@ -102,7 +103,7 @@ export function Landing2Modules({ content }: { content?: Landing2ModulesContent 
   const { handleClick, modalNode } = useCtaAction(
     data.ctaUrl || '/contact-us',
     ctaFormType,
-    data.ctaPdfUrl
+    data.ctaPdfUrl || (data as any).pdfUrl
   );
 
   return (
@@ -110,7 +111,10 @@ export function Landing2Modules({ content }: { content?: Landing2ModulesContent 
       <div className="container mx-auto max-w-6xl">
         {/* Section Title */}
         {data.title && (
-          <h2 className="text-[#09090b] text-3xl md:text-4xl font-bold text-center tracking-tight mb-12">
+          <h2
+            className="text-[#09090b] text-3xl md:text-4xl font-bold text-center tracking-tight mb-12"
+            style={data.titleColor ? { color: data.titleColor } : undefined}
+          >
             {data.title}
           </h2>
         )}
@@ -136,19 +140,35 @@ export function Landing2Modules({ content }: { content?: Landing2ModulesContent 
               </div>
             );
 
-            const targetUrl =
+            const targetUrl = (
+              mod.href ||
               mod.ctaUrl ||
               (mod as any).cta_url ||
-              mod.href ||
               (mod as any).link ||
               (mod as any).url ||
-              (mod as any).cta;
-            return targetUrl ? (
+              (mod as any).cta ||
+              ''
+            ).trim();
+            if (!targetUrl) {
+              return <div key={idx}>{cardContent}</div>;
+            }
+            if (/^https?:\/\//i.test(targetUrl)) {
+              return (
+                <a
+                  key={idx}
+                  href={targetUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="block cursor-pointer"
+                >
+                  {cardContent}
+                </a>
+              );
+            }
+            return (
               <Link key={idx} href={targetUrl} className="block cursor-pointer">
                 {cardContent}
               </Link>
-            ) : (
-              <div key={idx}>{cardContent}</div>
             );
           })}
         </div>

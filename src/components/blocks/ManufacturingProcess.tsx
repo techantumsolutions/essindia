@@ -21,6 +21,7 @@ function getSlideStep(el: HTMLElement) {
 export default function ManufacturingProcess({ content }: { content?: any }) {
   const sectionTitle = content?.sectionTitle || 'Process ipsum';
   const sectionSubtitle = content?.sectionSubtitle || 'Lorem ipsum dolor sit amet, consectetur.';
+  const sectionSubtitleColor = content?.sectionSubtitleColor;
   const sectionDescription = content?.sectionDescription || 'Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea nisi ut aliquip';
   const steps = content?.processes || defaultSteps;
 
@@ -96,7 +97,10 @@ export default function ManufacturingProcess({ content }: { content?: any }) {
           <div className="text-[14px] font-bold text-slate-900">
             {sectionTitle}
           </div>
-          <h2 className="text-3xl md:text-4xl font-bold text-[#27256b] tracking-tight">
+          <h2
+            className="text-3xl md:text-4xl font-bold text-[#000000] tracking-tight"
+            style={sectionSubtitleColor ? { color: sectionSubtitleColor } : undefined}
+          >
             {sectionSubtitle}
           </h2>
           <p className="text-slate-500 max-w-2xl mx-auto text-[15px]">

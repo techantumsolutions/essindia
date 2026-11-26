@@ -281,6 +281,14 @@ section h2 {
   line-height: inherit !important;
 }
 
+.formatted-text-content.quality-title-colored *,
+.formatted-text-content.ass-process-title-colored *,
+.formatted-text-content.aom-solutions-title-colored *,
+.formatted-text-content.aom-workspace-title-colored *,
+.formatted-text-content.roi-faq-title-colored * {
+  color: inherit !important;
+}
+
 /* Privacy Policy Block: honor CMS rich-text line spacing (must beat global `.prose p` 1.6 !important). */
 .formatted-text-content.privacy-policy-content.prose p,
 .formatted-text-content.privacy-policy-content.prose li,

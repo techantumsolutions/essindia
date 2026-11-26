@@ -27,6 +27,7 @@ interface WorkspaceCategory {
 
 interface AomWorkspaceContent {
   title?: string;
+  titleColor?: string;
   categories?: WorkspaceCategory[];
 }
 
@@ -50,7 +51,7 @@ function safeImageUrl(url?: string, fallback = ''): string {
 export function AomWorkspace({ content }: { content?: AomWorkspaceContent }) {
   const ctaUrl = (content as any)?.ctaUrl || '';
   const ctaFormType = ((content as any)?.ctaFormType || '') as CtaFormType;
-  const { handleClick: handleCtaClick, modalNode } = useCtaAction(ctaUrl, ctaFormType);
+  const { handleClick: handleCtaClick, modalNode } = useCtaAction(ctaUrl, ctaFormType, (content as any)?.ctaPdfUrl || (content as any)?.pdfUrl);
   const title = content?.title || 'Explore every mobile business application from one intelligent workspace.';
 
   const defaultCategories: WorkspaceCategory[] = [
@@ -179,7 +180,12 @@ export function AomWorkspace({ content }: { content?: AomWorkspaceContent }) {
       <div className="container mx-auto max-w-7xl">
         
         {/* Title */}
-        <FormattedText content={title} as="h2" className="text-[#0a1128] text-2xl sm:text-3xl lg:text-4xl font-extrabold max-w-3xl mx-auto mb-12 text-center leading-tight tracking-tight" />
+        <FormattedText
+          content={title}
+          as="h2"
+          className={`text-2xl sm:text-3xl lg:text-4xl font-extrabold max-w-3xl mx-auto mb-12 text-center leading-tight tracking-tight ${content?.titleColor ? 'aom-workspace-title-colored' : 'text-[#0a1128]'}`}
+          style={content?.titleColor ? { color: content.titleColor } : undefined}
+        />
 
         <div className="flex flex-col lg:flex-row gap-8 items-start">
           

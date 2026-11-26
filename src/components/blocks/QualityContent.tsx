@@ -6,12 +6,14 @@ import { FormattedText } from '@/components/ui/FormattedText';
 
 interface QualityContentData {
   title1?: string;
+  title1Color?: string;
   isoTitle?: string;
   isoDescription?: string;
   cmmTitle?: string;
   cmmDescription1?: string;
   cmmDescription2?: string;
   title2?: string;
+  title2Color?: string;
   policies?: string[];
 }
 
@@ -62,7 +64,8 @@ export function QualityContent({ content }: QualityContentProps) {
               <FormattedText
                 content={data.title1}
                 as="h2"
-                className="text-xl md:text-4xl font-semibold text-slate-900 tracking-tight"
+                className={`text-xl md:text-4xl font-semibold tracking-tight ${data.title1Color ? 'quality-title-colored' : 'text-slate-900'}`}
+                style={data.title1Color ? { color: data.title1Color } : undefined}
               />
               <FormattedText
                 content={data.isoTitle}
@@ -110,7 +113,8 @@ export function QualityContent({ content }: QualityContentProps) {
             <FormattedText
               content={data.title2}
               as="h2"
-              className="text-3xl md:text-4xl font-semibold text-slate-900 tracking-tight"
+              className={`text-3xl md:text-4xl font-semibold tracking-tight ${data.title2Color ? 'quality-title-colored' : 'text-slate-900'}`}
+              style={data.title2Color ? { color: data.title2Color } : undefined}
             />
 
             <div className="space-y-5">

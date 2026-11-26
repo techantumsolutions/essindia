@@ -8,6 +8,7 @@ import { HeroTitle } from '@/components/ui/HeroTitle';
 import { FormattedText } from '@/components/ui/FormattedText';
 import { safeImageUrl } from '@/lib/utils';
 import { PhoneField } from '@/components/ui/PhoneField';
+import { ServiceSelectField } from '@/components/ui/ServiceSelectField';
 import { validateAndFormatPhone } from '@/lib/phone-validation';
 import { DEFAULT_PHONE_COUNTRY } from '@/lib/dial-codes';
 import {
@@ -16,6 +17,7 @@ import {
   validateEmail,
   validateName,
   validatePrivacy,
+  validateService,
 } from '@/lib/form-validation';
 
 export interface KeyTakeawaysSegment {
@@ -92,9 +94,12 @@ export interface BlogDetailContent {
   titleGradientFrom?: string;
   titleGradientTo?: string;
   heroTitle?: string;
+  heroTitleColor?: string;
   title?: string;
   date?: string;
+  dateColor?: string;
   readTime?: string;
+  readTimeColor?: string;
 
   // Author Card
   authorCardAvatar?: string;
@@ -197,8 +202,11 @@ export function BlogDetailSection({ content }: BlogDetailSectionProps) {
 
   const heroBgImage = content?.heroBgImage;
   const heroTitle = content?.heroTitle || content?.title || 'How Power BI Services Help Fix Multi-System Data Mismatches';
+  const heroTitleColor = content?.heroTitleColor;
   const date = content?.date || 'May 15,2026';
+  const dateColor = content?.dateColor;
   const readTime = content?.readTime || '3min read';
+  const readTimeColor = content?.readTimeColor;
 
   // Author Card details (Author Name calls into Hero section before Published Date)
   const authorCardName = content?.authorCardName || 'Saurabh Singh';
@@ -333,6 +341,7 @@ export function BlogDetailSection({ content }: BlogDetailSectionProps) {
     fullName: '',
     email: '',
     phone: '',
+    service: '',
     isRobotChecked: false,
     agreeTerms: false,
   });
@@ -400,6 +409,11 @@ export function BlogDetailSection({ content }: BlogDetailSectionProps) {
       alert(validation.message);
       return;
     }
+    const serviceCheck = validateService(formData.service);
+    if (!serviceCheck.isValid) {
+      alert(serviceCheck.message);
+      return;
+    }
     const privacyCheck = validatePrivacy(formData.agreeTerms);
     if (!privacyCheck.isValid) {
       alert(privacyCheck.message);
@@ -416,6 +430,7 @@ export function BlogDetailSection({ content }: BlogDetailSectionProps) {
           email: formData.email,
           phone: validation.e164,
           countryCode: phoneCountry,
+          service: formData.service,
           formType: 'blog-lead',
           pageName: heroTitle || (typeof window !== 'undefined' ? window.location.pathname : ''),
         }),
@@ -427,6 +442,7 @@ export function BlogDetailSection({ content }: BlogDetailSectionProps) {
           fullName: '',
           email: '',
           phone: '',
+          service: '',
           isRobotChecked: false,
           agreeTerms: false,
         });
@@ -466,7 +482,10 @@ export function BlogDetailSection({ content }: BlogDetailSectionProps) {
               className="text-3xl sm:text-5xl md:text-6xl font-light tracking-tight leading-tight max-w-4xl mx-auto justify-center"
             />
           ) : (
-            <h1 className="text-3xl sm:text-5xl md:text-6xl font-light tracking-tight leading-tight max-w-4xl mx-auto text-white/95">
+            <h1
+              className="text-3xl sm:text-5xl md:text-6xl font-light tracking-tight leading-tight max-w-4xl mx-auto text-white/95"
+              style={heroTitleColor ? { color: heroTitleColor } : undefined}
+            >
               {heroTitle}
             </h1>
           )}
@@ -474,9 +493,9 @@ export function BlogDetailSection({ content }: BlogDetailSectionProps) {
           <div className="flex items-center justify-center gap-3 text-sm sm:text-base font-normal text-white/80">
             <span>{authorCardName}</span>
             <span className="opacity-60">|</span>
-            <span>{date}</span>
+            <span style={dateColor ? { color: dateColor } : undefined}>{date}</span>
             <span className="opacity-60">|</span>
-            <span>{readTime}</span>
+            <span style={readTimeColor ? { color: readTimeColor } : undefined}>{readTime}</span>
           </div>
         </div>
       </section>
@@ -823,6 +842,15 @@ export function BlogDetailSection({ content }: BlogDetailSectionProps) {
                     placeholder="Phone Number*"
                     triggerClassName="!h-auto py-2 rounded-none border-0 border-b border-slate-700 bg-transparent text-white shadow-none focus-visible:ring-0 focus-visible:border-purple-500"
                     inputClassName="!h-auto py-2 rounded-none border-0 border-b border-slate-700 bg-transparent text-white placeholder-slate-500 focus:ring-0 focus:border-purple-500"
+                  />
+                </div>
+
+                <div>
+                  <ServiceSelectField
+                    value={formData.service}
+                    onChange={(service) => setFormData({ ...formData, service })}
+                    triggerClassName="w-full !h-auto py-2 px-0 rounded-none border-0 border-b border-slate-700 bg-transparent text-white text-xs shadow-none focus-visible:ring-0 focus-visible:border-purple-500 [&_svg]:text-slate-400"
+                    placeholderClassName="text-slate-500"
                   />
                 </div>
 

@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { revalidatePath } from 'next/cache';
 import { isAdminRequest } from '@/lib/cms/auth';
 import { pageAdminRepository } from '@/repositories/page-admin.repository';
 import { pageSectionSchema, reorderSectionsSchema } from '@/lib/cms/validators';
@@ -71,6 +72,8 @@ export async function PUT(
         isActive: s.isActive,
       }))
     );
+
+    revalidatePath('/', 'layout');
 
     return NextResponse.json({ success: true, count: updatedSections.length, pageId });
   } catch (error) {

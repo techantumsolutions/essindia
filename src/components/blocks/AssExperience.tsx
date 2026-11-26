@@ -6,6 +6,7 @@ import { Play, X } from 'lucide-react';
 
 interface AssExperienceContent {
   title?: string;
+  titleColor?: string;
   mediaUrl?: string; // Image or Video URL shown in the section
   videoUrl?: string; // Optional video URL to play in a popup modal
 }
@@ -29,7 +30,10 @@ export function AssExperience({ content }: { content?: AssExperienceContent }) {
   return (
     <section className="p-14 px-6 bg-white border-b">
       <div className="container mx-auto max-w-7xl">
-        <h2 className="text-[#0a1128] text-2xl sm:text-3xl font-extrabold max-w-3xl mx-auto mb-10 text-center leading-tight tracking-tight">
+        <h2
+          className="text-[#0a1128] text-2xl sm:text-3xl font-extrabold max-w-3xl mx-auto mb-10 text-center leading-tight tracking-tight"
+          style={content?.titleColor ? { color: content.titleColor } : undefined}
+        >
           {title}
         </h2>
 

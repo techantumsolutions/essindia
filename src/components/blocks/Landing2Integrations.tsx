@@ -6,6 +6,7 @@ import Image from 'next/image';
 export interface Landing2IntegrationsContent {
   badge?: string;
   title?: string;
+  titleColor?: string;
   logos?: string[];
 }
 
@@ -48,7 +49,10 @@ export function Landing2Integrations({ content }: { content?: Landing2Integratio
 
         {/* Section Big Title */}
         {data.title && (
-          <h2 className="text-slate-900 text-3xl md:text-5xl font-bold tracking-tight leading-[1.15] whitespace-pre-line">
+          <h2
+            className="text-slate-900 text-3xl md:text-5xl font-bold tracking-tight leading-[1.15] whitespace-pre-line"
+            style={data.titleColor ? { color: data.titleColor } : undefined}
+          >
             {data.title}
           </h2>
         )}

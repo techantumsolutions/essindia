@@ -70,8 +70,8 @@ export function AssHero({ content }: { content?: AssHeroContent }) {
   const button1FormType = (content?.button1FormType || '') as CtaFormType;
   const button2FormType = (content?.button2FormType || '') as CtaFormType;
 
-  const { handleClick: handleBtn1Click, modalNode: modal1 } = useCtaAction(button1Url, button1FormType);
-  const { handleClick: handleBtn2Click, modalNode: modal2 } = useCtaAction(button2Url, button2FormType);  const image = content?.image || '/App-After Sales Service/002b2026-6c0c-4820-958f-344b26611bc6 1.png';
+  const { handleClick: handleBtn1Click, modalNode: modal1 } = useCtaAction(button1Url, button1FormType, (content as any)?.button1PdfUrl);
+  const { handleClick: handleBtn2Click, modalNode: modal2 } = useCtaAction(button2Url, button2FormType, (content as any)?.button2PdfUrl);  const image = content?.image || '/App-After Sales Service/002b2026-6c0c-4820-958f-344b26611bc6 1.png';
 
   
   const bgStyles = getHeroBackgroundStyles({

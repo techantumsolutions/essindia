@@ -7,6 +7,7 @@ import { motion } from 'framer-motion';
 
 interface OracleCtaContent {
   title?: string;
+  titleColor?: string;
   description?: string;
   buttonText?: string;
   buttonHoverBgColor?: string;
@@ -35,6 +36,7 @@ export function OracleCta({ content }: { content?: OracleCtaContent }) {
           viewport={{ once: true, margin: '-100px' }}
           transition={{ duration: 0.5 }}
           className="text-3xl sm:text-4xl font-normal text-[#5e35b1] tracking-tight font-sans"
+          style={content?.titleColor ? { color: content.titleColor } : undefined}
         >
           {title}
         </motion.h2>
