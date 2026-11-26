@@ -12,6 +12,7 @@ interface AssFunctionalitiesContent {
   badgeIcon?: string;
   badgeText?: string;
   title?: string;
+  titleColor?: string;
   items?: FuncItem[];
   image?: string;
 }
@@ -50,7 +51,10 @@ export function AssFunctionalities({ content }: { content?: AssFunctionalitiesCo
               </div>
             )}
 
-            <h2 className="text-3xl md:text-4xl font-bold text-[#0f172a] mb-2">
+            <h2
+              className="text-3xl md:text-4xl font-bold text-[#0f172a] mb-2"
+              style={content?.titleColor ? { color: content.titleColor } : undefined}
+            >
               {title}
             </h2>
 

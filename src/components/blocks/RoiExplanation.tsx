@@ -13,6 +13,7 @@ interface CardItem {
 interface RoiExplanationContent {
   image?: string;
   title?: string;
+  titleColor?: string;
   paragraphs?: string[];
   formulaText?: string;
   cards?: CardItem[];
@@ -65,7 +66,10 @@ export function RoiExplanation({ content }: { content?: RoiExplanationContent })
             transition={{ duration: 0.6 }}
             className="flex-1 space-y-6 text-left"
           >
-            <h2 className="text-3xl md:text-4xl font-bold text-[#2b2a6c] tracking-tight">
+            <h2
+              className="text-3xl md:text-4xl font-bold text-[#2b2a6c] tracking-tight"
+              style={content?.titleColor ? { color: content.titleColor } : undefined}
+            >
               {title}
             </h2>
 

@@ -6,6 +6,7 @@ import { motion } from 'framer-motion';
 export default function CareerExperience({ content }: { content?: any }) {
   const {
     title = 'Get hands-on experience on cutting\nedge enterprise software products.',
+    titleColor,
     tag = 'We believe great engineers deserve more than a desk\nand a deadline.',
     products = [
       { title: 'Aviation Software', image: '/Career-Page/aprs_svgrepo.com.png' },
@@ -20,6 +21,7 @@ export default function CareerExperience({ content }: { content?: any }) {
       <div className="container mx-auto max-w-7xl text-center">
         <h2
           className="text-3xl md:text-4xl font-bold text-slate-900 mb-6 max-w-2xl mx-auto leading-none"
+          style={titleColor ? { color: titleColor } : undefined}
           dangerouslySetInnerHTML={{ __html: title.replace(/\n/g, '<br />') }}
         />
         <p

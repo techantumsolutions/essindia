@@ -6,6 +6,7 @@ import Link from 'next/link';
 
 interface FmcgCtaContent {
   title?: string;
+  titleColor?: string;
   buttonText?: string;
   buttonHoverBgColor?: string;
   buttonHoverTextColor?: string;
@@ -27,7 +28,10 @@ export function FmcgCta({ content }: { content?: FmcgCtaContent }) {
       <div className="container mx-auto max-w-4xl text-center space-y-8">
 
         {/* Title */}
-        <h2 className="text-2xl sm:text-3xl md:text-4xl font-normal text-[#3c158e] leading-tight max-w-3xl mx-auto">
+        <h2
+          className="text-2xl sm:text-3xl md:text-4xl font-normal text-[#3c158e] leading-tight max-w-3xl mx-auto"
+          style={content?.titleColor ? { color: content.titleColor } : undefined}
+        >
           {title}
         </h2>
 

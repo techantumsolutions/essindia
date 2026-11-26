@@ -16,6 +16,7 @@ export interface AboutUsMissionVisionContent {
   title?: string;
   titlePrimaryColor?: string;
   titleSecondaryColor?: string;
+  highlightedWordIndices?: number[];
   visionIcon?: string;
   visionTitle?: string;
   visionDescription?: string;
@@ -54,6 +55,9 @@ export function AboutUsMissionVision({ content }: AboutUsMissionVisionProps) {
   const title = content?.title || 'Building technology that transforms businesses.';
   const titlePrimaryColor = content?.titlePrimaryColor || '#1E1B4B';
   const titleSecondaryColor = content?.titleSecondaryColor || '#9333EA';
+  const highlightedWordIndices = Array.isArray(content?.highlightedWordIndices)
+    ? content.highlightedWordIndices
+    : undefined;
 
   const bgGradientFrom = content?.bgGradientFrom || '#F3E8FF';
   const bgGradientVia = content?.bgGradientVia || '#F8F3FF';
@@ -142,7 +146,7 @@ export function AboutUsMissionVision({ content }: AboutUsMissionVisionProps) {
               transition={{ duration: 0.4 }}
               className="text-3xl sm:text-4xl md:text-[42px] font-extrabold tracking-tight leading-tight"
             >
-              {renderFormattedTitle(title, titlePrimaryColor, titleSecondaryColor)}
+              {renderFormattedTitle(title, titlePrimaryColor, titleSecondaryColor, highlightedWordIndices)}
             </motion.h2>
           )}
         </div>
@@ -241,10 +245,32 @@ export function AboutUsMissionVision({ content }: AboutUsMissionVisionProps) {
   );
 }
 
-function renderFormattedTitle(titleText: string, primaryColor: string, secondaryColor: string) {
+function renderFormattedTitle(
+  titleText: string,
+  primaryColor: string,
+  secondaryColor: string,
+  highlightedWordIndices?: number[]
+) {
   if (!titleText) return null;
   if (typeof titleText === 'string' && titleText.includes('<') && titleText.includes('>')) {
     return <span dangerouslySetInnerHTML={{ __html: titleText }} />;
+  }
+  if (Array.isArray(highlightedWordIndices)) {
+    const words = titleText.split(/\s+/).filter(Boolean);
+    return (
+      <>
+        {words.map((word, idx) => (
+          <span
+            key={idx}
+            style={{
+              color: highlightedWordIndices.includes(idx) ? secondaryColor : primaryColor,
+            }}
+          >
+            {word}{' '}
+          </span>
+        ))}
+      </>
+    );
   }
   if (titleText.toLowerCase().includes('transforms')) {
     const regex = /(transforms)/i;

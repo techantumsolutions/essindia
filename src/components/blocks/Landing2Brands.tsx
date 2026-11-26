@@ -5,6 +5,7 @@ import Image from 'next/image';
 
 export interface Landing2BrandsContent {
   title?: string;
+  titleColor?: string;
   logos?: string[];
 }
 
@@ -32,7 +33,10 @@ export function Landing2Brands({ content }: { content?: Landing2BrandsContent })
       <div className="container mx-auto max-w-6xl">
         {/* Title */}
         {data.title && (
-          <h3 className="text-white text-sm md:text-base font-bold tracking-wide mb-10 opacity-95">
+          <h3
+            className="text-white text-sm md:text-base font-bold tracking-wide mb-10 opacity-95"
+            style={data.titleColor ? { color: data.titleColor } : undefined}
+          >
             {data.title}
           </h3>
         )}

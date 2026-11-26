@@ -10,6 +10,7 @@ export interface IndustryItem {
 export interface Landing1IndustriesContent {
   badge?: string;
   title?: string;
+  titleColor?: string;
   description?: string;
   image?: string;
   industries?: IndustryItem[];
@@ -59,7 +60,10 @@ export function Landing1Industries({ content }: { content?: Landing1IndustriesCo
                 </span>
               )}
               {data.title && (
-                <h2 className="text-3xl md:text-5xl font-extrabold tracking-tight text-white leading-tight">
+                <h2
+                  className="text-3xl md:text-5xl font-extrabold tracking-tight text-white leading-tight"
+                  style={data.titleColor ? { color: data.titleColor } : undefined}
+                >
                   {data.title}
                 </h2>
               )}

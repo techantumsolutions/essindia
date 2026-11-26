@@ -17,7 +17,9 @@ import {
   validateEmail,
   validateName,
   validatePrivacy,
+  validateService,
 } from '@/lib/form-validation';
+import { ServiceSelectField } from '@/components/ui/ServiceSelectField';
 
 
 export interface BadgeItem {
@@ -30,6 +32,7 @@ export interface Landing2HeroContent {
   gradientColor3?: string;
   bgColor?: string;
   title?: string;
+  titleColor?: string;
   titleGradientFrom?: string;
   titleGradientTo?: string;
   subtitle?: string;
@@ -107,6 +110,7 @@ export function Landing2Hero({ content }: { content?: Landing2HeroContent }) {
     industry: '',
     email: '',
     phone: '',
+    service: '',
   });
 
   const [acceptedTerms, setAcceptedTerms] = useState<boolean>(false);
@@ -144,6 +148,11 @@ export function Landing2Hero({ content }: { content?: Landing2HeroContent }) {
       toast.error(validation.message);
       return;
     }
+    const serviceCheck = validateService(formData.service);
+    if (!serviceCheck.isValid) {
+      toast.error(serviceCheck.message);
+      return;
+    }
     const privacyCheck = validatePrivacy(acceptedTerms);
     if (!privacyCheck.isValid) {
       toast.error(privacyCheck.message);
@@ -161,6 +170,7 @@ export function Landing2Hero({ content }: { content?: Landing2HeroContent }) {
           phone: validation.e164,
           countryCode: phoneCountry,
           company: formData.company,
+          service: formData.service,
           message: JSON.stringify({ industry: formData.industry }),
           formType: 'landing-2',
           pageName: pathname || '',
@@ -173,7 +183,7 @@ export function Landing2Hero({ content }: { content?: Landing2HeroContent }) {
       }
 
       toast.success(FORM_SUCCESS_MESSAGE);
-      setFormData({ name: '', company: '', industry: '', email: '', phone: '' });
+      setFormData({ name: '', company: '', industry: '', email: '', phone: '', service: '' });
       setAcceptedTerms(false);
     } catch (err: any) {
       toast.error(submitErrorMessage(err.status, err.message));
@@ -215,7 +225,10 @@ export function Landing2Hero({ content }: { content?: Landing2HeroContent }) {
                 className="text-3xl md:text-5xl font-bold tracking-tight leading-[1.15]"
               />
             ) : (
-              <h1 className="text-white text-3xl md:text-5xl font-bold tracking-tight leading-[1.15]">
+              <h1
+                className="text-white text-3xl md:text-5xl font-bold tracking-tight leading-[1.15]"
+                style={data.titleColor ? { color: data.titleColor } : undefined}
+              >
                 {data.title}
               </h1>
             )
@@ -352,6 +365,15 @@ export function Landing2Hero({ content }: { content?: Landing2HeroContent }) {
                   placeholder="Mobile Number"
                   triggerClassName="!h-[46px] rounded-l-lg border-slate-200 bg-white focus-visible:ring-0 focus-visible:border-[#3f1885]"
                   inputClassName="!h-[46px] px-4 py-3 rounded-r-lg border-slate-200 placeholder:text-slate-400 focus:ring-0 focus:border-[#3f1885]"
+                />
+              </div>
+
+              {/* Service Select */}
+              <div>
+                <ServiceSelectField
+                  value={formData.service}
+                  onChange={(service) => setFormData((prev) => ({ ...prev, service }))}
+                  triggerClassName="w-full !h-[46px] px-4 rounded-lg border border-slate-200 text-sm bg-white shadow-none focus-visible:ring-0 focus-visible:border-[#3f1885]"
                 />
               </div>
 

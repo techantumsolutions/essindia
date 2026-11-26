@@ -7,6 +7,7 @@ import { COUNTRY_MAP } from '@/lib/countries';
 export default function CareerOffices({ content }: { content?: any }) {
   const {
     title = '35+ offices globally',
+    titleColor,
     subtitle = 'With offices in 30 global locations and customers\nspread across 35+ countries.',
     countries = [
       { countryCode: 'at' },
@@ -34,7 +35,12 @@ export default function CareerOffices({ content }: { content?: any }) {
     <section className="py-14 px-6 bg-[#f4f4f4]">
       <div className="container mx-auto  max-w-7xl">
         <div className="text-center mb-16">
-          <h2 className="text-[28px] md:text-4xl font-bold text-slate-900 mb-2">{title}</h2>
+          <h2
+            className="text-[28px] md:text-4xl font-bold text-slate-900 mb-2"
+            style={titleColor ? { color: titleColor } : undefined}
+          >
+            {title}
+          </h2>
           <p
             className="text-[#71717A] max-w-2xl mx-auto text-2xl font-light leading-none"
             dangerouslySetInnerHTML={{ __html: subtitle.replace(/\n/g, '<br />') }}

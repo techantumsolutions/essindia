@@ -10,6 +10,7 @@ interface SolutionItem {
 
 interface RpaSolutionsContent {
   title?: string;
+  titleColor?: string;
   description?: string;
   solutions?: SolutionItem[];
   image?: string;
@@ -49,6 +50,7 @@ export function RpaSolutions({ content }: { content?: RpaSolutionsContent }) {
                 viewport={{ once: true }}
                 transition={{ duration: 0.4 }}
                 className="text-3xl sm:text-4xl font-bold text-[#3e3d7b] leading-tight"
+                style={content?.titleColor ? { color: content.titleColor } : undefined}
               >
                 {title}
               </motion.h2>

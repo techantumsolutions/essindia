@@ -11,6 +11,7 @@ interface BenefitItem {
 
 interface RpaBenefitsContent {
   title?: string;
+  titleColor?: string;
   subtitle?: string;
   benefits?: BenefitItem[];
 }
@@ -43,6 +44,7 @@ export function RpaBenefits({ content }: { content?: RpaBenefitsContent }) {
               viewport={{ once: true }}
               transition={{ duration: 0.4 }}
               className="text-3xl sm:text-4xl font-bold text-[#27256b] tracking-tight leading-tight"
+              style={content?.titleColor ? { color: content.titleColor } : undefined}
             >
               {title}
             </motion.h2>

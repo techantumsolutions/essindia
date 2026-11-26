@@ -2,6 +2,7 @@ import React from 'react';
 
 interface StaffingAugmentationContent {
   heading?: string;
+  headingColor?: string;
   paragraph1?: string;
   paragraph2?: string;
 }
@@ -19,7 +20,10 @@ export function StaffingAugmentation({ content }: StaffingAugmentationProps) {
     <section className="py-12 px-6 bg-white border-t border-b">
       <div className="container mx-auto max-w-7xl">
         <div className="max-w-7xl mx-auto">
-          <h2 className="text-3xl md:text-4xl font-bold text-[#2a2d7c] mb-8 text-center">
+          <h2
+            className="text-3xl md:text-4xl font-bold text-[#2a2d7c] mb-8 text-center"
+            style={content?.headingColor ? { color: content.headingColor } : undefined}
+          >
             {heading}
           </h2>
           <div className="space-y-6 text-gray-500 text-sm md:text-base leading-relaxed">

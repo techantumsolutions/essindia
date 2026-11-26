@@ -12,6 +12,7 @@ export interface EuropeAiMonitorContent extends EuropeCommonSettings {
   image?: string;
   badgeText?: string;
   title?: string;
+  titleColor?: string;
   description?: string;
   buttonText?: string;
   buttonHoverBgColor?: string;
@@ -34,7 +35,7 @@ export function EuropeAiMonitor({ content }: { content?: EuropeAiMonitorContent 
   const buttonUrl = content?.buttonUrl || '/contact-us';
   const buttonFormType = (content?.buttonFormType || '') as CtaFormType;
 
-  const { handleClick: handleBtnClick, modalNode } = useCtaAction(buttonUrl, buttonFormType);
+  const { handleClick: handleBtnClick, modalNode } = useCtaAction(buttonUrl, buttonFormType, (content as any)?.buttonPdfUrl || (content as any)?.pdfUrl);
 
   return (
     <EuropeSectionShell content={{ ...content, backgroundColor: '#f4f7fa' }}>
@@ -46,7 +47,10 @@ export function EuropeAiMonitor({ content }: { content?: EuropeAiMonitorContent 
             </span>
           )}
           {title && (
-            <h2 className="text-3xl sm:text-[40px] leading-[1.15] font-bold text-[#111827]">
+            <h2
+              className="text-3xl sm:text-[40px] leading-[1.15] font-bold text-[#111827]"
+              style={content?.titleColor ? { color: content.titleColor } : undefined}
+            >
               {title}
             </h2>
           )}

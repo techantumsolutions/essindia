@@ -18,6 +18,7 @@ export interface SuiteModuleItem {
 export interface Landing1SuiteContent {
   badge?: string;
   title?: string;
+  titleColor?: string;
   description?: string;
   modules?: SuiteModuleItem[];
   ctaText?: string;
@@ -83,7 +84,12 @@ export function Landing1Suite({ content }: { content?: Landing1SuiteContent }) {
           )}
 
           {data.title && (
-            <FormattedText content={data.title} as="h2" className="text-3xl md:text-5xl font-bold text-slate-900 tracking-tight leading-tight" />
+            <FormattedText
+              content={data.title}
+              as="h2"
+              className="text-3xl md:text-5xl font-bold text-slate-900 tracking-tight leading-tight"
+              style={data.titleColor ? { color: data.titleColor } : undefined}
+            />
           )}
 
           {data.description && (

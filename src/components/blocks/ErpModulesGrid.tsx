@@ -18,6 +18,7 @@ interface ErpModule {
 
 interface ErpModulesGridContent {
   heading?: string;
+  headingColor?: string;
   subheading?: string;
   modules?: ErpModule[];
 }
@@ -30,7 +31,7 @@ export function ErpModulesGrid({ content }: ErpModulesGridProps) {
   const [hoveredCardIdx, setHoveredCardIdx] = React.useState<number | null>(null);
   const ctaUrl = (content as any)?.ctaUrl || '';
   const ctaFormType = ((content as any)?.ctaFormType || '') as CtaFormType;
-  const { handleClick: handleCtaClick, modalNode } = useCtaAction(ctaUrl, ctaFormType);
+  const { handleClick: handleCtaClick, modalNode } = useCtaAction(ctaUrl, ctaFormType, (content as any)?.ctaPdfUrl || (content as any)?.pdfUrl);
   const heading = content?.heading || 'ERP Modules';
   const subheading = content?.subheading || 'Choose standard version or customizable version of our technology. ERP modules contribute to business growth in the following ways';
   const modules = content?.modules || [
@@ -72,7 +73,10 @@ export function ErpModulesGrid({ content }: ErpModulesGridProps) {
         {/* Header Block */}
         <div className="text-center max-w-3xl mx-auto mb-8">
           <MotionSection variant="fadeUp">
-            <h2 className="text-3xl md:text-4xl lg:text-[42px] font-medium text-[#462294] tracking-tight">
+            <h2
+              className="text-3xl md:text-4xl lg:text-[42px] font-medium text-[#000000] tracking-tight"
+              style={content?.headingColor ? { color: content.headingColor } : undefined}
+            >
               {heading}
             </h2>
           </MotionSection>

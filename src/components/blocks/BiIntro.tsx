@@ -6,6 +6,7 @@ import { motion } from 'framer-motion';
 interface BiIntroContent {
   badge?: string;
   title?: string;
+  titleColor?: string;
   description?: string;
 }
 
@@ -39,6 +40,7 @@ export function BiIntro({ content }: { content?: BiIntroContent }) {
             viewport={{ once: true, margin: '-100px' }}
             transition={{ duration: 0.5, delay: 0.1 }}
             className="text-xl sm:text-4xl lg:text-[40px] font-extralight text-[#5e35b1] tracking-tight leading-tight max-w-5xl mx-auto mb-6 whitespace-pre-line font-sans"
+            style={content?.titleColor ? { color: content.titleColor } : undefined}
           >
             {title}
           </motion.h2>

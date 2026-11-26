@@ -12,6 +12,7 @@ interface ServiceItem {
 
 interface AboutUsServicesOverviewContent {
   heading?: string;
+  headingColor?: string;
   items?: ServiceItem[];
 }
 
@@ -55,6 +56,7 @@ export function AboutUsServicesOverview({
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
             className="text-4xl md:text-[48px] font-bold text-slate-900 tracking-tight leading-tight"
+            style={content?.headingColor ? { color: content.headingColor } : undefined}
           >
             {heading}
           </motion.h2>

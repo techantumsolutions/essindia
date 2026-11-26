@@ -21,6 +21,7 @@ interface Service {
 
 interface ServicesContent {
   heading?: string;
+  headingColor?: string;
   subheading?: string;
   services?: Service[];
   viewAllCta?: { label: string; url: string };
@@ -35,7 +36,7 @@ const defaultServices: Service[] = [];
 export function ServicesSection({ content }: ServicesSectionProps) {
   const ctaUrl = (content as any)?.ctaUrl || '';
   const ctaFormType = ((content as any)?.ctaFormType || '') as CtaFormType;
-  const { handleClick: handleCtaClick, modalNode } = useCtaAction(ctaUrl, ctaFormType);
+  const { handleClick: handleCtaClick, modalNode } = useCtaAction(ctaUrl, ctaFormType, (content as any)?.ctaPdfUrl || (content as any)?.pdfUrl);
   const heading = content?.heading || "Services we offer";
   const subheading = content?.subheading || "Manage your operations with guidance that evolves with your business goals.";
   const services = content?.services || defaultServices;
@@ -47,7 +48,10 @@ export function ServicesSection({ content }: ServicesSectionProps) {
 
         {/* Header */}
         <MotionSection variant="fadeUp" className="text-center mb-16">
-          <h2 className="text-4xl md:text-5xl font-bold tracking-tight text-slate-900 mb-6">
+          <h2
+            className="text-4xl md:text-5xl font-bold tracking-tight text-slate-900 mb-6"
+            style={content?.headingColor ? { color: content.headingColor } : undefined}
+          >
             {heading}
           </h2>
           <p className="text-slate-400 text-lg md:text-xl font-light max-w-2xl mx-auto">

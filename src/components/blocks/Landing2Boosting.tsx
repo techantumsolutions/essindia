@@ -7,8 +7,10 @@ import { useCtaAction, type CtaFormType } from '@/hooks/useCtaAction';
 
 export interface Landing2BoostingContent {
   sectionTitle?: string;
+  sectionTitleColor?: string;
   badge?: string;
   title?: string;
+  titleColor?: string;
   description?: string;
   image?: string;
   ctaText?: string;
@@ -34,7 +36,7 @@ export function Landing2Boosting({ content }: { content?: Landing2BoostingConten
   const { handleClick, modalNode } = useCtaAction(
     data.ctaUrl || '/contact-us',
     ctaFormType,
-    data.ctaPdfUrl
+    data.ctaPdfUrl || (data as any).pdfUrl
   );
 
   return (
@@ -42,7 +44,10 @@ export function Landing2Boosting({ content }: { content?: Landing2BoostingConten
       <div className="container mx-auto max-w-6xl">
         {/* Main Section Header */}
         {data.sectionTitle && (
-          <h2 className="text-slate-900 text-3xl md:text-5xl font-extrabold text-center tracking-tight leading-[1.15] mb-12 md:mb-16 whitespace-pre-line">
+          <h2
+            className="text-slate-900 text-3xl md:text-5xl font-extrabold text-center tracking-tight leading-[1.15] mb-12 md:mb-16 whitespace-pre-line"
+            style={data.sectionTitleColor ? { color: data.sectionTitleColor } : undefined}
+          >
             {data.sectionTitle}
           </h2>
         )}
@@ -73,7 +78,10 @@ export function Landing2Boosting({ content }: { content?: Landing2BoostingConten
 
             {/* Feature Big Title */}
             {data.title && (
-              <h3 className="text-slate-900 text-3xl md:text-4xl font-bold tracking-tight leading-[1.15] whitespace-pre-line">
+              <h3
+                className="text-slate-900 text-3xl md:text-4xl font-bold tracking-tight leading-[1.15] whitespace-pre-line"
+                style={data.titleColor ? { color: data.titleColor } : undefined}
+              >
                 {data.title}
               </h3>
             )}

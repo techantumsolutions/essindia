@@ -83,8 +83,8 @@ export function EuropeHero({ content }: { content?: EuropeHeroContent }) {
   const secondaryButtonUrl = content?.secondaryButtonUrl || '/contact-us';
   const secondaryButtonFormType = (content?.secondaryButtonFormType || '') as CtaFormType;
 
-  const { handleClick: handlePrimaryClick, modalNode: primaryModal } = useCtaAction(primaryButtonUrl, primaryButtonFormType);
-  const { handleClick: handleSecondaryClick, modalNode: secondaryModal } = useCtaAction(secondaryButtonUrl, secondaryButtonFormType);
+  const { handleClick: handlePrimaryClick, modalNode: primaryModal } = useCtaAction(primaryButtonUrl, primaryButtonFormType, (content as any)?.primaryButtonPdfUrl);
+  const { handleClick: handleSecondaryClick, modalNode: secondaryModal } = useCtaAction(secondaryButtonUrl, secondaryButtonFormType, (content as any)?.secondaryButtonPdfUrl);
 
   const backgroundGradient =
     content?.backgroundGradient ||

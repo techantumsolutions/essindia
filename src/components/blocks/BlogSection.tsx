@@ -21,6 +21,7 @@ interface Blog {
 
 interface BlogContent {
   heading?: string;
+  headingColor?: string;
   subheading?: string;
   blogs?: Blog[];
   buttonText?: string;
@@ -259,6 +260,7 @@ export function BlogSection({ content }: BlogSectionProps) {
             as="h2"
             text={heading}
             className="text-4xl md:text-[48px] font-bold text-slate-900 mb-6 tracking-tight leading-tight justify-center"
+            style={content?.headingColor ? { color: content.headingColor } : undefined}
           />
           <MotionSection variant="fadeUp" delay={0.4}>
             <p className="text-lg text-slate-500 font-light">

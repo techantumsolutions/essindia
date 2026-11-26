@@ -15,9 +15,11 @@ import {
   validateMessage,
   validateName,
   validatePrivacy,
+  validateService,
 } from '@/lib/form-validation';
 import { completeFormSuccess } from '@/lib/forms/form-success';
 import { PhoneField } from '@/components/ui/PhoneField';
+import { ServiceSelectField } from '@/components/ui/ServiceSelectField';
 
 import { FormattedText } from '@/components/ui/FormattedText';
 
@@ -30,11 +32,13 @@ export interface ContactFaq {
 
 export interface ContactFormFaqContent {
   formTitle?: string;
+  formTitleColor?: string;
   formDescription?: string;
   buttonHoverBgColor?: string;
   buttonHoverTextColor?: string;
   disclaimerText?: string;
   faqTitle?: string;
+  faqTitleColor?: string;
   faqs?: ContactFaq[];
 }
 
@@ -81,6 +85,7 @@ export function ContactFormFaq({ content }: { content?: ContactFormFaqContent })
     email: '',
     phone: '',
     company: '',
+    service: '',
     message: ''
   });
 
@@ -118,13 +123,18 @@ export function ContactFormFaq({ content }: { content?: ContactFormFaqContent })
       toast.error(phoneCheck.message);
       return;
     }
-    const companyCheck = validateCompany(formData.company);
+    const companyCheck = validateCompany(formData.company, true);
     if (!companyCheck.isValid) {
       toast.error(companyCheck.message);
       return;
     }
     if (!selectedCountry) {
       toast.error(FORM_COUNTRY_ERROR);
+      return;
+    }
+    const serviceCheck = validateService(formData.service);
+    if (!serviceCheck.isValid) {
+      toast.error(serviceCheck.message);
       return;
     }
     const messageCheck = validateMessage(formData.message, true);
@@ -152,6 +162,7 @@ export function ContactFormFaq({ content }: { content?: ContactFormFaqContent })
           countryCode: selectedDialCode,
           company: formData.company,
           country: countryInfo ? countryInfo.name : selectedCountry,
+          service: formData.service,
           message: formData.message,
           formType: 'contact',
         })
@@ -162,7 +173,7 @@ export function ContactFormFaq({ content }: { content?: ContactFormFaqContent })
         throw Object.assign(new Error(data.error || ''), { status: res.status });
       }
 
-      setFormData({ firstName: '', lastName: '', email: '', phone: '', company: '', message: '' });
+      setFormData({ firstName: '', lastName: '', email: '', phone: '', company: '', service: '', message: '' });
       setSelectedCountry(DEFAULT_PHONE_COUNTRY);
       setSelectedDialCode(DEFAULT_PHONE_COUNTRY);
       setAcceptedPrivacy(false);
@@ -185,7 +196,12 @@ export function ContactFormFaq({ content }: { content?: ContactFormFaqContent })
         {/* Left Side - Form */}
         <div className="w-full lg:w-1/2">
           <div className="bg-white rounded-3xl p-6 border border-gray-200 shadow-md">
-            <h2 className="text-3xl font-bold text-[#27256B] mb-2">{formTitle}</h2>
+            <h2
+              className="text-3xl font-bold text-[#27256B] mb-2"
+              style={content?.formTitleColor ? { color: content.formTitleColor } : undefined}
+            >
+              {formTitle}
+            </h2>
             <p className="text-gray-500 text-sm mb-4 leading-relaxed">
               {formDescription}
             </p>
@@ -223,7 +239,7 @@ export function ContactFormFaq({ content }: { content?: ContactFormFaqContent })
 
               <div className="space-y-2">
                 <label className="text-sm font-medium text-gray-700">Company Name</label>
-                <input name="company" value={formData.company} onChange={handleInputChange} type="text" placeholder="Enter company name" className="w-full px-4 py-2 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#5C2B6A] focus:border-transparent transition-all text-sm" />
+                <input required name="company" value={formData.company} onChange={handleInputChange} type="text" placeholder="Enter company name" className="w-full px-4 py-2 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#5C2B6A] focus:border-transparent transition-all text-sm" />
               </div>
 
               <div className="space-y-2">
@@ -276,6 +292,15 @@ export function ContactFormFaq({ content }: { content?: ContactFormFaqContent })
               </div>
 
               <div className="space-y-2">
+                <label className="text-sm font-medium text-gray-700">Select service</label>
+                <ServiceSelectField
+                  value={formData.service}
+                  onChange={(service) => setFormData((prev) => ({ ...prev, service }))}
+                  triggerClassName="w-full px-4 !h-[38px] rounded-lg border border-gray-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#5C2B6A] focus-visible:border-transparent transition-all text-sm bg-white shadow-none"
+                />
+              </div>
+
+              <div className="space-y-2">
                 <label className="text-sm font-medium text-gray-700">Message</label>
                 <textarea required name="message" value={formData.message} onChange={handleInputChange} rows={4} placeholder="Leave us a message..." className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#5C2B6A] focus:border-transparent transition-all text-sm resize-none"></textarea>
               </div>
@@ -320,7 +345,12 @@ export function ContactFormFaq({ content }: { content?: ContactFormFaqContent })
         {/* Right Side - FAQ */}
         <div className="w-full lg:w-1/2 lg:pl-12 pt-8 lg:pt-0">
           <div className="bg-white rounded-3xl p-6 border border-gray-200 shadow-md h-full">
-            <FormattedText content={faqTitle} as="h2" className="text-3xl font-bold text-[#27256B] mb-4" />
+            <FormattedText
+              content={faqTitle}
+              as="h2"
+              className="text-3xl font-bold text-[#27256B] mb-4"
+              style={content?.faqTitleColor ? { color: content.faqTitleColor } : undefined}
+            />
 
             <div className="space-y-3">
               {displayFaqs.map((faq, index) => (

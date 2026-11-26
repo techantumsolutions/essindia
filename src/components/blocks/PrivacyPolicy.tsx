@@ -3,6 +3,7 @@ import { FormattedText } from '@/components/ui/FormattedText';
 
 interface PrivacyPolicyContent {
   title?: string;
+  titleColor?: string;
   contentHtml?: string;
 }
 
@@ -28,6 +29,7 @@ export function PrivacyPolicy({ content }: { content?: PrivacyPolicyContent }) {
           content={title}
           as="h1"
           className="text-4xl font-extrabold text-slate-900 tracking-tight mb-8 pb-4 border-b border-slate-100"
+          style={content?.titleColor ? { color: content.titleColor } : undefined}
         />
         <FormattedText
           content={preserveEditorLineBreaks(contentHtml)}

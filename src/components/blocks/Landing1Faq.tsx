@@ -34,6 +34,7 @@ export interface FaqItem {
 export interface Landing1FaqContent {
   badge?: string;
   title?: string;
+  titleColor?: string;
   description?: string;
   faqs?: FaqItem[];
 }
@@ -100,7 +101,10 @@ export function Landing1Faq({ content }: { content?: Landing1FaqContent }) {
             </span>
           )}
           {data.title && (
-            <h2 className="text-3xl md:text-[40px] font-extrabold tracking-tight text-slate-900 leading-tight">
+            <h2
+              className="text-3xl md:text-[40px] font-extrabold tracking-tight text-slate-900 leading-tight"
+              style={data.titleColor ? { color: data.titleColor } : undefined}
+            >
               {stripHtml(data.title)}
             </h2>
           )}

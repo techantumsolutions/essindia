@@ -13,6 +13,7 @@ interface StepItem {
 
 interface OracleMigrationFlowContent {
   title?: string;
+  titleColor?: string;
   steps?: StepItem[];
 }
 
@@ -56,7 +57,12 @@ export function OracleMigrationFlow({ content }: { content?: OracleMigrationFlow
       <div className="container mx-auto max-w-7xl px-6">
         {sectionTitle && (
           <div className="text-center mb-16">
-            <h2 className="text-3xl font-extrabold text-[#2e2a72] sm:text-4xl">{sectionTitle}</h2>
+            <h2
+              className="text-3xl font-extrabold text-[#2e2a72] sm:text-4xl"
+              style={content?.titleColor ? { color: content.titleColor } : undefined}
+            >
+              {sectionTitle}
+            </h2>
           </div>
         )}
 

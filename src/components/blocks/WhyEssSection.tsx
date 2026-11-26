@@ -11,6 +11,7 @@ interface Point {
 
 interface WhyEssContent {
   title?: string;
+  titleColor?: string;
   description?: string;
   image1?: string;
   image2?: string;
@@ -59,6 +60,7 @@ export function WhyEssSection({ content }: WhyEssSectionProps) {
             as="h2"
             text={heading}
             className="text-4xl md:text-5xl font-bold text-slate-900 mb-6 tracking-tight justify-center"
+            style={content?.titleColor ? { color: content.titleColor } : undefined}
           />
           <MotionSection variant="fadeUp" delay={0.4}>
             <p className="text-lg md:text-xl text-slate-500 leading-relaxed font-light">

@@ -16,6 +16,7 @@ export interface TestimonialCardItem {
 
 export interface Landing2TestimonialsContent {
   title?: string;
+  titleColor?: string;
   badge?: string;
   subtitle?: string;
   description?: string;
@@ -180,7 +181,10 @@ export function Landing2Testimonials({ content }: { content?: Landing2Testimonia
     <section className="py-12 bg-[#f1f3f5] font-sans select-none relative z-10 overflow-hidden">
       <div className="container mx-auto px-4 md:px-8 max-w-7xl relative z-10 text-center">
         {data.title && (
-          <h2 className="text-slate-900 text-2xl md:text-3xl lg:text-4xl font-extrabold tracking-tight leading-[1.15] mb-2">
+          <h2
+            className="text-slate-900 text-2xl md:text-3xl lg:text-4xl font-extrabold tracking-tight leading-[1.15] mb-2"
+            style={data.titleColor ? { color: data.titleColor } : undefined}
+          >
             {data.title}
           </h2>
         )}

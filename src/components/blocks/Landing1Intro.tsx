@@ -24,6 +24,9 @@ export interface Landing1IntroContent {
   badge?: string;
   titlePart1?: string;
   titlePart2?: string;
+  titleColor?: string;
+  titleSecondaryColor?: string;
+  highlightedWordIndices?: number[];
   description?: string;
   image?: string;
   ctaText?: string;
@@ -123,9 +126,34 @@ export function Landing1Intro({ content }: { content?: Landing1IntroContent }) {
             )}
 
             {/* Heading */}
-            <h2 className="text-3xl md:text-[40px] font-bold leading-tight tracking-tight">
-              <span className="text-[#0D265C]">{data.titlePart1}</span>
-              <span className="text-[#4B2A63]">{data.titlePart2}</span>
+            <h2
+              className="text-3xl md:text-[40px] font-bold leading-tight tracking-tight"
+              style={{ color: data.titleColor || '#0D265C' }}
+            >
+              {Array.isArray(content?.highlightedWordIndices) ? (
+                [data.titlePart1, data.titlePart2]
+                  .filter(Boolean)
+                  .join(' ')
+                  .split(/\s+/)
+                  .filter(Boolean)
+                  .map((word, idx) => (
+                    <span
+                      key={idx}
+                      style={{
+                        color: content.highlightedWordIndices!.includes(idx)
+                          ? data.titleSecondaryColor || '#4B2A63'
+                          : undefined,
+                      }}
+                    >
+                      {word}{' '}
+                    </span>
+                  ))
+              ) : (
+                <>
+                  <span style={{ color: data.titleColor || '#0D265C' }}>{data.titlePart1}</span>
+                  <span style={{ color: data.titleSecondaryColor || '#4B2A63' }}>{data.titlePart2}</span>
+                </>
+              )}
             </h2>
 
             {/* Description */}

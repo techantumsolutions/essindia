@@ -11,6 +11,7 @@ interface EnterpriseCard {
 
 interface AssEnterpriseContent {
   title?: string;
+  titleColor?: string;
   description?: string;
   image?: string;
   cards?: EnterpriseCard[];
@@ -94,7 +95,10 @@ export function AssEnterprise({ content }: { content?: AssEnterpriseContent }) {
               )}
             </div>
           )}
-          <h2 className="text-3xl md:text-4xl font-bold text-[#171C76] leading-tight whitespace-pre-line">
+          <h2
+            className="text-3xl md:text-4xl font-bold text-[#171C76] leading-tight whitespace-pre-line"
+            style={content?.titleColor ? { color: content.titleColor } : undefined}
+          >
             {title}
           </h2>
         </div>

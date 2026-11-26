@@ -19,27 +19,23 @@ export async function POST(request: Request) {
     }
 
     const updateData: Record<string, any> = { updatedAt: new Date() };
-    if (email && String(email).trim()) {
-      const emailCheck = validateEmail(email, false);
-      if (!emailCheck.isValid) {
-        return NextResponse.json({ error: emailCheck.message }, { status: 400 });
-      }
-      updateData.userEmail = String(email).trim();
+    const nameCheck = validateName(name || '', true);
+    if (!nameCheck.isValid) {
+      return NextResponse.json({ error: nameCheck.message }, { status: 400 });
     }
-    if (phone && String(phone).trim()) {
-      const result = validateAndFormatPhone(phone, countryCode || '', false);
-      if (!result.isValid) {
-        return NextResponse.json({ error: result.message }, { status: 400 });
-      }
-      updateData.userPhone = result.e164;
+    updateData.userName = String(name).trim();
+
+    const emailCheck = validateEmail(email || '', true);
+    if (!emailCheck.isValid) {
+      return NextResponse.json({ error: emailCheck.message }, { status: 400 });
     }
-    if (name && String(name).trim()) {
-      const nameCheck = validateName(name, false);
-      if (!nameCheck.isValid) {
-        return NextResponse.json({ error: nameCheck.message }, { status: 400 });
-      }
-      updateData.userName = String(name).trim();
+    updateData.userEmail = String(email).trim();
+
+    const result = validateAndFormatPhone(phone || '', countryCode || '', true);
+    if (!result.isValid) {
+      return NextResponse.json({ error: result.message }, { status: 400 });
     }
+    updateData.userPhone = result.e164;
 
     await db.update(chatConversations)
       .set(updateData)

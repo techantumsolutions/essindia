@@ -30,6 +30,7 @@ export interface CaseStudyDetailContent {
   badge?: string;
   date?: string;
   title?: string;
+  titleColor?: string;
   authors?: Author[];
   
   // Overview
@@ -146,6 +147,7 @@ export function CaseStudyDetailBlock({ content }: CaseStudyDetailBlockProps) {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6 }}
               className="text-4xl md:text-5xl lg:text-[56px] font-light text-white leading-tight mb-8"
+              style={content?.titleColor ? { color: content.titleColor } : undefined}
             >
               {title}
             </motion.h1>

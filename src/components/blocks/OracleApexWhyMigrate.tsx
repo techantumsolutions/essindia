@@ -15,6 +15,7 @@ interface OracleApexWhyMigrateContent {
   tag3?: string;
   tags?: string[];
   title?: string;
+  titleColor?: string;
   description?: string;
   points?: string[];
 }
@@ -47,7 +48,7 @@ export function OracleApexWhyMigrate({ content }: { content?: OracleApexWhyMigra
   }
 
   const title = content?.title || 'WHY ENTERPRISES ARE MIGRATING ORACLE FORMS TO ORACLE APEX';
-  const titleColor = '#27256B';
+  const titleColor = content?.titleColor || '#27256B';
   const description = content?.description || 'The objective is not just platform replacement — it is operational optimization.';
   const defaultPoints = [
     'Client-server limitations restrict scalability',

@@ -13,6 +13,7 @@ interface SolutionItem {
 
 interface AomSolutionsContent {
   title?: string;
+  titleColor?: string;
   description?: string;
   image?: string;
   items?: SolutionItem[];
@@ -57,7 +58,12 @@ export function AomSolutions({ content }: { content?: AomSolutionsContent }) {
 
           {/* Right Column (Content) */}
           <div className="flex-grow space-y-6 lg:max-w-2xl text-left">
-            <FormattedText content={title} as="h2" className="text-[#0a1128] text-3xl md:text-4xl font-extrabold tracking-tight leading-tight" />
+            <FormattedText
+              content={title}
+              as="h2"
+              className={`text-3xl md:text-4xl font-extrabold tracking-tight leading-tight ${content?.titleColor ? 'aom-solutions-title-colored' : 'text-[#0a1128]'}`}
+              style={content?.titleColor ? { color: content.titleColor } : undefined}
+            />
 
             <FormattedText content={description} className="text-slate-500 text-sm md:text-base leading-relaxed font-medium" />
 

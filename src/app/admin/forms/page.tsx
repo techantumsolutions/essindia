@@ -15,6 +15,7 @@ interface FormSubmission {
   phone: string | null;
   company: string | null;
   country: string | null;
+  service: string | null;
   message: string | null;
   status: string;
   formType: string;
@@ -129,15 +130,17 @@ function FormsAdminInner() {
 
     let headers: string[] = [];
     if (activeTab === 'contact') {
-      headers = ['Date', 'Name', 'Email', 'Phone', 'Company', 'Country', 'Message'];
+      headers = ['Date', 'Name', 'Email', 'Phone', 'Company', 'Country', 'Service', 'Message'];
     } else if (activeTab === 'blog-lead') {
-      headers = ['Date', 'Name', 'Email', 'Phone No', 'Blog Title'];
+      headers = ['Date', 'Name', 'Email', 'Phone No', 'Service', 'Blog Title'];
     } else if (activeTab === 'landing-1') {
-      headers = ['Date', 'Page Name', 'Name', 'Email', 'Phone', 'Company', 'Industry', 'Employees', 'Current ERP', 'Requirement'];
+      headers = ['Date', 'Page Name', 'Name', 'Email', 'Phone', 'Company', 'Service', 'Industry', 'Employees', 'Current ERP', 'Requirement'];
     } else if (activeTab === 'landing-2') {
-      headers = ['Date', 'Page Name', 'Company Name', 'Email', 'Phone', 'Industry', 'Country'];
-    } else {
+      headers = ['Date', 'Page Name', 'Company Name', 'Email', 'Phone', 'Service', 'Industry', 'Country'];
+    } else if (activeTab === 'chat-lead') {
       headers = ['Date', 'Name', 'Email', 'Phone', 'Country', 'Page Name', 'PDF URL'];
+    } else {
+      headers = ['Date', 'Name', 'Email', 'Phone', 'Service', 'Country', 'Page Name', 'PDF URL'];
     }
 
     const rows = filteredSubmissions.map(sub => {
@@ -158,6 +161,7 @@ function FormsAdminInner() {
           `"${(sub.phone || '').replace(/"/g, '""')}"`,
           `"${(sub.company || '').replace(/"/g, '""')}"`,
           `"${(sub.country || '').replace(/"/g, '""')}"`,
+          `"${(sub.service || '').replace(/"/g, '""')}"`,
           `"${(sub.message || '').replace(/"/g, '""').replace(/\n|\r/g, ' ')}"`
         ];
       } else if (activeTab === 'blog-lead') {
@@ -166,6 +170,7 @@ function FormsAdminInner() {
           `"${(sub.name || '').replace(/"/g, '""')}"`,
           `"${(sub.email || '').replace(/"/g, '""')}"`,
           `"${(sub.phone || '').replace(/"/g, '""')}"`,
+          `"${(sub.service || '').replace(/"/g, '""')}"`,
           `"${(sub.pageName || '').replace(/"/g, '""')}"`
         ];
       } else if (activeTab === 'landing-1') {
@@ -176,6 +181,7 @@ function FormsAdminInner() {
           `"${(sub.email || '').replace(/"/g, '""')}"`,
           `"${(sub.phone || '').replace(/"/g, '""')}"`,
           `"${(sub.company || '').replace(/"/g, '""')}"`,
+          `"${(sub.service || '').replace(/"/g, '""')}"`,
           `"${(parsed.industry || '').replace(/"/g, '""')}"`,
           `"${(parsed.employees || '').replace(/"/g, '""')}"`,
           `"${(parsed.currentErp || '').replace(/"/g, '""')}"`,
@@ -188,8 +194,19 @@ function FormsAdminInner() {
           `"${(sub.company || sub.name || '').replace(/"/g, '""')}"`,
           `"${(sub.email || '').replace(/"/g, '""')}"`,
           `"${(sub.phone || '').replace(/"/g, '""')}"`,
+          `"${(sub.service || '').replace(/"/g, '""')}"`,
           `"${(parsed.industry || '').replace(/"/g, '""')}"`,
           `"${(sub.country || '').replace(/"/g, '""')}"`
+        ];
+      } else if (activeTab === 'chat-lead') {
+        return [
+          `"${new Date(sub.createdAt).toLocaleString().replace(/"/g, '""')}"`,
+          `"${(sub.name || '').replace(/"/g, '""')}"`,
+          `"${(sub.email || '').replace(/"/g, '""')}"`,
+          `"${(sub.phone || '').replace(/"/g, '""')}"`,
+          `"${(sub.country || '').replace(/"/g, '""')}"`,
+          `"${(formatPageName(sub.pageName) || '').replace(/"/g, '""')}"`,
+          `"${(sub.pdfUrl || '').replace(/"/g, '""')}"`
         ];
       } else {
         return [
@@ -197,6 +214,7 @@ function FormsAdminInner() {
           `"${(sub.name || '').replace(/"/g, '""')}"`,
           `"${(sub.email || '').replace(/"/g, '""')}"`,
           `"${(sub.phone || '').replace(/"/g, '""')}"`,
+          `"${(sub.service || '').replace(/"/g, '""')}"`,
           `"${(sub.country || '').replace(/"/g, '""')}"`,
           `"${(formatPageName(sub.pageName) || '').replace(/"/g, '""')}"`,
           `"${(sub.pdfUrl || '').replace(/"/g, '""')}"`
@@ -346,6 +364,9 @@ function FormsAdminInner() {
                     <th className="px-3 py-2 whitespace-nowrap">Name</th>
                     <th className="px-3 py-2 whitespace-nowrap">Mail</th>
                     <th className="px-3 py-2 whitespace-nowrap">Phone No</th>
+                    {activeTab !== 'chat-lead' ? (
+                      <th className="px-3 py-2 whitespace-nowrap">Service</th>
+                    ) : null}
                     {activeTab === 'blog-lead' ? (
                       <th className="px-3 py-2 whitespace-nowrap font-bold text-slate-800">Blog Title</th>
                     ) : null}
@@ -420,6 +441,11 @@ function FormsAdminInner() {
                         <td className="px-3 py-3.5 text-[11px] text-slate-500 whitespace-nowrap">
                           {sub.phone || '-'}
                         </td>
+                        {activeTab !== 'chat-lead' ? (
+                          <td className="px-3 py-3.5 text-[11px] text-slate-700 font-medium whitespace-nowrap">
+                            {sub.service || '-'}
+                          </td>
+                        ) : null}
                         {activeTab === 'blog-lead' ? (
                           <td className="px-3 py-3.5 text-xs font-bold text-slate-800 whitespace-nowrap">
                             {sub.pageName || 'Blog Article'}
@@ -608,6 +634,12 @@ function FormsAdminInner() {
                   <div>
                     <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1">Country</p>
                     <p className="font-bold text-slate-900">{selectedSub.country}</p>
+                  </div>
+                )}
+                {selectedSub.service && (
+                  <div>
+                    <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1">Service</p>
+                    <p className="font-bold text-slate-900">{selectedSub.service}</p>
                   </div>
                 )}
               </div>

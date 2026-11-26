@@ -9,6 +9,7 @@ interface CardData {
 
 interface JudicialOverviewContent {
   heading?: string;
+  headingColor?: string;
   description?: string;
   cards?: CardData[];
 }
@@ -39,7 +40,10 @@ export function JudicialOverview({ content }: JudicialOverviewProps) {
   return (
     <section className="py-12 px-6 border-t border-b bg-white">
       <div className="container mx-auto max-w-7xl">
-        <h2 className="text-3xl md:text-4xl font-bold text-[#2a2d7c] mb-6 text-center">
+        <h2
+          className="text-3xl md:text-4xl font-bold text-[#2a2d7c] mb-6 text-center"
+          style={content?.headingColor ? { color: content.headingColor } : undefined}
+        >
           {heading}
         </h2>
         <p className="text-gray-600 max-w-7xl mx-auto mb-6 md:mb-16 text-sm md:text-base leading-relaxed">

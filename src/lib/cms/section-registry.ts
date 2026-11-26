@@ -35,6 +35,7 @@ const RAW_SECTION_REGISTRY: SectionTypeDefinition[] = [
     fieldOrder: [
       'image',
       'title',
+      'titleColor',
       'description',
       'buttonText',
       'documentUrl',
@@ -87,6 +88,7 @@ const RAW_SECTION_REGISTRY: SectionTypeDefinition[] = [
     color: 'bg-slate-50 text-slate-600',
     defaultVariant: 'default',
     supportsVariants: false,
+    fieldOrder: ['title', 'titleColor', 'brands'],
   },
   {
     type: 'intro',
@@ -98,6 +100,7 @@ const RAW_SECTION_REGISTRY: SectionTypeDefinition[] = [
     supportsVariants: false,
     fieldOrder: [
       'heading',
+      'headingColor',
       'subheading',
       'buttonText',
       'buttonBgColor',
@@ -117,7 +120,7 @@ const RAW_SECTION_REGISTRY: SectionTypeDefinition[] = [
     color: 'bg-emerald-50 text-emerald-600',
     defaultVariant: 'default',
     supportsVariants: true,
-    fieldOrder: ['heading', 'subheading', 'services'],
+    fieldOrder: ['heading', 'headingColor', 'subheading', 'services'],
   },
   {
     type: 'industries',
@@ -154,7 +157,7 @@ const RAW_SECTION_REGISTRY: SectionTypeDefinition[] = [
     color: 'bg-rose-50 text-rose-600',
     defaultVariant: 'default',
     supportsVariants: false,
-    fieldOrder: ['title', 'description', 'image1', 'image2', 'image3', 'reasons'],
+    fieldOrder: ['title', 'titleColor', 'description', 'image1', 'image2', 'image3', 'reasons'],
   },
   {
     type: 'portfolio',
@@ -166,6 +169,7 @@ const RAW_SECTION_REGISTRY: SectionTypeDefinition[] = [
     supportsVariants: false,
     fieldOrder: [
       'heading',
+      'headingColor',
       'subheading',
       'projects',
       'buttonText',
@@ -188,6 +192,7 @@ const RAW_SECTION_REGISTRY: SectionTypeDefinition[] = [
     supportsVariants: false,
     fieldOrder: [
       'heading',
+      'headingColor',
       'subheading',
       'buttonText',
       'buttonBgColor',
@@ -253,7 +258,7 @@ const RAW_SECTION_REGISTRY: SectionTypeDefinition[] = [
     color: 'bg-slate-50 text-slate-600',
     defaultVariant: 'default',
     supportsVariants: false,
-    fieldOrder: ['title', 'description'],
+    fieldOrder: ['title', 'titleColor', 'description'],
   },
   {
     type: 'erp-modules',
@@ -263,7 +268,7 @@ const RAW_SECTION_REGISTRY: SectionTypeDefinition[] = [
     color: 'bg-emerald-50 text-emerald-600',
     defaultVariant: 'default',
     supportsVariants: false,
-    fieldOrder: ['heading', 'subheading', 'modules'],
+    fieldOrder: ['heading', 'headingColor', 'subheading', 'modules'],
   },
   {
     type: 'erp-features',
@@ -298,7 +303,7 @@ const RAW_SECTION_REGISTRY: SectionTypeDefinition[] = [
     color: 'bg-purple-50 text-purple-600',
     defaultVariant: 'default',
     supportsVariants: false,
-    fieldOrder: ['heading', 'description', 'badgeText', 'values'],
+    fieldOrder: ['heading', 'headingColor', 'description', 'badgeText', 'values'],
   },
   {
     type: 'erp-transform',
@@ -308,7 +313,7 @@ const RAW_SECTION_REGISTRY: SectionTypeDefinition[] = [
     color: 'bg-rose-50 text-rose-600',
     defaultVariant: 'default',
     supportsVariants: false,
-    fieldOrder: ['heading', 'description', 'items'],
+    fieldOrder: ['heading', 'headingColor', 'description', 'items'],
   },
   {
     type: 'retail-hero',
@@ -349,10 +354,12 @@ const RAW_SECTION_REGISTRY: SectionTypeDefinition[] = [
     supportsVariants: false,
     fieldOrder: [
       'title',
+      'titleColor',
       'paragraphs',
       'images',
       'whyImagePath',
       'whyTitle',
+      'whyTitleColor',
       'whyParagraph'
     ],
   },
@@ -364,6 +371,7 @@ const RAW_SECTION_REGISTRY: SectionTypeDefinition[] = [
     color: 'bg-blue-50 text-blue-600',
     defaultVariant: 'default',
     supportsVariants: false,
+    fieldOrder: ['title', 'titleColor', 'subtitle', 'bgImage', 'centerImage', 'leftFeatures', 'rightFeatures'],
   },
   {
     type: 'retail-operations',
@@ -405,7 +413,7 @@ const RAW_SECTION_REGISTRY: SectionTypeDefinition[] = [
     color: 'bg-amber-50 text-amber-600',
     defaultVariant: 'default',
     supportsVariants: false,
-    fieldOrder: ['title', 'autoScroll', 'logos'],
+    fieldOrder: ['title', 'titleColor', 'autoScroll', 'logos'],
   },
   {
     type: 'retail-why-erp',
@@ -415,7 +423,7 @@ const RAW_SECTION_REGISTRY: SectionTypeDefinition[] = [
     color: 'bg-indigo-50 text-indigo-600',
     defaultVariant: 'default',
     supportsVariants: false,
-    fieldOrder: ['title', 'paragraphs', 'imagePath'],
+    fieldOrder: ['title', 'titleColor', 'paragraphs', 'imagePath'],
   },
   {
     type: 'mfg-hero',
@@ -460,7 +468,7 @@ const RAW_SECTION_REGISTRY: SectionTypeDefinition[] = [
     color: 'bg-emerald-50 text-emerald-600',
     defaultVariant: 'default',
     supportsVariants: false,
-    fieldOrder: ['tabs']
+    fieldOrder: ['titleColor', 'activeTitleColor', 'tabs']
   },
   {
     type: 'mfg-demand',
@@ -470,7 +478,7 @@ const RAW_SECTION_REGISTRY: SectionTypeDefinition[] = [
     color: 'bg-blue-50 text-blue-600',
     defaultVariant: 'default',
     supportsVariants: false,
-    fieldOrder: ['title', 'paragraph1', 'paragraph2'],
+    fieldOrder: ['title', 'titleColor', 'paragraph1', 'paragraph2'],
   },
   {
     type: 'mfg-process',
@@ -480,7 +488,7 @@ const RAW_SECTION_REGISTRY: SectionTypeDefinition[] = [
     color: 'bg-purple-50 text-purple-600',
     defaultVariant: 'default',
     supportsVariants: false,
-    fieldOrder: ['sectionTitle', 'sectionSubtitle', 'sectionDescription', 'processes'],
+    fieldOrder: ['sectionTitle', 'sectionSubtitle', 'sectionSubtitleColor', 'sectionDescription', 'processes'],
   },
   {
     type: 'mfg-efficiency',
@@ -570,7 +578,7 @@ const RAW_SECTION_REGISTRY: SectionTypeDefinition[] = [
     color: 'bg-rose-50 text-rose-600',
     defaultVariant: 'default',
     supportsVariants: false,
-    fieldOrder: ['title', 'tag', 'mapImage', 'stats'],
+    fieldOrder: ['title', 'titleColor', 'tag', 'mapImage', 'stats'],
   },
   {
     type: 'career-offices',
@@ -580,6 +588,7 @@ const RAW_SECTION_REGISTRY: SectionTypeDefinition[] = [
     color: 'bg-amber-50 text-amber-600',
     defaultVariant: 'default',
     supportsVariants: false,
+    fieldOrder: ['title', 'titleColor', 'subtitle', 'countries'],
   },
   {
     type: 'career-experience',
@@ -589,7 +598,7 @@ const RAW_SECTION_REGISTRY: SectionTypeDefinition[] = [
     color: 'bg-blue-50 text-blue-600',
     defaultVariant: 'default',
     supportsVariants: false,
-    fieldOrder: ['title', 'tag', 'products'],
+    fieldOrder: ['title', 'titleColor', 'tag', 'products'],
   },
   {
     type: 'career-perks',
@@ -626,7 +635,7 @@ const RAW_SECTION_REGISTRY: SectionTypeDefinition[] = [
     color: 'bg-cyan-50 text-cyan-600',
     defaultVariant: 'default',
     supportsVariants: false,
-    fieldOrder: ['title', 'subtitle', 'image1', 'image2', 'image3', 'image4', 'image5', 'largeImage', 'largeImageTitle', 'largeImageSubtitle', 'smallImage'],
+    fieldOrder: ['title', 'titleColor', 'subtitle', 'image1', 'image2', 'image3', 'image4', 'image5', 'largeImage', 'largeImageTitle', 'largeImageSubtitle', 'smallImage'],
   },
   {
     type: 'job-detail-content',
@@ -652,7 +661,7 @@ const RAW_SECTION_REGISTRY: SectionTypeDefinition[] = [
     color: 'bg-purple-50 text-purple-600',
     defaultVariant: 'default',
     supportsVariants: false,
-    fieldOrder: ['title', 'subtitle'],
+    fieldOrder: ['title', 'titleColor', 'subtitle'],
   },
   {
     type: 'career-cta',
@@ -662,7 +671,7 @@ const RAW_SECTION_REGISTRY: SectionTypeDefinition[] = [
     color: 'bg-slate-50 text-slate-600',
     defaultVariant: 'default',
     supportsVariants: false,
-    fieldOrder: ['title', 'subtitle', 'ctaText', 'ctaHoverBgColor', 'ctaHoverTextColor', 'pdfUrl'],
+    fieldOrder: ['title', 'titleColor', 'subtitle', 'ctaText', 'ctaHoverBgColor', 'ctaHoverTextColor', 'pdfUrl'],
   },
   {
     type: 'cta',
@@ -674,6 +683,7 @@ const RAW_SECTION_REGISTRY: SectionTypeDefinition[] = [
     supportsVariants: false,
     fieldOrder: [
       'title',
+      'titleColor',
       'subtitle',
       'ctaText',
       'ctaHoverBgColor',
@@ -729,7 +739,7 @@ const RAW_SECTION_REGISTRY: SectionTypeDefinition[] = [
     color: 'bg-slate-50 text-slate-600',
     defaultVariant: 'default',
     supportsVariants: false,
-    fieldOrder: ['title', 'contentHtml'],
+    fieldOrder: ['title', 'titleColor', 'contentHtml'],
   },
   {
     type: 'blog-detail-block',
@@ -749,8 +759,11 @@ const RAW_SECTION_REGISTRY: SectionTypeDefinition[] = [
       'gradientVia',
       'gradientTo',
       'heroTitle',
+      'heroTitleColor',
       'date',
+      'dateColor',
       'readTime',
+      'readTimeColor',
       'authorCardAvatar',
       'authorCardName',
       'authorCardRole',
@@ -798,6 +811,18 @@ const RAW_SECTION_REGISTRY: SectionTypeDefinition[] = [
     color: 'bg-slate-50 text-slate-600',
     defaultVariant: 'default',
     supportsVariants: false,
+    fieldOrder: [
+      'title1',
+      'title1Color',
+      'isoTitle',
+      'isoDescription',
+      'cmmTitle',
+      'cmmDescription1',
+      'cmmDescription2',
+      'title2',
+      'title2Color',
+      'policies',
+    ],
   },
   {
     type: 'testimonials-block',
@@ -873,7 +898,7 @@ const RAW_SECTION_REGISTRY: SectionTypeDefinition[] = [
     color: 'bg-purple-50 text-purple-600',
     defaultVariant: 'default',
     supportsVariants: false,
-    fieldOrder: ['heading', 'description', 'cards'],
+    fieldOrder: ['heading', 'headingColor', 'description', 'cards'],
   },
   {
     type: 'hospital-features',
@@ -883,7 +908,7 @@ const RAW_SECTION_REGISTRY: SectionTypeDefinition[] = [
     color: 'bg-blue-50 text-blue-600',
     defaultVariant: 'default',
     supportsVariants: false,
-    fieldOrder: ['heading', 'description', 'features', 'image1', 'image2', 'image3'],
+    fieldOrder: ['heading', 'headingColor', 'description', 'features', 'image1', 'image2', 'image3'],
   },
   {
     type: 'hospital-regulatory',
@@ -893,7 +918,7 @@ const RAW_SECTION_REGISTRY: SectionTypeDefinition[] = [
     color: 'bg-emerald-50 text-emerald-600',
     defaultVariant: 'default',
     supportsVariants: false,
-    fieldOrder: ['heading', 'description', 'points', 'image1', 'image2', 'image3'],
+    fieldOrder: ['heading', 'headingColor', 'description', 'points', 'image1', 'image2', 'image3'],
   },
   {
     type: 'hospital-tech-specs',
@@ -903,7 +928,7 @@ const RAW_SECTION_REGISTRY: SectionTypeDefinition[] = [
     color: 'bg-rose-50 text-rose-600',
     defaultVariant: 'default',
     supportsVariants: false,
-    fieldOrder: ['heading', 'description', 'specs', 'image1', 'image2', 'image3'],
+    fieldOrder: ['heading', 'headingColor', 'description', 'specs', 'image1', 'image2', 'image3'],
   },
   {
     type: 'staffing-hero',
@@ -943,7 +968,7 @@ const RAW_SECTION_REGISTRY: SectionTypeDefinition[] = [
     color: 'bg-purple-50 text-purple-600',
     defaultVariant: 'default',
     supportsVariants: false,
-    fieldOrder: ['heading', 'paragraph1', 'paragraph2'],
+    fieldOrder: ['heading', 'headingColor', 'paragraph1', 'paragraph2'],
   },
   {
     type: 'staffing-technologies',
@@ -953,7 +978,7 @@ const RAW_SECTION_REGISTRY: SectionTypeDefinition[] = [
     color: 'bg-blue-50 text-blue-600',
     defaultVariant: 'default',
     supportsVariants: false,
-    fieldOrder: ['heading', 'columns'],
+    fieldOrder: ['heading', 'headingColor', 'columns'],
   },
   {
     type: 'staffing-why-ess',
@@ -963,7 +988,7 @@ const RAW_SECTION_REGISTRY: SectionTypeDefinition[] = [
     color: 'bg-emerald-50 text-emerald-600',
     defaultVariant: 'default',
     supportsVariants: false,
-    fieldOrder: ['heading', 'description', 'pills', 'image'],
+    fieldOrder: ['heading', 'headingColor', 'description', 'pills', 'image'],
   },
   {
     type: 'staffing-benefits',
@@ -973,7 +998,7 @@ const RAW_SECTION_REGISTRY: SectionTypeDefinition[] = [
     color: 'bg-rose-50 text-rose-600',
     defaultVariant: 'default',
     supportsVariants: false,
-    fieldOrder: ['heading', 'description', 'cards'],
+    fieldOrder: ['heading', 'headingColor', 'description', 'cards'],
   },
   {
     type: 'about-us-hero',
@@ -997,7 +1022,7 @@ const RAW_SECTION_REGISTRY: SectionTypeDefinition[] = [
     color: 'bg-emerald-50 text-emerald-600',
     defaultVariant: 'default',
     supportsVariants: false,
-    fieldOrder: ['subtitle', 'title', 'description', 'description2', 'items', 'image'],
+    fieldOrder: ['subtitle', 'subtitleColor', 'title', 'titleColor', 'description', 'description2', 'items', 'image'],
   },
   {
     type: 'about-us-mission-vision',
@@ -1017,6 +1042,7 @@ const RAW_SECTION_REGISTRY: SectionTypeDefinition[] = [
       'title',
       'titlePrimaryColor',
       'titleSecondaryColor',
+      'highlightedWordIndices',
       'cardBgColor',
       'cardBorderColor',
       'cardHoverBorderColor',
@@ -1048,7 +1074,7 @@ const RAW_SECTION_REGISTRY: SectionTypeDefinition[] = [
     color: 'bg-emerald-50 text-emerald-600',
     defaultVariant: 'default',
     supportsVariants: false,
-    fieldOrder: ['heading', 'items'],
+    fieldOrder: ['heading', 'headingColor', 'items'],
   },
   {
     type: 'about-us-transformation-section',
@@ -1058,7 +1084,7 @@ const RAW_SECTION_REGISTRY: SectionTypeDefinition[] = [
     color: 'bg-emerald-50 text-emerald-600',
     defaultVariant: 'default',
     supportsVariants: false,
-    fieldOrder: ['title', 'items'],
+    fieldOrder: ['title', 'titleColor', 'items'],
   },
   {
     type: 'about-us-why-ess',
@@ -1079,6 +1105,7 @@ const RAW_SECTION_REGISTRY: SectionTypeDefinition[] = [
       'title',
       'primaryTitleColor',
       'secondaryTitleColor',
+      'highlightedWordIndices',
       'description',
       'descriptionTextColor',
       'cardBgColor',
@@ -1099,7 +1126,7 @@ const RAW_SECTION_REGISTRY: SectionTypeDefinition[] = [
     color: 'bg-emerald-50 text-emerald-600',
     defaultVariant: 'default',
     supportsVariants: false,
-    fieldOrder: ['title', 'description', 'buttonText', 'buttonHoverBgColor', 'buttonHoverTextColor', 'pdfUrl'],
+    fieldOrder: ['title', 'titleColor', 'description', 'buttonText', 'buttonHoverBgColor', 'buttonHoverTextColor', 'pdfUrl'],
   },
   {
     type: 'contact-hero',
@@ -1133,11 +1160,13 @@ const RAW_SECTION_REGISTRY: SectionTypeDefinition[] = [
     supportsVariants: false,
     fieldOrder: [
       'formTitle',
+      'formTitleColor',
       'formDescription',
       'buttonHoverBgColor',
       'buttonHoverTextColor',
       'disclaimerText',
       'faqTitle',
+      'faqTitleColor',
       'faqs'
     ],
   },
@@ -1152,6 +1181,7 @@ const RAW_SECTION_REGISTRY: SectionTypeDefinition[] = [
     fieldOrder: [
       'backgroundImageUrl',
       'title',
+      'titleColor',
       'description',
       'image',
       'locations'
@@ -1223,6 +1253,7 @@ const RAW_SECTION_REGISTRY: SectionTypeDefinition[] = [
     supportsVariants: false,
     fieldOrder: [
       'heading',
+      'headingColor',
       'description',
       'cards'
     ],
@@ -1238,6 +1269,7 @@ const RAW_SECTION_REGISTRY: SectionTypeDefinition[] = [
     fieldOrder: [
       'sideImage',
       'heading',
+      'headingColor',
       'description',
       'features'
     ],
@@ -1298,6 +1330,7 @@ const RAW_SECTION_REGISTRY: SectionTypeDefinition[] = [
       'title',
       'titlePrimaryColor',
       'titleSecondaryColor',
+      'highlightedWordIndices',
       'cardBgColor',
       'cardBorderColor',
       'cardHoverBorderColor',
@@ -1340,6 +1373,7 @@ const RAW_SECTION_REGISTRY: SectionTypeDefinition[] = [
       'title',
       'primaryTitleColor',
       'secondaryTitleColor',
+      'highlightedWordIndices',
       'description',
       'descriptionTextColor',
       'cardBgColor',
@@ -1360,7 +1394,7 @@ const RAW_SECTION_REGISTRY: SectionTypeDefinition[] = [
     color: 'bg-slate-50 text-slate-600',
     defaultVariant: 'default',
     supportsVariants: false,
-    fieldOrder: ['title', 'paragraph1', 'paragraph2'],
+    fieldOrder: ['title', 'titleColor', 'paragraph1', 'paragraph2'],
   },
   {
     type: 'ass-functionalities',
@@ -1370,7 +1404,7 @@ const RAW_SECTION_REGISTRY: SectionTypeDefinition[] = [
     color: 'bg-blue-50 text-blue-600',
     defaultVariant: 'default',
     supportsVariants: false,
-    fieldOrder: ['badgeIcon', 'badgeText', 'title', 'items', 'image'],
+    fieldOrder: ['badgeIcon', 'badgeText', 'title', 'titleColor', 'items', 'image'],
   },
   {
     type: 'ass-benefits',
@@ -1380,7 +1414,7 @@ const RAW_SECTION_REGISTRY: SectionTypeDefinition[] = [
     color: 'bg-emerald-50 text-emerald-600',
     defaultVariant: 'default',
     supportsVariants: false,
-    fieldOrder: ['title', 'image', 'leftItems', 'rightItems'],
+    fieldOrder: ['title', 'titleColor', 'image', 'leftItems', 'rightItems'],
   },
   {
     type: 'ass-enterprise',
@@ -1390,7 +1424,7 @@ const RAW_SECTION_REGISTRY: SectionTypeDefinition[] = [
     color: 'bg-purple-50 text-purple-600',
     defaultVariant: 'default',
     supportsVariants: false,
-    fieldOrder: ['title', 'description', 'image', 'cards'],
+    fieldOrder: ['title', 'titleColor', 'description', 'image', 'cards'],
   },
   {
     type: 'ass-stats',
@@ -1410,7 +1444,7 @@ const RAW_SECTION_REGISTRY: SectionTypeDefinition[] = [
     color: 'bg-rose-50 text-rose-600',
     defaultVariant: 'default',
     supportsVariants: false,
-    fieldOrder: ['title', 'steps'],
+    fieldOrder: ['title', 'titleColor', 'steps'],
   },
   {
     type: 'ass-why-choose',
@@ -1420,7 +1454,7 @@ const RAW_SECTION_REGISTRY: SectionTypeDefinition[] = [
     color: 'bg-blue-50 text-blue-600',
     defaultVariant: 'default',
     supportsVariants: false,
-    fieldOrder: ['badgeText', 'title', 'description', 'image'],
+    fieldOrder: ['badgeText', 'title', 'titleColor', 'description', 'image'],
   },
   {
     type: 'ass-features-grid',
@@ -1462,7 +1496,7 @@ const RAW_SECTION_REGISTRY: SectionTypeDefinition[] = [
     color: 'bg-amber-50 text-amber-600',
     defaultVariant: 'default',
     supportsVariants: false,
-    fieldOrder: ['title', 'logos'],
+    fieldOrder: ['title', 'titleColor', 'logos'],
   },
   {
     type: 'ass-experience',
@@ -1472,7 +1506,7 @@ const RAW_SECTION_REGISTRY: SectionTypeDefinition[] = [
     color: 'bg-emerald-50 text-emerald-600',
     defaultVariant: 'default',
     supportsVariants: false,
-    fieldOrder: ['title', 'mediaUrl', 'videoUrl'],
+    fieldOrder: ['title', 'titleColor', 'mediaUrl', 'videoUrl'],
   },
   {
     type: 'aom-hero',
@@ -1520,7 +1554,7 @@ const RAW_SECTION_REGISTRY: SectionTypeDefinition[] = [
     color: 'bg-emerald-50 text-emerald-600',
     defaultVariant: 'default',
     supportsVariants: false,
-    fieldOrder: ['title', 'description', 'image', 'items'],
+    fieldOrder: ['title', 'titleColor', 'description', 'image', 'items'],
   },
   {
     type: 'aom-workspace',
@@ -1530,7 +1564,7 @@ const RAW_SECTION_REGISTRY: SectionTypeDefinition[] = [
     color: 'bg-purple-50 text-purple-600',
     defaultVariant: 'default',
     supportsVariants: false,
-    fieldOrder: ['title', 'categories'],
+    fieldOrder: ['title', 'titleColor', 'categories'],
   },
   {
     type: 'fmcg-hero',
@@ -1590,7 +1624,7 @@ const RAW_SECTION_REGISTRY: SectionTypeDefinition[] = [
     color: 'bg-emerald-50 text-emerald-600',
     defaultVariant: 'default',
     supportsVariants: false,
-    fieldOrder: ['title', 'paragraphs', 'image'],
+    fieldOrder: ['title', 'titleColor', 'paragraphs', 'image'],
   },
   {
     type: 'fmcg-tabs',
@@ -1626,7 +1660,7 @@ const RAW_SECTION_REGISTRY: SectionTypeDefinition[] = [
     color: 'bg-orange-50 text-orange-600',
     defaultVariant: 'default',
     supportsVariants: false,
-    fieldOrder: ['title', 'description', 'cards'],
+    fieldOrder: ['title', 'titleColor', 'description', 'cards'],
   },
   {
     type: 'fmcg-impact',
@@ -1636,7 +1670,7 @@ const RAW_SECTION_REGISTRY: SectionTypeDefinition[] = [
     color: 'bg-blue-50 text-blue-600',
     defaultVariant: 'default',
     supportsVariants: false,
-    fieldOrder: ['title', 'cards'],
+    fieldOrder: ['title', 'titleColor', 'cards'],
   },
   {
     type: 'rpa-capabilities',
@@ -1651,6 +1685,7 @@ const RAW_SECTION_REGISTRY: SectionTypeDefinition[] = [
       'title',
       'primaryTitleColor',
       'secondaryTitleColor',
+      'highlightedWordIndices',
       'description',
       'descriptionTextColor',
       'hubSubtitle',
@@ -1685,7 +1720,7 @@ const RAW_SECTION_REGISTRY: SectionTypeDefinition[] = [
     color: 'bg-rose-50 text-rose-600',
     defaultVariant: 'default',
     supportsVariants: false,
-    fieldOrder: ['title', 'cards'],
+    fieldOrder: ['title', 'titleColor', 'cards'],
   },
   {
     type: 'fmcg-empower',
@@ -1695,7 +1730,7 @@ const RAW_SECTION_REGISTRY: SectionTypeDefinition[] = [
     color: 'bg-cyan-50 text-cyan-600',
     defaultVariant: 'default',
     supportsVariants: false,
-    fieldOrder: ['title', 'subtitle', 'cards'],
+    fieldOrder: ['title', 'titleColor', 'subtitle', 'cards'],
   },
   {
     type: 'fmcg-use-cases',
@@ -1705,7 +1740,7 @@ const RAW_SECTION_REGISTRY: SectionTypeDefinition[] = [
     color: 'bg-[#4B2A63]/5 text-[#4B2A63]',
     defaultVariant: 'default',
     supportsVariants: false,
-    fieldOrder: ['title', 'subtitle', 'tabs'],
+    fieldOrder: ['title', 'titleColor', 'subtitle', 'tabs'],
   },
   {
     type: 'fmcg-integrations',
@@ -1715,7 +1750,7 @@ const RAW_SECTION_REGISTRY: SectionTypeDefinition[] = [
     color: 'bg-emerald-50 text-emerald-600',
     defaultVariant: 'default',
     supportsVariants: false,
-    fieldOrder: ['title', 'subtitle', 'cards'],
+    fieldOrder: ['title', 'titleColor', 'subtitle', 'cards'],
   },
   {
     type: 'fmcg-faq',
@@ -1725,7 +1760,7 @@ const RAW_SECTION_REGISTRY: SectionTypeDefinition[] = [
     color: 'bg-purple-50 text-purple-600',
     defaultVariant: 'default',
     supportsVariants: false,
-    fieldOrder: ['title', 'subtitle', 'faqs'],
+    fieldOrder: ['title', 'titleColor', 'subtitle', 'faqs'],
   },
   {
     type: 'fmcg-cta',
@@ -1735,7 +1770,7 @@ const RAW_SECTION_REGISTRY: SectionTypeDefinition[] = [
     color: 'bg-indigo-50 text-indigo-600',
     defaultVariant: 'default',
     supportsVariants: false,
-    fieldOrder: ['title', 'buttonText', 'buttonHoverBgColor', 'buttonHoverTextColor', 'pdfUrl'],
+    fieldOrder: ['title', 'titleColor', 'buttonText', 'buttonHoverBgColor', 'buttonHoverTextColor', 'pdfUrl'],
   },
   {
     type: 'roi-hero',
@@ -1783,7 +1818,7 @@ const RAW_SECTION_REGISTRY: SectionTypeDefinition[] = [
     color: 'bg-purple-50 text-purple-600',
     defaultVariant: 'default',
     supportsVariants: false,
-    fieldOrder: ['image', 'title', 'paragraphs', 'formulaText', 'cards'],
+    fieldOrder: ['image', 'title', 'titleColor', 'paragraphs', 'formulaText', 'cards'],
   },
   {
     type: 'roi-formula',
@@ -1793,7 +1828,7 @@ const RAW_SECTION_REGISTRY: SectionTypeDefinition[] = [
     color: 'bg-blue-50 text-blue-600',
     defaultVariant: 'default',
     supportsVariants: false,
-    fieldOrder: ['title', 'paragraphs', 'image1', 'image2'],
+    fieldOrder: ['title', 'titleColor', 'paragraphs', 'image1', 'image2'],
   },
   {
     type: 'roi-usage',
@@ -1805,12 +1840,15 @@ const RAW_SECTION_REGISTRY: SectionTypeDefinition[] = [
     supportsVariants: false,
     fieldOrder: [
       'usageTitle',
+      'usageTitleColor',
       'usageParagraphs',
       'usageImage',
       'limitationsTitle',
+      'limitationsTitleColor',
       'limitationsDescription',
       'limitations',
       'faqTitle',
+      'faqTitleColor',
       'faqs'
     ],
   },
@@ -1877,7 +1915,7 @@ const RAW_SECTION_REGISTRY: SectionTypeDefinition[] = [
     color: 'bg-purple-50 text-purple-600',
     defaultVariant: 'default',
     supportsVariants: false,
-    fieldOrder: ['image', 'title', 'description', 'points'],
+    fieldOrder: ['image', 'title', 'titleColor', 'description', 'points'],
   },
   {
     type: 'oracle-migration-flow',
@@ -1887,7 +1925,7 @@ const RAW_SECTION_REGISTRY: SectionTypeDefinition[] = [
     color: 'bg-emerald-50 text-emerald-600',
     defaultVariant: 'default',
     supportsVariants: false,
-    fieldOrder: ['title', 'steps'],
+    fieldOrder: ['title', 'titleColor', 'steps'],
   },
   {
     type: 'oracle-framework',
@@ -1897,7 +1935,7 @@ const RAW_SECTION_REGISTRY: SectionTypeDefinition[] = [
     color: 'bg-emerald-50 text-emerald-600',
     defaultVariant: 'default',
     supportsVariants: false,
-    fieldOrder: ['title', 'subtitle', 'cards'],
+    fieldOrder: ['title', 'titleColor', 'subtitle', 'cards'],
   },
   {
     type: 'oracle-cta',
@@ -1907,7 +1945,7 @@ const RAW_SECTION_REGISTRY: SectionTypeDefinition[] = [
     color: 'bg-indigo-50 text-indigo-600',
     defaultVariant: 'default',
     supportsVariants: false,
-    fieldOrder: ['title', 'description', 'buttonText', 'buttonHoverBgColor', 'buttonHoverTextColor', 'pdfUrl'],
+    fieldOrder: ['title', 'titleColor', 'description', 'buttonText', 'buttonHoverBgColor', 'buttonHoverTextColor', 'pdfUrl'],
   },
   {
     type: 'bi-hero',
@@ -1955,7 +1993,7 @@ const RAW_SECTION_REGISTRY: SectionTypeDefinition[] = [
     color: 'bg-purple-50 text-purple-600',
     defaultVariant: 'default',
     supportsVariants: false,
-    fieldOrder: ['badge', 'title', 'description'],
+    fieldOrder: ['badge', 'title', 'titleColor', 'description'],
   },
   {
     type: 'bi-insights',
@@ -1965,7 +2003,7 @@ const RAW_SECTION_REGISTRY: SectionTypeDefinition[] = [
     color: 'bg-emerald-50 text-emerald-600',
     defaultVariant: 'default',
     supportsVariants: false,
-    fieldOrder: ['title', 'items', 'rightImage'],
+    fieldOrder: ['title', 'titleColor', 'items', 'rightImage'],
   },
   {
     type: 'bi-title',
@@ -2028,7 +2066,7 @@ const RAW_SECTION_REGISTRY: SectionTypeDefinition[] = [
     color: 'bg-indigo-50 text-indigo-600',
     defaultVariant: 'default',
     supportsVariants: false,
-    fieldOrder: ['title', 'subtitle', 'description', 'optionLabel', 'steps']
+    fieldOrder: ['title', 'titleColor', 'subtitle', 'description', 'optionLabel', 'steps']
   },
   {
     type: 'bi-architecture',
@@ -2038,7 +2076,7 @@ const RAW_SECTION_REGISTRY: SectionTypeDefinition[] = [
     color: 'bg-indigo-50 text-indigo-600',
     defaultVariant: 'default',
     supportsVariants: false,
-    fieldOrder: ['title', 'description', 'image']
+    fieldOrder: ['title', 'titleColor', 'description', 'image']
   },
   {
     type: 'bi-empowerment',
@@ -2048,7 +2086,7 @@ const RAW_SECTION_REGISTRY: SectionTypeDefinition[] = [
     color: 'bg-indigo-50 text-indigo-600',
     defaultVariant: 'default',
     supportsVariants: false,
-    fieldOrder: ['title', 'subtitle', 'cards']
+    fieldOrder: ['title', 'titleColor', 'subtitle', 'cards']
   },
   {
     type: 'bi-industries',
@@ -2058,7 +2096,7 @@ const RAW_SECTION_REGISTRY: SectionTypeDefinition[] = [
     color: 'bg-indigo-50 text-indigo-600',
     defaultVariant: 'default',
     supportsVariants: false,
-    fieldOrder: ['title', 'description', 'industries']
+    fieldOrder: ['title', 'titleColor', 'description', 'industries']
   },
   {
     type: 'bi-industry-services',
@@ -2099,7 +2137,7 @@ const RAW_SECTION_REGISTRY: SectionTypeDefinition[] = [
     color: 'bg-[#1e0a45] text-amber-400',
     defaultVariant: 'default',
     supportsVariants: false,
-    fieldOrder: ['sectionTitle', 'column1Title', 'column2Title', 'column3Title', 'rows']
+    fieldOrder: ['sectionTitle', 'sectionTitleColor', 'column1Title', 'column2Title', 'column3Title', 'rows']
   },
   {
     type: 'rpa-hero',
@@ -2145,7 +2183,7 @@ const RAW_SECTION_REGISTRY: SectionTypeDefinition[] = [
     color: 'bg-blue-50 text-blue-600',
     defaultVariant: 'default',
     supportsVariants: false,
-    fieldOrder: ['title', 'description', 'subtitle', 'autoScroll', 'cards', 'logos']
+    fieldOrder: ['title', 'titleColor', 'description', 'subtitle', 'autoScroll', 'cards', 'logos']
   },
   {
     type: 'rpa-overview-intro',
@@ -2155,7 +2193,7 @@ const RAW_SECTION_REGISTRY: SectionTypeDefinition[] = [
     color: 'bg-blue-50 text-blue-600',
     defaultVariant: 'default',
     supportsVariants: false,
-    fieldOrder: ['title', 'description']
+    fieldOrder: ['title', 'titleColor', 'description']
   },
   {
     type: 'rpa-overview-metrics',
@@ -2165,7 +2203,7 @@ const RAW_SECTION_REGISTRY: SectionTypeDefinition[] = [
     color: 'bg-blue-50 text-blue-600',
     defaultVariant: 'default',
     supportsVariants: false,
-    fieldOrder: ['subtitle', 'cards']
+    fieldOrder: ['subtitle', 'subtitleColor', 'cards']
   },
   {
     type: 'rpa-overview-logos',
@@ -2185,7 +2223,7 @@ const RAW_SECTION_REGISTRY: SectionTypeDefinition[] = [
     color: 'bg-blue-50 text-blue-600',
     defaultVariant: 'default',
     supportsVariants: false,
-    fieldOrder: ['title', 'description', 'industries']
+    fieldOrder: ['title', 'titleColor', 'description', 'industries']
   },
   {
     type: 'rpa-solutions',
@@ -2195,7 +2233,7 @@ const RAW_SECTION_REGISTRY: SectionTypeDefinition[] = [
     color: 'bg-blue-50 text-blue-600',
     defaultVariant: 'default',
     supportsVariants: false,
-    fieldOrder: ['title', 'description', 'solutions', 'image']
+    fieldOrder: ['title', 'titleColor', 'description', 'solutions', 'image']
   },
   {
     type: 'rpa-frameworks',
@@ -2205,7 +2243,7 @@ const RAW_SECTION_REGISTRY: SectionTypeDefinition[] = [
     color: 'bg-blue-50 text-blue-600',
     defaultVariant: 'default',
     supportsVariants: false,
-    fieldOrder: ['title', 'autoScroll', 'logos']
+    fieldOrder: ['title', 'titleColor', 'autoScroll', 'logos']
   },
   {
     type: 'rpa-benefits',
@@ -2215,7 +2253,7 @@ const RAW_SECTION_REGISTRY: SectionTypeDefinition[] = [
     color: 'bg-blue-50 text-blue-600',
     defaultVariant: 'default',
     supportsVariants: false,
-    fieldOrder: ['title', 'subtitle', 'benefits']
+    fieldOrder: ['title', 'titleColor', 'subtitle', 'benefits']
   },
   {
     type: 'rpa-capabilities',
@@ -2230,6 +2268,7 @@ const RAW_SECTION_REGISTRY: SectionTypeDefinition[] = [
       'title',
       'primaryTitleColor',
       'secondaryTitleColor',
+      'highlightedWordIndices',
       'description',
       'descriptionTextColor',
       'hubSubtitle',
@@ -2264,7 +2303,7 @@ const RAW_SECTION_REGISTRY: SectionTypeDefinition[] = [
     color: 'bg-blue-50 text-blue-600',
     defaultVariant: 'default',
     supportsVariants: false,
-    fieldOrder: ['title', 'subtitle', 'faqs']
+    fieldOrder: ['title', 'titleColor', 'subtitle', 'faqs']
   },
   {
     type: 'rpa-cta',
@@ -2274,7 +2313,7 @@ const RAW_SECTION_REGISTRY: SectionTypeDefinition[] = [
     color: 'bg-blue-50 text-blue-600',
     defaultVariant: 'default',
     supportsVariants: false,
-    fieldOrder: ['title', 'buttonText', 'buttonHoverBgColor', 'buttonHoverTextColor', 'pdfUrl'],
+    fieldOrder: ['title', 'titleColor', 'buttonText', 'buttonHoverBgColor', 'buttonHoverTextColor', 'pdfUrl'],
   },
   {
     type: 'oracle-apex-hero',
@@ -2322,7 +2361,7 @@ const RAW_SECTION_REGISTRY: SectionTypeDefinition[] = [
     color: 'bg-purple-50 text-purple-600',
     defaultVariant: 'default',
     supportsVariants: false,
-    fieldOrder: ['title', 'paragraphs', 'buttonText', 'buttonHoverBgColor', 'buttonHoverTextColor', 'buttonUrl', 'buttonFormType']
+    fieldOrder: ['title', 'titleColor', 'paragraphs', 'buttonText', 'buttonHoverBgColor', 'buttonHoverTextColor', 'buttonUrl', 'buttonFormType']
   },
   {
     type: 'oracle-apex-why-migrate',
@@ -2332,7 +2371,7 @@ const RAW_SECTION_REGISTRY: SectionTypeDefinition[] = [
     color: 'bg-purple-50 text-purple-600',
     defaultVariant: 'default',
     supportsVariants: false,
-    fieldOrder: ['title', 'description', 'tagText1', 'tagText2', 'tagText3', 'points', 'image']
+    fieldOrder: ['title', 'titleColor', 'description', 'tagText1', 'tagText2', 'tagText3', 'points', 'image']
   },
   {
     type: 'oracle-apex-deliverables',
@@ -2369,7 +2408,7 @@ const RAW_SECTION_REGISTRY: SectionTypeDefinition[] = [
     color: 'bg-purple-50 text-purple-600',
     defaultVariant: 'default',
     supportsVariants: false,
-    fieldOrder: ['title', 'tag', 'description', 'tabs']
+    fieldOrder: ['title', 'titleColor', 'tag', 'description', 'tabs']
   },
   {
     type: 'oracle-apex-cta',
@@ -2467,7 +2506,7 @@ const RAW_SECTION_REGISTRY: SectionTypeDefinition[] = [
     defaultVariant: 'default',
     supportsVariants: false,
     fieldOrder: [
-      'image', 'smallTitle', 'title', 'description', 'buttonText', 'buttonHoverBgColor', 'buttonHoverTextColor', 'buttonUrl', 'buttonFormType',
+      'image', 'smallTitle', 'title', 'titleColor', 'description', 'buttonText', 'buttonHoverBgColor', 'buttonHoverTextColor', 'buttonUrl', 'buttonFormType',
     ],
   },
   {
@@ -2479,7 +2518,7 @@ const RAW_SECTION_REGISTRY: SectionTypeDefinition[] = [
     defaultVariant: 'default',
     supportsVariants: false,
     fieldOrder: [
-      'image', 'badgeText', 'title', 'description', 'buttonText', 'buttonHoverBgColor', 'buttonHoverTextColor', 'buttonUrl', 'buttonFormType',
+      'image', 'badgeText', 'title', 'titleColor', 'description', 'buttonText', 'buttonHoverBgColor', 'buttonHoverTextColor', 'buttonUrl', 'buttonFormType',
     ],
   },
   {
@@ -2491,7 +2530,7 @@ const RAW_SECTION_REGISTRY: SectionTypeDefinition[] = [
     defaultVariant: 'default',
     supportsVariants: false,
     fieldOrder: [
-      'deviceImage', 'badgeText', 'title', 'description', 'buttonText', 'buttonHoverBgColor', 'buttonHoverTextColor', 'buttonUrl', 'buttonFormType', 'cards',
+      'deviceImage', 'badgeText', 'title', 'titleColor', 'description', 'buttonText', 'buttonHoverBgColor', 'buttonHoverTextColor', 'buttonUrl', 'buttonFormType', 'cards',
     ],
   },
   {
@@ -2503,7 +2542,7 @@ const RAW_SECTION_REGISTRY: SectionTypeDefinition[] = [
     defaultVariant: 'default',
     supportsVariants: false,
     fieldOrder: [
-      'sectionTitle', 'cards',
+      'sectionTitle', 'sectionTitleColor', 'cards',
     ],
   },
   {
@@ -2548,7 +2587,7 @@ const RAW_SECTION_REGISTRY: SectionTypeDefinition[] = [
     defaultVariant: 'default',
     supportsVariants: false,
     fieldOrder: [
-      'badgeText', 'title', 'description', 'cards',
+      'badgeText', 'title', 'titleColor', 'description', 'cards',
     ],
   },
   {
@@ -2560,7 +2599,7 @@ const RAW_SECTION_REGISTRY: SectionTypeDefinition[] = [
     defaultVariant: 'default',
     supportsVariants: false,
     fieldOrder: [
-      'subtitle', 'title', 'desc1', 'desc2', 'points', 'image',
+      'subtitle', 'title', 'titleColor', 'desc1', 'desc2', 'points', 'image',
     ],
   },
   {
@@ -2572,7 +2611,7 @@ const RAW_SECTION_REGISTRY: SectionTypeDefinition[] = [
     defaultVariant: 'default',
     supportsVariants: false,
     fieldOrder: [
-      'subtitle', 'title', 'description', 'cards',
+      'subtitle', 'title', 'titleColor', 'description', 'cards',
     ],
   },
   {
@@ -2584,7 +2623,7 @@ const RAW_SECTION_REGISTRY: SectionTypeDefinition[] = [
     defaultVariant: 'default',
     supportsVariants: false,
     fieldOrder: [
-      'subtitle', 'title', 'description', 'cards',
+      'subtitle', 'title', 'titleColor', 'description', 'cards',
     ],
   },
   {
@@ -2596,7 +2635,7 @@ const RAW_SECTION_REGISTRY: SectionTypeDefinition[] = [
     defaultVariant: 'default',
     supportsVariants: false,
     fieldOrder: [
-      'tag', 'title', 'description', 'tabs',
+      'tag', 'title', 'titleColor', 'description', 'tabs',
     ],
   },
   {
@@ -2663,12 +2702,15 @@ const RAW_SECTION_REGISTRY: SectionTypeDefinition[] = [
       'gradientColor3',
       'bgColor',
       'title',
+      'titleColor',
       'subtitle',
       'badges',
       'primaryCtaText',
       'primaryCtaUrl',
+      'primaryCtaFormType',
       'secondaryCtaText',
       'secondaryCtaUrl',
+      'secondaryCtaFormType',
       'formTitle',
       'formSubtitle',
       'dataNotice',
@@ -2684,7 +2726,7 @@ const RAW_SECTION_REGISTRY: SectionTypeDefinition[] = [
     color: 'bg-[#4B2A63]/10 text-[#4B2A63]',
     defaultVariant: 'default',
     supportsVariants: false,
-    fieldOrder: ['badgeText', 'title', 'description', 'ctaText', 'ctaUrl']
+    fieldOrder: ['badgeText', 'title', 'titleColor', 'description', 'ctaText', 'ctaUrl', 'ctaFormType']
   },
   {
     type: 'landing2-modules',
@@ -2694,7 +2736,7 @@ const RAW_SECTION_REGISTRY: SectionTypeDefinition[] = [
     color: 'bg-[#4B2A63]/10 text-[#4B2A63]',
     defaultVariant: 'default',
     supportsVariants: false,
-    fieldOrder: ['title', 'modules', 'ctaText', 'ctaUrl']
+    fieldOrder: ['title', 'titleColor', 'modules', 'ctaText', 'ctaUrl', 'ctaFormType']
   },
   {
     type: 'landing2-carousel',
@@ -2730,7 +2772,7 @@ const RAW_SECTION_REGISTRY: SectionTypeDefinition[] = [
     color: 'bg-[#4B2A63]/10 text-[#4B2A63]',
     defaultVariant: 'default',
     supportsVariants: false,
-    fieldOrder: ['sectionTitle', 'badge', 'title', 'description', 'image', 'ctaText', 'ctaUrl']
+    fieldOrder: ['sectionTitle', 'sectionTitleColor', 'badge', 'title', 'titleColor', 'description', 'image', 'ctaText', 'ctaUrl', 'ctaFormType']
   },
   {
     type: 'landing2-accounting',
@@ -2740,7 +2782,7 @@ const RAW_SECTION_REGISTRY: SectionTypeDefinition[] = [
     color: 'bg-[#4B2A63]/10 text-[#4B2A63]',
     defaultVariant: 'default',
     supportsVariants: false,
-    fieldOrder: ['badge', 'title', 'description', 'image', 'ctaText', 'ctaUrl']
+    fieldOrder: ['badge', 'title', 'titleColor', 'description', 'image', 'ctaText', 'ctaUrl', 'ctaFormType']
   },
   {
     type: 'landing2-brands',
@@ -2750,7 +2792,7 @@ const RAW_SECTION_REGISTRY: SectionTypeDefinition[] = [
     color: 'bg-[#4B2A63]/10 text-[#4B2A63]',
     defaultVariant: 'default',
     supportsVariants: false,
-    fieldOrder: ['title', 'logos']
+    fieldOrder: ['title', 'titleColor', 'logos']
   },
   {
     type: 'landing2-capabilities',
@@ -2760,7 +2802,7 @@ const RAW_SECTION_REGISTRY: SectionTypeDefinition[] = [
     color: 'bg-[#4B2A63]/10 text-[#4B2A63]',
     defaultVariant: 'default',
     supportsVariants: false,
-    fieldOrder: ['badge', 'title', 'tabs', 'ctaText', 'ctaUrl']
+    fieldOrder: ['badge', 'title', 'titleColor', 'tabs', 'ctaText', 'ctaUrl', 'ctaFormType']
   },
   {
     type: 'landing2-industries',
@@ -2770,7 +2812,7 @@ const RAW_SECTION_REGISTRY: SectionTypeDefinition[] = [
     color: 'bg-[#4B2A63]/10 text-[#4B2A63]',
     defaultVariant: 'default',
     supportsVariants: false,
-    fieldOrder: ['badge', 'title', 'industries']
+    fieldOrder: ['badge', 'title', 'titleColor', 'industries']
   },
   {
     type: 'landing2-integrations',
@@ -2780,7 +2822,7 @@ const RAW_SECTION_REGISTRY: SectionTypeDefinition[] = [
     color: 'bg-[#4B2A63]/10 text-[#4B2A63]',
     defaultVariant: 'default',
     supportsVariants: false,
-    fieldOrder: ['badge', 'title', 'logos']
+    fieldOrder: ['badge', 'title', 'titleColor', 'logos']
   },
   {
     type: 'landing2-testimonials',
@@ -2790,7 +2832,7 @@ const RAW_SECTION_REGISTRY: SectionTypeDefinition[] = [
     color: 'bg-[#4B2A63]/10 text-[#4B2A63]',
     defaultVariant: 'default',
     supportsVariants: false,
-    fieldOrder: ['title', 'subtitle', 'testimonials']
+    fieldOrder: ['title', 'titleColor', 'subtitle', 'testimonials']
   },
   {
     type: 'landing2-why-ess',
@@ -2800,7 +2842,7 @@ const RAW_SECTION_REGISTRY: SectionTypeDefinition[] = [
     color: 'bg-[#4B2A63]/10 text-[#4B2A63]',
     defaultVariant: 'default',
     supportsVariants: false,
-    fieldOrder: ['badge', 'title', 'features', 'ctaText', 'ctaUrl']
+    fieldOrder: ['badge', 'title', 'titleColor', 'features', 'ctaText', 'ctaUrl', 'ctaFormType']
   },
   {
     type: 'landing1-value',
@@ -2820,7 +2862,7 @@ const RAW_SECTION_REGISTRY: SectionTypeDefinition[] = [
     color: 'bg-[#4B2A63]/10 text-[#4B2A63]',
     defaultVariant: 'default',
     supportsVariants: false,
-    fieldOrder: ['badge', 'title', 'description', 'logos']
+    fieldOrder: ['badge', 'title', 'titleColor', 'description', 'logos']
   },
   {
     type: 'landing1-intro',
@@ -2830,7 +2872,20 @@ const RAW_SECTION_REGISTRY: SectionTypeDefinition[] = [
     color: 'bg-[#4B2A63]/10 text-[#4B2A63]',
     defaultVariant: 'default',
     supportsVariants: false,
-    fieldOrder: ['badge', 'titlePart1', 'titlePart2', 'description', 'image', 'ctaText', 'ctaUrl', 'ctaFormType', 'introModules']
+    fieldOrder: [
+      'badge',
+      'titlePart1',
+      'titlePart2',
+      'titleColor',
+      'titleSecondaryColor',
+      'highlightedWordIndices',
+      'description',
+      'image',
+      'ctaText',
+      'ctaUrl',
+      'ctaFormType',
+      'introModules',
+    ]
   },
   {
     type: 'landing1-industries',
@@ -2840,7 +2895,7 @@ const RAW_SECTION_REGISTRY: SectionTypeDefinition[] = [
     color: 'bg-[#4B2A63]/10 text-[#4B2A63]',
     defaultVariant: 'default',
     supportsVariants: false,
-    fieldOrder: ['badge', 'title', 'description', 'image', 'industries']
+    fieldOrder: ['badge', 'title', 'titleColor', 'description', 'image', 'industries']
   },
   {
     type: 'landing1-features',
@@ -2850,7 +2905,7 @@ const RAW_SECTION_REGISTRY: SectionTypeDefinition[] = [
     color: 'bg-[#4B2A63]/10 text-[#4B2A63]',
     defaultVariant: 'default',
     supportsVariants: false,
-    fieldOrder: ['badge', 'title', 'description', 'features', 'ctaText', 'ctaUrl', 'ctaFormType']
+    fieldOrder: ['badge', 'title', 'titleColor', 'description', 'features', 'ctaText', 'ctaUrl', 'ctaFormType']
   },
   {
     type: 'landing1-suite',
@@ -2860,7 +2915,7 @@ const RAW_SECTION_REGISTRY: SectionTypeDefinition[] = [
     color: 'bg-[#4B2A63]/10 text-[#4B2A63]',
     defaultVariant: 'default',
     supportsVariants: false,
-    fieldOrder: ['badge', 'title', 'description', 'modules', 'ctaText', 'ctaUrl', 'ctaFormType']
+    fieldOrder: ['badge', 'title', 'titleColor', 'description', 'modules', 'ctaText', 'ctaUrl', 'ctaFormType']
   },
   {
     type: 'landing1-stats',
@@ -2870,7 +2925,7 @@ const RAW_SECTION_REGISTRY: SectionTypeDefinition[] = [
     color: 'bg-[#4B2A63]/10 text-[#4B2A63]',
     defaultVariant: 'default',
     supportsVariants: false,
-    fieldOrder: ['badge', 'title', 'stats']
+    fieldOrder: ['badge', 'title', 'titleColor', 'stats']
   },
   {
     type: 'landing1-integration',
@@ -2880,7 +2935,7 @@ const RAW_SECTION_REGISTRY: SectionTypeDefinition[] = [
     color: 'bg-[#4B2A63]/10 text-[#4B2A63]',
     defaultVariant: 'default',
     supportsVariants: false,
-    fieldOrder: ['badge', 'title', 'description', 'image']
+    fieldOrder: ['badge', 'title', 'titleColor', 'description', 'image']
   },
   {
     type: 'landing1-process',
@@ -2890,7 +2945,7 @@ const RAW_SECTION_REGISTRY: SectionTypeDefinition[] = [
     color: 'bg-[#4B2A63]/10 text-[#4B2A63]',
     defaultVariant: 'default',
     supportsVariants: false,
-    fieldOrder: ['badge', 'title', 'description', 'process']
+    fieldOrder: ['badge', 'title', 'titleColor', 'description', 'process']
   },
   {
     type: 'landing1-works',
@@ -2900,7 +2955,7 @@ const RAW_SECTION_REGISTRY: SectionTypeDefinition[] = [
     color: 'bg-[#4B2A63]/10 text-[#4B2A63]',
     defaultVariant: 'default',
     supportsVariants: false,
-    fieldOrder: ['badge', 'title', 'description', 'works']
+    fieldOrder: ['badge', 'title', 'titleColor', 'description', 'works']
   },
   {
     type: 'landing1-showcase',
@@ -2910,7 +2965,7 @@ const RAW_SECTION_REGISTRY: SectionTypeDefinition[] = [
     color: 'bg-[#4B2A63]/10 text-[#4B2A63]',
     defaultVariant: 'default',
     supportsVariants: false,
-    fieldOrder: ['title', 'tabs']
+    fieldOrder: ['title', 'titleColor', 'tabs']
   },
   {
     type: 'landing1-testimonials',
@@ -2920,7 +2975,7 @@ const RAW_SECTION_REGISTRY: SectionTypeDefinition[] = [
     color: 'bg-[#4B2A63]/10 text-[#4B2A63]',
     defaultVariant: 'default',
     supportsVariants: false,
-    fieldOrder: ['badge', 'title', 'description', 'testimonials']
+    fieldOrder: ['badge', 'title', 'titleColor', 'description', 'testimonials']
   },
   {
     type: 'landing1-faq',
@@ -2930,7 +2985,7 @@ const RAW_SECTION_REGISTRY: SectionTypeDefinition[] = [
     color: 'bg-[#4B2A63]/10 text-[#4B2A63]',
     defaultVariant: 'default',
     supportsVariants: false,
-    fieldOrder: ['badge', 'title', 'description', 'faqs']
+    fieldOrder: ['badge', 'title', 'titleColor', 'description', 'faqs']
   },
   {
     type: 'landing1-cta',
@@ -2940,7 +2995,7 @@ const RAW_SECTION_REGISTRY: SectionTypeDefinition[] = [
     color: 'bg-[#4B2A63]/10 text-[#4B2A63]',
     defaultVariant: 'default',
     supportsVariants: false,
-    fieldOrder: ['badge', 'title', 'description', 'whatWeGet', 'icon', 'contactTitle', 'mobileNumber', 'form']
+    fieldOrder: ['badge', 'title', 'titleColor', 'description', 'whatWeGet', 'icon', 'contactTitle', 'mobileNumber', 'form']
   },
   {
     type: 'landing1-challenges',
@@ -2950,7 +3005,7 @@ const RAW_SECTION_REGISTRY: SectionTypeDefinition[] = [
     color: 'bg-[#4B2A63]/10 text-[#4B2A63]',
     defaultVariant: 'default',
     supportsVariants: false,
-    fieldOrder: ['badge', 'title', 'description', 'challenges']
+    fieldOrder: ['badge', 'title', 'titleColor', 'description', 'challenges']
   },
 ];
 

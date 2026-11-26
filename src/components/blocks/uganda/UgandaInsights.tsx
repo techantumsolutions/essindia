@@ -30,6 +30,7 @@ interface TabItem {
 export interface UgandaInsightsContent {
   tag?: string;
   title?: string;
+  titleColor?: string;
   description?: string;
   tabs?: TabItem[];
 }
@@ -148,7 +149,12 @@ export function UgandaInsights({ content }: { content?: UgandaInsightsContent })
             <FormattedText content={tag} as="span" className="inline-block text-xs sm:text-sm font-bold uppercase tracking-wider text-slate-500 mb-3" />
           )}
           {title && (
-            <FormattedText content={title} as="h2" className="text-2xl sm:text-[34px] font-bold text-[#1d1b4b] mb-4 tracking-tight leading-tight" />
+            <FormattedText
+              content={title}
+              as="h2"
+              className="text-2xl sm:text-[34px] font-bold text-[#1d1b4b] mb-4 tracking-tight leading-tight"
+              style={content?.titleColor ? { color: content.titleColor } : undefined}
+            />
           )}
           {description && (
             <FormattedText content={description} className="text-xs sm:text-sm text-slate-400 leading-relaxed max-w-2xl mx-auto" />

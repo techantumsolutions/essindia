@@ -12,6 +12,7 @@ export interface StatCard {
 
 export interface RpaOverviewMetricsContent {
   subtitle?: string;
+  subtitleColor?: string;
   cards?: StatCard[];
 }
 
@@ -50,6 +51,7 @@ export function RpaOverviewMetrics({ content }: { content?: RpaOverviewMetricsCo
               viewport={{ once: true }}
               transition={{ duration: 0.4 }}
               className="text-lg sm:text-xl font-bold text-slate-800 tracking-tight"
+              style={content?.subtitleColor ? { color: content.subtitleColor } : undefined}
             >
               {subtitle}
             </motion.h3>

@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { CaseStudyManager } from '../pages/[id]/page';
+import { CaseStudyManager } from '../pages/_managers';
 
 export default function AdminCaseStudiesPage() {
   return (

@@ -72,8 +72,8 @@ export function AomHero({ content }: { content?: AomHeroContent }) {
   const button1FormType = (content?.button1FormType || '') as CtaFormType;
   const button2FormType = (content?.button2FormType || '') as CtaFormType;
 
-  const { handleClick: handleBtn1Click, modalNode: modal1 } = useCtaAction(button1Url, button1FormType);
-  const { handleClick: handleBtn2Click, modalNode: modal2 } = useCtaAction(button2Url, button2FormType);
+  const { handleClick: handleBtn1Click, modalNode: modal1 } = useCtaAction(button1Url, button1FormType, (content as any)?.button1PdfUrl);
+  const { handleClick: handleBtn2Click, modalNode: modal2 } = useCtaAction(button2Url, button2FormType, (content as any)?.button2PdfUrl);
   const rightImage = content?.image || '/App- App over view (mobile app)/f3273dba-dc3e-435a-bf5b-2c68d5a7ccd1 1.png';
 
   const gradientColor1 = content?.gradientColor1;

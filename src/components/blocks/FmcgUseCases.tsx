@@ -20,6 +20,7 @@ interface UseCaseTab {
 
 interface FmcgUseCasesContent {
   title?: string;
+  titleColor?: string;
   subtitle?: string;
   tabs?: UseCaseTab[];
 }
@@ -176,7 +177,10 @@ export function FmcgUseCases({ content }: { content?: FmcgUseCasesContent }) {
 
         {/* Header Block */}
         <div className="space-y-4 max-w-4xl mx-auto">
-          <h2 className="text-3xl sm:text-4xl font-extrabold text-[#2a2b6a] leading-tight">
+          <h2
+            className="text-3xl sm:text-4xl font-extrabold text-[#2a2b6a] leading-tight"
+            style={content?.titleColor ? { color: content.titleColor } : undefined}
+          >
             {title}
           </h2>
           <p className="text-slate-500 text-sm sm:text-base leading-relaxed">

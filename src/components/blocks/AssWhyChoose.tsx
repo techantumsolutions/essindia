@@ -6,6 +6,7 @@ import Image from 'next/image';
 interface AssWhyChooseContent {
   badgeText?: string;
   title?: string;
+  titleColor?: string;
   description?: string;
   image?: string;
 }
@@ -34,7 +35,10 @@ export function AssWhyChoose({ content }: { content?: AssWhyChooseContent }) {
               </span>
             )}
 
-            <h2 className="text-3xl md:text-4xl lg:text-[40px] font-light text-[#171C76] leading-tight mb-2 whitespace-pre-line">
+            <h2
+              className="text-3xl md:text-4xl lg:text-[40px] font-light text-[#171C76] leading-tight mb-2 whitespace-pre-line"
+              style={content?.titleColor ? { color: content.titleColor } : undefined}
+            >
               {title}
             </h2>
 

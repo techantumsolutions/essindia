@@ -7,6 +7,7 @@ interface PillPoint {
 
 interface StaffingWhyEssContent {
   heading?: string;
+  headingColor?: string;
   description?: string;
   pills?: PillPoint[];
   image?: string;
@@ -40,7 +41,10 @@ export function StaffingWhyEss({ content }: StaffingWhyEssProps) {
 
           {/* Left Text & Pills */}
           <div className="lg:w-1/2 w-full">
-            <h2 className="text-4xl font-extrabold text-[#2a2d7c] mb-6 whitespace-pre-line leading-tight">
+            <h2
+              className="text-4xl font-extrabold text-[#2a2d7c] mb-6 whitespace-pre-line leading-tight"
+              style={content?.headingColor ? { color: content.headingColor } : undefined}
+            >
               {heading}
             </h2>
             <p className="text-gray-500 text-sm md:text-base leading-relaxed mb-10 max-w-lg">

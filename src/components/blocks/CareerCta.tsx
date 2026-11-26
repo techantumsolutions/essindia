@@ -10,6 +10,7 @@ export default function CareerCta({ content }: { content?: any }) {
   const [isBtnHovered, setIsBtnHovered] = useState(false);
   const {
     title = 'Ready To Start Your Career Journey?',
+    titleColor,
     subtitle = 'Join our team and be part of an innovative culture that values your growth and contributions.',
     ctaText = 'Join Us',
     ctaHoverBgColor,
@@ -26,7 +27,10 @@ export default function CareerCta({ content }: { content?: any }) {
           viewport={{ once: true }}
           transition={{ duration: 0.5 }}
         >
-          <h2 className="text-2xl md:text-4xl font-bold text-[#0D1A5C] mb-4">
+          <h2
+            className="text-2xl md:text-4xl font-bold text-[#0D1A5C] mb-4"
+            style={titleColor ? { color: titleColor } : undefined}
+          >
             {title}
           </h2>
           <p className="max-w-2xl mx-auto text-xl font-medium leading-none mb-6">

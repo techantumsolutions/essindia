@@ -13,6 +13,7 @@ interface ProcessStep {
 
 interface AssProcessContent {
   title?: string;
+  titleColor?: string;
   steps?: ProcessStep[];
 }
 
@@ -30,7 +31,12 @@ export function AssProcess({ content }: { content?: AssProcessContent }) {
     <section className="p-12 px-6 bg-[#ffffff] border-b">
       <div className="container mx-auto max-w-7xl">
         {/* Title */}
-        <FormattedText content={title} as="h2" className="text-3xl md:text-4xl lg:text-[40px] font-bold text-[#0a1128] text-center mb-6 leading-tight" />
+        <FormattedText
+          content={title}
+          as="h2"
+          className={`text-3xl md:text-4xl lg:text-[40px] font-bold text-center mb-6 leading-tight ${content?.titleColor ? 'ass-process-title-colored' : 'text-[#0a1128]'}`}
+          style={content?.titleColor ? { color: content.titleColor } : undefined}
+        />
 
         {/* Process Flow */}
         <div className="relative">

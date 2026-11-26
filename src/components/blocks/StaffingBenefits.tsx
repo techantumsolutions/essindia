@@ -9,6 +9,7 @@ interface BenefitCard {
 
 interface StaffingBenefitsContent {
   heading?: string;
+  headingColor?: string;
   description?: string;
   cards?: BenefitCard[];
 }
@@ -45,7 +46,10 @@ export function StaffingBenefits({ content }: StaffingBenefitsProps) {
     <section className="py-12 px-6 bg-white border-b">
       <div className="container mx-auto max-w-7xl">
         <div className="max-w-7xl mx-auto mb-6 md:mb-16">
-          <h2 className="text-3xl md:text-4xl font-bold text-[#2a2d7c] mb-6 text-center">
+          <h2
+            className="text-3xl md:text-4xl font-bold text-[#2a2d7c] mb-6 text-center"
+            style={content?.headingColor ? { color: content.headingColor } : undefined}
+          >
             {heading}
           </h2>
           <p className="text-gray-500 text-sm md:text-base leading-relaxed">

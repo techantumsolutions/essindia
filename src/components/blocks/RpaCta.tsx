@@ -6,6 +6,7 @@ import { motion } from 'framer-motion';
 
 interface RpaCtaContent {
   title?: string;
+  titleColor?: string;
   buttonText?: string;
   buttonHoverBgColor?: string;
   buttonHoverTextColor?: string;
@@ -32,6 +33,7 @@ export function RpaCta({ content }: { content?: RpaCtaContent }) {
             viewport={{ once: true }}
             transition={{ duration: 0.4 }}
             className="text-2xl sm:text-3xl md:text-4xl font-light text-[#462295] tracking-tight leading-tight"
+            style={content?.titleColor ? { color: content.titleColor } : undefined}
           >
             {title}
           </motion.h2>

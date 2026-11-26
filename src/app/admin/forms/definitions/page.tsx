@@ -2,10 +2,11 @@
 
 import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Loader2, Mail, FileText, Eye, X, ClipboardList, ChevronRight, Link2, Save, Check } from 'lucide-react';
+import { Loader2, Mail, FileText, Eye, X, ClipboardList, ChevronRight, Link2, Save, Check, Plus, Trash2, Layers } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { toast } from 'sonner';
+import { invalidateFormSettingsCache } from '@/lib/forms/form-success';
 
 /* ──────────────────────────────────────────────
    FORM DEFINITIONS (static – matches actual modals)
@@ -44,6 +45,7 @@ const FORMS: FormDef[] = [
       { label: 'Phone Number', type: 'tel', placeholder: 'Enter Mobile No', required: true },
       { label: 'Company Name', type: 'text', placeholder: 'Enter Company Name', required: false },
       { label: 'Country', type: 'select', placeholder: 'Select Country', required: true },
+      { label: 'Service', type: 'select', placeholder: 'Please select a service', required: true },
       { label: 'Message', type: 'textarea', placeholder: 'Enter your message', required: false },
       {
         label: 'You agree to our privacy policy.',
@@ -66,6 +68,7 @@ const FORMS: FormDef[] = [
       { label: 'Email Address', type: 'email', placeholder: 'Enter Email', required: true },
       { label: 'Phone Number', type: 'tel', placeholder: 'Enter Mobile No', required: true },
       { label: 'Country', type: 'select', placeholder: 'Select Country', required: true },
+      { label: 'Service', type: 'select', placeholder: 'Please select a service', required: true },
       {
         label: 'You agree to our privacy policy.',
         type: 'checkbox',
@@ -193,6 +196,10 @@ export default function FormDefinitionsPage() {
   });
   const [savingType, setSavingType] = React.useState<string | null>(null);
   const [savedType, setSavedType] = React.useState<string | null>(null);
+  const [services, setServices] = React.useState<string[]>([]);
+  const [isServiceModalOpen, setIsServiceModalOpen] = React.useState(false);
+  const [newServiceName, setNewServiceName] = React.useState('');
+  const [isSavingServices, setIsSavingServices] = React.useState(false);
 
   React.useEffect(() => {
     async function fetchCounts() {
@@ -222,6 +229,7 @@ export default function FormDefinitionsPage() {
           contact: data?.contact?.thankYouUrl || '/thank-you',
           cta: data?.cta?.thankYouUrl || '/thank-you',
         });
+        setServices(Array.isArray(data?.services) ? data.services : []);
       } catch {
         // silent
       }
@@ -252,6 +260,7 @@ export default function FormDefinitionsPage() {
         cta: data?.cta?.thankYouUrl || '/thank-you',
       });
       setSavedType(formType);
+      invalidateFormSettingsCache();
       toast.success('Thank you page link saved');
       window.setTimeout(() => setSavedType(null), 2000);
     } catch (err: any) {
@@ -259,6 +268,53 @@ export default function FormDefinitionsPage() {
     } finally {
       setSavingType(null);
     }
+  }
+
+  async function persistServices(nextServices: string[], successMessage: string) {
+    setIsSavingServices(true);
+    try {
+      const res = await fetch('/api/admin/forms/settings', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ services: nextServices }),
+      });
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        throw new Error(data.error || 'Failed to update services');
+      }
+      const data = await res.json();
+      setServices(Array.isArray(data?.services) ? data.services : nextServices);
+      invalidateFormSettingsCache();
+      toast.success(successMessage);
+      return true;
+    } catch (err: any) {
+      toast.error(err.message || 'Could not save services');
+      return false;
+    } finally {
+      setIsSavingServices(false);
+    }
+  }
+
+  async function handleCreateService(e: React.FormEvent) {
+    e.preventDefault();
+    const trimmed = newServiceName.trim();
+    if (!trimmed) {
+      toast.error('Please enter a service name.');
+      return;
+    }
+    if (services.some((s) => s.toLowerCase() === trimmed.toLowerCase())) {
+      toast.error('This service already exists.');
+      return;
+    }
+    const ok = await persistServices([...services, trimmed], 'Service created');
+    if (ok) {
+      setNewServiceName('');
+    }
+  }
+
+  async function handleDeleteService(target: string) {
+    const next = services.filter((s) => s !== target);
+    await persistServices(next, 'Service removed');
   }
 
   return (
@@ -275,13 +331,23 @@ export default function FormDefinitionsPage() {
             All active forms on the website. Set a thank-you page link per form to redirect after submission.
           </p>
         </div>
-        <button
-          onClick={() => router.push('/admin/forms')}
-          className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#4B2A63] text-white text-sm font-semibold hover:bg-[#3A1F4D] transition-colors cursor-pointer"
-        >
-          <ClipboardList className="w-4 h-4" />
-          View All Leads
-        </button>
+        <div className="flex items-center gap-3">
+          <button
+            type="button"
+            onClick={() => setIsServiceModalOpen(true)}
+            className="flex items-center gap-2 px-5 py-2.5 rounded-xl border border-[#4B2A63] bg-white text-[#4B2A63] text-sm font-semibold hover:bg-[#4B2A63]/5 transition-colors cursor-pointer"
+          >
+            <Plus className="w-4 h-4" />
+            Create Service
+          </button>
+          <button
+            onClick={() => router.push('/admin/forms')}
+            className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#4B2A63] text-white text-sm font-semibold hover:bg-[#3A1F4D] transition-colors cursor-pointer"
+          >
+            <ClipboardList className="w-4 h-4" />
+            View All Leads
+          </button>
+        </div>
       </div>
 
       {/* Table */}
@@ -413,6 +479,130 @@ export default function FormDefinitionsPage() {
           </tbody>
         </table>
       </div>
+
+      {/* Created Services Card */}
+      <div className="bg-white rounded-3xl border border-slate-200 shadow-sm p-6 space-y-4">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div className="flex items-center gap-3">
+            <div className="w-9 h-9 rounded-xl bg-[#4B2A63]/10 text-[#4B2A63] flex items-center justify-center shrink-0">
+              <Layers className="w-4 h-4" />
+            </div>
+            <div>
+              <h2 className="text-base font-bold text-slate-900">Form Services Dropdown</h2>
+              <p className="text-xs text-slate-500">
+                Services created here appear in the mandatory &quot;Please select a service&quot; dropdown across public website forms.
+              </p>
+            </div>
+          </div>
+          <button
+            type="button"
+            onClick={() => setIsServiceModalOpen(true)}
+            className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-[#4B2A63] text-white text-xs font-semibold hover:bg-[#3A1F4D] transition-colors cursor-pointer shrink-0"
+          >
+            <Plus className="w-3.5 h-3.5" />
+            Create Service
+          </button>
+        </div>
+
+        {services.length === 0 ? (
+          <div className="rounded-2xl border border-dashed border-slate-200 bg-slate-50/50 py-6 text-center text-xs text-slate-500">
+            No services created yet. Click &quot;Create Service&quot; to add options to the dropdown.
+          </div>
+        ) : (
+          <div className="flex flex-wrap gap-2">
+            {services.map((svc) => (
+              <div
+                key={svc}
+                className="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-slate-100 text-slate-800 text-xs font-semibold border border-slate-200"
+              >
+                <span>{svc}</span>
+                <button
+                  type="button"
+                  disabled={isSavingServices}
+                  onClick={() => handleDeleteService(svc)}
+                  title={`Remove ${svc}`}
+                  className="text-slate-400 hover:text-rose-600 transition-colors cursor-pointer disabled:opacity-50"
+                >
+                  <X className="w-3.5 h-3.5" />
+                </button>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+
+      {/* Create Service Dialog */}
+      <Dialog open={isServiceModalOpen} onOpenChange={setIsServiceModalOpen}>
+        <DialogContent className="sm:max-w-md max-h-[85vh] overflow-y-auto p-0">
+          <div className="px-6 py-5 bg-[#4B2A63] flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="w-9 h-9 rounded-xl bg-white/20 flex items-center justify-center text-white">
+                <Layers className="w-4 h-4" />
+              </div>
+              <div>
+                <h2 className="text-base font-bold text-white">Create Service</h2>
+                <p className="text-xs text-white/75 mt-0.5">Add services shown in website form dropdowns</p>
+              </div>
+            </div>
+            <button
+              type="button"
+              onClick={() => setIsServiceModalOpen(false)}
+              className="w-8 h-8 rounded-lg bg-white/10 hover:bg-white/20 flex items-center justify-center text-white transition-colors cursor-pointer"
+            >
+              <X className="w-4 h-4" />
+            </button>
+          </div>
+
+          <div className="p-6 bg-white space-y-5">
+            <form onSubmit={handleCreateService} className="space-y-3">
+              <label className="text-xs font-semibold text-slate-700 block">Service Name</label>
+              <div className="flex items-center gap-2">
+                <input
+                  type="text"
+                  value={newServiceName}
+                  onChange={(e) => setNewServiceName(e.target.value)}
+                  placeholder="e.g. ERP Implementation"
+                  className="flex-1 px-3 py-2 text-sm rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-[#4B2A63]/30 focus:border-[#4B2A63]"
+                />
+                <button
+                  type="submit"
+                  disabled={isSavingServices}
+                  className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-[#4B2A63] text-white text-sm font-semibold hover:bg-[#3A1F4D] transition-colors cursor-pointer disabled:opacity-60"
+                >
+                  {isSavingServices ? <Loader2 className="w-4 h-4 animate-spin" /> : <Plus className="w-4 h-4" />}
+                  Add
+                </button>
+              </div>
+            </form>
+
+            <div className="border-t border-slate-100 pt-4 space-y-2">
+              <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">
+                Existing Services ({services.length})
+              </p>
+              {services.length === 0 ? (
+                <p className="text-xs text-slate-400 py-3">No services added yet.</p>
+              ) : (
+                <div className="max-h-56 overflow-y-auto divide-y divide-slate-100 border border-slate-100 rounded-xl">
+                  {services.map((svc) => (
+                    <div key={svc} className="flex items-center justify-between px-3 py-2.5 text-sm text-slate-800">
+                      <span className="font-medium">{svc}</span>
+                      <button
+                        type="button"
+                        disabled={isSavingServices}
+                        onClick={() => handleDeleteService(svc)}
+                        title="Delete service"
+                        className="p-1.5 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition-colors cursor-pointer disabled:opacity-50"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
 
       {/* Form Preview Dialog */}
       <Dialog open={!!previewForm} onOpenChange={(open) => !open && setPreviewForm(null)}>

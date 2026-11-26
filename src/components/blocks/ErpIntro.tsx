@@ -6,6 +6,7 @@ import { MotionSection } from '@/components/animations/MotionSection';
 
 interface ErpIntroContent {
   title?: string;
+  titleColor?: string;
   description?: string;
 }
 
@@ -26,7 +27,10 @@ export function ErpIntro({ content }: ErpIntroProps) {
       <div className="container mx-auto px-4 md:px-8 max-w-5xl text-center">
         <MotionSection variant="fadeUp" className="space-y-4">
           {/* Main Heading */}
-          <h2 className="text-3xl md:text-4xl lg:text-[42px] leading-[1.2] font-[400] tracking-tight">
+          <h2
+            className="text-3xl md:text-4xl lg:text-[42px] leading-[1.2] font-[400] tracking-tight"
+            style={content?.titleColor ? { color: content.titleColor } : undefined}
+          >
             {title}
           </h2>
 

@@ -8,7 +8,13 @@ import JobDetailHero from '@/components/blocks/JobDetailHero';
 import { PhoneField } from '@/components/ui/PhoneField';
 import { validateAndFormatPhone } from '@/lib/phone-validation';
 import { DEFAULT_PHONE_COUNTRY } from '@/lib/dial-codes';
-import { submitErrorMessage, validateEmail, validateName } from '@/lib/form-validation';
+import {
+  submitErrorMessage,
+  validateCompany,
+  validateEmail,
+  validateName,
+  validateUrl,
+} from '@/lib/form-validation';
 
 interface CareerDetailClientProps {
   job: {
@@ -75,8 +81,33 @@ export default function CareerDetailClient({ job }: CareerDetailClientProps) {
       toast.error(validation.message);
       return;
     }
-    if (!experience || !noticePeriod || !resumeFile) {
+    if (!experience.trim() || !noticePeriod.trim() || !resumeFile) {
       toast.error('Please fill in all required fields and upload your resume');
+      return;
+    }
+    const companyCheck = validateCompany(currentCompany, true);
+    if (!companyCheck.isValid) {
+      toast.error(companyCheck.message);
+      return;
+    }
+    const linkedInCheck = validateUrl(
+      linkedInProfile,
+      'Please enter your LinkedIn profile URL.',
+      'Please enter a valid LinkedIn profile URL.',
+      false
+    );
+    if (!linkedInCheck.isValid) {
+      toast.error(linkedInCheck.message);
+      return;
+    }
+    const portfolioCheck = validateUrl(
+      portfolioUrl,
+      'Please enter your Portfolio or GitHub URL.',
+      'Please enter a valid Portfolio or GitHub URL.',
+      false
+    );
+    if (!portfolioCheck.isValid) {
+      toast.error(portfolioCheck.message);
       return;
     }
 
@@ -319,9 +350,10 @@ export default function CareerDetailClient({ job }: CareerDetailClientProps) {
                         {/* Current Company & Notice Period */}
                         <div className="grid grid-cols-2 gap-4">
                           <div className="space-y-1.5">
-                            <label className="text-[11px] font-bold text-slate-700">Current Company</label>
+                            <label className="text-[11px] font-bold text-slate-700">Current Company *</label>
                             <input
                               type="text"
+                              required
                               value={currentCompany}
                               onChange={(e) => setCurrentCompany(e.target.value)}
                               className="w-full h-10 px-3 bg-white border border-slate-200 rounded-lg text-sm outline-none focus:border-[#4B2A63] transition-colors"

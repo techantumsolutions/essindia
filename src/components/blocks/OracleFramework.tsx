@@ -12,6 +12,7 @@ interface FrameworkCard {
 
 interface OracleFrameworkContent {
   title?: string;
+  titleColor?: string;
   subtitle?: string;
   cards?: FrameworkCard[];
 }
@@ -54,6 +55,7 @@ export function OracleFramework({ content }: { content?: OracleFrameworkContent 
             viewport={{ once: true, margin: '-100px' }}
             transition={{ duration: 0.5 }}
             className="text-3xl sm:text-4xl font-extrabold text-[#111827] tracking-tight font-sans uppercase"
+            style={content?.titleColor ? { color: content.titleColor } : undefined}
           >
             {title}
           </motion.h2>

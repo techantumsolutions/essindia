@@ -12,6 +12,7 @@ interface FaqItem {
 
 interface FmcgFaqContent {
   title?: string;
+  titleColor?: string;
   subtitle?: string;
   faqs?: FaqItem[];
 }
@@ -78,7 +79,12 @@ export function FmcgFaq({ content }: { content?: FmcgFaqContent }) {
         {(title || subtitle) && (
           <div className="space-y-2 max-w-2xl mx-auto text-center">
             {title && (
-              <FormattedText content={title} as="h2" className="text-3xl sm:text-4xl font-extrabold text-[#2a2b6a] leading-tight" />
+              <FormattedText
+                content={title}
+                as="h2"
+                className="text-3xl sm:text-4xl font-extrabold text-[#2a2b6a] leading-tight"
+                style={content?.titleColor ? { color: content.titleColor } : undefined}
+              />
             )}
             {subtitle && (
               <FormattedText content={subtitle} className="text-slate-500 text-sm sm:text-base leading-relaxed" />

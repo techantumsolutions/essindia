@@ -66,10 +66,10 @@ export function isHiddenCmsField(key: string, sectionType?: string, keyPath?: st
     }
   }
 
-  // Restrict why-ess (Value Prop) section to title, description, image1, image2, image3, and reasons (with title and description)
+  // Restrict why-ess (Value Prop) section to title, titleColor, description, image1, image2, image3, and reasons (with title and description)
   if (sectionType === 'why-ess') {
     if (key === 'points') return true;
-    const allowed = ['title', 'description', 'image1', 'image2', 'image3', 'reasons'];
+    const allowed = ['title', 'titleColor', 'description', 'image1', 'image2', 'image3', 'reasons'];
     if (keyPath && keyPath !== key) {
       const allowedPointFields = ['title', 'description'];
       if (!allowedPointFields.includes(key)) return true;
@@ -459,6 +459,8 @@ function baseHumanLabel(key: string): string {
   if (key === 'button1FormType') return 'Button 1 Form Action';
   if (key === 'button2FormType') return 'Button 2 Form Action';
   if (key === 'ctaFormType') return 'CTA Form Action';
+  if (key === 'primaryCtaFormType') return 'Primary CTA Form Action';
+  if (key === 'secondaryCtaFormType') return 'Secondary CTA Form Action';
   if (key === 'whatWeGet') return 'What You Get';
   if (key === 'mobileNumber') return 'Mobile Number';
   if (key === 'contactTitle') return 'Contact Title';

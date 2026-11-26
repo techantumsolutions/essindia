@@ -5,6 +5,7 @@ import Image from 'next/image';
 
 interface AssClientsContent {
   title?: string;
+  titleColor?: string;
   logos?: string[];
 }
 
@@ -22,7 +23,10 @@ export function AssClients({ content }: { content?: AssClientsContent }) {
   return (
     <section className="p-14 px-6 bg-white">
       <div className="container mx-auto max-w-7xl">
-        <h2 className="text-3xl md:text-4xl font-bold text-[#0f172a] text-center mb-12 leading-tight">
+        <h2
+          className="text-3xl md:text-4xl font-bold text-[#0f172a] text-center mb-12 leading-tight"
+          style={content?.titleColor ? { color: content.titleColor } : undefined}
+        >
           {title}
         </h2>
 

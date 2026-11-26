@@ -15,6 +15,7 @@ export interface WorkItem {
 export interface Landing1WorksContent {
   badge?: string;
   title?: string;
+  titleColor?: string;
   description?: string;
   works?: WorkItem[];
 }
@@ -109,7 +110,10 @@ export function Landing1Works({ content }: { content?: Landing1WorksContent }) {
             </span>
           )}
           {data.title && (
-            <h2 className="text-3xl md:text-[40px] font-extrabold tracking-tight text-slate-900 leading-tight">
+            <h2
+              className="text-3xl md:text-[40px] font-extrabold tracking-tight text-slate-900 leading-tight"
+              style={data.titleColor ? { color: data.titleColor } : undefined}
+            >
               {data.title}
             </h2>
           )}

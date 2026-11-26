@@ -12,6 +12,7 @@ interface FaqItem {
 
 interface RpaFaqContent {
   title?: string;
+  titleColor?: string;
   subtitle?: string;
   faqs?: FaqItem[];
 }
@@ -46,7 +47,12 @@ export function RpaFaq({ content }: { content?: RpaFaqContent }) {
         {/* Header */}
         <div className="text-center space-y-3 mb-6">
           {title && (
-            <FormattedText content={title} as="h2" className="text-3xl sm:text-4xl font-bold text-[#27256b] tracking-tight" />
+            <FormattedText
+              content={title}
+              as="h2"
+              className="text-3xl sm:text-4xl font-bold text-[#27256b] tracking-tight"
+              style={content?.titleColor ? { color: content.titleColor } : undefined}
+            />
           )}
           {subtitle && (
             <FormattedText content={subtitle} className="text-slate-500 font-light text-base sm:text-lg" />

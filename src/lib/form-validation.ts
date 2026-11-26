@@ -5,6 +5,7 @@ export const FORM_RATE_LIMIT_ERROR = 'Too many attempts. Please wait a few minut
 export const FORM_SUCCESS_MESSAGE = 'Thank you. Our team will be in touch within one business day.';
 export const FORM_PRIVACY_ERROR = 'Please accept our privacy policy to continue.';
 export const FORM_COUNTRY_ERROR = 'Please select your country.';
+export const FORM_SERVICE_ERROR = 'Please select a service.';
 
 export type FieldValidation = { isValid: true; message: '' } | { isValid: false; message: string };
 
@@ -76,6 +77,44 @@ export function validatePrivacy(accepted: boolean): FieldValidation {
     return { isValid: false, message: FORM_PRIVACY_ERROR };
   }
   return { isValid: true, message: '' };
+}
+
+export function validateService(raw: string, required = true): FieldValidation {
+  const value = (raw || '').trim();
+  if (!value) {
+    if (!required) return { isValid: true, message: '' };
+    return { isValid: false, message: FORM_SERVICE_ERROR };
+  }
+  return { isValid: true, message: '' };
+}
+
+export function validateRequiredText(raw: string, emptyMessage: string): FieldValidation {
+  if (!(raw || '').trim()) {
+    return { isValid: false, message: emptyMessage };
+  }
+  return { isValid: true, message: '' };
+}
+
+export function validateUrl(
+  raw: string,
+  emptyMessage: string,
+  invalidMessage: string,
+  required = true
+): FieldValidation {
+  const value = (raw || '').trim();
+  if (!value) {
+    if (!required) return { isValid: true, message: '' };
+    return { isValid: false, message: emptyMessage };
+  }
+  try {
+    const parsed = new URL(value);
+    if (parsed.protocol !== 'http:' && parsed.protocol !== 'https:') {
+      return { isValid: false, message: invalidMessage };
+    }
+    return { isValid: true, message: '' };
+  } catch {
+    return { isValid: false, message: invalidMessage };
+  }
 }
 
 export function submitErrorMessage(status?: number, fallback?: string): string {

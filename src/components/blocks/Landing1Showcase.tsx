@@ -22,6 +22,7 @@ export interface TabItem {
 
 export interface Landing1ShowcaseContent {
   title?: string;
+  titleColor?: string;
   tabs?: TabItem[];
 }
 
@@ -123,7 +124,10 @@ export function Landing1Showcase({ content }: { content?: Landing1ShowcaseConten
       <div className="container mx-auto px-6 max-w-7xl space-y-12">
         {/* Title */}
         {data.title && (
-          <h2 className="text-3xl md:text-[40px] font-bold text-center text-[#0D265C] tracking-tight leading-tight max-w-4xl mx-auto">
+          <h2
+            className="text-3xl md:text-[40px] font-bold text-center text-[#0D265C] tracking-tight leading-tight max-w-4xl mx-auto"
+            style={data.titleColor ? { color: data.titleColor } : undefined}
+          >
             {data.title}
           </h2>
         )}

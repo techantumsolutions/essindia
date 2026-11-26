@@ -44,8 +44,11 @@ const BLOG_DETAIL_TABS: Record<string, string[]> = {
     'gradientVia',
     'gradientTo',
     'heroTitle',
+    'heroTitleColor',
     'date',
-    'readTime'
+    'dateColor',
+    'readTime',
+    'readTimeColor'
   ],
   author: [
     'authorCardAvatar',
@@ -437,6 +440,7 @@ const DEFAULT_AOM_HERO_CONTENT: Record<string, any> = {
 
 const DEFAULT_AOM_SOLUTIONS_CONTENT: Record<string, any> = {
   title: 'Enterprise Mobility Solutions',
+  titleColor: '#0a1128',
   description: 'Modern businesses rely on Enterprise Mobility Solutions to empower teams with real-time access, seamless collaboration, and efficient business operations from anywhere. At ESS Mobile Apps, we build intelligent, workflow-driven mobile applications using modern PWA technology, delivering seamless experiences across iOS, Android, and Windows platforms.',
   image: '/App- App over view (mobile app)/image 78.png',
   items: [
@@ -455,6 +459,7 @@ const DEFAULT_AOM_SOLUTIONS_CONTENT: Record<string, any> = {
 
 const DEFAULT_AOM_WORKSPACE_CONTENT: Record<string, any> = {
   title: 'Explore every mobile business application from one intelligent workspace.',
+  titleColor: '#0a1128',
   categories: [
     {
       name: 'SALES OPERATIONS',
@@ -979,18 +984,21 @@ const DEFAULT_ROI_FORMULA_CONTENT: Record<string, any> = {
 
 const DEFAULT_ROI_USAGE_CONTENT: Record<string, any> = {
   usageTitle: 'How and when to use ROI',
+  usageTitleColor: '#2b2a6c',
   usageParagraphs: [
     'ROI is a valuable decision-making tool. Use it to evaluate the potential profitability of different investment decisions, such as a new product line, marketing campaign or equipment upgrade. Calculate ROI before making significant financial commitments to compare options and forecast which will yield the highest rate of return. Additionally, you can track ROI after an investment to measure its ongoing performance and success in terms of capital gains.',
     'Improving customer experiences: Salesforce provides businesses with tools to improve customer experiences, such as customer service, support, and loyalty programs. These tools can help businesses build relationships with customers and increase customer satisfaction.'
   ],
   usageImage: '/BI-ROI caluculator/Frame 297.png',
   limitationsTitle: 'Limitations of ROI',
+  limitationsTitleColor: '#2b2a6c',
   limitationsDescription: 'ROI is a very useful tool for decision-making, but it has some limitations that are important to consider:',
   limitations: [
     { text: 'Benefit estimates are based on future projections. These projections are uncertain, meaning that ROI cannot predict with certainty the future performance of an investment.' },
     { text: 'ROI does not take risk into account, nor does it consider the possibility that an investment may lose money.' }
   ],
   faqTitle: 'ROI FAQ\'s',
+  faqTitleColor: '#2b2a6c',
   faqs: [
     {
       question: 'ROI FAQ\'s text block',
@@ -1781,6 +1789,7 @@ const DEFAULT_ORACLE_APEX_HERO_CONTENT: Record<string, any> = {
 
 const DEFAULT_ORACLE_APEX_INTRO_CONTENT: Record<string, any> = {
   title: 'Strategic Modernization for Enterprise Critical Systems',
+  titleColor: '#2D1A70',
   paragraphs: [
     'Many enterprises across France, Europe, the United States, and India continue to run business-critical operations on legacy Oracle Forms environments. While stable, these systems limit scalability, integration capability, user experience, and cloud readiness.',
     '<strong>Modernization today requires more than code conversion.</strong>',
@@ -1792,6 +1801,7 @@ const DEFAULT_ORACLE_APEX_INTRO_CONTENT: Record<string, any> = {
 
 const DEFAULT_ORACLE_APEX_WHY_MIGRATE_CONTENT: Record<string, any> = {
   title: 'WHY ENTERPRISES ARE MIGRATING ORACLE FORMS TO ORACLE APEX',
+  titleColor: '#27256B',
   description: 'The objective is not just platform replacement — it is operational optimization.',
   tagText1: 'Modern',
   tagText2: 'Secure',
@@ -1918,6 +1928,7 @@ const DEFAULT_ERP_FEATURES_CONTENT: Record<string, any> = {
 
 const DEFAULT_ORACLE_APEX_APPROACH_CONTENT: Record<string, any> = {
   title: 'COMPREHENSIVE ORACLE FORMS MIGRATION ASSESSMENT',
+  titleColor: '#000000',
   tag: 'OUR STRATEGIC MIGRATION APPROACH',
   description: 'Unlike tool-only migration models, our approach combines technical precision with business transformation.',
   tabs: [
@@ -3278,6 +3289,7 @@ export function SectionEditorCard({
         'title',
         'primaryTitleColor',
         'secondaryTitleColor',
+        'highlightedWordIndices',
         'description',
         'descriptionTextColor',
         'cardBgColor',
@@ -3315,7 +3327,13 @@ export function SectionEditorCard({
       const prefix = ftKey.replace(/FormType$/, '');
       let pdfKey = `${prefix}PdfUrl`;
       if (!prefix || prefix === 'cta' || prefix === 'button') {
-        if (Object.keys(mergedContent).includes('pdfUrl') || !Object.keys(mergedContent).includes(pdfKey)) {
+        const aliasVal = mergedContent[pdfKey];
+        const pdfUrlVal = mergedContent['pdfUrl'];
+        const hasAliasValue = typeof aliasVal === 'string' && aliasVal.trim() !== '';
+        const hasPdfUrlValue = typeof pdfUrlVal === 'string' && pdfUrlVal.trim() !== '';
+        if (hasAliasValue && !hasPdfUrlValue) {
+          // Keep the populated alias key (e.g. buttonPdfUrl / ctaPdfUrl) visible so it can be edited/cleared
+        } else if (Object.keys(mergedContent).includes('pdfUrl') || !Object.keys(mergedContent).includes(pdfKey)) {
           pdfKey = 'pdfUrl';
         }
       }
@@ -3620,7 +3638,16 @@ export function SectionEditorCard({
                         keyPath={key}
                         fieldKey={key}
                         value={mergedContent[key] as JsonValue}
-                        onChange={(kp, val) => onContentChange(section.id, kp, val)}
+                        onChange={(kp, val) => {
+                  onContentChange(section.id, kp, val);
+                  if (val === '' && (kp === 'pdfUrl' || kp === 'buttonPdfUrl' || kp === 'ctaPdfUrl')) {
+                    for (const aliasKey of ['pdfUrl', 'buttonPdfUrl', 'ctaPdfUrl']) {
+                      if (aliasKey !== kp && typeof mergedContent[aliasKey] === 'string' && mergedContent[aliasKey] !== '') {
+                        onContentChange(section.id, aliasKey, '');
+                      }
+                    }
+                  }
+                }}
                         sectionType={section.type}
                         colorDefaults={colorDefaults}
                       />
@@ -3636,7 +3663,16 @@ export function SectionEditorCard({
                 keyPath={key}
                 fieldKey={key}
                 value={mergedContent[key] as JsonValue}
-                onChange={(kp, val) => onContentChange(section.id, kp, val)}
+                onChange={(kp, val) => {
+                  onContentChange(section.id, kp, val);
+                  if (val === '' && (kp === 'pdfUrl' || kp === 'buttonPdfUrl' || kp === 'ctaPdfUrl')) {
+                    for (const aliasKey of ['pdfUrl', 'buttonPdfUrl', 'ctaPdfUrl']) {
+                      if (aliasKey !== kp && typeof mergedContent[aliasKey] === 'string' && mergedContent[aliasKey] !== '') {
+                        onContentChange(section.id, aliasKey, '');
+                      }
+                    }
+                  }
+                }}
                 sectionType={section.type}
                 allSectionValues={mergedContent as Record<string, JsonValue>}
                 colorDefaults={colorDefaults}

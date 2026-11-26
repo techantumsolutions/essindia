@@ -163,7 +163,7 @@ export function TestimonialsSection({ content }: TestimonialsSectionProps) {
             initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.1 }}
-            className="text-4xl md:text-6xl font-black font-extralight tracking-tight leading-tight mb-4"
+            className="text-4xl md:text-5xl font-black font-extralight tracking-tight leading-tight mb-4"
             style={{ color: headingColor }}
           >
             {heading}
@@ -172,7 +172,7 @@ export function TestimonialsSection({ content }: TestimonialsSectionProps) {
             initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.2 }}
-            className="text-sm max-w-2xl font-light leading-relaxed"
+            className="text-[16px] max-w-2xl font-light leading-relaxed"
             style={{ color: subheadingColor }}
           >
             <FormattedText content={subheading} />

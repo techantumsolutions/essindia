@@ -45,6 +45,7 @@ interface InsightItem {
 
 interface BiInsightsContent {
   title?: string;
+  titleColor?: string;
   items?: InsightItem[];
   rightImage?: string;
 }
@@ -91,6 +92,7 @@ export function BiInsights({ content }: { content?: BiInsightsContent }) {
               viewport={{ once: true }}
               transition={{ duration: 0.5 }}
               className="text-3xl sm:text-4xl font-extrabold text-[#301c5c] tracking-tight leading-tight"
+              style={content?.titleColor ? { color: content.titleColor } : undefined}
             >
               {title}
             </motion.h2>

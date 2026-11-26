@@ -549,7 +549,7 @@ export default function CategoriesModule() {
                   value={form.pageId}
                   onValueChange={(val) => setForm({ ...form, pageId: val || '' })}
                 >
-                  <SelectTrigger className="admin-input flex items-center justify-between h-10 border-gray-200 focus:ring-2 focus:ring-[#5C2B6A] focus:border-transparent text-slate-700">
+                  <SelectTrigger className="admin-input w-full min-w-0 overflow-hidden flex items-center justify-between h-10 border-gray-200 focus:ring-2 focus:ring-[#5C2B6A] focus:border-transparent text-slate-700">
                     {form.pageId ? (
                       (() => {
                         const selectedPage = registryPages.find((p) => p.id === form.pageId);
@@ -566,8 +566,16 @@ export default function CategoriesModule() {
                       <SelectValue placeholder="No Page (Direct Category Only)" />
                     )}
                   </SelectTrigger>
-                  <SelectContent className="bg-white border border-slate-100 rounded-2xl shadow-xl p-2 z-[999] max-h-60 overflow-y-auto w-[var(--radix-select-trigger-width)]">
-                    <SelectItem value="">No Page (Direct Category Only)</SelectItem>
+                  <SelectContent
+                    alignItemWithTrigger={false}
+                    side="top"
+                    align="center"
+                    sideOffset={6}
+                    className="bg-white border border-slate-100 rounded-2xl shadow-xl p-2 z-[999] max-h-96 overflow-y-auto overflow-x-hidden w-[min(1000px,calc(100vw-3rem))] max-w-[calc(100vw-3rem)]"
+                  >
+                    <SelectItem value="" className="w-full min-w-0 [&>div]:min-w-0 [&>div]:shrink [&>div]:whitespace-normal">
+                      No Page (Direct Category Only)
+                    </SelectItem>
                     {registryPages.filter(p => p.status === 'published').map((page) => {
                       const isAssigned = !!(
                         page.navigationLabel ||
@@ -577,9 +585,13 @@ export default function CategoriesModule() {
                       );
                       const pageVal = page.id || '';
                       return (
-                        <SelectItem key={pageVal} value={pageVal}>
-                          <div className="flex items-center justify-between w-full gap-4">
-                            <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2 min-w-0 overflow-hidden flex-1">
+                        <SelectItem
+                          key={pageVal}
+                          value={pageVal}
+                          className="w-full min-w-0 max-w-full overflow-hidden [&>div]:min-w-0 [&>div]:w-full [&>div]:shrink [&>div]:whitespace-normal"
+                        >
+                          <div className="flex items-center justify-between w-full gap-2 min-w-0">
+                            <div className="flex flex-col sm:flex-row sm:items-center gap-0.5 sm:gap-1.5 min-w-0 overflow-hidden flex-1">
                               <span className="font-bold text-slate-800 truncate">{page.title}</span>
                               <span className="text-slate-400 text-xs font-mono truncate">({page.routePath})</span>
                             </div>

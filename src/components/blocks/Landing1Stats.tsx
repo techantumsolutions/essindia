@@ -12,6 +12,7 @@ export interface StatItem {
 export interface Landing1StatsContent {
   badge?: string;
   title?: string;
+  titleColor?: string;
   stats?: StatItem[];
 }
 
@@ -52,7 +53,10 @@ export function Landing1Stats({ content }: { content?: Landing1StatsContent }) {
 
           {/* Title */}
           {data.title && (
-            <h2 className="text-2xl md:text-[40px] font-extrabold text-white tracking-tight leading-tight max-w-3xl mx-auto mb-14">
+            <h2
+              className="text-2xl md:text-[40px] font-extrabold text-white tracking-tight leading-tight max-w-3xl mx-auto mb-14"
+              style={data.titleColor ? { color: data.titleColor } : undefined}
+            >
               {data.title}
             </h2>
           )}

@@ -14,6 +14,7 @@ export interface CapabilityTabItem {
 export interface Landing2CapabilitiesContent {
   badge?: string;
   title?: string;
+  titleColor?: string;
   tabs?: CapabilityTabItem[];
   ctaText?: string;
   ctaUrl?: string;
@@ -68,7 +69,7 @@ export function Landing2Capabilities({ content }: { content?: Landing2Capabiliti
   const { handleClick, modalNode } = useCtaAction(
     data.ctaUrl || '/contact-us',
     ctaFormType,
-    data.ctaPdfUrl
+    data.ctaPdfUrl || (data as any).pdfUrl
   );
 
   return (
@@ -83,7 +84,10 @@ export function Landing2Capabilities({ content }: { content?: Landing2Capabiliti
 
         {/* Section Big Title */}
         {data.title && (
-          <h2 className="text-slate-900 text-3xl md:text-5xl font-extrabold tracking-tight leading-[1.15] mb-10">
+          <h2
+            className="text-slate-900 text-3xl md:text-5xl font-extrabold tracking-tight leading-[1.15] mb-10"
+            style={data.titleColor ? { color: data.titleColor } : undefined}
+          >
             {data.title}
           </h2>
         )}

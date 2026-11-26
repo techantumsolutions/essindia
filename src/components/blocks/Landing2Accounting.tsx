@@ -8,6 +8,7 @@ import { useCtaAction, type CtaFormType } from '@/hooks/useCtaAction';
 export interface Landing2AccountingContent {
   badge?: string;
   title?: string;
+  titleColor?: string;
   description?: string;
   image?: string;
   ctaText?: string;
@@ -32,7 +33,7 @@ export function Landing2Accounting({ content }: { content?: Landing2AccountingCo
   const { handleClick, modalNode } = useCtaAction(
     data.ctaUrl || '/contact-us',
     ctaFormType,
-    data.ctaPdfUrl
+    data.ctaPdfUrl || (data as any).pdfUrl
   );
 
   return (
@@ -50,7 +51,10 @@ export function Landing2Accounting({ content }: { content?: Landing2AccountingCo
 
             {/* Feature Big Title */}
             {data.title && (
-              <h3 className="text-slate-900 text-3xl md:text-5xl font-bold tracking-tight leading-[1.15] whitespace-pre-line">
+              <h3
+                className="text-slate-900 text-3xl md:text-5xl font-bold tracking-tight leading-[1.15] whitespace-pre-line"
+                style={data.titleColor ? { color: data.titleColor } : undefined}
+              >
                 {data.title}
               </h3>
             )}

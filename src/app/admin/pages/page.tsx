@@ -43,7 +43,11 @@ function PagesModuleContent() {
 
   React.useEffect(() => {
     if (searchParams.get('createPage') === 'true') {
-      router.push('/admin/pages/new');
+      const templateId = searchParams.get('templateId');
+      const target = templateId
+        ? `/admin/pages/new?templateId=${encodeURIComponent(templateId)}`
+        : '/admin/pages/new';
+      router.push(target);
     }
   }, [searchParams, router]);
   const fetchData = React.useCallback(async (signal?: AbortSignal) => {

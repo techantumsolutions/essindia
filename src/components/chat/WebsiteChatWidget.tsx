@@ -240,32 +240,25 @@ export function WebsiteChatWidget() {
   // Submit name, email & mobile lead details
   const handleSubmitLead = async (e: React.FormEvent) => {
     e.preventDefault();
-    if ((!nameInput.trim() && !emailInput.trim() && !phoneInput.trim()) || !conversationId || isSubmittingLead) return;
+    if (!conversationId || isSubmittingLead) return;
 
-    if (nameInput.trim()) {
-      const nameCheck = validateName(nameInput, false);
-      if (!nameCheck.isValid) {
-        window.alert(nameCheck.message);
-        return;
-      }
+    const nameCheck = validateName(nameInput, true);
+    if (!nameCheck.isValid) {
+      window.alert(nameCheck.message);
+      return;
     }
-    if (emailInput.trim()) {
-      const emailCheck = validateEmail(emailInput, false);
-      if (!emailCheck.isValid) {
-        window.alert(emailCheck.message);
-        return;
-      }
+    const emailCheck = validateEmail(emailInput, true);
+    if (!emailCheck.isValid) {
+      window.alert(emailCheck.message);
+      return;
     }
 
-    let e164Phone: string | undefined;
-    if (phoneInput.trim()) {
-      const validation = validateAndFormatPhone(phoneInput, phoneCountry, false);
-      if (!validation.isValid) {
-        window.alert(validation.message);
-        return;
-      }
-      e164Phone = validation.e164 || undefined;
+    const validation = validateAndFormatPhone(phoneInput, phoneCountry, true);
+    if (!validation.isValid) {
+      window.alert(validation.message);
+      return;
     }
+    const e164Phone = validation.e164;
 
     setIsSubmittingLead(true);
     try {
@@ -399,6 +392,7 @@ export function WebsiteChatWidget() {
                     </p>
                     <input
                       type="text"
+                      required
                       placeholder="Your Full Name"
                       value={nameInput}
                       onChange={(e) => setNameInput(e.target.value)}
@@ -406,6 +400,7 @@ export function WebsiteChatWidget() {
                     />
                     <input
                       type="email"
+                      required
                       placeholder="Your Email address"
                       value={emailInput}
                       onChange={(e) => setEmailInput(e.target.value)}
@@ -413,6 +408,7 @@ export function WebsiteChatWidget() {
                     />
                     <PhoneField
                       variant="attached"
+                      required
                       value={phoneInput}
                       onChange={setPhoneInput}
                       countryCode={phoneCountry}

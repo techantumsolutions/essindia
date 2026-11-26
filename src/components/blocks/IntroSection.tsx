@@ -9,6 +9,7 @@ import { useCtaAction, type CtaFormType } from '@/hooks/useCtaAction';
 
 interface IntroContent {
   heading?: string;
+  headingColor?: string;
   subheading?: string;
   buttonText?: string;
   buttonBgColor?: string;
@@ -51,6 +52,7 @@ export function IntroSection({ content }: IntroSectionProps) {
           as="h2"
           text={heading}
           className="text-3xl md:text-4xl lg:text-[42px] leading-[1.25] font-medium text-slate-900 tracking-tight justify-center"
+          style={content?.headingColor ? { color: content.headingColor } : undefined}
         />
         
         <MotionSection variant="fadeUp" delay={0.4}>

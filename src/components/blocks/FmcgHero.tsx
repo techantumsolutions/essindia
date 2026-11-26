@@ -62,7 +62,7 @@ export function FmcgHero({ content }: { content?: FmcgHeroContent }) {
   const buttonHoverTextColor = content?.buttonHoverTextColor;
   const buttonUrl = content?.buttonUrl || '#';
   const buttonFormType = (content?.buttonFormType || '') as CtaFormType;
-  const { handleClick: handleBtnClick, modalNode: modalNode1 } = useCtaAction(buttonUrl, buttonFormType);
+  const { handleClick: handleBtnClick, modalNode: modalNode1 } = useCtaAction(buttonUrl, buttonFormType, (content as any)?.buttonPdfUrl || (content as any)?.pdfUrl);
 
   const button2Text = content?.button2Text;
   const button2Url = content?.button2Url || '#';
@@ -72,7 +72,7 @@ export function FmcgHero({ content }: { content?: FmcgHeroContent }) {
   const button2BorderColor = content?.button2BorderColor || '#ffffff';
   const button2TextColor = content?.button2TextColor || '#2b2a6c';
   const button2HoverTextColor = content?.button2HoverTextColor;
-  const { handleClick: handleBtn2Click, modalNode: modalNode2 } = useCtaAction(button2Url, button2FormType);
+  const { handleClick: handleBtn2Click, modalNode: modalNode2 } = useCtaAction(button2Url, button2FormType, (content as any)?.button2PdfUrl);
 
   const rightImage = content?.image || '/BI-industy solution-FMGC/2b58cf43-2428-4667-ac1c-680abeb784a1 1.png';
 

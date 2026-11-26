@@ -10,6 +10,7 @@ interface OverviewCard {
 
 interface HospitalOverviewContent {
   heading?: string;
+  headingColor?: string;
   description?: string;
   cards?: OverviewCard[];
 }
@@ -50,6 +51,7 @@ export function HospitalOverview({ content }: HospitalOverviewProps) {
             content={heading}
             as="h2"
             className="text-3xl md:text-4xl font-bold text-[#2a2d7c] mb-6 text-center"
+            style={content?.headingColor ? { color: content.headingColor } : undefined}
           />
           <FormattedText
             content={description}

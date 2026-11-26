@@ -19,6 +19,7 @@ interface AboutUsWhyEssContent {
   secondaryTitleColor?: string;
   titlePrimaryColor?: string;
   titleSecondaryColor?: string;
+  highlightedWordIndices?: number[];
   description?: string;
   items?: TrustCard[];
   bgColor?: string;
@@ -79,6 +80,9 @@ export function AboutUsWhyEss({ content }: AboutUsWhyEssProps) {
   const title = content?.title || 'Why Businesses Trust ESS';
   const primaryTitleColor = content?.primaryTitleColor || content?.titlePrimaryColor || '#FFFFFF';
   const secondaryTitleColor = content?.secondaryTitleColor || content?.titleSecondaryColor || '#C084FC';
+  const highlightedWordIndices = Array.isArray(content?.highlightedWordIndices)
+    ? content.highlightedWordIndices
+    : undefined;
   const description =
     content?.description ||
     'Trusted by organizations worldwide for practical expertise, enterprise technology, and a business-first approach to digital transformation.';
@@ -131,7 +135,7 @@ export function AboutUsWhyEss({ content }: AboutUsWhyEssProps) {
               transition={{ duration: 0.4 }}
               className="text-3xl sm:text-4xl md:text-[44px] font-extrabold tracking-tight leading-tight"
             >
-              {renderFormattedTitle(title, primaryTitleColor, secondaryTitleColor)}
+              {renderFormattedTitle(title, primaryTitleColor, secondaryTitleColor, highlightedWordIndices)}
             </motion.h2>
           )}
 
@@ -207,7 +211,12 @@ export function AboutUsWhyEss({ content }: AboutUsWhyEssProps) {
   );
 }
 
-function renderFormattedTitle(titleText: string, primaryColor?: string, secondaryColor?: string) {
+function renderFormattedTitle(
+  titleText: string,
+  primaryColor?: string,
+  secondaryColor?: string,
+  highlightedWordIndices?: number[]
+) {
   if (!titleText) return null;
   if (typeof titleText === 'string' && titleText.includes('<') && titleText.includes('>')) {
     return <span dangerouslySetInnerHTML={{ __html: titleText }} />;
@@ -215,6 +224,18 @@ function renderFormattedTitle(titleText: string, primaryColor?: string, secondar
   const pColor = primaryColor || '#FFFFFF';
   const sColor = secondaryColor || '#C084FC';
   const words = titleText.trim().split(/\s+/);
+  if (Array.isArray(highlightedWordIndices)) {
+    return (
+      <>
+        {words.map((word, i) => (
+          <React.Fragment key={i}>
+            {i > 0 && ' '}
+            <span style={{ color: highlightedWordIndices.includes(i) ? sColor : pColor }}>{word}</span>
+          </React.Fragment>
+        ))}
+      </>
+    );
+  }
   if (words.length < 4) {
     return <span style={{ color: pColor }}>{titleText}</span>;
   }

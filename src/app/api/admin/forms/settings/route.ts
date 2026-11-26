@@ -11,6 +11,7 @@ const formTypeSchema = z.object({
 const bodySchema = z.object({
   contact: formTypeSchema.optional(),
   cta: formTypeSchema.optional(),
+  services: z.array(z.string().max(120)).optional(),
 });
 
 export async function GET() {

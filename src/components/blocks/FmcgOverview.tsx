@@ -6,6 +6,7 @@ import { FormattedText } from '@/components/ui/FormattedText';
 
 interface FmcgOverviewContent {
   title?: string;
+  titleColor?: string;
   paragraphs?: string[];
   image?: string;
 }
@@ -27,7 +28,10 @@ export function FmcgOverview({ content }: { content?: FmcgOverviewContent }) {
 
           {/* Left Content Column */}
           <div className="flex-1 space-y-6 text-left">
-            <h2 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-[#2a2b6a] leading-tight font-sans">
+            <h2
+              className="text-3xl sm:text-4xl font-extrabold tracking-tight text-[#2a2b6a] leading-tight font-sans"
+              style={content?.titleColor ? { color: content.titleColor } : undefined}
+            >
               {title}
             </h2>
 

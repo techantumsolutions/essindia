@@ -8,6 +8,7 @@ import { Check } from 'lucide-react';
 interface OracleWhyUpgradeContent {
   image?: string;
   title?: string;
+  titleColor?: string;
   description?: string;
   points?: string[];
 }
@@ -57,7 +58,10 @@ export function OracleWhyUpgrade({ content }: { content?: OracleWhyUpgradeConten
               transition={{ duration: 0.5 }}
               className="space-y-3"
             >
-              <h2 className="text-3xl sm:text-4xl font-extrabold text-[#2e2a72] leading-tight font-sans">
+              <h2
+                className="text-3xl sm:text-4xl font-extrabold text-[#2e2a72] leading-tight font-sans"
+                style={content?.titleColor ? { color: content.titleColor } : undefined}
+              >
                 {title}
               </h2>
               <p className="text-sm sm:text-base text-slate-500 font-light">

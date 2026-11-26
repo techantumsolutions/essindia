@@ -159,7 +159,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   }).filter((group) => group.items.length > 0);
 
   return (
-    <div className="admin-shell min-h-screen bg-[#F6F7F9] flex overflow-hidden font-sans">
+    <div className="admin-shell min-h-screen bg-[#F6F7F9] flex overflow-x-clip font-sans">
       {/* Sidebar */}
       <motion.aside
         initial={false}

@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { pages, pageSections } from '@/lib/db/schema';
-import { eq } from 'drizzle-orm';
+import { desc, eq } from 'drizzle-orm';
 import { DEFAULT_TOPICS, DEFAULT_INDUSTRIES } from '@/lib/blogs-data';
 
 export async function GET() {
@@ -24,9 +24,10 @@ export async function GET() {
       }
     });
 
-    // 2. Fetch blog pages containing blog-detail-block
+    // 2. Fetch blog pages containing blog-detail-block (newest first)
     const blogPages = await db.query.pages.findMany({
       where: eq(pages.status, 'published'),
+      orderBy: [desc(pages.createdAt)],
       with: {
         sections: {
           where: eq(pageSections.type, 'blog-detail-block'),

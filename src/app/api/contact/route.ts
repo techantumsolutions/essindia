@@ -10,6 +10,8 @@ import {
   validateEmail,
   validateMessage,
   validateName,
+  validateRequiredText,
+  validateService,
 } from '@/lib/form-validation';
 import { consumeFormRateLimit, getRequestIp } from '@/lib/form-rate-limit';
 
@@ -20,6 +22,7 @@ const contactSchema = z.object({
   countryCode: z.string().optional(),
   company: z.string().optional(),
   country: z.string().optional(),
+  service: z.string().optional(),
   message: z.string().optional(),
   formType: z.string().optional(),
   pageName: z.string().optional(),
@@ -40,10 +43,12 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: FORM_SUBMIT_ERROR }, { status: 400 });
     }
 
-    const { name, email, phone, countryCode, company, country, message, formType, pageName, pdfUrl } = parsed.data;
+    const { name, email, phone, countryCode, company, country, service, message, formType, pageName, pdfUrl } = parsed.data;
     const type = formType || 'contact';
-    const phoneRequired = type !== 'landing-1';
-    const companyRequired = type === 'landing-2';
+    const phoneRequired = true;
+    const companyRequired = type === 'landing-1' || type === 'landing-2' || type === 'contact';
+    const serviceRequired = type !== 'career-cta';
+    const messageRequired = type === 'contact';
     const skipMessageContentRules = ['landing-1', 'landing-2', 'blog-lead', 'cta', 'career-cta'].includes(type);
 
     const nameCheck = validateName(name);
@@ -71,10 +76,44 @@ export async function POST(req: NextRequest) {
       }
     }
 
-    if (!skipMessageContentRules && message && message.trim()) {
-      const messageCheck = validateMessage(message, false);
+    if (serviceRequired || (service && service.trim())) {
+      const serviceCheck = validateService(service || '', serviceRequired);
+      if (!serviceCheck.isValid) {
+        return NextResponse.json({ error: serviceCheck.message }, { status: 400 });
+      }
+    }
+
+    if (messageRequired || (!skipMessageContentRules && message && message.trim())) {
+      const messageCheck = validateMessage(message || '', messageRequired);
       if (!messageCheck.isValid) {
         return NextResponse.json({ error: messageCheck.message }, { status: 400 });
+      }
+    }
+
+    if (type === 'landing-1' || type === 'landing-2') {
+      let extra: Record<string, string> = {};
+      try {
+        extra = message ? JSON.parse(message) : {};
+      } catch {
+        extra = {};
+      }
+      const industryCheck = validateRequiredText(extra.industry || '', 'Please enter your industry.');
+      if (!industryCheck.isValid) {
+        return NextResponse.json({ error: industryCheck.message }, { status: 400 });
+      }
+      if (type === 'landing-1') {
+        const employeesCheck = validateRequiredText(extra.employees || '', 'Please enter the number of employees.');
+        if (!employeesCheck.isValid) {
+          return NextResponse.json({ error: employeesCheck.message }, { status: 400 });
+        }
+        const currentErpCheck = validateRequiredText(extra.currentErp || '', 'Please enter your current ERP.');
+        if (!currentErpCheck.isValid) {
+          return NextResponse.json({ error: currentErpCheck.message }, { status: 400 });
+        }
+        const requirementCheck = validateRequiredText(extra.requirement || '', 'Please enter your business requirement.');
+        if (!requirementCheck.isValid) {
+          return NextResponse.json({ error: requirementCheck.message }, { status: 400 });
+        }
       }
     }
 
@@ -84,6 +123,7 @@ export async function POST(req: NextRequest) {
       phone: storedPhone,
       company,
       country,
+      service: service?.trim() || null,
       message,
       formType: type,
       pageName,

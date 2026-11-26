@@ -5,6 +5,7 @@ import React from 'react';
 export interface Landing1IntegrationContent {
   badge?: string;
   title?: string;
+  titleColor?: string;
   description?: string;
   image?: string;
 }
@@ -32,7 +33,10 @@ export function Landing1Integration({ content }: { content?: Landing1Integration
             </span>
           )}
           {data.title && (
-            <h2 className="text-3xl md:text-[40px] font-extrabold tracking-tight text-slate-900 leading-tight">
+            <h2
+              className="text-3xl md:text-[40px] font-extrabold tracking-tight text-slate-900 leading-tight"
+              style={data.titleColor ? { color: data.titleColor } : undefined}
+            >
               {data.title}
             </h2>
           )}

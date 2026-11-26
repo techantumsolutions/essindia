@@ -10,6 +10,7 @@ interface Brand {
 
 interface TrustedBrandsContent {
   title?: string;
+  titleColor?: string;
   brands?: (Brand | string)[];
 }
 
@@ -37,7 +38,10 @@ export function TrustedBrands({ content }: TrustedBrandsProps) {
     <section className="py-10 bg-white relative overflow-hidden border-b border-gray-200">
       <div className="container mx-auto px-4 md:px-8 max-w-7xl">
         <MotionSection variant="fadeUp">
-          <h3 className="text-center text-lg md:text-xl font-bold text-slate-400 mb-10 tracking-tight uppercase">
+          <h3
+            className="text-center text-lg md:text-xl font-bold text-slate-400 mb-10 tracking-tight uppercase"
+            style={content?.titleColor ? { color: content.titleColor } : undefined}
+          >
             {title}
           </h3>
         </MotionSection>

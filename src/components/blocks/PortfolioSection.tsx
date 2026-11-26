@@ -21,6 +21,7 @@ interface Project {
 
 interface PortfolioContent {
   heading?: string;
+  headingColor?: string;
   subheading?: string;
   projects?: Project[];
   buttonText?: string;
@@ -81,9 +82,10 @@ export function PortfolioSection({ content }: PortfolioSectionProps) {
   const { handleClick, modalNode } = useCtaAction(btnUrl, btnFormType, pdfUrl);
 
   const scrollRef = useRef<HTMLDivElement>(null);
-  const pausedRef = useRef(false);
   const showArrows = projects.length > 3;
-  const slides = showArrows ? [...projects, ...projects] : projects;
+  const slides = projects;
+  const [canScrollLeft, setCanScrollLeft] = React.useState(false);
+  const [canScrollRight, setCanScrollRight] = React.useState(false);
 
   const getSlideStep = useCallback(() => {
     const el = scrollRef.current;
@@ -93,64 +95,54 @@ export function PortfolioSection({ content }: PortfolioSectionProps) {
     return cards[0]?.offsetWidth || el.clientWidth;
   }, []);
 
-  const normalizeLoop = useCallback(() => {
+  const checkScroll = useCallback(() => {
     const el = scrollRef.current;
-    if (!el || !showArrows || projects.length === 0) return;
-    const cycle = getSlideStep() * projects.length;
-    if (cycle <= 0 || el.scrollLeft < cycle - 1) return;
-    const previous = el.style.scrollBehavior;
-    el.style.scrollBehavior = 'auto';
-    el.scrollLeft = el.scrollLeft - cycle;
-    el.style.scrollBehavior = previous;
-  }, [getSlideStep, projects.length, showArrows]);
+    if (!el || !showArrows) {
+      setCanScrollLeft(false);
+      setCanScrollRight(false);
+      return;
+    }
+    const maxScroll = el.scrollWidth - el.clientWidth;
+    setCanScrollLeft(el.scrollLeft > 8);
+    setCanScrollRight(maxScroll > 8 && el.scrollLeft < maxScroll - 8);
+  }, [showArrows]);
 
   const scroll = useCallback((direction: 'left' | 'right') => {
     const el = scrollRef.current;
     if (!el) return;
     const step = getSlideStep();
-    if (el.scrollWidth - el.clientWidth <= 8 || step <= 0) return;
-
-    if (direction === 'left' && showArrows && el.scrollLeft <= 8) {
-      const cycle = step * projects.length;
-      const previous = el.style.scrollBehavior;
-      el.style.scrollBehavior = 'auto';
-      el.scrollLeft = el.scrollLeft + cycle;
-      el.style.scrollBehavior = previous;
-    }
+    const maxScroll = el.scrollWidth - el.clientWidth;
+    if (maxScroll <= 8 || step <= 0) return;
+    if (direction === 'left' && el.scrollLeft <= 8) return;
+    if (direction === 'right' && el.scrollLeft >= maxScroll - 8) return;
 
     el.scrollBy({ left: direction === 'right' ? step : -step, behavior: 'smooth' });
-  }, [getSlideStep, projects.length, showArrows]);
+  }, [getSlideStep]);
 
   useEffect(() => {
     const el = scrollRef.current;
-    if (!el || !showArrows) return;
+    if (!el || !showArrows) {
+      setCanScrollLeft(false);
+      setCanScrollRight(false);
+      return;
+    }
 
-    let settleTimer = 0;
-    const onScroll = () => {
-      window.clearTimeout(settleTimer);
-      settleTimer = window.setTimeout(() => normalizeLoop(), 80);
-    };
+    checkScroll();
+    const frame = window.requestAnimationFrame(checkScroll);
+    const timer = window.setTimeout(checkScroll, 150);
+    const ro = typeof ResizeObserver !== 'undefined' ? new ResizeObserver(checkScroll) : null;
+    ro?.observe(el);
 
-    el.addEventListener('scroll', onScroll, { passive: true });
+    el.addEventListener('scroll', checkScroll, { passive: true });
+    window.addEventListener('resize', checkScroll);
     return () => {
-      window.clearTimeout(settleTimer);
-      el.removeEventListener('scroll', onScroll);
+      window.cancelAnimationFrame(frame);
+      window.clearTimeout(timer);
+      ro?.disconnect();
+      el.removeEventListener('scroll', checkScroll);
+      window.removeEventListener('resize', checkScroll);
     };
-  }, [normalizeLoop, showArrows, slides.length]);
-
-  useEffect(() => {
-    const el = scrollRef.current;
-    if (!el || !showArrows) return;
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-
-    const id = window.setInterval(() => {
-      if (pausedRef.current) return;
-      if (el.scrollWidth - el.clientWidth <= 8) return;
-      el.scrollBy({ left: getSlideStep(), behavior: 'smooth' });
-    }, 4500);
-
-    return () => window.clearInterval(id);
-  }, [getSlideStep, showArrows, projects.length]);
+  }, [checkScroll, showArrows, slides.length]);
 
   return (
     <section className="py-10 lg:py-12 bg-[#F2F6F9] overflow-hidden relative">
@@ -162,6 +154,7 @@ export function PortfolioSection({ content }: PortfolioSectionProps) {
             as="h2"
             text={heading}
             className="text-4xl md:text-5xl font-bold text-slate-900 mb-6 tracking-tight justify-center"
+            style={content?.headingColor ? { color: content.headingColor } : undefined}
           />
           <MotionSection variant="fadeUp" delay={0.4}>
             <p className="text-lg md:text-xl text-slate-500 leading-relaxed font-light">
@@ -176,15 +169,21 @@ export function PortfolioSection({ content }: PortfolioSectionProps) {
             "relative @container flex items-center justify-center group/carousel w-full",
             showArrows ? "xl:px-24" : ""
           )}
-          onMouseEnter={() => { pausedRef.current = true; }}
-          onMouseLeave={() => { pausedRef.current = false; }}
         >
 
           {/* Left Arrow */}
           {showArrows && (
             <button
+              type="button"
               onClick={() => scroll('left')}
-              className="flex absolute left-2 top-[calc(75cqw+1.625rem)] md:top-1/2 md:-translate-y-1/2 xl:left-4 z-10 w-10 h-10 rounded-full border border-slate-200 bg-white items-center justify-center text-slate-600 hover:bg-[#4B2A63] hover:text-white hover:border-[#4B2A63] transition-all duration-300 shadow-sm cursor-pointer hover:scale-110 active:scale-95"
+              disabled={!canScrollLeft}
+              aria-label="Previous projects"
+              className={cn(
+                "flex absolute left-2 top-[calc(75cqw+1.625rem)] md:top-1/2 md:-translate-y-1/2 xl:left-4 z-10 w-10 h-10 rounded-full border border-slate-200 bg-white items-center justify-center text-slate-600 transition-all duration-300 shadow-sm",
+                canScrollLeft
+                  ? "hover:bg-[#4B2A63] hover:text-white hover:border-[#4B2A63] cursor-pointer hover:scale-110 active:scale-95"
+                  : "opacity-40 cursor-not-allowed"
+              )}
             >
               <ChevronLeft className="w-4 h-4" />
             </button>
@@ -209,7 +208,6 @@ export function PortfolioSection({ content }: PortfolioSectionProps) {
               {slides.map((portfolio, index) => {
                 const targetUrl = portfolio.ctaUrl || (portfolio as any).url || (portfolio as any).link || (portfolio as any).buttonUrl || '';
                 const formType = ((portfolio as any).ctaFormType || (portfolio as any).formType || '') as CtaFormType;
-                const isClone = showArrows && index >= projects.length;
                 return (
                   <ProjectCard
                     key={`${portfolio.title}-${index}`}
@@ -217,7 +215,6 @@ export function PortfolioSection({ content }: PortfolioSectionProps) {
                     showArrows={showArrows}
                     targetUrl={targetUrl}
                     formType={formType}
-                    isClone={isClone}
                   />
                 );
               })}
@@ -227,8 +224,16 @@ export function PortfolioSection({ content }: PortfolioSectionProps) {
           {/* Right Arrow */}
           {showArrows && (
             <button
+              type="button"
               onClick={() => scroll('right')}
-              className="flex absolute right-2 top-[calc(75cqw+1.625rem)] md:top-1/2 md:-translate-y-1/2 xl:right-4 z-10 w-10 h-10 rounded-full border border-slate-200 bg-white items-center justify-center text-slate-600 hover:bg-[#4B2A63] hover:text-white hover:border-[#4B2A63] transition-all duration-300 shadow-sm cursor-pointer hover:scale-110 active:scale-95"
+              disabled={!canScrollRight}
+              aria-label="Next projects"
+              className={cn(
+                "flex absolute right-2 top-[calc(75cqw+1.625rem)] md:top-1/2 md:-translate-y-1/2 xl:right-4 z-10 w-10 h-10 rounded-full border border-slate-200 bg-white items-center justify-center text-slate-600 transition-all duration-300 shadow-sm",
+                canScrollRight
+                  ? "hover:bg-[#4B2A63] hover:text-white hover:border-[#4B2A63] cursor-pointer hover:scale-110 active:scale-95"
+                  : "opacity-40 cursor-not-allowed"
+              )}
             >
               <ChevronRight className="w-4 h-4" />
             </button>

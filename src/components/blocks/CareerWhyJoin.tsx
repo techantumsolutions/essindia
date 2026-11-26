@@ -6,6 +6,7 @@ import { motion } from 'framer-motion';
 export default function CareerWhyJoin({ content }: { content?: any }) {
   const {
     title = 'Why Join ESS?',
+    titleColor,
     tag = 'With offices in 30 global locations and customers\nspread across 35+ countries.',
     mapImage = '/Career-Page/Group 1.png',
     stats = [
@@ -20,7 +21,12 @@ export default function CareerWhyJoin({ content }: { content?: any }) {
     <section className="py-14 px-6 bg-slate-50 relative overflow-hidden">
       <div className="container mx-auto max-w-7xl">
         <div className="text-center mb-12">
-          <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-4">{title}</h2>
+          <h2
+            className="text-3xl md:text-4xl font-bold text-slate-900 mb-4"
+            style={titleColor ? { color: titleColor } : undefined}
+          >
+            {title}
+          </h2>
           <p
             className="text-[#71717A] max-w-2xl mx-auto text-2xl font-light leading-none"
             dangerouslySetInnerHTML={{ __html: tag.replace(/\n/g, '<br />') }}

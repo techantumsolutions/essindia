@@ -65,6 +65,7 @@ export default async function Home() {
 
   const isLandingPage =
     page &&
+    page.pageType !== 'duplicated-landing' &&
     (page.pageType === 'landing' ||
       page.pageType === 'LANDING' ||
       path.startsWith('/landing') ||

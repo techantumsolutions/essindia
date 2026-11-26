@@ -209,14 +209,14 @@ export function BlogListSection({ content }: BlogListSectionProps) {
               gradientFrom={titleGradientFrom}
               gradientTo={titleGradientTo}
               enableAnimation={content?.enableTitleGradientAnimation}
-              className="text-4xl md:text-6xl font-black font-extralight tracking-tight leading-tight justify-center"
+              className="text-4xl md:text-5xl font-black font-extralight tracking-tight leading-tight justify-center"
             />
           ) : (
             <FormattedText
               content={heading}
               as="h1"
               className={cn(
-                'text-4xl md:text-6xl font-black font-extralight tracking-tight leading-tight',
+                'text-4xl md:text-5xl font-black font-extralight tracking-tight leading-tight',
                 !titleColor && 'text-white'
               )}
               style={titleColor ? { color: titleColor } : undefined}
@@ -262,84 +262,84 @@ export function BlogListSection({ content }: BlogListSectionProps) {
 
               {/* Topics Filter */}
               {visibleTopics.length > 0 && (
-              <div className="space-y-3">
-                <button
-                  onClick={() => setTopicsOpen(!topicsOpen)}
-                  className="w-full flex items-center justify-between text-left font-bold text-slate-700 text-sm py-1 hover:text-[#103D38]"
-                >
-                  Topic
-                  {topicsOpen ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
-                </button>
+                <div className="space-y-3">
+                  <button
+                    onClick={() => setTopicsOpen(!topicsOpen)}
+                    className="w-full flex items-center justify-between text-left font-bold text-slate-700 text-sm py-1 hover:text-[#103D38]"
+                  >
+                    Topic
+                    {topicsOpen ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+                  </button>
 
-                <AnimatePresence initial={false}>
-                  {topicsOpen && (
-                    <motion.div
-                      initial={{ opacity: 0, height: 0 }}
-                      animate={{ opacity: 1, height: 'auto' }}
-                      exit={{ opacity: 0, height: 0 }}
-                      className="overflow-hidden pl-1 space-y-2.5 pt-1"
-                    >
-                      {visibleTopics.map(topic => {
-                        const isChecked = selectedTopics.includes(topic);
-                        return (
-                          <label key={topic} className="flex items-center gap-3 text-xs text-slate-600 font-medium cursor-pointer select-none group">
-                            <input
-                              type="checkbox"
-                              checked={isChecked}
-                              onChange={() => toggleTopic(topic)}
-                              className="w-4.5 h-4.5 rounded border-slate-300 text-[#103D38] focus:ring-[#103D38] focus:ring-offset-0 cursor-pointer accent-[#103D38]"
-                            />
-                            <span className={isChecked ? 'text-slate-900 font-bold' : 'group-hover:text-slate-900 transition-colors'}>
-                              {topic}
-                            </span>
-                          </label>
-                        );
-                      })}
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-              </div>
+                  <AnimatePresence initial={false}>
+                    {topicsOpen && (
+                      <motion.div
+                        initial={{ opacity: 0, height: 0 }}
+                        animate={{ opacity: 1, height: 'auto' }}
+                        exit={{ opacity: 0, height: 0 }}
+                        className="overflow-hidden pl-1 space-y-2.5 pt-1"
+                      >
+                        {visibleTopics.map(topic => {
+                          const isChecked = selectedTopics.includes(topic);
+                          return (
+                            <label key={topic} className="flex items-center gap-3 text-xs text-slate-600 font-medium cursor-pointer select-none group">
+                              <input
+                                type="checkbox"
+                                checked={isChecked}
+                                onChange={() => toggleTopic(topic)}
+                                className="w-4.5 h-4.5 rounded border-slate-300 text-[#103D38] focus:ring-[#103D38] focus:ring-offset-0 cursor-pointer accent-[#103D38]"
+                              />
+                              <span className={isChecked ? 'text-slate-900 font-bold' : 'group-hover:text-slate-900 transition-colors'}>
+                                {topic}
+                              </span>
+                            </label>
+                          );
+                        })}
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </div>
               )}
 
               {/* Industries Filter */}
               {visibleIndustries.length > 0 && (
-              <div className="space-y-3 pt-2">
-                <button
-                  onClick={() => setIndustriesOpen(!industriesOpen)}
-                  className="w-full flex items-center justify-between text-left font-bold text-slate-700 text-sm py-1 hover:text-[#103D38]"
-                >
-                  Industries
-                  {industriesOpen ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
-                </button>
+                <div className="space-y-3 pt-2">
+                  <button
+                    onClick={() => setIndustriesOpen(!industriesOpen)}
+                    className="w-full flex items-center justify-between text-left font-bold text-slate-700 text-sm py-1 hover:text-[#103D38]"
+                  >
+                    Industries
+                    {industriesOpen ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+                  </button>
 
-                <AnimatePresence initial={false}>
-                  {industriesOpen && (
-                    <motion.div
-                      initial={{ opacity: 0, height: 0 }}
-                      animate={{ opacity: 1, height: 'auto' }}
-                      exit={{ opacity: 0, height: 0 }}
-                      className="overflow-hidden pl-1 space-y-2.5 pt-1"
-                    >
-                      {visibleIndustries.map(industry => {
-                        const isChecked = selectedIndustries.includes(industry);
-                        return (
-                          <label key={industry} className="flex items-center gap-3 text-xs text-slate-600 font-medium cursor-pointer select-none group">
-                            <input
-                              type="checkbox"
-                              checked={isChecked}
-                              onChange={() => toggleIndustry(industry)}
-                              className="w-4.5 h-4.5 rounded border-slate-300 text-[#103D38] focus:ring-[#103D38] focus:ring-offset-0 cursor-pointer accent-[#103D38]"
-                            />
-                            <span className={isChecked ? 'text-slate-900 font-bold' : 'group-hover:text-slate-900 transition-colors'}>
-                              {industry}
-                            </span>
-                          </label>
-                        );
-                      })}
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-              </div>
+                  <AnimatePresence initial={false}>
+                    {industriesOpen && (
+                      <motion.div
+                        initial={{ opacity: 0, height: 0 }}
+                        animate={{ opacity: 1, height: 'auto' }}
+                        exit={{ opacity: 0, height: 0 }}
+                        className="overflow-hidden pl-1 space-y-2.5 pt-1"
+                      >
+                        {visibleIndustries.map(industry => {
+                          const isChecked = selectedIndustries.includes(industry);
+                          return (
+                            <label key={industry} className="flex items-center gap-3 text-xs text-slate-600 font-medium cursor-pointer select-none group">
+                              <input
+                                type="checkbox"
+                                checked={isChecked}
+                                onChange={() => toggleIndustry(industry)}
+                                className="w-4.5 h-4.5 rounded border-slate-300 text-[#103D38] focus:ring-[#103D38] focus:ring-offset-0 cursor-pointer accent-[#103D38]"
+                              />
+                              <span className={isChecked ? 'text-slate-900 font-bold' : 'group-hover:text-slate-900 transition-colors'}>
+                                {industry}
+                              </span>
+                            </label>
+                          );
+                        })}
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </div>
               )}
 
             </div>

@@ -23,6 +23,7 @@ export async function GET() {
         phone: c.phone || null,
         company: null,
         country: null,
+        service: null,
         message: c.message || 'Chat Inquiry',
         status: 'new',
         formType: 'chat-lead',

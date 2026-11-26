@@ -14,6 +14,7 @@ export interface FeatureItem {
 export interface Landing1FeaturesContent {
   badge?: string;
   title?: string;
+  titleColor?: string;
   description?: string;
   features?: FeatureItem[];
   ctaText?: string;
@@ -88,7 +89,10 @@ export function Landing1Features({ content }: { content?: Landing1FeaturesConten
           )}
 
           {data.title && (
-            <h2 className="text-3xl md:text-5xl font-bold text-white tracking-tight leading-tight">
+            <h2
+              className="text-3xl md:text-5xl font-bold text-white tracking-tight leading-tight"
+              style={data.titleColor ? { color: data.titleColor } : undefined}
+            >
               {data.title}
             </h2>
           )}

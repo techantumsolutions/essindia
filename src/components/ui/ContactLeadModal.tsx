@@ -19,9 +19,11 @@ import {
   validateMessage,
   validateName,
   validatePrivacy,
+  validateService,
 } from '@/lib/form-validation';
 import { completeFormSuccess } from '@/lib/forms/form-success';
 import { PhoneField } from '@/components/ui/PhoneField';
+import { ServiceSelectField } from '@/components/ui/ServiceSelectField';
 
 interface ContactLeadModalProps {
   isOpen: boolean;
@@ -37,6 +39,7 @@ export function ContactLeadModal({ isOpen, onClose, pageName }: ContactLeadModal
     email: '',
     phone: '',
     company: '',
+    service: '',
     message: '',
   });
 
@@ -76,7 +79,7 @@ export function ContactLeadModal({ isOpen, onClose, pageName }: ContactLeadModal
       toast.error(phoneCheck.message);
       return;
     }
-    const companyCheck = validateCompany(formData.company);
+    const companyCheck = validateCompany(formData.company, true);
     if (!companyCheck.isValid) {
       toast.error(companyCheck.message);
       return;
@@ -85,7 +88,12 @@ export function ContactLeadModal({ isOpen, onClose, pageName }: ContactLeadModal
       toast.error(FORM_COUNTRY_ERROR);
       return;
     }
-    const messageCheck = validateMessage(formData.message);
+    const serviceCheck = validateService(formData.service);
+    if (!serviceCheck.isValid) {
+      toast.error(serviceCheck.message);
+      return;
+    }
+    const messageCheck = validateMessage(formData.message, true);
     if (!messageCheck.isValid) {
       toast.error(messageCheck.message);
       return;
@@ -124,6 +132,7 @@ export function ContactLeadModal({ isOpen, onClose, pageName }: ContactLeadModal
         email: '',
         phone: '',
         company: '',
+        service: '',
         message: '',
       });
       setSelectedCountry(DEFAULT_PHONE_COUNTRY);
@@ -171,8 +180,8 @@ export function ContactLeadModal({ isOpen, onClose, pageName }: ContactLeadModal
             />
           </div>
           <div className="space-y-2">
-            <label className="text-sm font-medium text-slate-700">Company Name</label>
-            <Input name="company" value={formData.company} onChange={handleChange} placeholder="Enter Company Name" />
+            <label className="text-sm font-medium text-slate-700">Company Name *</label>
+            <Input required name="company" value={formData.company} onChange={handleChange} placeholder="Enter Company Name" />
           </div>
           <div className="space-y-2">
             <label className="text-sm font-medium text-slate-700">Country *</label>
@@ -223,8 +232,16 @@ export function ContactLeadModal({ isOpen, onClose, pageName }: ContactLeadModal
             </Select>
           </div>
           <div className="space-y-2">
-            <label className="text-sm font-medium text-slate-700">Message</label>
+            <label className="text-sm font-medium text-slate-700">Service *</label>
+            <ServiceSelectField
+              value={formData.service}
+              onChange={(service) => setFormData((prev) => ({ ...prev, service }))}
+            />
+          </div>
+          <div className="space-y-2">
+            <label className="text-sm font-medium text-slate-700">Message *</label>
             <textarea 
+              required
               name="message" 
               value={formData.message} 
               onChange={handleChange} 

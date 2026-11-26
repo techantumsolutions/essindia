@@ -26,6 +26,7 @@ export default function CareerPositions({ content }: { content?: any }) {
 
   const {
     title = 'Open Positions',
+    titleColor,
     subtitle = 'Find your perfect role and help us shape the future of enterprise software.',
     positions: staticPositions = [
       {
@@ -64,7 +65,12 @@ export default function CareerPositions({ content }: { content?: any }) {
     <section className="py-12 px-6 border-t border-b bg-white">
       <div className="container mx-auto max-w-7xl">
         <div className="text-center mb-16">
-          <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-4">{title}</h2>
+          <h2
+            className="text-3xl md:text-4xl font-bold text-slate-900 mb-4"
+            style={titleColor ? { color: titleColor } : undefined}
+          >
+            {title}
+          </h2>
           <p className="max-w-2xl mx-auto text-xl font-medium leading-relaxed text-slate-500">
             {subtitle}
           </p>
