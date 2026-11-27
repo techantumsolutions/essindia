@@ -6,6 +6,7 @@ import { FormattedText } from '@/components/ui/FormattedText';
 
 export default function ManufacturingDemand({ content }: { content?: any }) {
   const title = content?.title || 'Lorem demand, Lorem,<br />ipsum, incididunt ,<br />commodo ,  adipiscing.';
+  const titleColor = typeof content?.titleColor === 'string' ? content.titleColor.replace(/[\u200B-\u200D\uFEFF]/g, '').trim() : '';
   const paragraph1 = content?.paragraph1 || 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.';
   const paragraph2 = content?.paragraph2 || 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.';
 
@@ -19,7 +20,12 @@ export default function ManufacturingDemand({ content }: { content?: any }) {
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
           >
-            <FormattedText content={title} as="h2" className="text-3xl md:text-[40px] font-bold text-[#27256b] leading-[1.3] tracking-tight" />
+            <FormattedText
+              content={title}
+              as="h2"
+              className={`text-3xl md:text-[40px] font-bold leading-[1.3] tracking-tight ${titleColor ? 'mfg-demand-title-colored' : 'text-[#27256b]'}`}
+              style={titleColor ? { color: titleColor } : undefined}
+            />
           </motion.div>
 
           <motion.div

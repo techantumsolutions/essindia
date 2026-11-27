@@ -18,6 +18,7 @@ const defaultCapabilities = [
 export default function ManufacturingEfficiency({ content }: { content?: any }) {
   const sectionTitle = content?.sectionTitle || 'Lorem ipsum';
   const sectionSubtitle = content?.sectionSubtitle || 'Lorem Efficiency dolor sit amet,<br />Consectetur ipsum';
+  const sectionSubtitleColor = typeof content?.sectionSubtitleColor === 'string' ? content.sectionSubtitleColor.replace(/[\u200B-\u200D\uFEFF]/g, '').trim() : '';
   const description = content?.description || 'Lorem ipsum dolor sit amet, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.';
   const image = content?.image || '/Modules-manufacturing/Eifficiency.png';
   const capabilities = content?.metrics || defaultCapabilities;
@@ -40,7 +41,8 @@ export default function ManufacturingEfficiency({ content }: { content?: any }) 
               <FormattedText
                 content={sectionSubtitle}
                 as="h2"
-                className="text-3xl lg:text-4xl font-bold text-[#27256b] leading-[1.1] tracking-tight"
+                className={`text-3xl lg:text-4xl font-bold leading-[1.1] tracking-tight ${sectionSubtitleColor ? 'mfg-efficiency-subtitle-colored' : 'text-[#27256b]'}`}
+                style={sectionSubtitleColor ? { color: sectionSubtitleColor } : undefined}
               />
               <FormattedText
                 content={description}

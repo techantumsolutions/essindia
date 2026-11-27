@@ -278,7 +278,7 @@ export function BlogSection({ content }: BlogSectionProps) {
               onClick={() => scroll('left')}
               disabled={!canScrollLeft}
               aria-label="Previous blogs"
-              className={`absolute left-0 top-1/2 -translate-y-1/2 -translate-x-1 md:-translate-x-3 lg:-translate-x-14 xl:-translate-x-16 z-20 w-10 h-10 md:w-11 md:h-11 rounded-full bg-white border border-slate-200 text-[#462294] shadow-md hover:shadow-lg flex items-center justify-center hover:bg-[#462294] hover:text-white hover:border-[#462294] transition-all duration-200 active:scale-95 ${
+              className={`absolute left-0 top-[36%] md:top-1/2 -translate-y-1/2 -translate-x-3 md:-translate-x-3 lg:-translate-x-14 xl:-translate-x-16 z-20 w-10 h-10 md:w-11 md:h-11 rounded-full bg-white border border-slate-200 text-[#462294] shadow-md hover:shadow-lg flex items-center justify-center hover:bg-[#462294] hover:text-white hover:border-[#462294] transition-all duration-200 active:scale-95 ${
                 canScrollLeft
                   ? 'opacity-100 scale-100 cursor-pointer pointer-events-auto'
                   : 'opacity-0 pointer-events-none scale-90'
@@ -305,7 +305,7 @@ export function BlogSection({ content }: BlogSectionProps) {
               onClick={() => scroll('right')}
               disabled={!canScrollRight}
               aria-label="Next blogs"
-              className={`absolute right-0 top-1/2 -translate-y-1/2 translate-x-1 md:translate-x-3 lg:translate-x-14 xl:translate-x-16 z-20 w-10 h-10 md:w-11 md:h-11 rounded-full bg-white border border-slate-200 text-[#462294] shadow-md hover:shadow-lg flex items-center justify-center hover:bg-[#462294] hover:text-white hover:border-[#462294] transition-all duration-200 active:scale-95 ${
+              className={`absolute right-0 top-[36%] md:top-1/2 -translate-y-1/2 translate-x-3 md:translate-x-3 lg:translate-x-14 xl:translate-x-16 z-20 w-10 h-10 md:w-11 md:h-11 rounded-full bg-white border border-slate-200 text-[#462294] shadow-md hover:shadow-lg flex items-center justify-center hover:bg-[#462294] hover:text-white hover:border-[#462294] transition-all duration-200 active:scale-95 ${
                 canScrollRight
                   ? 'opacity-100 scale-100 cursor-pointer pointer-events-auto'
                   : 'opacity-0 pointer-events-none scale-90'

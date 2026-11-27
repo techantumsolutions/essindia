@@ -3409,7 +3409,11 @@ export function SectionEditorCard({
       }
     }
 
-    return orderedKeys.filter((k) => !isHiddenCmsField(k));
+    return orderedKeys.filter(
+      (k) =>
+        !isHiddenCmsField(k) &&
+        !(section.type === 'mfg-icons' && (k === 'titleColor' || k === 'activeTitleColor'))
+    );
   }, [mergedContent, meta, section.type]);
 
   const handleSave = async () => {
