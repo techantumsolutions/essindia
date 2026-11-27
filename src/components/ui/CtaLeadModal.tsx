@@ -61,6 +61,16 @@ export function CtaLeadModal({ isOpen, onClose, pdfUrl, pageName, isCareerCta, f
     }
   };
 
+  const cleanPdfUrl =
+    typeof pdfUrl === 'string'
+      ? pdfUrl.replace(/[\u200B-\u200D\uFEFF]/g, '').trim()
+      : '';
+  const validPdfUrl =
+    cleanPdfUrl && cleanPdfUrl !== '#' && cleanPdfUrl !== 'null' && cleanPdfUrl !== 'undefined'
+      ? cleanPdfUrl
+      : '';
+  const hasDocument = Boolean(validPdfUrl);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -101,12 +111,7 @@ export function CtaLeadModal({ isOpen, onClose, pdfUrl, pageName, isCareerCta, f
       return;
     }
 
-  const cleanPdfUrl = typeof pdfUrl === 'string' ? pdfUrl.trim() : '';
-  const validPdfUrl =
-    cleanPdfUrl && cleanPdfUrl !== '#' && cleanPdfUrl !== 'null' && cleanPdfUrl !== 'undefined'
-      ? cleanPdfUrl
-      : '';
-  const trimmedPdfUrl = !isCareerCta && validPdfUrl ? validPdfUrl : '';
+    const trimmedPdfUrl = !isCareerCta && validPdfUrl ? validPdfUrl : '';
     const pdfWindow = trimmedPdfUrl ? window.open('', '_blank') : null;
     if (pdfWindow) {
       pdfWindow.opener = null;
@@ -143,7 +148,7 @@ export function CtaLeadModal({ isOpen, onClose, pdfUrl, pageName, isCareerCta, f
           service: !isCareerCta ? formData.service : undefined,
           formType: formType || (isCareerCta ? 'career-cta' : 'cta'),
           pageName: pageName || pathname || document.title,
-          pdfUrl: uploadedResumeUrl || pdfUrl,
+          pdfUrl: uploadedResumeUrl || validPdfUrl || undefined,
           message: uploadedResumeUrl ? `Resume URL: ${uploadedResumeUrl}` : undefined,
         }),
       });
@@ -172,14 +177,6 @@ export function CtaLeadModal({ isOpen, onClose, pdfUrl, pageName, isCareerCta, f
       setIsSubmitting(false);
     }
   };
-
-  const hasDocument = Boolean(
-    typeof pdfUrl === 'string' &&
-    pdfUrl.trim() &&
-    pdfUrl.trim() !== '#' &&
-    pdfUrl.trim() !== 'null' &&
-    pdfUrl.trim() !== 'undefined'
-  );
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
