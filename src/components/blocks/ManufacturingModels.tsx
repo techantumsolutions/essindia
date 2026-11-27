@@ -50,6 +50,7 @@ const defaultModels = [
 export default function ManufacturingModels({ content }: { content?: any }) {
   const sectionTitle = content?.sectionTitle || 'Lorem ipsum';
   const sectionSubtitle = content?.sectionSubtitle || 'Lorem ipsum dolor sit amet, consectetur.<br />ipsum dolor sit models.';
+  const sectionSubtitleColor = typeof content?.sectionSubtitleColor === 'string' ? content.sectionSubtitleColor.replace(/[\u200B-\u200D\uFEFF]/g, '').trim() : '';
   const sectionDescription = content?.sectionDescription || 'Lorem ipsum dolor sit amet, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.';
   const models = content?.models || defaultModels;
 
@@ -63,7 +64,8 @@ export default function ManufacturingModels({ content }: { content?: any }) {
           <FormattedText
             content={sectionSubtitle}
             as="h2"
-            className="text-3xl md:text-4xl lg:text-[44px] font-extrabold text-[#27256b] leading-[1.1] tracking-tight"
+            className={`text-3xl md:text-4xl lg:text-[44px] font-extrabold leading-[1.1] tracking-tight ${sectionSubtitleColor ? 'mfg-models-subtitle-colored' : 'text-[#27256b]'}`}
+            style={sectionSubtitleColor ? { color: sectionSubtitleColor } : undefined}
           />
           <FormattedText
             content={sectionDescription}

@@ -50,7 +50,7 @@ const RAW_SECTION_REGISTRY: SectionTypeDefinition[] = [
     color: 'bg-blue-50 text-blue-600',
     defaultVariant: 'default',
     supportsVariants: true,
-  
+
     fieldOrder: [
       'bgColor',
       'gradientColor1',
@@ -468,7 +468,7 @@ const RAW_SECTION_REGISTRY: SectionTypeDefinition[] = [
     color: 'bg-emerald-50 text-emerald-600',
     defaultVariant: 'default',
     supportsVariants: false,
-    fieldOrder: ['titleColor', 'activeTitleColor', 'tabs']
+    fieldOrder: ['tabs']
   },
   {
     type: 'mfg-demand',
@@ -498,7 +498,7 @@ const RAW_SECTION_REGISTRY: SectionTypeDefinition[] = [
     color: 'bg-cyan-50 text-cyan-600',
     defaultVariant: 'default',
     supportsVariants: false,
-    fieldOrder: ['sectionTitle', 'sectionSubtitle', 'description', 'metrics', 'image'],
+    fieldOrder: ['sectionTitle', 'sectionSubtitle', 'sectionSubtitleColor', 'description', 'metrics', 'image'],
   },
   {
     type: 'mfg-models',
@@ -508,7 +508,7 @@ const RAW_SECTION_REGISTRY: SectionTypeDefinition[] = [
     color: 'bg-emerald-50 text-emerald-600',
     defaultVariant: 'default',
     supportsVariants: false,
-    fieldOrder: ['sectionTitle', 'sectionSubtitle', 'sectionDescription', 'models'],
+    fieldOrder: ['sectionTitle', 'sectionSubtitle', 'sectionSubtitleColor', 'sectionDescription', 'models'],
   },
   {
     type: 'employee-spotlight-hero',
@@ -786,7 +786,7 @@ const RAW_SECTION_REGISTRY: SectionTypeDefinition[] = [
     color: 'bg-indigo-50 text-indigo-600',
     defaultVariant: 'default',
     supportsVariants: false,
-  
+
     fieldOrder: [
       'bgColor',
       'gradientColor1',

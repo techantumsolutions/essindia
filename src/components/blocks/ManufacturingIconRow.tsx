@@ -53,16 +53,7 @@ export default function ManufacturingIconRow({ content }: { content?: any }) {
                     ) : null;
                   })()}
                   <span
-                    className={`text-[12px] font-semibold uppercase ${
-                      isActive
-                        ? (content?.activeTitleColor ? '' : 'text-[#FFD600]')
-                        : (content?.titleColor ? '' : 'text-[#27256b]')
-                    }`}
-                    style={
-                      isActive
-                        ? (content?.activeTitleColor ? { color: content.activeTitleColor } : undefined)
-                        : (content?.titleColor ? { color: content.titleColor } : undefined)
-                    }
+                    className={`text-[12px] font-semibold uppercase ${isActive ? 'text-[#FFD600]' : 'text-[#27256b]'}`}
                   >
                     {itemTitle}
                   </span>

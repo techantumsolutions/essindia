@@ -177,7 +177,7 @@ export function EmployeeSpotlightCards({ content }: { content?: any }) {
           {/* Scrollable Track */}
           <div
             ref={scrollRef}
-            className="flex gap-6 overflow-x-auto scroll-smooth py-4 px-2 no-scrollbar snap-x snap-mandatory"
+            className="flex gap-6 overflow-x-auto scroll-smooth py-4 no-scrollbar snap-x snap-mandatory"
             style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
           >
             {employees.map((emp: any, index: number) => {
